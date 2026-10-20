@@ -1,0 +1,13 @@
+{
+  "Food": {"feed_category_id":"976759", "path_segments":["Food", "Grocery"]},
+  "Household Essentials": {"feed_category_id":"1115193", "path_segments":["Household Essentials"]},
+  "Personal Care": {"feed_category_id":"1005862", "path_segments":["Personal Care"]},
+  "Beauty": {"feed_category_id":"1085666", "path_segments":["Beauty"]},
+  "Diapering": {"feed_category_id":"5427", "path_segments":["Diapering", "Diapers & Wipes", "Diapers"]},
+  "Feeding": {"feed_category_id":"5427", "path_segments":["Feeding", "Baby Feeding"]},
+  "Health & Wellness": {"feed_category_id":"976760", "path_segments":["Health & Wellness", "Health"]},
+  "Pets": {"feed_category_id":"5440", "path_segments":["Pets", "Pet Supplies"]},
+  "Balloons": {"feed_category_id":"2637", "path_segments":["Balloons"]},
+  "Art Supplies": {"feed_category_id":"5899871", "path_segments":["Art Supplies"]},
+  "Office Supplies": {"feed_category_id":"1229749", "path_segments":["Office Supplies"]}
+}

@@ -1,0 +1,32 @@
+{
+  "store_id": "5959",
+  "zipcode": "77007",
+  "store_context_verified": true,
+  "source_url": "https://www.walmart.com/browse/party-occasions/balloons/2637_1042319_1212898_3956207?povid=GlobalNav_rWeb_ETS_partysupplies_balloons",
+  "products": [
+    {
+      "product_id": "SYN-5959-balloons-8",
+      "store_id": "5959",
+      "zipcode": "77007",
+      "store_context_verified": true,
+      "seller_type": "walmart",
+      "fulfillment": "pickup",
+      "product_title": "SYNTHETIC TEST PRODUCT: Balloons 8",
+      "weight": "12 oz",
+      "regular_price": "3.99",
+      "sale_price": "3.49",
+      "brand": "Great Value",
+      "image_url": "https://example.invalid/fixture-image.jpg",
+      "url": "https://www.walmart.com/ip/SYNTHETIC-NOT-REAL-5959-balloons-8",
+      "upc": "SYNTHETIC-UPC-5959-8",
+      "ppm": "$0.29/oz",
+      "volume_deals_description": "",
+      "volume_deals_price": "",
+      "digital_deals_description": "Clip Coupon: Save $2 (synthetic example)",
+      "digital_deals_price": ""
+    }
+  ],
+  "children": [],
+  "next_cursor": "",
+  "subcategories_complete": true
+}

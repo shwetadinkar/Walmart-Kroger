@@ -1,0 +1,33 @@
+{
+  "store_id": "DEMO-WESTLOOP-60661",
+  "zipcode": "60661",
+  "store_context_verified": true,
+  "source_url": "https://www.marianos.com/savings/cl/coupons/",
+  "products": [
+    {
+      "store_id": "DEMO-WESTLOOP-60661",
+      "zipcode": "60661",
+      "store_context_verified": true,
+      "seller_type": "marianos",
+      "fulfillment": "pickup",
+      "product_id": "DEMO-001",
+      "product_title": "SYNTHETIC Coupons item 1",
+      "weight": "12 oz",
+      "regular_price": "4.99",
+      "sale_price": "",
+      "upc": "9999990000001",
+      "brand": "Mariano's",
+      "url": "https://www.marianos.com/p/synthetic-demo-product-1",
+      "image_url": "https://www.marianos.com/images/demo-1.jpg",
+      "ppm": "($0.42/oz)",
+      "volume_deals_description": "2 for $5; must purchase 2",
+      "volume_deals_price": "2.50",
+      "digital_deals_description": "",
+      "digital_deals_price": ""
+    }
+  ],
+  "children": [],
+  "next_cursor": "",
+  "subcategories_complete": true,
+  "location_evidence_url": ""
+}

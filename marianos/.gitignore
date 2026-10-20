@@ -1,0 +1,9 @@
+.collector-output/
+client-test-output/
+__pycache__/
+*.py[cod]
+.env
+*.resolved.json
+submission_evidence/readiness.json
+submission_evidence/observed_review.json
+config/stores_live.json

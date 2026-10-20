@@ -1,0 +1,23 @@
+{
+  "DEMONSTRATION_ONLY": "The values in this example are synthetic, not Mariano's data.",
+  "store_id": "VERIFIED_LOCATION_ID",
+  "zipcode": "60601",
+  "store_context_verified": true,
+  "location_evidence_url": "https://www.marianos.com/stores/grocery/il/chicago",
+  "source_url": "https://www.marianos.com/d/dairy",
+  "subcategories_complete": true,
+  "next_cursor": "",
+  "children": [
+    {"name": "Milk", "url": "https://www.marianos.com/d/dairy/milk"}
+  ],
+  "products": [
+    {
+      "store_id": "VERIFIED_LOCATION_ID", "zipcode": "60601", "store_context_verified": true,
+      "product_id": "SYNTHETIC-12345", "seller_type": "marianos", "fulfillment": "pickup",
+      "product_title": "SYNTHETIC Demonstration Milk", "brand": "Private Selection", "weight": "1 gal",
+      "regular_price": "4.29", "sale_price": "3.99", "ppm": "", "upc": "0000000000000",
+      "image_url": "https://www.marianos.com/images/EXAMPLE-ONLY",
+      "url": "https://www.marianos.com/p/SYNTHETIC-EXAMPLE"
+    }
+  ]
+}

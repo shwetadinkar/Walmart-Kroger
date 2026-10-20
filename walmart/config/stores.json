@@ -1,0 +1,6 @@
+{
+  "stores": [
+    {"store_id":"100", "zipcode":"72712", "store_name":"Walmart Supercenter #100", "store_location":"406 S Walton Blvd, Bentonville, AR 72712", "store_logo":"", "enabled":true},
+    {"store_id":"5959", "zipcode":"77007", "store_name":"Walmart Supercenter #5959", "store_location":"111 Yale St, Houston, TX 77007", "store_logo":"", "enabled":true}
+  ]
+}

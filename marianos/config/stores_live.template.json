@@ -1,0 +1,12 @@
+{
+  "stores": [
+    {
+      "store_id": "REPLACE_WITH_VERIFIED_KROGER_LOCATION_ID",
+      "zipcode": "60601",
+      "store_name": "Mariano's Lakeshore East",
+      "store_location": "333 E Benton Pl, Chicago, IL 60601",
+      "store_logo": "",
+      "enabled": true
+    }
+  ]
+}

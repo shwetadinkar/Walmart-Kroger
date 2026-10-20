@@ -1,0 +1,2 @@
+# Standard library only for offline/local/API functionality.
+# Azure backend requires: pip install azure-storage-blob>=12.19,<13

@@ -1,0 +1,25 @@
+# Secrets, credentials and generated data
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.p12
+*.key
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+.collector-output/
+**/.collector-output/
+client-test-output/
+**/client-test-output/
+submission_evidence/
+**/submission_evidence/
+.test-output/
+.test-rejected/
+*.log

@@ -1,0 +1,10 @@
+.git
+__pycache__
+.collector-output
+client-test-output
+.env
+submission_evidence
+tests
+fixtures
+SHARED_REQUIREMENTS.docx
+config/*.resolved.json

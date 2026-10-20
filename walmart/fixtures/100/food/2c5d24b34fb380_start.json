@@ -1,0 +1,66 @@
+{
+  "store_id": "100",
+  "zipcode": "72712",
+  "store_context_verified": true,
+  "source_url": "https://www.walmart.com/cp/food/976759?povid=GlobalNav_rWeb_Grocery_GroceryShopAll",
+  "products": [
+    {
+      "product_id": "SYN-100-food-0",
+      "store_id": "100",
+      "zipcode": "72712",
+      "store_context_verified": true,
+      "seller_type": "walmart",
+      "fulfillment": "pickup",
+      "product_title": "SYNTHETIC TEST PRODUCT: Food 0",
+      "weight": "12 oz",
+      "regular_price": "3.99",
+      "sale_price": "3.49",
+      "brand": "Great Value",
+      "image_url": "https://example.invalid/fixture-image.jpg",
+      "url": "https://www.walmart.com/ip/SYNTHETIC-NOT-REAL-100-food-0",
+      "upc": "SYNTHETIC-UPC-100-0",
+      "ppm": "$0.29/oz",
+      "volume_deals_description": "2 for $5 (synthetic example)",
+      "volume_deals_price": "5.00",
+      "digital_deals_description": "Clip Coupon: Save $2 (synthetic example)",
+      "digital_deals_price": ""
+    },
+    {
+      "product_id": "SYN-100-food-approx",
+      "store_id": "100",
+      "zipcode": "72712",
+      "store_context_verified": true,
+      "seller_type": "walmart",
+      "fulfillment": "pickup",
+      "product_title": "SYNTHETIC TEST PRODUCT: Food approx",
+      "weight": "approx. 2 lb",
+      "regular_price": "3.99",
+      "sale_price": "3.49",
+      "brand": "Great Value",
+      "image_url": "https://example.invalid/fixture-image.jpg",
+      "url": "https://www.walmart.com/ip/SYNTHETIC-NOT-REAL-100-food-approx",
+      "upc": "SYNTHETIC-UPC-100-approx",
+      "ppm": "$0.29/oz",
+      "volume_deals_description": "",
+      "volume_deals_price": "",
+      "digital_deals_description": "",
+      "digital_deals_price": ""
+    }
+  ],
+  "children": [
+    {
+      "name": "Canned Foods",
+      "url": "https://www.walmart.com/browse/synthetic-canned-foods/99991"
+    },
+    {
+      "name": "Recipes",
+      "url": "https://www.walmart.com/browse/synthetic-recipes/99992"
+    },
+    {
+      "name": "Shop All Foods",
+      "url": "https://www.walmart.com/browse/synthetic-all-foods/99993"
+    }
+  ],
+  "next_cursor": "",
+  "subcategories_complete": true
+}

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "walmart-azure-collector"
+version = "0.4.1"
+description = "Fail-closed Walmart local-offer collection pipeline with authorized provider adapter"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+azure = ["azure-storage-blob>=12.19,<13"]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+walmart-collector = "walmart_collector.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["walmart_collector*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

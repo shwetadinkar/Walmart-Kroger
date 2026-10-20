@@ -1,0 +1,11 @@
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.git
+.collector-output
+fixtures
+examples
+.tests
+.venv
+.env
+*.docx

@@ -1,0 +1,20 @@
+{
+  "stores": [
+    {
+      "store_id": "DEMO-LAKESHORE-60601",
+      "zipcode": "60601",
+      "store_name": "Mariano's Lakeshore East (DEMO)",
+      "store_location": "333 E Benton Pl, Chicago, IL 60601",
+      "store_logo": "",
+      "enabled": true
+    },
+    {
+      "store_id": "DEMO-WESTLOOP-60661",
+      "zipcode": "60661",
+      "store_name": "Mariano's West Loop (DEMO)",
+      "store_location": "40 S Halsted St, Chicago, IL 60661",
+      "store_logo": "",
+      "enabled": true
+    }
+  ]
+}

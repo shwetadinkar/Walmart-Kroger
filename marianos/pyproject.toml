@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "marianos-azure-collector"
+version = "0.2.1"
+description = "Mariano's Azure data collector, validated provider adapter and offline acceptance tests"
+requires-python = ">=3.11"
+dependencies = []
+[project.optional-dependencies]
+azure = ["azure-storage-blob>=12.19,<13"]
+[project.scripts]
+marianos-collector = "marianos_collector.cli:main"
+[tool.setuptools.packages.find]
+include = ["marianos_collector*"]
