@@ -23,7 +23,7 @@ def _payload_hash(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 class Collector:
-    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None):
+    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False):
         self.storage = storage
         self.source = source
         self.categories = categories
@@ -31,14 +31,24 @@ class Collector:
         self.previous_ratio = previous_ratio
         self.max_pages = max_pages
         self.canaries = canaries or {}
+        self.trial = trial
+        # Trial and full releases, checkpoints and staging never share a namespace.
+        # A trial of Food/Beauty cannot replace the 11-category latest pointer.
+        definition = [(c.name, c.url) for c in categories]
+        self.scope = ("trial-" + _payload_hash(definition)[:16]) if trial else "full"
+
+    def _published_root(self, store):
+        return (f"trials/{store.store_id}/{self.scope}"
+                if self.trial else f"published/{store.store_id}")
 
     def _checkpoint_key(self, store, category):
-        return f"checkpoints/{store.store_id}/{category.slug}.json"
+        return f"checkpoints/{store.store_id}/{self.scope}/{category.slug}.json"
 
     def _collect_category(self, store, category):
         cp_key = self._checkpoint_key(store, category)
         cp = read_json(self.storage, cp_key)
-        config_id = _payload_hash({"store":store.store_id, "category":category.name, "url":category.url})
+        config_id = _payload_hash({"store":store.store_id, "category":category.name, "url":category.url,
+                                   "source": self.source.source_mode, "scope": self.scope})
         if cp:
             started = datetime.fromisoformat(cp["started_at"])
             if cp["config_id"] != config_id or datetime.now(timezone.utc) - started > timedelta(days=7):
@@ -49,7 +59,8 @@ class Collector:
                 "config_id":config_id, "run_id":uuid.uuid4().hex,
                 "started_at":datetime.now(timezone.utc).isoformat(),
                 "queue":[{"url":category.url, "sub_category":"", "cursor":""}],
-                "seen_urls":[category.url], "seen_requests":[], "pages":[], "finished":False
+                "seen_urls":[category.url], "seen_requests":[], "pages":[], "finished":False,
+                "source_revision":""
             }
             write_json(self.storage, cp_key, cp)
 
@@ -74,8 +85,15 @@ class Collector:
                     raise ValidationFailure("Provider returned malformed product")
                 if prod.get("store_id") != store.store_id or prod.get("zipcode") != store.zipcode or prod.get("store_context_verified") is not True:
                     raise ValidationFailure("Product-level store context mismatch or unknown")
+            revision = getattr(page, "source_revision", "")
+            if not isinstance(revision, str):
+                raise ValidationFailure("Invalid source revision in page")
+            if cp["pages"] and revision != cp.get("source_revision", ""):
+                raise ValidationFailure(f"Source snapshot changed during {category.name}; reset required")
+            if not cp["pages"]:
+                cp["source_revision"] = revision
             page_id = len(cp["pages"])
-            stage_key = f"staging/{store.store_id}/{cp['run_id']}/{category.slug}/{page_id:07d}.json"
+            stage_key = f"staging/{store.store_id}/{self.scope}/{cp['run_id']}/{category.slug}/{page_id:07d}.json"
             stage = {"task":task,"page":page.__dict__}
             # Stage first, then advance checkpoint; on crash an orphan staged page is harmless.
             write_json(self.storage, stage_key, stage)
@@ -113,7 +131,7 @@ class Collector:
             return self._run_locked(store, start)
 
     def _run_locked(self, store, start):
-        pointer_key = f"published/{store.store_id}/latest.json"
+        pointer_key = self._published_root(store) + "/latest.json"
         previous_pointer = read_json(self.storage, pointer_key)
         previous_manifest = read_json(self.storage, previous_pointer["manifest_key"]) if previous_pointer else None
         if previous_pointer and previous_manifest is None:
@@ -174,6 +192,8 @@ class Collector:
         report = {
             "store_id": store.store_id, "zipcode":store.zipcode, "source_mode":self.source.source_mode,
             "source_is_synthetic": self.source.source_mode.startswith("synthetic_fixture"),
+            "scope": "trial" if self.trial else "full", "source_coverage_attested": bool(
+                getattr(self.source, "coverage_attested", False)),
             "status":"validated", "timestamp_utc":datetime.now(timezone.utc).isoformat(),
             "runtime_seconds":round(time.monotonic()-start,3),
             "unique_records":len(records),"duplicate_placements":duplicates,
@@ -187,13 +207,14 @@ class Collector:
             "caution":"This is NOT contest proof if source_is_synthetic=true. Live providers require independent verification."
         }
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
-        prefix = f"published/{store.store_id}/runs/{release}"
+        prefix = f"{self._published_root(store)}/runs/{release}"
         data_key, report_key, manifest_key = prefix+"/data.json", prefix+"/report.json", prefix+"/manifest.json"
         # Versioned artifacts first. latest pointer is committed LAST.
         write_json(self.storage, data_key, records)
         write_json(self.storage, report_key, report)
         manifest = {"store_id":store.store_id, "zipcode":store.zipcode, "release":release, "data_key":data_key,
-                    "report_key":report_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode}
+                    "report_key":report_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
+                    "scope": "trial" if self.trial else "full"}
         write_json(self.storage, manifest_key, manifest)
         if hasattr(self.storage, "assert_lock_held"):
             self.storage.assert_lock_held()

@@ -133,7 +133,7 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaises(SourceError):
             self.runner(flaky).run(STORES[0])
         self.assertIsNone(read_json(self.storage,"published/100/latest.json"))
-        cp=read_json(self.storage,"checkpoints/100/food.json")
+        cp=read_json(self.storage,"checkpoints/100/full/food.json")
         self.assertTrue(cp["finished"])
         seen_before=sum(1 for x in flaky.attempts if x[0]=="food")
         result=self.runner(flaky).run(STORES[0])

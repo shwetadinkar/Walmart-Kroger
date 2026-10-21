@@ -37,6 +37,7 @@ class Page:
     next_cursor: str
     subcategories_complete: bool
     location_evidence_url: str = ""
+    source_revision: str = ""
 
     @classmethod
     def parse(cls, body: dict) -> "Page":
@@ -63,7 +64,11 @@ class Page:
             raise SourceError("location_evidence_url must be a string")
         if evidence and urlparse(evidence).scheme not in ("http", "https"):
             raise SourceError("Location evidence must be a verifiable URL")
-        return cls(**{k: body[k] for k in required}, location_evidence_url=evidence)
+        revision = body.get("source_revision", "")
+        if not isinstance(revision, str):
+            raise SourceError("source_revision must be a string")
+        return cls(**{k: body[k] for k in required}, location_evidence_url=evidence,
+                   source_revision=revision)
 
 class FixtureSource:
     source_mode = "synthetic_fixture_NOT_contest_proof"
@@ -83,6 +88,7 @@ class AuthorizedProviderSource:
     Authorization is explicit; a Walmart site URL is not an authorized feed.
     """
     source_mode = "authorized_provider_data_unverified_until_review"
+    coverage_attested = True  # Provider's page.subcategories_complete claim; auditor must verify.
     def __init__(self, base_url: str, token: str, timeout: int = 35, max_attempts: int = 3):
         parsed = urlparse(base_url)
         if parsed.scheme != "https" or not parsed.hostname:

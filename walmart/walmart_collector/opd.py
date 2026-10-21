@@ -278,6 +278,9 @@ class WalmartOPDSnapshotSource:
     roll back transactionally and resume at complete-file boundaries.
     """
     source_mode = "authorized_provider_walmart_opd_snapshot_NEEDS_COVERAGE_AUDIT"
+    # OPD snapshots are candidates, not proof that every website category,
+    # promotion or individual pickup offer is represented.
+    coverage_attested = False
 
     def __init__(self, client, root: Path, mappings: dict, page_size=100):
         self.client, self.root, self.mappings = client, Path(root), mappings
@@ -363,6 +366,8 @@ class WalmartOPDSnapshotSource:
         db = sqlite3.connect(path, timeout=30)
         try:
             self._prepare(db,store,category)
+            revision_row = db.execute("SELECT value FROM meta WHERE key='signature'").fetchone()
+            revision = revision_row[0] if revision_row else ""
             count = db.execute("SELECT COUNT(*) FROM catalog c JOIN price p ON c.offer=p.offer").fetchone()[0]
             offset = int(cursor) if cursor else 0
             if offset < 0 or offset >= count:
@@ -380,4 +385,5 @@ class WalmartOPDSnapshotSource:
             store_context_verified=True, source_url=url, products=products,
             children=[], next_cursor=next_cursor,
             subcategories_complete=True,
-            location_evidence_url=f"https://www.walmart.com/store/{store.store_id}")
+            location_evidence_url=f"https://www.walmart.com/store/{store.store_id}",
+            source_revision=revision)

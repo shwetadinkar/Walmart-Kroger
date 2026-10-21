@@ -1,8 +1,8 @@
-# Azure deployment (not yet deployed)
+# Azure deployment (not yet deployed; v0.5.0)
 
 ## Architecture
 
-Two scheduled Azure Container Apps Jobs (one per store) run the same immutable image, with `WALMART_STORE_ID` set differently. They use a **single Azure Blob container** for remote staging, checkpoints, versioned data, and per-store 60-second renewable leases. Each job starts Monday and Thursday at **06:00 UTC** (`0 6 * * 1,4`). A Blob lease prevents two overlapping executions of the **same store**. The jobs are not guaranteed to finish in four hours; adjust `--replica-timeout 14400` based on a measured full run.
+Two scheduled Azure Container Apps Jobs (one per store) run the same immutable image, with `WALMART_STORE_ID` set differently. They use a **single Azure Blob container** for remote staging, checkpoints, versioned data, and per-store 60-second renewable leases. Each job starts Monday and Thursday at **06:00 UTC** (`0 6 * * 1,4`). A Blob lease prevents two overlapping executions of the **same store**. OPD snapshot collection now publishes only to the trial namespace; do not schedule OPD as a complete production scraper. The jobs are not guaranteed to finish in four hours; adjust `--replica-timeout 14400` based on a measured full run.
 
 ## Prerequisites
 

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from .config import categories_from_csv, stores_from_json
-from .runner import Collector
+from .runner import Collector, _payload_hash
 from .sources import FixtureSource, AuthorizedProviderSource
 from .opd import OPDClient, WalmartOPDSnapshotSource
 from .storage import LocalStorage, AzureBlobStorage, read_json
@@ -40,7 +40,8 @@ def build_parser():
     parser.add_argument("--opd-mapping", type=Path, default=PROJECT / "config/opd_category_mapping.json")
     parser.add_argument("--opd-cache", type=Path, default=None, help="Persistent directory; mount a persistent volume on Azure")
     parser.add_argument("--opd-page-size", type=int, default=100)
-    parser.add_argument("--only-categories", default="", help="Trial subset, e.g. Food,Beauty; not proof of complete category coverage")
+    parser.add_argument("--only-categories", default="", help="Trial subset, e.g. Food,Beauty; never overwrites full release")
+    parser.add_argument("--trial", action="store_true", help="Isolate this run/status/export in a trial namespace")
     parser.add_argument("--minimum-products", type=int, default=None)
     parser.add_argument("--authorized-source", action="store_true", help="Affirm client's authorized/contractual feed access")
     parser.add_argument("--canaries", type=Path, help="Optional JSON dictionary category to required product IDs")
@@ -59,13 +60,21 @@ def main(argv=None):
     log.setLevel(logging.INFO)
     try:
         categories = categories_from_csv(args.categories)
+        # The OPD feed cannot prove all retail website subcategories, pickup
+        # eligibility for each item, or detailed promotion conditions. Always
+        # isolate its output from full-contest published releases.
+        trial = args.trial or args.source == "opd"
         if args.only_categories:
             requested = {x.strip() for x in args.only_categories.split(",") if x.strip()}
             unknown = requested - {c.name for c in categories}
             if unknown or len(requested) < 2:
                 parser.error("--only-categories requires at least two existing categories; unknown: " + str(unknown))
             categories = [c for c in categories if c.name in requested]
+            trial = True
             print("CAUTION: trial only; category coverage is incomplete.", file=sys.stderr)
+        if args.command == "run" and args.source == "opd":
+            print("CAUTION: OPD snapshot output is provisional, stored only under trials/. "
+                  "Independent pickup, coupon and category coverage proofs are missing.", file=sys.stderr)
         stores = stores_from_json(args.stores)
         if args.command == "list":
             print(json.dumps({"stores":[s.__dict__ for s in stores],"categories":[c.__dict__ for c in categories]},indent=2))
@@ -80,13 +89,15 @@ def main(argv=None):
             storage = AzureBlobStorage(conn, args.container)
         else:
             storage = LocalStorage(args.output)
+        scope = ("trial-" + _payload_hash([(c.name, c.url) for c in categories])[:16]) if trial else "full"
+        pub_root = f"trials/{store.store_id}/{scope}" if trial else f"published/{store.store_id}"
         if args.command == "status":
-            latest = read_json(storage, f"published/{store.store_id}/latest.json")
+            latest = read_json(storage, pub_root + "/latest.json")
             print(json.dumps({"store_id":store.store_id, "latest":latest,
                               "manifest":read_json(storage,latest["manifest_key"]) if latest else None},indent=2))
             return 0
         if args.command == "export":
-            latest = read_json(storage, f"published/{store.store_id}/latest.json")
+            latest = read_json(storage, pub_root + "/latest.json")
             if latest is None or not args.export_file:
                 parser.error("Export requires a successful prior run and --export-file")
             manifest = read_json(storage, latest["manifest_key"])
@@ -102,7 +113,7 @@ def main(argv=None):
                 parser.error("Specify --confirm-reset; this discards partial (not published) category progress")
             with storage.locked(store.store_id):
                 for c in categories:
-                    storage.delete(f"checkpoints/{store.store_id}/{c.slug}.json")
+                    storage.delete(f"checkpoints/{store.store_id}/{scope}/{c.slug}.json")
             print("Partial checkpoints reset. Previous successful release untouched.")
             return 0
         if args.minimum_products is not None and args.minimum_products < 1:
@@ -127,7 +138,7 @@ def main(argv=None):
             min_products = args.minimum_products or 1
             print("WARNING: DEMO MODE — all records are synthetic and cannot serve as contest proof.",file=sys.stderr)
         canaries = json.loads(args.canaries.read_text(encoding="utf-8")) if args.canaries else {}
-        result = Collector(storage, source, categories, min_products=min_products, canaries=canaries).run(store)
+        result = Collector(storage, source, categories, min_products=min_products, canaries=canaries, trial=trial).run(store)
         print(json.dumps({"manifest": result["manifest"],"report":result["report"]}, indent=2))
         return 0
     except (Exception, KeyboardInterrupt) as exc:

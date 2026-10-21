@@ -1,3 +1,20 @@
+# Walmart Azure Collector — v0.5.0 integrity update
+
+**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
+
+From the GitHub folder `Walmart-Kroger/walmart` run:
+
+```bash
+python tools/preflight.py
+python -m unittest discover -v tests
+```
+
+**New safeguards:** partial-category and OPD tests are isolated under `trials/`, separate from the full `published/` pointer. Category pagination checks source revision across resumptions, and `tools/submission_gate.py` rejects unproven live-data claims. `tools/opd_category_audit.py` compares category roots against an authorized OPD taxonomy file but cannot independently verify completeness.
+
+The authorized provider remains necessary for fully audited pickup-specific offers, site hierarchy and digital/volume promotions. No API key is committed; the OPD bulk source is provisional. See the acceptance ledger for the exact outstanding requirements.
+
+---
+
 > **v0.4.1 client preflight:** To verify everything locally with no Walmart API key, run `python tools/preflight.py` after extracting this package. See [PRE_CLIENT_TEST.md](PRE_CLIENT_TEST.md). This is a testing prototype, not proof of real Walmart records or an observed Azure deployment.
 
 > **Update v0.4.0:** An official Walmart OPD snapshot-to-collector adapter is now included. See [`OPD_CLIENT_RUNBOOK.md`](OPD_CLIENT_RUNBOOK.md) for runnable client commands and unresolved acceptance limitations.
