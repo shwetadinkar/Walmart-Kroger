@@ -1,0 +1,40 @@
+name: Walmart offline verification
+
+on:
+  push:
+    paths:
+      - "walmart/**"
+      - ".github/workflows/walmart-offline.yml"
+  pull_request:
+    paths:
+      - "walmart/**"
+      - ".github/workflows/walmart-offline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-walmart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run collector tests and offline preflight
+        working-directory: walmart
+        run: |
+          python -m unittest discover -v tests
+          python tools/preflight.py
+      - name: Validate Walmart request layout (no API calls)
+        working-directory: walmart
+        run: python tools/walmart_opd_smoke_test.py --store both --dry-run
+      - name: Store synthetic preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: walmart-offline-preflight
+          path: walmart/client-test-output/preflight-report.json
+          if-no-files-found: ignore
