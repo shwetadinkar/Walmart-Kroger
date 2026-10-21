@@ -1,6 +1,6 @@
 # Walmart Azure Collector — v0.5.0 integrity update
 
-**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
+**Run the Walmart offline checks directly on GitHub:** [Walmart offline verification](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/walmart-offline.yml) (select **Run workflow**). [Successful initial workflow run](https://github.com/shwetadinkar/Walmart-Kroger/actions/runs/39544351675). The workflow uses synthetic fixtures only; it does not make authenticated Walmart requests.\n\n**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
 
 From the GitHub folder `Walmart-Kroger/walmart` run:
 
