@@ -1,4 +1,6 @@
-**Source-feasibility pilot (22 Oct 2026):** See [WALMART_SOURCE_FEASIBILITY.md](WALMART_SOURCE_FEASIBILITY.md) for provider candidates, advertised price examples, $0 trial rule, exact access gaps, and the new raw-response quality audit. No live Walmart source records have been obtained.\n\n# Walmart Azure Collector — v0.5.0 integrity update
+**Source-feasibility pilot (22 Oct 2026):** See [WALMART_SOURCE_FEASIBILITY.md](WALMART_SOURCE_FEASIBILITY.md) for provider candidates, advertised price examples, $0 trial rule, exact access gaps, and the new raw-response quality audit. No live Walmart source records have been obtained.
+
+# Walmart Azure Collector — v0.5.0 integrity update
 
 **Run the Walmart offline checks directly on GitHub:** [Walmart offline verification](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/walmart-offline.yml) (select **Run workflow**). [Successful initial workflow run](https://github.com/shwetadinkar/Walmart-Kroger/actions/runs/39544351675). The workflow uses synthetic fixtures only; it does not make authenticated Walmart requests.\n\n**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
 
