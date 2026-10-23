@@ -1,3 +1,5 @@
+> **AZURE EXECUTION UPDATE — 24 OCT 2026:** Actual Walmart Python image `ghcr.io/shwetadinkar/walmart63-collector:trial` ran successfully in South India Azure Container Apps Job `walmart63-collector` (manual, dry-run-no-network; 11 category inputs, Store 100, ZIP 72712). The 615-row JSON was uploaded manually to private Blob Storage, `retail-collection`, and the system-assigned managed identity role assignment was confirmed. **The code-driven Blob read/write test and production collection have NOT yet run.** See [managed-identity verification](../../azure/MANAGED_IDENTITY_BLOB_TEST.md). This is not source price / PPM / promotional evidence.
+
 # Walmart scraper contest #63 — client review package
 
 **Prepared:** 24 October 2026 · **Repository:** [Walmart-Kroger / walmart](../../)  
