@@ -10,6 +10,7 @@ import csv
 from datetime import datetime, timezone
 import json
 import os
+import re
 from pathlib import Path
 import tempfile
 import time
@@ -133,20 +134,91 @@ class LocalStore:
 
 
 class AzureBlobStore:
-    """Azure SDK loads only inside authorized Azure runs, not during offline tests."""
-    def __init__(self, connection_string, container):
+    """Existing PRIVATE Blob container, using system-assigned managed identity.
+
+    Storage account URI is not a secret. Connection string remains an optional
+    legacy fallback, but do not expose keys in GitHub or Azure plain environment.
+    No container creation/permission escalation is attempted by the job.
+    """
+    def __init__(self, connection_string=None, container="retail-collection", account_url=None):
         from azure.storage.blob import BlobServiceClient  # type: ignore
-        service = BlobServiceClient.from_connection_string(connection_string)
+        if account_url:
+            from azure.identity import ManagedIdentityCredential  # type: ignore
+            url = account_url.rstrip("/")
+            if not re.fullmatch(r"https://[a-z0-9]{3,24}\\.blob\\.core\\.windows\\.net", url):
+                raise ValueError("AZURE_STORAGE_ACCOUNT_URL must be an Azure HTTPS Blob service URL")
+            service = BlobServiceClient(account_url=url, credential=ManagedIdentityCredential())
+        elif connection_string:
+            service = BlobServiceClient.from_connection_string(connection_string)
+        else:
+            raise ValueError("Set AZURE_STORAGE_ACCOUNT_URL for managed identity (or a private connection string)")
         self.container = service.get_container_client(container)
-        self.container.create_container() if not self.container.exists() else None
+
     def get(self, key):
         try:
             from azure.core.exceptions import ResourceNotFoundError  # type: ignore
             return self.container.download_blob(key).readall()
         except ResourceNotFoundError:
             return None
+
     def put(self, key, data):
         self.container.upload_blob(name=key, data=data, overwrite=True)
+
+
+def blob_smoke(storage, store, blob_name="Walmart_Store100_615_Trial_22Field.json", expected_records=615):
+    """Prove real Blob read and limited metadata write without a provider API call.
+
+    The uploaded demonstration is NOT a provenance/history.json database. Never
+    overwrite production/latest, import history, or infer missing local prices.
+    """
+    import hashlib
+    import uuid
+    from collections import Counter
+    from .schema import FIELDS
+    if not blob_name or blob_name.startswith("/") or ".." in blob_name or "\\\\" in blob_name:
+        raise ValueError("Invalid input Blob name")
+    raw = storage.get(blob_name)
+    if raw is None:
+        raise FileNotFoundError("Uploaded trial JSON not found in private Azure container: " + blob_name)
+    if len(raw) > 15_000_000:
+        raise ValueError("Trial JSON larger than smoke-test safety limit")
+    rows = json.loads(raw)
+    if not isinstance(rows, list) or len(rows) != expected_records:
+        raise ValueError(f"Expected {expected_records} trial rows")
+    seen, category_counts = set(), Counter()
+    for i, record in enumerate(rows, 1):
+        if not isinstance(record, dict) or tuple(record) != FIELDS:
+            raise ValueError(f"Row {i}: expected exact 22-field order")
+        if not all(isinstance(value, str) for value in record.values()):
+            raise ValueError(f"Row {i}: all values must be strings")
+        if record["zipcode"] != store["zipcode"] or record["store_name"] != store["store_name"]:
+            raise ValueError(f"Row {i}: wrong store/ZIP")
+        if record["category"] not in set(ROOT_IDS.values()):
+            raise ValueError(f"Row {i}: disallowed category")
+        url = urlsplit(record["url"])
+        if url.scheme != "https" or url.hostname not in {"walmart.com", "www.walmart.com"} or not re.search(r"/ip/(?:[^/]+/)?\\d+/?$", url.path):
+            raise ValueError(f"Row {i}: invalid product URL")
+        if record["url"] in seen:
+            raise ValueError(f"Row {i}: duplicate product URL")
+        seen.add(record["url"])
+        category_counts[record["category"]] += 1
+
+    report = {
+        "mode": "blob-smoke-no-provider",
+        "classification": "offline-source-trial-not-acceptance-certified",
+        "store_id": store["store_id"], "zipcode": store["zipcode"],
+        "source_blob": blob_name, "records_checked": len(rows),
+        "categories": dict(sorted(category_counts.items())),
+        "source_sha256": hashlib.sha256(raw).hexdigest(),
+        "verified_local_price_count": 0,
+        "verified_displayed_ppm_count": 0,
+        "provider_api_called": False,
+        "checked_at_utc": utc_now(),
+    }
+    path = f'brightdata-trials/{store["store_id"]}/azure-verification/runs/{datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")}_{uuid.uuid4().hex[:8]}.json'
+    storage.put(path, json_bytes(report))
+    # Do not change the production or trial release pointers.
+    return {"status": "blob_read_write_succeeded", "report_blob": path, **report}
 
 
 def execute(store, api, storage, snapshot_id=None, trigger_inputs=None, max_records=None,
@@ -228,6 +300,9 @@ def main(argv=None, api_factory=HTTPBrightData):
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--snapshot-id", help="Existing ready/pending snapshot; no new billable collection")
     group.add_argument("--trigger", action="store_true", help="Request NEW collection; requires explicit permission")
+    group.add_argument("--blob-smoke", action="store_true", help="Verify uploaded 615-row JSON with Azure Blob read and report write; no provider API")
+    parser.add_argument("--blob-name", default="Walmart_Store100_615_Trial_22Field.json")
+    parser.add_argument("--expected-records", type=int, default=615)
     parser.add_argument("--inputs-csv", type=Path, help="Approved category URLs and store/ZIP for a new collection")
     parser.add_argument("--max-records", type=int, help="Explicit maximum result count per trigger (pilot cost gate)")
     parser.add_argument("--dataset-id", default=ZIP_DATASET)
@@ -254,15 +329,21 @@ def main(argv=None, api_factory=HTTPBrightData):
                           "zipcode": args.zipcode, "trigger_allowed": args.trigger,
                           "max_records": args.max_records}, indent=2))
         return 0
-    if not os.environ.get("BRIGHTDATA_API_KEY"):
+    if not args.blob_smoke and not os.environ.get("BRIGHTDATA_API_KEY"):
         parser.error("BRIGHTDATA_API_KEY secret is missing")
     if args.local_root:
         storage = LocalStore(args.local_root)
     else:
         conn = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-        if not conn:
-            parser.error("AZURE_STORAGE_CONNECTION_STRING required for Azure mode")
-        storage = AzureBlobStore(conn, os.environ.get("AZURE_BLOB_CONTAINER", "retail-collection"))
+        account_url = os.environ.get("AZURE_STORAGE_ACCOUNT_URL")
+        if not account_url and not conn:
+            parser.error("Azure mode requires AZURE_STORAGE_ACCOUNT_URL (managed identity) or private AZURE_STORAGE_CONNECTION_STRING")
+        storage = AzureBlobStore(conn, os.environ.get("AZURE_BLOB_CONTAINER", "retail-collection"), account_url=account_url)
+    if args.blob_smoke:
+        if args.expected_records < 1 or args.expected_records > 100000:
+            parser.error("Expected records must be positive and bounded")
+        print(json.dumps(blob_smoke(storage, store, args.blob_name, args.expected_records), indent=2))
+        return 0
     result = execute(store, api_factory(os.environ["BRIGHTDATA_API_KEY"]), storage,
                      snapshot_id=args.snapshot_id,
                      trigger_inputs=inputs if args.trigger else None,
