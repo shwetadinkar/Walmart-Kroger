@@ -1,4 +1,4 @@
-> **AZURE EXECUTION UPDATE — 24 OCT 2026:** Actual Walmart Python image `ghcr.io/shwetadinkar/walmart63-collector:trial` ran successfully in South India Azure Container Apps Job `walmart63-collector` (manual, dry-run-no-network; 11 category inputs, Store 100, ZIP 72712). The 615-row JSON was uploaded manually to private Blob Storage, `retail-collection`, and the system-assigned managed identity role assignment was confirmed. **The code-driven Blob read/write test and production collection have NOT yet run.** See [managed-identity verification](../../azure/MANAGED_IDENTITY_BLOB_TEST.md). This is not source price / PPM / promotional evidence.
+> **LIVE AZURE STORAGE TEST — verified 24 October 2026:** The user's South India Azure Container Apps Job `walmart63-collector` successfully ran our updated Python image with system-assigned Managed Identity and produced [the actual JSON verification report](azure_blob_verification_20261023T215838Z.json) in private Azure Blob Storage. The report validates **615 distinct structurally qualified records**, **11 of 11 category groups represented**, a source checksum, `blob-smoke-no-provider` and `provider_api_called=false`. The 615-row JSON was initially **uploaded manually**; this test proved automatic Blob **reading and audit report writing**, **not** automated Bright Data collection, ingestion of full historical source evidence, exhaustive pagination, local pickup prices, displayed PPM or scheduled recovery. The report explicitly shows **0 independently verified local prices and 0 displayed PPM values**. [Azure procedure](../../azure/MANAGED_IDENTITY_BLOB_TEST.md).
 
 # Walmart scraper contest #63 — client review package
 
@@ -7,7 +7,7 @@
 **Candidate dataset:** **615 distinct genuine-source Walmart product observations** in the client's exactly ordered 22-field format  
 **Release classification:** **TRIAL / INCOMPLETE ACCEPTANCE**, not a fully verified live-priced submission
 
-> **Start here, reviewer:** [615-product demonstration JSON](Walmart_Store100_615_Trial_22Field.json) · [offline verification script](validate_submission.py) · [filter audit](../../reports/WALMART_STORE100_20261024_FILTER_AUDIT.md) · [full Walmart program and setup](../../README.md).
+> **Start here, reviewer:** [615-product demonstration JSON](Walmart_Store100_615_Trial_22Field.json) · [offline verification script](validate_submission.py) · [Azure Blob verification JSON](azure_blob_verification_20261023T215838Z.json) · [filter audit](../../reports/WALMART_STORE100_20261024_FILTER_AUDIT.md) · [full Walmart program and setup](../../README.md).
 
 ## Scope and versioned source code
 
@@ -33,7 +33,7 @@
 | Store-specific pickup prices independently verified | **0** | Online `final_price` is deliberately **not** passed off as selected-store pickup price |
 | Directly displayed price-per-measure (PPM) independently verified | **0** | Numeric provider `unit_price` is not enough |
 | Digital and volume promotion terms verified | **0** | Missing deal fields left empty |
-| Production Azure execution and twice-weekly schedule observed | **No** | Prepared but not deployed |
+| Azure Python dry-run and Managed Identity Blob read/write observed | **Yes** | Manual job, 615-row validation; actual report linked above |\n| Scheduled live Bright Data collection observed | **No** | Not activated or independently tested |
 | Automated interruption recovery validated on Azure | **No** | Designed; only offline/mock behaviors tested |
 
 There are **615 authentic source-product candidates**, but **not 615 verified, price-complete store offers**. Please evaluate the trial data with that limitation.
@@ -95,7 +95,7 @@ The previous rejected-row totals are updated in the [aggregate audit](../../repo
 2. **Promotions:** verify coupon eligibility and clip requirements, quantity/volume deals and their full terms from source.
 3. **Full-category coverage:** demonstrate exhaustive pagination and descendant enumeration for all eleven approved category roots, rather than merely obtaining products in each.
 4. **Interruption recovery:** observe a real interrupted/resumed provider + Azure job with no double billing, partial promotion, or history loss.
-5. **Azure production:** provision a client-approved subscription, storage, secure secrets, container job, monitored run and scheduled repeat; document actual execution logs and storage objects.
+5. **Azure production:** A working personal-trial job, Managed Identity read/write and validation report are observed. Still require authorized Bright Data secrets, provider-triggered ingestion, interruption/resume testing, durable private source-history migration, production environment ownership, and monitored twice-weekly schedule.
 6. **Original raw evidence access:** give reviewer permissioned access to the 46 original snapshots and row-level provenance under the provider's data-use terms.
 
 **No firm finish date is claimed for the above dependencies.** They require verified source capability/authorization, access to the client's Azure subscription and approval for possible cloud/vendor charges. **Do not mark this dataset client-accepted based only on the offline count.**
