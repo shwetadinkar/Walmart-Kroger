@@ -13,6 +13,10 @@ def run():
             "--inputs-csv", os.getenv("BRIGHTDATA_INPUT_CSV", "config/brightdata_category_inputs.csv")]
     if mode == "dry-run":
         args += ["--dry-run", "--trigger", "--max-records", "10"]
+    elif mode == "blob-smoke":
+        # Verifies the manually uploaded 615-row trial JSON using Managed Identity.
+        # No Bright Data API key or provider request is needed.
+        args += ["--blob-smoke"]
     elif mode == "snapshot":
         sid = os.getenv("BRIGHTDATA_SNAPSHOT_ID")
         if not sid:
