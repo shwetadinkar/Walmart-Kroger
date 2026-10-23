@@ -1,0 +1,50 @@
+name: Walmart 63 - Build Azure Docker image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-walmart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout public Walmart source
+        uses: actions/checkout@v4
+
+      - name: Set up Python for offline tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify Walmart collector offline (no provider requests)
+        working-directory: walmart
+        run: |
+          python -m unittest discover -v tests
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish the manual-test Walmart image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./walmart
+          file: ./walmart/azure/Dockerfile.brightdata
+          push: true
+          tags: |
+            ghcr.io/shwetadinkar/walmart63-collector:trial
+            ghcr.io/shwetadinkar/walmart63-collector:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/shwetadinkar/Walmart-Kroger
+            org.opencontainers.image.description=Walmart 63 collector, safe dry-run default
+
+# This workflow builds and publishes an image only after the repository owner
+# explicitly clicks Run workflow. It never starts an Azure Job or triggers a
+# billable Bright Data collection. New GHCR packages may be private by default.
