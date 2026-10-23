@@ -7,7 +7,7 @@
 **Candidate dataset:** **615 distinct genuine-source Walmart product observations** in the client's exactly ordered 22-field format  
 **Release classification:** **TRIAL / INCOMPLETE ACCEPTANCE**, not a fully verified live-priced submission
 
-> **Start here, reviewer:** [615-product demonstration JSON](Walmart_Store100_615_Trial_22Field.json) · [offline verification script](validate_submission.py) · [Azure Blob verification JSON](azure_blob_verification_20261023T215838Z.json) · [filter audit](../../reports/WALMART_STORE100_20261024_FILTER_AUDIT.md) · [full Walmart program and setup](../../README.md).
+> **Start here, reviewer:** [**One-page evidence & acceptance checklist**](REVIEWER_START_HERE.md) · [615-product demonstration JSON](Walmart_Store100_615_Trial_22Field.json) · [offline verification script](validate_submission.py) · [Azure Blob verification JSON](azure_blob_verification_20261023T215838Z.json) · [filter audit](../../reports/WALMART_STORE100_20261024_FILTER_AUDIT.md) · [full Walmart program and setup](../../README.md).
 
 ## Scope and versioned source code
 
