@@ -154,3 +154,10 @@ This does not delete already published validated data. Checkpoints older than se
 5. Deploy with production IAM, Key Vault secret references, schedule, alerts, cost controls, data retention, and an acceptance walkthrough.
 
 All five items require a real approved data source and/or the customer's access. See [Requirements Coverage](REQUIREMENTS_COVERAGE.md) and [Azure Deployment](azure/AZURE_DEPLOYMENT.md).
+
+
+## Bright Data offline snapshot import — v0.6.0 evidence trial
+
+Normalize existing private Bright Data ZIP/store JSON snapshots to the exact ordered 22-field output schema via `python tools/import_brightdata.py /private/sd_*.json --store-id 100 --zipcode 72712 --output /private/output`. Generates immutable trial exports, candidate assortment history, provenance of prices and dates, and rejection diagnostics. Read [BRIGHTDATA_IMPORT_RUNBOOK.md](BRIGHTDATA_IMPORT_RUNBOOK.md) for commands and observed results.
+
+**Caution:** These are 87 Store #100 assortment candidates from the eight received snapshots, NOT 500 acceptance-verified products. None of the snapshots separately proves a pickup-specific price or directly displayed PPM. The importer leaves unsupported prices, deal terms and PPM blank. It performs no network calls, does not complete category traversal, and does not advance the production `latest.json` pointer. Raw data, generated evidence and tokens must remain private.
