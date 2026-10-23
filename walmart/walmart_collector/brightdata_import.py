@@ -50,14 +50,57 @@ def _spec(raw, keys):
     return next((vals[k.casefold()] for k in keys if vals.get(k.casefold())), "")
 
 
+# Walmart category_ids are a primary category HIERARCHY. Several approved
+# categories live under a broader root department (Baby, Arts & Crafts, Party).
+APPROVED_CATEGORY_PATHS = (
+    (("976759",), "Food"),
+    (("1115193",), "Household Essentials"),
+    (("1005862",), "Personal Care"),
+    (("1085666",), "Beauty"),
+    (("5427", "486190"), "Diapering"),
+    (("5427", "133283"), "Feeding"),
+    (("976760",), "Health & Wellness"),
+    (("5440",), "Pets"),
+    (("2637", "1042319", "1212898", "3956207"), "Balloons"),
+    (("1334134", "5899871"), "Art Supplies"),
+    (("1229749",), "Office Supplies"),
+)
+
+
 def _root_category(raw):
-    """Use explicit source category membership, never categorize from a keyword."""
-    url = _string(raw.get("root_category_url"))
-    ids = re.findall(r"(?<!\d)\d{4,8}(?!\d)", urlsplit(url).path)
-    for ident in ids:
-        if ident in ROOT_IDS:
-            return ROOT_IDS[ident]
-    return ""
+    """Validate the product's *primary* category ancestry, not related pages."""
+    raw_path = _string(raw.get("category_ids"))
+    hierarchy = tuple(raw_path.split(":"))
+    if hierarchy and hierarchy[0] == "0":
+        hierarchy = hierarchy[1:]
+    category = ""
+    if raw_path and raw_path not in {"-1", "0"}:
+        for prefix, label in APPROVED_CATEGORY_PATHS:
+            if len(hierarchy) >= len(prefix) and hierarchy[:len(prefix)] == prefix:
+                category = label
+                break
+        if not category:
+            return ""
+    else:
+        # Some actual provider responses report -1 instead of category_ids.
+        # A direct approved top-level root URL is acceptable in that case;
+        # nested category claims require genuine hierarchy evidence.
+        url = _string(raw.get("root_category_url"))
+        ids = re.findall(r"(?<!\d)\d{4,8}(?!\d)", urlsplit(url).path)
+        if len(ids) != 1 or ids[0] not in ROOT_IDS:
+            return ""
+        category = ROOT_IDS[ids[0]]
+        if category in {"Diapering", "Feeding", "Balloons", "Art Supplies"}:
+            return ""
+
+    ancestors = [str(x.get("name", "")).casefold().strip()
+                 for x in raw.get("breadcrumbs", []) if isinstance(x, dict)]
+    names = ancestors + [_string(raw.get("category_name")).casefold().strip()]
+    if category == "Food" and any(x in {"recipes", "shop all foods"} for x in names):
+        return ""
+    if category == "Pets" and any(x == "farm animals" for x in names):
+        return ""
+    return category
 
 
 def _product_id(raw):
@@ -144,6 +187,12 @@ def _convert(raw, store, history):
     # Keep original promotion text in audit only.
     prior = history.get("record", {}) if isinstance(history, dict) else {}
     carried_fields = []
+    # Preserve older descriptive evidence when a partial source response omits it.
+    # Carried field timestamps remain explicitly recorded in the evidence sidecar.
+    for field in ("sub_category", "weight", "image_url", "upc"):
+        if not record[field] and prior.get(field):
+            record[field] = prior[field]
+            carried_fields.append(field)
     if not eligible_pickup and prior:
         for field in ("regular_price", "sale_price", "volume_deals_description",
                       "volume_deals_price", "digital_deals_description", "digital_deals_price", "ppm"):
