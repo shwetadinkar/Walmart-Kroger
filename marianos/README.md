@@ -1,3 +1,5 @@
+> **24 OCT 2026 — NEW TEST / IMAGE WORKFLOW:** [Manual Mariano's offline verification and GHCR Docker build](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/marianos-ghcr.yml). Trigger only via GitHub Actions **Run workflow**. It runs unit tests and the 28-root synthetic preflight, then publishes a separate `marianos58-collector` image to GHCR. **No real Mariano's products are collected, no Azure job is started, and no paid API call is made.** The resulting image is not a 500-product contest demonstration. The complete data-source feasibility gate remains [here](MARIANOS_LIVE_DATA_SOURCE_PLAN.md).
+
 # Mariano's Azure Collector v0.2.1 — live-access testing handoff
 
 **Current status: software-complete for offline integration, not buyer-accepted and NOT a genuine 500-product contest entry.** We have no authorized full-coverage Mariano's data feed, verified production Kroger location IDs, actual product collection, or observed Azure deployment. Never present offline generated records as if they came from Mariano's.
