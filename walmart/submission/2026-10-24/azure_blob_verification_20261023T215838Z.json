@@ -1,0 +1,26 @@
+{
+  "categories": {
+    "Art Supplies": 20,
+    "Balloons": 14,
+    "Beauty": 74,
+    "Diapering": 41,
+    "Feeding": 58,
+    "Food": 81,
+    "Health & Wellness": 66,
+    "Household Essentials": 60,
+    "Office Supplies": 58,
+    "Personal Care": 44,
+    "Pets": 99
+  },
+  "checked_at_utc": "2026-10-23T21:58:38.973778Z",
+  "classification": "offline-source-trial-not-acceptance-certified",
+  "mode": "blob-smoke-no-provider",
+  "provider_api_called": false,
+  "records_checked": 615,
+  "source_blob": "Walmart_Store100_615_Trial_22Field.json",
+  "source_sha256": "e2e9c8e0fb20f4a23e4c9b1ee42afae0f33bdc72604636e3e4d60cc62b49d537",
+  "store_id": "100",
+  "verified_displayed_ppm_count": 0,
+  "verified_local_price_count": 0,
+  "zipcode": "72712"
+}
