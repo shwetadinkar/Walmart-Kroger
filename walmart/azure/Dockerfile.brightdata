@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY pyproject.toml ./
+COPY walmart_collector/ ./walmart_collector/
+COPY tools/brightdata_auto.py tools/brightdata_start.py ./tools/
+COPY config/ ./config/
+RUN pip install --no-cache-dir 'azure-storage-blob>=12.19,<13'
+# Safe default is a dry run. Never scrape from Docker CMD unless approved at runtime.
+CMD ["python", "tools/brightdata_start.py"]
