@@ -145,7 +145,7 @@ class AzureBlobStore:
         if account_url:
             from azure.identity import ManagedIdentityCredential  # type: ignore
             url = account_url.rstrip("/")
-            if not re.fullmatch(r"https://[a-z0-9]{3,24}\\.blob\\.core\\.windows\\.net", url):
+            if not re.fullmatch(r"https://[a-z0-9]{3,24}\.blob\.core\.windows\.net", url):
                 raise ValueError("AZURE_STORAGE_ACCOUNT_URL must be an Azure HTTPS Blob service URL")
             service = BlobServiceClient(account_url=url, credential=ManagedIdentityCredential())
         elif connection_string:
@@ -196,7 +196,7 @@ def blob_smoke(storage, store, blob_name="Walmart_Store100_615_Trial_22Field.jso
         if record["category"] not in set(ROOT_IDS.values()):
             raise ValueError(f"Row {i}: disallowed category")
         url = urlsplit(record["url"])
-        if url.scheme != "https" or url.hostname not in {"walmart.com", "www.walmart.com"} or not re.search(r"/ip/(?:[^/]+/)?\\d+/?$", url.path):
+        if url.scheme != "https" or url.hostname not in {"walmart.com", "www.walmart.com"} or not re.search(r"/ip/(?:[^/]+/)?\d+/?$", url.path):
             raise ValueError(f"Row {i}: invalid product URL")
         if record["url"] in seen:
             raise ValueError(f"Row {i}: duplicate product URL")
