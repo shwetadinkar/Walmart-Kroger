@@ -97,6 +97,44 @@ class BrightDataImporterTests(unittest.TestCase):
             self.assertFalse(ev['100:1235']['fresh_in_this_import'])
             self.assertEqual(json.loads((first/'data_22_fields.json').read_text()),exported)
 
+    def test_nested_approved_category_hierarchy_and_exclusions(self):
+        obj = raw()
+        from walmart_collector.brightdata_import import _root_category
+        cases = [
+            ("0:5427:133283:1001448", "Feeding"),
+            ("0:5427:486190:1101406", "Diapering"),
+            ("0:1334134:5899871:9862357", "Art Supplies"),
+            ("0:2637:1042319:1212898:3956207:2726275", "Balloons"),
+            ("0:1229749:4796182", "Office Supplies"),
+        ]
+        for ids, category in cases:
+            item = dict(obj, category_ids=ids,
+                        root_category_url="https://www.walmart.com/cp/baby/5427")
+            self.assertEqual(_validate(item, '100', '72712'), '', ids)
+            self.assertEqual(_root_category(item), category)
+        sentinel = dict(obj, category_ids="-1",
+                        root_category_url="https://www.walmart.com/cp/household-essentials/1115193")
+        self.assertEqual(_validate(sentinel, '100', '72712'), '')
+        self.assertEqual(_root_category(sentinel), "Household Essentials")
+        wrong = dict(obj, category_ids="0:3944:133251:1230476",
+                     related_pages=["/browse/baby/food/5427_133283"])
+        self.assertEqual(_validate(wrong, '100', '72712'), "OUTSIDE_REQUIRED_CATEGORY_ROOTS")
+        farm = dict(obj, category_ids="0:5440:202072", category_name="Farm Animals")
+        self.assertEqual(_validate(farm, '100', '72712'), "OUTSIDE_REQUIRED_CATEGORY_ROOTS")
+        recipes = dict(obj, category_ids="0:976759:12345", category_name="Recipes")
+        self.assertEqual(_validate(recipes, '100', '72712'), "OUTSIDE_REQUIRED_CATEGORY_ROOTS")
+
+    def test_missing_descriptive_fields_preserve_prior_evidence(self):
+        item = raw()
+        item["category_name"] = ""
+        prev = {"record": {"sub_category": "Protein Shakes"},
+                "field_observed_at": {"sub_category": "2026-10-20T01:00:00Z"}}
+        record, provenance = _convert(item, STORE, prev)
+        self.assertEqual(record["sub_category"], "Protein Shakes")
+        self.assertIn("sub_category", provenance["carried_fields"])
+        self.assertEqual(provenance["carried_field_observed_at"]["sub_category"],
+                         "2026-10-20T01:00:00Z")
+
     def test_repeat_seen_latest_timestamp(self):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)/'input.json'
