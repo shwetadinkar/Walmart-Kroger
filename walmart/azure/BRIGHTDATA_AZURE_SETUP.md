@@ -1,6 +1,10 @@
 # Walmart — automatic Bright Data + Azure setup (v0.7.0 pilot architecture)
 
-**Status:** Locally tested integration, **not deployed in the client's Azure account**, not a claim that the 381 products have been uploaded to Azure. No Bright Data trigger, billed service, Azure resource, or registry build was executed by this package. Mariano's is unchanged.
+**Status as observed 24 October 2026:** The Walmart Python image has been deployed **in a personal Azure Free Trial**, not the client's subscription. A manual no-provider dry-run succeeded, and a subsequent system-assigned Managed Identity test **read the manually uploaded 615-row trial JSON and wrote a separate Blob verification report** ([source report](../submission/2026-10-24/azure_blob_verification_20261023T215838Z.json)). **No paid Bright Data trigger, live end-to-end product collection, production schedule, or Azure interruption recovery has been tested.** The 615 data rows remain trial candidates with no independent local price or displayed PPM validation. Mariano's is unchanged.
+
+## Observed Azure verification (current quick route)
+
+The existing managed-identity job is `walmart63-collector` in `env-walmart63` / `rg-walmart63-trial` (South India), using `ghcr.io/shwetadinkar/walmart63-collector`. The latest successful no-provider Blob report is [here](../submission/2026-10-24/azure_blob_verification_20261023T215838Z.json). For reproduction use [Managed Identity Blob runbook](MANAGED_IDENTITY_BLOB_TEST.md). The following ACR-specific CLI example is **an unexecuted alternative deployment recipe**, not a record of what was tested.
 
 ## What it actually does
 
@@ -13,7 +17,7 @@
 
 ## Minimum Azure environment (client-provided subscription)
 
-- A resource group, one Azure Container Registry (ACR), one Container Apps Environment, and one **private** Storage Account / Blob container `retail-collection`.
+- A resource group, one Container Apps Environment, and a **private** Storage Account / Blob container `retail-collection`. A container registry is needed for a build, but **Azure Container Registry is optional**: the observed working setup uses a public GitHub Container Registry (GHCR) image.
 - Permissions to push image to ACR; job permission to pull it; storage credentials or preferably managed identity (`Storage Blob Data Contributor`).
 - An authorized Bright Data account and API token stored privately as a Container Apps Job secret/Key Vault reference. Never paste keys into GitHub, ChatGPT, contest submissions or public logs. Enable cost alerts and provider spending caps before collection.
 - For Azure portal walkthrough: https://learn.microsoft.com/en-us/azure/container-apps/jobs-get-started-portal
@@ -78,9 +82,9 @@ There is **no need for the client to download/upload JSON manually** once these 
 
 References: https://docs.brightdata.com/api-reference/web-scraper-api/management-apis/monitor-progress and https://learn.microsoft.com/en-us/azure/container-apps/jobs-get-started-cli
 
-### One-time migration of the 381 previously imported candidates
+### One-time migration of original observed product history (not yet executed in Azure)
 
-The previous private evidence archive contains `processed_latest/history.json` (381 candidates). **This is a one-time seed, not a manual operation every week**. Extract that history file to a PRIVATE location accessible to the Azure administrator. With the owner's Blob credentials in their environment, run:
+The original **615-candidate** complete private evidence/history package must be located and checked for provenance before seeding. Earlier v0.7 examples were written when only 381 products were available. **This is a one-time seed, not a manual operation every week**. Extract that history file to a PRIVATE location accessible to the Azure administrator. With the owner's Blob credentials in their environment, run:
 
 ```bash
 # Preview/check store, ZIP and exact 22-column order, without uploading:
@@ -89,4 +93,4 @@ python tools/seed_azure_history.py --history /private/history.json
 python tools/seed_azure_history.py --history /private/history.json --confirm-upload
 ```
 
-This refuses to overwrite a history that already exists. It stores these **381 trial candidates**, not certified prices. Future automated snapshot downloads read and update the persisted history. Keep the original private evidence archive and source snapshots secure; they are not part of the source repository.
+This refuses to overwrite an existing remote history. The history migration remains **unexecuted in Azure**, and the records are **trial candidates**, not certified prices. Future automated snapshot downloads read and update the persisted history. Keep the original private evidence archive and source snapshots secure; they are not part of the source repository.
