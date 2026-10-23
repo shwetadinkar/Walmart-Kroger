@@ -1,0 +1,52 @@
+name: Marianos 58 - Verify and build Azure image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test Mariano's collector offline, without retailer or Azure calls
+        working-directory: marianos
+        run: |
+          python -m unittest discover -v tests
+          python tools/preflight.py
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish the Mariano's image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./marianos
+          file: ./marianos/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/shwetadinkar/marianos58-collector:trial
+            ghcr.io/shwetadinkar/marianos58-collector:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/shwetadinkar/Walmart-Kroger
+            org.opencontainers.image.description=Marianos 58 pilot; zero live products or price-compliance claims
+
+# Manual-only workflow. No paid retailer requests, no Azure job is started,
+# and no production store config or provider credentials are bundled.
+# Built container defaults to a safe configuration listing without a store ID.
+# Synthetic output is NEVER a valid contest demonstration.
