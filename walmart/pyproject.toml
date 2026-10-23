@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "walmart-azure-collector"
-version = "0.5.0"
+version = "0.6.0"
 description = "Fail-closed Walmart local-offer collection pipeline with authorized provider adapter"
 requires-python = ">=3.11"
 dependencies = []
