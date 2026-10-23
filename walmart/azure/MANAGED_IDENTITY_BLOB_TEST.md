@@ -1,3 +1,5 @@
+> **RESULT — OBSERVED SUCCESS ON 24 OCTOBER 2026:** The user executed the updated `walmart63-collector` image in the personal Azure trial, and the job wrote `brightdata-trials/100/azure-verification/runs/20261023T215838Z_610df5e2.json` using Managed Identity. The uploaded report is preserved at [client review / Azure verification JSON](../submission/2026-10-24/azure_blob_verification_20261023T215838Z.json). It records `records_checked=615`, `provider_api_called=false`, 11 category groups, and zero verified local prices and PPM. The later sections describe **how to reproduce the already completed test**, not work still pending.
+
 # Walmart Store #100 — Azure Managed Identity read/write verification
 
 **Version:** 24 October 2026, managed-identity smoke-test update.  
@@ -13,7 +15,7 @@
 - User uploaded `Walmart_Store100_615_Trial_22Field.json` to the container root and confirmed the file listing (613.59 KiB).
 - User confirmed the `walmart63-collector` job's **system-assigned managed identity** was granted **Storage Blob Data Contributor** role on the storage account.
 
-These observations prove the Python image ran in Azure and the manual upload succeeded. They do **not** yet prove the code itself reads and writes Blob data. The steps below are the next independent test.
+The subsequently observed Managed Identity Blob smoke test **also succeeded**. The steps below document its reproducible configuration, not a new collection.
 
 ## New code behavior
 
