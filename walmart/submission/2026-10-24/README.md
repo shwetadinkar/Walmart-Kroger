@@ -33,7 +33,8 @@
 | Store-specific pickup prices independently verified | **0** | Online `final_price` is deliberately **not** passed off as selected-store pickup price |
 | Directly displayed price-per-measure (PPM) independently verified | **0** | Numeric provider `unit_price` is not enough |
 | Digital and volume promotion terms verified | **0** | Missing deal fields left empty |
-| Azure Python dry-run and Managed Identity Blob read/write observed | **Yes** | Manual job, 615-row validation; actual report linked above |\n| Scheduled live Bright Data collection observed | **No** | Not activated or independently tested |
+| Azure Python dry-run and Managed Identity Blob read/write observed | **Yes** | Manual job, 615-row validation; actual report linked above |
+| Scheduled live Bright Data collection observed | **No** | Not activated or independently tested |
 | Automated interruption recovery validated on Azure | **No** | Designed; only offline/mock behaviors tested |
 
 There are **615 authentic source-product candidates**, but **not 615 verified, price-complete store offers**. Please evaluate the trial data with that limitation.
