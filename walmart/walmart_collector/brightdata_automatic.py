@@ -141,12 +141,13 @@ class AzureBlobStore:
     No container creation/permission escalation is attempted by the job.
     """
     def __init__(self, connection_string=None, container="retail-collection", account_url=None):
-        from azure.storage.blob import BlobServiceClient  # type: ignore
         if account_url:
-            from azure.identity import ManagedIdentityCredential  # type: ignore
             url = account_url.rstrip("/")
             if not re.fullmatch(r"https://[a-z0-9]{3,24}\.blob\.core\.windows\.net", url):
                 raise ValueError("AZURE_STORAGE_ACCOUNT_URL must be an Azure HTTPS Blob service URL")
+        from azure.storage.blob import BlobServiceClient  # type: ignore
+        if account_url:
+            from azure.identity import ManagedIdentityCredential  # type: ignore
             service = BlobServiceClient(account_url=url, credential=ManagedIdentityCredential())
         elif connection_string:
             service = BlobServiceClient.from_connection_string(connection_string)
