@@ -66,10 +66,10 @@ Latest observed fulfillment: **471 pickup-available; 144 pickup-unavailable**. I
 - The correction includes Feeding, Diapering, Balloons and Art Supplies and protects Recipes, Shop All Foods and Farm Animals exclusions.
 - **All 615 prices / displayed PPM remain unverified**: all `regular_price`, `sale_price`, `ppm` and `unit_price` are blank. Digital and volume offers are also blank, not invented.
 - **Eleven categories represented** does *not* prove every subcategory or page was traversed.
-- API and Azure orchestration components are implemented as a pilot but **not live-deployed**; no witnessed Azure interruption/resume evidence.
+- **Azure implementation update (24 October 2026):** Actual Walmart Docker program executed in South India Azure Container Apps Job, and its Managed Identity successfully read the manually uploaded 615-row JSON and wrote [a verification report](../submission/2026-10-24/azure_blob_verification_20261023T215838Z.json) to private Blob Storage. **No live Bright Data collection, automatic raw-history migration, scheduled ingestion or interruption/resume test has been demonstrated.**
 - **60 importer/collector automated tests passed locally**; these are offline tests.
 - Detailed original source row hashes, input file SHA-256 digests, per-record seller/store/fulfillment evidence and historical observations remain in a **private evidence package** for permissioned review. They are not interchangeable with store-specific pricing proof.
 
 **Data-use note:** The public repo includes the user-requested 615-row demonstration, but it does not include original full provider snapshots, personal customer reviews, API keys or other nonessential raw material. Confirm the relevant redistribution rights. An authorization-controlled evidence handoff should be arranged before client acceptance.
 
-No Bright Data paid collection or Azure production deployment is claimed. **Do not label 615 records a fully compliant client submission.**
+No Bright Data paid collection, scheduled production ingestion, or end-to-end retailer-price verification is claimed. **Do not label 615 records a fully compliant client submission.**
