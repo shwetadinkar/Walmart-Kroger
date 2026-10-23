@@ -15,3 +15,7 @@ client-test-output/
 # Proprietary or unverified source responses stay local
 private-source/
 source-feasibility-report.json
+
+brightdata-output/
+trial-imports/
+brightdata-raw/
