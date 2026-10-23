@@ -1,36 +1,47 @@
-# Walmart #63 — Store #100 filter audit (24 October 2026)
+# Walmart contest #63 — Store #100 full offline source audit (24 October 2026)
 
-**Store / ZIP:** Walmart Supercenter #100, Bentonville, 72712  
-**Status:** Offline import trial only. **NOT an acceptance-certified 500-record dataset.**  
-**Data policy:** This public repository contains no original provider responses, product-level data export, API keys, or private evidence. Client access to originals requires private authorized storage.
+**Store / ZIP:** Walmart Supercenter #100 · 406 S Walton Blvd, Bentonville, AR 72712  
+**Release:** [Client review — 615-product trial JSON](../submission/2026-10-24/README.md)  
+**Status:** **615 real-source assortment candidates, NOT acceptance-certified local-price data.**
 
-## Source and normalization summary
+## Original provider inputs and filter outcomes
 
-- 45 distinct Bright Data JSON snapshot files inspected (22–23 October 2026 source observations).
-- 1,268 source response rows.
-- 171 source error rows, including store chooser failures, timeouts, CAPTCHA or unavailable pages.
-- 445 product response rows rejected under strict store / category / seller / item identity rules.
-- 39 repeated eligible product observations deduplicated.
-- **613 unique Walmart Store #100 assortment candidates** remain (471 pickup-available and 142 pickup-unavailable at last observation).
-- Earlier 422/422 products preserved; 191 additional unique candidates after category filter correction.
-- The 22-field output is structurally verified and contains 613 unique product URLs.
-- Locally run automated test suite: **60 tests passed**.
+**46 distinct Bright Data JSON files** (observed 22–23 October 2026); **1,294 response rows**.
 
-## Rejection reasons (product response rows)
+| Outcome | Count |
+|---|---:|
+| Provider/source errors | 177 |
+| Ineligible/uncorroborated product responses | 463 |
+| Eligible but duplicate observations | 39 |
+| **Unique eligible products in final store dataset** | **615** |
+| **Total response rows** | **1,294** |
+
+### Source errors
+
+| Category | Count |
+|---|---:|
+| Dead page / store unavailability | 68 |
+| CAPTCHA / block | 55 |
+| Provider errors without normalized code (including store chooser issues) | 41 |
+| Wait-element timeout | 12 |
+| Parsing error | 1 |
+| **Total** | **177** |
+
+### Product rejection reasons
 
 | Reason | Count |
 |---|---:|
-| Walmart seller / retailer cannot be verified | 240 |
-| Outside the 11 approved category paths | 115 |
-| Store identity missing or inconsistent | 86 |
-| Walmart item URL/product ID mismatch | 4 |
-| **Total** | **445** |
+| Walmart seller or retailer unverified, including third-party marketplace sellers | 258 |
+| Outside the approved 11 category paths | 115 |
+| Store ID missing/mismatched | 86 |
+| Walmart URL and product ID inconsistent | 4 |
+| **Total** | **463** |
 
-Provider errors (171) are tracked separately, not misclassified as ineligible products.
+**The latest snapshot** `sd_mvlb7aru15q1lwe5t2.json` supplied **26** responses: six source errors, eighteen third-party seller rejections, and two valid Walmart product candidates (both pickup-unavailable) added to the previously reconciled 613.
 
-## Coverage across client's eleven approved roots
+## Category counts
 
-| Category | Unique candidates |
+| Approved root | Products |
 |---|---:|
 | Pets | 99 |
 | Food | 81 |
@@ -40,21 +51,25 @@ Provider errors (171) are tracked separately, not misclassified as ineligible pr
 | Office Supplies | 58 |
 | Feeding | 58 |
 | Personal Care | 44 |
-| Diapering | 39 |
+| Diapering | 41 |
 | Art Supplies | 20 |
 | Balloons | 14 |
-| **Total** | **613** |
+| **Total** | **615** |
 
-## Important importer correction
+Latest observed fulfillment: **471 pickup-available; 144 pickup-unavailable**. Import history preserves unavailable products rather than removing them. This is a snapshot observation, **not** proof of all local prices.
 
-The original importer used `root_category_url`, which incorrectly excluded genuine Feeding, Diapering, Art Supplies and Balloons products because their broad parent category is Baby, Arts & Crafts or Party & Occasions.
+## Validation and limitations
 
-The corrected importer verifies the **primary product `category_ids` ancestry** against the approved paths, ignores unrelated `related_pages`, supports a strict top-level fallback for the provider's `-1` sentinel, and preserves the specifically excluded Recipes, Shop All Foods and Farm Animals scopes. It retains previously sourced descriptive fields with provenance if later partial responses omit them.
+- **615** distinct Walmart product URLs; exact **22-field** JSON schema; source observation dates preserved.
+- Input source is **real Bright Data exported responses**, not synthetic fixture data.
+- The old category-root bug was repaired: validate the **primary `category_ids` ancestry**, not only a broad department URL; the revised importer also handles documented `-1` sentinel cases under strict fallback.
+- The correction includes Feeding, Diapering, Balloons and Art Supplies and protects Recipes, Shop All Foods and Farm Animals exclusions.
+- **All 615 prices / displayed PPM remain unverified**: all `regular_price`, `sale_price`, `ppm` and `unit_price` are blank. Digital and volume offers are also blank, not invented.
+- **Eleven categories represented** does *not* prove every subcategory or page was traversed.
+- API and Azure orchestration components are implemented as a pilot but **not live-deployed**; no witnessed Azure interruption/resume evidence.
+- **60 importer/collector automated tests passed locally**; these are offline tests.
+- Detailed original source row hashes, input file SHA-256 digests, per-record seller/store/fulfillment evidence and historical observations remain in a **private evidence package** for permissioned review. They are not interchangeable with store-specific pricing proof.
 
-## Acceptance blockers still open
+**Data-use note:** The public repo includes the user-requested 615-row demonstration, but it does not include original full provider snapshots, personal customer reviews, API keys or other nonessential raw material. Confirm the relevant redistribution rights. An authorization-controlled evidence handoff should be arranged before client acceptance.
 
-The provider's generic `final_price` is not verified as the specific selected store pickup price; `unit_price` is not independently established as directly displayed PPM; complete digital and quantity promotion terms were not observed. In the current 613-row trial export, **regular_price, sale_price, PPM and promotion fields remain blank** rather than inferred. Full-category traversal/pagination and live Azure twice-weekly operation also require independent verification.
-
-**Private evidence package** includes original 45 snapshots, per-row reasons, observation history and JSON/CSV exports; it is intentionally **not checked into public GitHub**.
-
-No additional billable Bright Data requests or Azure cloud deployments were performed during this offline import.
+No Bright Data paid collection or Azure production deployment is claimed. **Do not label 615 records a fully compliant client submission.**
