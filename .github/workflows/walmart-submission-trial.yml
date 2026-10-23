@@ -1,0 +1,36 @@
+name: Walmart 615-candidate trial validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'walmart/submission/2026-10-24/**'
+      - 'walmart/walmart_collector/brightdata_import.py'
+      - 'walmart/tests/**'
+      - '.github/workflows/walmart-submission-trial.yml'
+  pull_request:
+    paths:
+      - 'walmart/submission/2026-10-24/**'
+      - 'walmart/walmart_collector/brightdata_import.py'
+      - 'walmart/tests/**'
+
+jobs:
+  offline-submission-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate submitted 615-row JSON structure and counts
+        run: python walmart/submission/2026-10-24/validate_submission.py
+      - name: Offline Walmart Python regression tests
+        working-directory: walmart
+        run: python -m unittest discover -v tests
+      - name: Clarify scope
+        run: |
+          echo 'This workflow checks trial structure and local unit tests only.'
+          echo 'Store-specific prices, PPM, promotions, end-to-end Azure, and live subcategory traversal remain unverified.'
