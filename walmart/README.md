@@ -1,4 +1,6 @@
-**Source-feasibility pilot (22 Oct 2026):** See [WALMART_SOURCE_FEASIBILITY.md](WALMART_SOURCE_FEASIBILITY.md) for provider candidates, advertised price examples, $0 trial rule, exact access gaps, and the new raw-response quality audit. No live Walmart source records have been obtained.
+> **Walmart v0.7 progress (23 Oct 2026):** Bright Data snapshot orchestration, history-aware importer, and guarded Azure trial deployment files are now available in [BRIGHTDATA_AUTO_INTEGRATION.md](BRIGHTDATA_AUTO_INTEGRATION.md) and [Azure setup](azure/BRIGHTDATA_AZURE_SETUP.md). The [client-filtering review ledger](reports/2026-10-23-store100/README.md) documents 480 filtered/source-error decisions from 28 prior snapshots, with raw responses held privately. **381 unique Store #100 assortment candidates have been normalized offline, NOT verified 500 compliant live records; no new paid collection or Azure deployment has been run.** GitHub stores software/audit metadata, not the raw provider dataset.
+
+**Source-feasibility pilot (22 Oct 2026):** See [WALMART_SOURCE_FEASIBILITY.md](WALMART_SOURCE_FEASIBILITY.md) for provider candidates, advertised price examples, $0 trial rule, exact access gaps, and the new raw-response quality audit. Past permitted-source Bright Data snapshot files were imported as trial candidates; verified local pickup price and promotion evidence remains unavailable.
 
 # Walmart Azure Collector — v0.5.0 integrity update
 
