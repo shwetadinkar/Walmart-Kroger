@@ -1,3 +1,4 @@
+> **Verified live update — 24 October 2026:** Official Kroger API verified West Loop location 53100508 / ZIP 60661. Real collection: 650 unique products; conservative export after conflict quarantine: 604. Website enrichment: 158 displayed PPM values and 29 volume descriptions in retained rows. See [API trial runbook](API_TRIAL_RUNBOOK.md). This is not complete 28-root or Azure acceptance proof. Older zero-live-data statements below describe the pre-API baseline.
 # Mariano's collector — client handover and observed acceptance
 
 **This is a technical testing package. Do not submit as a completed final contest entry until the live acceptance gate succeeds.** It contains no live product records and no production credentials.
