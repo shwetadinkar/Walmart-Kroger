@@ -1,0 +1,482 @@
+{
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "configured_roots": 1,
+  "complete_roots": 1,
+  "all_roots_complete": true,
+  "discovered_nodes": 10,
+  "visited_nodes": 10,
+  "roots": [
+    {
+      "name": "Batteries",
+      "url": "https://www.marianos.com/pl/batteries/26003",
+      "status": "complete",
+      "complete": true,
+      "observations": 1,
+      "completion_basis": "exhaustive-descendant-union",
+      "discovered_children": 9,
+      "unique_product_urls": 72
+    }
+  ],
+  "nodes": {
+    "https://www.marianos.com/pl/batteries/26003": {
+      "children": [
+        "https://www.marianos.com/pl/small-size-hearing-aid-batteries/2600300006?fulfillment=all&taxonomyId=2600300006",
+        "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002",
+        "https://www.marianos.com/pl/aaa-batteries/2600300003?fulfillment=all&taxonomyId=2600300003",
+        "https://www.marianos.com/pl/c-batteries/2600300004?fulfillment=all&taxonomyId=2600300004",
+        "https://www.marianos.com/pl/size-300-to-400-batteries/2600300010?fulfillment=all&taxonomyId=2600300010",
+        "https://www.marianos.com/pl/9-volt-batteries/2600300001?fulfillment=all&taxonomyId=2600300001",
+        "https://www.marianos.com/pl/size-1000-to-2000-batteries/2600300008?fulfillment=all&taxonomyId=2600300008",
+        "https://www.marianos.com/pl/d-batteries/2600300005?fulfillment=all&taxonomyId=2600300005",
+        "https://www.marianos.com/pl/size-2000-to-3000-batteries/2600300009?fulfillment=all&taxonomyId=2600300009"
+      ],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/batteries/26003",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:02:12.544Z",
+          "snapshot_sha256": "62300ec215320e96a692415128a357d48cde3852de6875601209e5687b6f7aa4",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 95,
+          "observed_listing_cards": 97,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/duracell-copper-top-aaa-alkaline-batteries-24-count/0004133300213",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133327035",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133370464",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133382501",
+            "https://www.marianos.com/p/duracell-coppertop-aaa-alkaline-batteries/0004133374064",
+            "https://www.marianos.com/p/duracell-coppertop-aaa-alkaline-batteries/0004133384401",
+            "https://www.marianos.com/p/duracell-coppertop-d-alkaline-batteries/0004133343001",
+            "https://www.marianos.com/p/energizer-hearing-aid-312-zinc-air-batteries/0003980014482",
+            "https://www.marianos.com/p/energizer-hearing-aid-312-zinc-air-batteries/0003980014486",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-batteries-/0003980014523",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-batteries-/0003980014524",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-battery/0003980014522",
+            "https://www.marianos.com/p/energizer-max-aa-8pk/0003980014519",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014518",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014520",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014521",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014514",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014515",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014517",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries/0003980014516",
+            "https://www.marianos.com/p/energizer-max-alkaline-aa-batteries-32-pack/0003980015087",
+            "https://www.marianos.com/p/energizer-max-alkaline-aaa-batteries-32-pack/0003980014728",
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014525",
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014526",
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014527",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries-/0003980014530",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries/0003980014528",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries/0003980014529",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980008272",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980010063",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980013067",
+            "https://www.marianos.com/p/energizer-photo-cr2-lithium-batteries/0003980002297",
+            "https://www.marianos.com/p/energizer-recharge-power-plus-aa-nimh-batteries/0003980001636",
+            "https://www.marianos.com/p/energizer-rechargeables-basic-chargers-battery/0003980007401",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2016-3v-lithium-coin-batteries/0003980014984",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2025-3v-lithium-coin-batteries/0003980014977",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2025-3v-lithium-coin-batteries/0003980014983",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014979",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014981",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014982",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-9v-lithium-battery/0003980014531",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014532",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014533",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aaa-lithium-batteries/0003980014534",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aaa-lithium-batteries/0003980014535",
+            "https://www.marianos.com/p/energizer-watch-electronic-1220-lithium-battery/0003980000675",
+            "https://www.marianos.com/p/energizer-watch-electronic-1616-lithium-battery/0003980003858",
+            "https://www.marianos.com/p/energizer-watch-electronic-1620-lithium-battery/0003980003859",
+            "https://www.marianos.com/p/energizer-watch-electronic-1632-lithium-battery/0003980004158",
+            "https://www.marianos.com/p/energizer-watch-electronic-2430-lithium-battery/0003980001752",
+            "https://www.marianos.com/p/energizer-watch-electronic-2450-lithium-batteries/0003980013744",
+            "https://www.marianos.com/p/energizer-watch-electronic-2450-lithium-battery/0003980008513",
+            "https://www.marianos.com/p/energizer-watch-electronic-357-silver-oxide-batteries/0003980011099",
+            "https://www.marianos.com/p/energizer-watch-electronic-364-silver-oxide-battery/0003980011077",
+            "https://www.marianos.com/p/energizer-watch-electronic-371-silver-oxide-battery/0003980010962",
+            "https://www.marianos.com/p/energizer-watch-electronic-377-silver-oxide-batteries/0003980010963",
+            "https://www.marianos.com/p/energizer-watch-electronic-389-silver-oxide-battery/0003980011073",
+            "https://www.marianos.com/p/energizer-watch-electronic-395-silver-oxide-battery/0003980011086",
+            "https://www.marianos.com/p/energizer-watch-electronic-a23-alkaline-batteries/0003980011009",
+            "https://www.marianos.com/p/energizer-watch-electronic-a76-alkaline-battery/0003980011090",
+            "https://www.marianos.com/p/energizer-watch-electronic-aaaa-alkaline-batteries/0003980003077",
+            "https://www.marianos.com/p/energizer-watch-electronic-n-alkaline-batteries/0003980001320",
+            "https://www.marianos.com/p/kroger-alkaline-9v-batteries/0004122600003",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries-value-pack/0004122600016",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries/0004122600009",
+            "https://www.marianos.com/p/kroger-alkaline-aaa-batteries-value-pack/0004122600018",
+            "https://www.marianos.com/p/kroger-alkaline-c-batteries/0004122600004",
+            "https://www.marianos.com/p/kroger-alkaline-d-batteries/0004122600006",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054011",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054013",
+            "https://www.marianos.com/p/rayovac-high-energy-aaa-alkaline-batteries/0001280054007",
+            "https://www.marianos.com/p/rayovac-high-energy-aaa-alkaline-batteries/0001280054009"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "7b19fc2499bfcbd1be59244c4748e12a503c7336f9c8c07b67d2633e44c245ed",
+          "children": [
+            "https://www.marianos.com/pl/small-size-hearing-aid-batteries/2600300006?fulfillment=all&pzn=relevance&taxonomyId=2600300006&page=2",
+            "https://www.marianos.com/pl/aa-batteries/2600300002?pzn=relevance&taxonomyId=2600300002&fulfillment=all",
+            "https://www.marianos.com/pl/aaa-batteries/2600300003?pzn=relevance&taxonomyId=2600300003&fulfillment=all",
+            "https://www.marianos.com/pl/c-batteries/2600300004?pzn=relevance&taxonomyId=2600300004&fulfillment=all",
+            "https://www.marianos.com/pl/size-300-to-400-batteries/2600300010?pzn=relevance&taxonomyId=2600300010&fulfillment=all",
+            "https://www.marianos.com/pl/9-volt-batteries/2600300001?pzn=relevance&taxonomyId=2600300001&fulfillment=all",
+            "https://www.marianos.com/pl/size-1000-to-2000-batteries/2600300008?pzn=relevance&taxonomyId=2600300008&fulfillment=all",
+            "https://www.marianos.com/pl/d-batteries/2600300005?pzn=relevance&taxonomyId=2600300005&fulfillment=all",
+            "https://www.marianos.com/pl/size-2000-to-3000-batteries/2600300009?pzn=relevance&taxonomyId=2600300009&fulfillment=all"
+          ]
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/small-size-hearing-aid-batteries/2600300006?fulfillment=all&taxonomyId=2600300006": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/small-size-hearing-aid-batteries/2600300006?fulfillment=all&taxonomyId=2600300006",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:04:07.782Z",
+          "snapshot_sha256": "7eae73d20b11b6e76375c4acc22e79f6364aa0536faec1729c9e44527719fe93",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 33,
+          "observed_listing_cards": 37,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-hearing-aid-10-zinc-air-batteries/0003980014480",
+            "https://www.marianos.com/p/energizer-hearing-aid-10-zinc-air-batteries/0003980014484",
+            "https://www.marianos.com/p/energizer-hearing-aid-13-zinc-air-batteries/0003980014481",
+            "https://www.marianos.com/p/energizer-hearing-aid-13-zinc-air-batteries/0003980014485",
+            "https://www.marianos.com/p/energizer-hearing-aid-312-zinc-air-batteries/0003980014482",
+            "https://www.marianos.com/p/energizer-hearing-aid-312-zinc-air-batteries/0003980014486",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980008272",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980010063",
+            "https://www.marianos.com/p/energizer-photo-123-lithium-batteries/0003980013067",
+            "https://www.marianos.com/p/energizer-photo-a544-alkaline-battery/0003980011011",
+            "https://www.marianos.com/p/energizer-photo-cr2-lithium-batteries/0003980002297",
+            "https://www.marianos.com/p/energizer-watch-electronic-1216-lithium-battery/0003980008512",
+            "https://www.marianos.com/p/energizer-watch-electronic-1616-lithium-battery/0003980003858",
+            "https://www.marianos.com/p/energizer-watch-electronic-1620-lithium-battery/0003980003859",
+            "https://www.marianos.com/p/energizer-watch-electronic-1632-lithium-battery/0003980004158",
+            "https://www.marianos.com/p/energizer-watch-electronic-2430-lithium-battery/0003980001752",
+            "https://www.marianos.com/p/energizer-watch-electronic-2450-lithium-battery/0003980008513",
+            "https://www.marianos.com/p/energizer-watch-electronic-357-silver-oxide-batteries/0003980011099",
+            "https://www.marianos.com/p/energizer-watch-electronic-377-silver-oxide-batteries/0003980010963",
+            "https://www.marianos.com/p/energizer-watch-electronic-395-silver-oxide-battery/0003980011086",
+            "https://www.marianos.com/p/energizer-watch-electronic-a23-alkaline-batteries/0003980011009",
+            "https://www.marianos.com/p/energizer-watch-electronic-a76-alkaline-battery/0003980011090",
+            "https://www.marianos.com/p/energizer-watch-electronic-n-alkaline-batteries/0003980001320",
+            "https://www.marianos.com/p/rayovac-hearing-aid-10-zinc-air-batteries/0001280053797",
+            "https://www.marianos.com/p/rayovac-hearing-aid-10-zinc-air-batteries/0001280053798",
+            "https://www.marianos.com/p/rayovac-hearing-aid-10-zinc-air-batteries/0001280053799",
+            "https://www.marianos.com/p/rayovac-hearing-aid-13-zinc-air-batteries/0001280053802",
+            "https://www.marianos.com/p/rayovac-hearing-aid-13-zinc-air-batteries/0001280053803",
+            "https://www.marianos.com/p/rayovac-hearing-aid-13-zinc-air-batteries/0001280053804",
+            "https://www.marianos.com/p/rayovac-hearing-aid-312-zinc-air-batteries/0001280053807",
+            "https://www.marianos.com/p/rayovac-hearing-aid-312-zinc-air-batteries/0001280053808",
+            "https://www.marianos.com/p/rayovac-hearing-aid-312-zinc-air-batteries/0001280053809",
+            "https://www.marianos.com/p/rayovac-hearing-aid-675-zinc-air-batteries/0001280053812"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "ab73c551692b0cc7d234b74111370910f9eda51921f914ed19af23e9acde816d",
+          "children": [],
+          "sponsored_placements": 8
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:07:55.826Z",
+          "snapshot_sha256": "e1f5becfc639d09c60aac682a0d3adef0563d1c0b267b28342d157297fed13a5",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 19,
+          "observed_listing_cards": 19,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133327035",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133370464",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133382501",
+            "https://www.marianos.com/p/energizer-max-aa-8pk/0003980014519",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014518",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014520",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014521",
+            "https://www.marianos.com/p/energizer-max-alkaline-aa-batteries-32-pack/0003980015087",
+            "https://www.marianos.com/p/energizer-recharge-power-plus-aa-nimh-batteries/0003980001636",
+            "https://www.marianos.com/p/energizer-recharge-power-plus-aa-nimh-batteries/0003980007404",
+            "https://www.marianos.com/p/energizer-recharge-pro-chargers-battery/0003980012104",
+            "https://www.marianos.com/p/energizer-rechargeables-basic-chargers-battery/0003980007401",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014532",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014533",
+            "https://www.marianos.com/p/kroger-aa-alkaline-batteries/0004122600015",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries-value-pack/0004122600016",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries/0004122600009",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054011",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054013"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "41bd04c221f1000d532b35d8604f6f44e17345c4ce8093b07b93d41b32404ec1",
+          "children": [],
+          "sponsored_placements": 5
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/aaa-batteries/2600300003?fulfillment=all&taxonomyId=2600300003": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/aaa-batteries/2600300003?fulfillment=all&taxonomyId=2600300003",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:06:19.302Z",
+          "snapshot_sha256": "f0b16c235e8b5d2fed4c58845d40a319da9eccee30f364d9f278f1472891504f",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 15,
+          "observed_listing_cards": 15,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/duracell-copper-top-aaa-alkaline-batteries-24-count/0004133300213",
+            "https://www.marianos.com/p/duracell-coppertop-aaa-alkaline-batteries/0004133374064",
+            "https://www.marianos.com/p/duracell-coppertop-aaa-alkaline-batteries/0004133384401",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014514",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014515",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries-/0003980014517",
+            "https://www.marianos.com/p/energizer-max-aaa-alkaline-batteries/0003980014516",
+            "https://www.marianos.com/p/energizer-max-alkaline-aaa-batteries-32-pack/0003980014728",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aaa-lithium-batteries/0003980014534",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aaa-lithium-batteries/0003980014535",
+            "https://www.marianos.com/p/energizer-watch-electronic-aaaa-alkaline-batteries/0003980003077",
+            "https://www.marianos.com/p/kroger-aaa-alkaline-batteries/0004122600017",
+            "https://www.marianos.com/p/kroger-alkaline-aaa-batteries-value-pack/0004122600018",
+            "https://www.marianos.com/p/rayovac-high-energy-aaa-alkaline-batteries/0001280054007",
+            "https://www.marianos.com/p/rayovac-high-energy-aaa-alkaline-batteries/0001280054009"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "dcde1972e30fe06d342b95bedd795dc78f1648c283863dc578cb088911873c1a",
+          "children": [],
+          "sponsored_placements": 4
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/c-batteries/2600300004?fulfillment=all&taxonomyId=2600300004": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/c-batteries/2600300004?fulfillment=all&taxonomyId=2600300004",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:06:28.086Z",
+          "snapshot_sha256": "8bf46484ee721a7e6a48dfe2a48e09b31eb2e85dbd8beb3f6cb5a8e6a787a8a2",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 7,
+          "observed_listing_cards": 7,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014525",
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014526",
+            "https://www.marianos.com/p/energizer-max-c-alkaline-batteries/0003980014527",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2025-3v-lithium-coin-batteries/0003980014977",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014979",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014982",
+            "https://www.marianos.com/p/kroger-alkaline-c-batteries/0004122600004"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "d8261037d571aff514450ddbf537a3687b63d4c4af5bb4ccffa0619d0ca4f0d2",
+          "children": [],
+          "sponsored_placements": 1
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/size-300-to-400-batteries/2600300010?fulfillment=all&taxonomyId=2600300010": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/size-300-to-400-batteries/2600300010?fulfillment=all&taxonomyId=2600300010",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:06:41.562Z",
+          "snapshot_sha256": "6aba20a6f4bce6022bf6a1f4b25d5d2267513c0365ec3c1bdd4a9425a901b675",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 7,
+          "observed_listing_cards": 7,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-watch-electronic-357-silver-oxide-batteries/0003980011099",
+            "https://www.marianos.com/p/energizer-watch-electronic-364-silver-oxide-battery/0003980011077",
+            "https://www.marianos.com/p/energizer-watch-electronic-371-silver-oxide-battery/0003980010962",
+            "https://www.marianos.com/p/energizer-watch-electronic-377-silver-oxide-batteries/0003980010963",
+            "https://www.marianos.com/p/energizer-watch-electronic-379-silver-oxide-battery/0003980011071",
+            "https://www.marianos.com/p/energizer-watch-electronic-389-silver-oxide-battery/0003980011073",
+            "https://www.marianos.com/p/energizer-watch-electronic-395-silver-oxide-battery/0003980011086"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "4af1f898743fa0d0a3f282010f8c6de98f6ba7f05241b06b3ad070672e3ad024",
+          "children": [],
+          "sponsored_placements": 3
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/9-volt-batteries/2600300001?fulfillment=all&taxonomyId=2600300001": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/9-volt-batteries/2600300001?fulfillment=all&taxonomyId=2600300001",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:06:48.549Z",
+          "snapshot_sha256": "d12bc4382a5ec3f8d192ff59da0c7e1bf3c74742f516f05902a18de946c79e0a",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 6,
+          "observed_listing_cards": 6,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-max-6v-alkaline-battery/0003980013432",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-batteries-/0003980014523",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-batteries-/0003980014524",
+            "https://www.marianos.com/p/energizer-max-9v-alkaline-battery/0003980014522",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-9v-lithium-battery/0003980014531",
+            "https://www.marianos.com/p/kroger-alkaline-9v-batteries/0004122600003"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "38947fe8ec0b87d41e1973c077cd14785ce1a80102e8edfd4dcc58949ac6c408",
+          "children": [],
+          "sponsored_placements": 1
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/size-1000-to-2000-batteries/2600300008?fulfillment=all&taxonomyId=2600300008": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/size-1000-to-2000-batteries/2600300008?fulfillment=all&taxonomyId=2600300008",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:06:56.894Z",
+          "snapshot_sha256": "bba0df08db06db1a327aa151e53bfcf1ce8fb093d19ba207bc338946fe6ed7fd",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 6,
+          "observed_listing_cards": 6,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-watch-electronic-1216-lithium-battery/0003980008512",
+            "https://www.marianos.com/p/energizer-watch-electronic-1220-lithium-battery/0003980000675",
+            "https://www.marianos.com/p/energizer-watch-electronic-1225-lithium-battery/0003980013815",
+            "https://www.marianos.com/p/energizer-watch-electronic-1616-lithium-battery/0003980003858",
+            "https://www.marianos.com/p/energizer-watch-electronic-1620-lithium-battery/0003980003859",
+            "https://www.marianos.com/p/energizer-watch-electronic-1632-lithium-battery/0003980004158"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "02731a2f51b36c618df1d7b51b1fdc80e695b0389cfc5eb527f32c0ed1803d73",
+          "children": [],
+          "sponsored_placements": 3
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/d-batteries/2600300005?fulfillment=all&taxonomyId=2600300005": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/d-batteries/2600300005?fulfillment=all&taxonomyId=2600300005",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:07:40.811Z",
+          "snapshot_sha256": "d22c5c4e3b99a7af49843a0e31bb1f9fd9d512cd98429c97d5d4b48ccad05ecf",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 5,
+          "observed_listing_cards": 5,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/duracell-coppertop-d-alkaline-batteries/0004133343001",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries-/0003980014530",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries/0003980014528",
+            "https://www.marianos.com/p/energizer-max-d-alkaline-batteries/0003980014529",
+            "https://www.marianos.com/p/kroger-alkaline-d-batteries/0004122600006"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "49666f7521c445968d292b01cdf285ff9396ab0d67f10d27ee7b04ba3d6e9a06",
+          "children": [],
+          "sponsored_placements": 0
+        }
+      ]
+    },
+    "https://www.marianos.com/pl/size-2000-to-3000-batteries/2600300009?fulfillment=all&taxonomyId=2600300009": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/size-2000-to-3000-batteries/2600300009?fulfillment=all&taxonomyId=2600300009",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "observed_at": "2026-10-24T12:07:48.681Z",
+          "snapshot_sha256": "67370cbf60beedf3d1afe5aa87d6e7ecafb6436501cd9e3bb6c3e30244a4306f",
+          "source_kind": "rendered-retailer",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 5,
+          "observed_listing_cards": 5,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2016-3v-lithium-coin-batteries/0003980014984",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2025-3v-lithium-coin-batteries/0003980014983",
+            "https://www.marianos.com/p/energizer-ultimate-child-shield-2032-3v-lithium-coin-batteries/0003980014981",
+            "https://www.marianos.com/p/energizer-watch-electronic-2430-lithium-battery/0003980001752",
+            "https://www.marianos.com/p/energizer-watch-electronic-2450-lithium-batteries/0003980013744"
+          ],
+          "discovery_complete": true,
+          "discovery_evidence_sha256": "f6841f5a1a26e5a397fa20cba2dcc369445280fde61db1ef3f62cdc20044c2a9",
+          "children": [],
+          "sponsored_placements": 1
+        }
+      ]
+    }
+  },
+  "submission_ready": false,
+  "scope": "listing URL enumeration only; not product export acceptance",
+  "collection_mode": "normal live browser UI; Python driver not run end to end",
+  "roots_in_full_contest": 28,
+  "listing_roots_reconciled": 1,
+  "product_export_roots_verified": 0,
+  "upcs_verified": false,
+  "exact_22_field_dataset_created": false,
+  "counts": {
+    "reported_root_products": 95,
+    "root_card_placements": 97,
+    "root_unique_product_links": 72,
+    "child_categories_visited": 9,
+    "union_unique_product_links": 95
+  }
+}

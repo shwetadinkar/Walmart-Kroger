@@ -1,0 +1,17 @@
+{
+  "unit_tests_passed": true,
+  "unit_test_summary": [
+    "Ran 105 tests in 7.139s",
+    "",
+    "OK"
+  ],
+  "DEMO-LAKESHORE-60601_fixture_run": true,
+  "DEMO-LAKESHORE-60601_exact_22_field_records": true,
+  "DEMO-WESTLOOP-60661_fixture_run": true,
+  "DEMO-WESTLOOP-60661_exact_22_field_records": true,
+  "reject_insufficient_500": true,
+  "never_publish_failed_run": true,
+  "DEMO-LAKESHORE-60601_560_SYNTHETIC_acceptance_simulation": true,
+  "DEMO-WESTLOOP-60661_560_SYNTHETIC_acceptance_simulation": true,
+  "offline_passed": true
+}

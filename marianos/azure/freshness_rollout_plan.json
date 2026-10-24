@@ -1,0 +1,46 @@
+{
+  "approval_required": true,
+  "applied": false,
+  "resource_group": "rg-walmart63-trial",
+  "existing_job": "marianos-westloop-api-pilot",
+  "existing_environment": "env-walmart63",
+  "baseline_image_digest": "sha256:09000c6068c96d934660b92a796e3cf7db5a3f6df4a32b12c628aeb9ee81fc6b",
+  "new_image_digest": null,
+  "trigger_type": "Manual",
+  "replica_timeout_seconds": 600,
+  "replica_retry_limit": 0,
+  "parallelism": 1,
+  "replica_completion_count": 1,
+  "cpu": 0.5,
+  "memory": "1Gi",
+  "environment_changes": {
+    "remove": ["MARIANOS_RUN_ID"],
+    "set": {
+      "MARIANOS_MODE": "api-trial",
+      "MARIANOS_STORE_ID": "53100508",
+      "MARIANOS_ZIPCODE": "60661",
+      "MARIANOS_OUTPUT_PREFIX": "freshness-checks",
+      "MARIANOS_TARGET": "5",
+      "MARIANOS_MINIMUM": "5",
+      "MARIANOS_MAX_QUERIES": "1",
+      "MARIANOS_MAX_REQUESTS": "6"
+    }
+  },
+  "preserve_existing_secret_references_and_managed_identity": true,
+  "new_resources_or_role_assignments": [],
+  "manual_validation_executions": 2,
+  "maximum_combined_kroger_http_attempts": 12,
+  "maximum_combined_execution_seconds": 1200,
+  "maximum_combined_vcpu_seconds": 600,
+  "maximum_combined_gib_seconds": 1200,
+  "protected_blob_prefix": "trials/53100508/",
+  "validation_blob_prefix": "freshness-checks/53100508/",
+  "schedule": {
+    "enabled": false,
+    "cron_utc": "0 6 * * 1,4",
+    "description": "Monday and Thursday at 06:00 UTC",
+    "requires_separate_approval": true,
+    "gates": ["two distinct Azure execution names", "fresh source requests on both", "different retailer observation timestamps", "no old checkpoint reuse", "validated five-record outputs", "baseline object hashes unchanged", "verified budget and monitoring", "approved production collection scope"]
+  },
+  "submission_ready": false
+}

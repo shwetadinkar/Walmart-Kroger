@@ -1,0 +1,17 @@
+{
+  "stores": [
+    {
+      "store_id": "53100508",
+      "zipcode": "60661",
+      "store_name": "Marianos West Loop",
+      "street": "40 S Halsted St",
+      "store_location": "40 S Halsted St, Chicago, IL 60661",
+      "store_logo": "",
+      "enabled": true,
+      "verification_source": "official Kroger Locations API and retailer store page",
+      "verification_date": "2026-10-24",
+      "store_page": "https://www.marianos.com/stores/grocery/il/chicago/marianos-west-loop/531/00508"
+    }
+  ],
+  "additional_stores_live_verified": false
+}

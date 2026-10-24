@@ -12,14 +12,17 @@ from urllib.request import urlopen
 from .api_trial import TERMS, encode, import_snapshot, normalize, verify_store
 from .kroger import Credentials, KrogerClient
 from .storage import LocalStorage, AzureBlobStorage
+from .execution_state import execute_once
 
 class BudgetOpener:
     def __init__(self,maximum,opener=urlopen):
         if not 1 <= maximum <= 200:raise ValueError('Network budget must be 1..200')
         self.maximum,self.opener,self.used=maximum,opener,0
+        self.on_attempt=None
     def __call__(self,*args,**kwargs):
         if self.used>=self.maximum:raise ValueError('NETWORK_BUDGET_EXHAUSTED')
         self.used+=1
+        if self.on_attempt:self.on_attempt(self.used)
         return self.opener(*args,**kwargs)
 
 def collect(client,storage,location_id,zipcode,run_id,terms=TERMS,maximum_queries=40,target=650,canary_upc=''):
@@ -38,13 +41,14 @@ def collect(client,storage,location_id,zipcode,run_id,terms=TERMS,maximum_querie
     if prior and json.loads(prior)!=config:raise ValueError('CHECKPOINT_CONFIGURATION_MISMATCH')
     storage.write(config_key,encode(config))
     storage.write(prefix+'/verified_store.json',encode(store_response))
-    records={};new_queries=0;completed=[]
+    records={};new_queries=0;cached_queries=0;completed=[]
     for index,term in enumerate(terms[:maximum_queries]):
         key=prefix+f'/page_{index:02d}.json'
         previous=storage.read(key)
         if previous:
             page=json.loads(previous)
             if page.get('term')!=term or page.get('locationId')!=location_id:raise ValueError('CHECKPOINT_PAGE_MISMATCH')
+            cached_queries+=1
         else:
             if index and index%10==0:
                 verify_store(client.get('/locations/'+location_id).get('data'),location_id,zipcode)
@@ -61,7 +65,8 @@ def collect(client,storage,location_id,zipcode,run_id,terms=TERMS,maximum_querie
             if len(records)>=target:break
         completed.append(term)
         status={'location_id':location_id,'source_prefix':prefix,'unique_records':len(records),
-                'completed_terms':completed,'new_queries_this_run':new_queries,'submission_ready':False}
+                'completed_terms':completed,'new_queries_this_run':new_queries,
+                'cached_queries_this_run':cached_queries,'submission_ready':False}
         storage.write(prefix+'/progress.json',encode(status))
         print(json.dumps({'event':'search_checkpointed','term':term,'unique_records':len(records)}),flush=True)
         if len(records)>=target:break
@@ -72,9 +77,12 @@ def main(argv=None):
     parser.add_argument('--location-id',required=True)
     parser.add_argument('--zipcode',required=True)
     parser.add_argument('--run-id',required=True,help='Reuse only to resume the same snapshot. Use a new ID for fresh collection.')
+    parser.add_argument('--execution-id',default='',help='Azure execution identity for audit; never a credential.')
+    parser.add_argument('--run-origin',choices=('azure-execution','explicit-resume','fresh-local'),default='explicit-resume')
     parser.add_argument('--output',type=Path,default=Path('.collector-output/api-trial'))
     parser.add_argument('--backend',choices=('local','azure'),default='local')
     parser.add_argument('--container',default='marianos-api-trials')
+    parser.add_argument('--output-prefix',default='trials',help='Separate freshness pilots from the preserved baseline.')
     parser.add_argument('--maximum-queries',type=int,default=40)
     parser.add_argument('--maximum-requests',type=int,default=60)
     parser.add_argument('--target',type=int,default=650)
@@ -87,27 +95,36 @@ def main(argv=None):
     if args.backend=='azure':
         storage=AzureBlobStorage.from_environment(args.container)
     else:storage=LocalStorage(args.output)
+    configuration={'zipcode':args.zipcode,'terms':list(TERMS),'maximum_queries':args.maximum_queries,
+                   'maximum_requests':args.maximum_requests,'target':args.target,'minimum':args.minimum,
+                   'canary_upc':args.canary_upc,'execution_id':args.execution_id,'run_origin':args.run_origin,
+                   'output_prefix':args.output_prefix}
     with storage.locked(args.location_id):
-        status=collect(client,storage,args.location_id,args.zipcode,args.run_id,TERMS,args.maximum_queries,args.target,args.canary_upc)
-        with tempfile.TemporaryDirectory(prefix='marianos-api-') as scratch:
-            source=Path(scratch)/'source';source.mkdir()
-            prefix=status['source_prefix']
-            for name in ['verified_store.json']+[f'page_{i:02d}.json' for i in range(len(status['completed_terms']))]:
-                (source/name).write_bytes(storage.read(prefix+'/'+name))
-            export=Path(scratch)/'normalized'
-            report=import_snapshot(source,export,args.location_id,args.zipcode,args.minimum,args.target)
-            pointer=json.loads((export/'latest.json').read_text(encoding='utf-8'))
-            destination=f'trials/{args.location_id}'
-            previous=storage.read(destination+'/latest.json')
-            if previous and report['records']<int(json.loads(previous).get('records',0))*0.8:
-                raise ValueError('MATERIAL_YIELD_DROP: previous trial preserved')
-            for file in (export/'runs').rglob('*.json'):
-                if hasattr(storage,'assert_lock_held'):storage.assert_lock_held()
-                storage.write(destination+'/'+file.relative_to(export).as_posix(),file.read_bytes())
+        result=execute_once(storage,args.location_id,args.run_id,configuration,budget,
+                            lambda:_collect_and_export(args,client,storage))
+    print(json.dumps({'event':'api_trial_duplicate_skipped' if result['duplicate_skipped'] else 'api_trial_validated',
+                      **result,'submission_ready':False}),flush=True)
+
+
+def _collect_and_export(args,client,storage):
+    status=collect(client,storage,args.location_id,args.zipcode,args.run_id,TERMS,args.maximum_queries,args.target,args.canary_upc)
+    with tempfile.TemporaryDirectory(prefix='marianos-api-') as scratch:
+        source=Path(scratch)/'source';source.mkdir()
+        prefix=status['source_prefix']
+        for name in ['verified_store.json']+[f'page_{i:02d}.json' for i in range(len(status['completed_terms']))]:
+            (source/name).write_bytes(storage.read(prefix+'/'+name))
+        export=Path(scratch)/'normalized'
+        report=import_snapshot(source,export,args.location_id,args.zipcode,args.minimum,args.target)
+        pointer=json.loads((export/'latest.json').read_text(encoding='utf-8'))
+        destination=f'{args.output_prefix}/{args.location_id}'
+        previous=storage.read(destination+'/latest.json')
+        if previous and report['records']<int(json.loads(previous).get('records',0))*0.8:
+            raise ValueError('MATERIAL_YIELD_DROP: previous trial preserved')
+        for file in (export/'runs').rglob('*.json'):
             if hasattr(storage,'assert_lock_held'):storage.assert_lock_held()
-            storage.write(destination+'/latest.json',encode(pointer))
-    print(json.dumps({'event':'api_trial_validated','records':report['records'],
-                      'network_requests':budget.used,'submission_ready':False}),flush=True)
+            storage.write(destination+'/'+file.relative_to(export).as_posix(),file.read_bytes())
+    return pointer,{'records':report['records'],'product_queries':status['new_queries_this_run'],
+                    'cached_product_pages':status['cached_queries_this_run']}
 
 if __name__=='__main__':
     try:main()

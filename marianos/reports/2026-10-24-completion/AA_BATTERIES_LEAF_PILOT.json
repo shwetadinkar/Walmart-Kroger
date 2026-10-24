@@ -1,0 +1,72 @@
+{
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "configured_roots": 1,
+  "complete_roots": 1,
+  "all_roots_complete": true,
+  "discovered_nodes": 1,
+  "visited_nodes": 1,
+  "roots": [
+    {
+      "name": "AA Batteries",
+      "url": "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002",
+      "status": "complete",
+      "complete": true,
+      "observations": 1,
+      "discovered_children": 0,
+      "unique_product_urls": 19
+    }
+  ],
+  "nodes": {
+    "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002": {
+      "children": [],
+      "observations": [
+        {
+          "url": "https://www.marianos.com/pl/aa-batteries/2600300002?fulfillment=all&taxonomyId=2600300002",
+          "store_id": "53100508",
+          "zipcode": "60661",
+          "store_context_verified": true,
+          "source_kind": "rendered-retailer",
+          "observed_at": "2026-10-24T11:46:01.556Z",
+          "status": "ok",
+          "listing_present": true,
+          "terminal": true,
+          "expected_products": 19,
+          "observed_listing_cards": 19,
+          "unique_product_urls": [
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133327035",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133370464",
+            "https://www.marianos.com/p/duracell-coppertop-aa-alkaline-batteries/0004133382501",
+            "https://www.marianos.com/p/energizer-max-aa-8pk/0003980014519",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014518",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014520",
+            "https://www.marianos.com/p/energizer-max-aa-alkaline-batteries/0003980014521",
+            "https://www.marianos.com/p/energizer-max-alkaline-aa-batteries-32-pack/0003980015087",
+            "https://www.marianos.com/p/energizer-recharge-power-plus-aa-nimh-batteries/0003980001636",
+            "https://www.marianos.com/p/energizer-recharge-power-plus-aa-nimh-batteries/0003980007404",
+            "https://www.marianos.com/p/energizer-recharge-pro-chargers-battery/0003980012104",
+            "https://www.marianos.com/p/energizer-rechargeables-basic-chargers-battery/0003980007401",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014532",
+            "https://www.marianos.com/p/energizer-ultimate-lithium-aa-lithium-batteries/0003980014533",
+            "https://www.marianos.com/p/kroger-aa-alkaline-batteries/0004122600015",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries-value-pack/0004122600016",
+            "https://www.marianos.com/p/kroger-alkaline-aa-batteries/0004122600009",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054011",
+            "https://www.marianos.com/p/rayovac-high-energy-aa-alkaline-batteries/0001280054013"
+          ],
+          "snapshot_sha256": "e1f5becfc639d09c60aac682a0d3adef0563d1c0b267b28342d157297fed13a5",
+          "discovery_evidence_sha256": "92b945add15ffc02d136ab1c273df556c3b87b30ea48711311361abd897ef366",
+          "discovery_complete": true,
+          "children": [],
+          "sponsored_cards": 5,
+          "mode": "live browser UI pilot; Python DOM driver not exercised end to end"
+        }
+      ]
+    }
+  },
+  "submission_ready": false,
+  "scope": "One leaf listing; not one of the 28 configured roots",
+  "full_contest_root_complete": false,
+  "product_upcs_verified": false,
+  "not_a_22_field_product_dataset": true
+}

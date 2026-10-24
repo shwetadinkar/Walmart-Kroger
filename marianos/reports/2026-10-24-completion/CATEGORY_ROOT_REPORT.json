@@ -1,0 +1,2979 @@
+{
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "configured_roots": 28,
+  "complete_roots": 0,
+  "unique_normalized_discovery_links": 331,
+  "submission_ready": false,
+  "root_observations": [
+    {
+      "name": "Coupons",
+      "url": "https://www.marianos.com/savings/cl/coupons/",
+      "index": 0,
+      "observed_at": "2026-10-24T10:59:39.309Z",
+      "actual_url": "https://www.marianos.com/savings/cl/coupons/",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "da00603dc4fc52e4066b8def331b48a8e7cd9c7e94d52ffaf3837d88bb5f659d",
+      "category_links": [],
+      "complete": false
+    },
+    {
+      "name": "Produce",
+      "url": "https://www.marianos.com/d/produce",
+      "index": 1,
+      "observed_at": "2026-10-24T10:59:44.375Z",
+      "actual_url": "https://www.marianos.com/d/produce",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "8b457667b63360715e71947effdfe595c475a5654a35ede42599a1344dc90071",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/fresh-fruits-vegetables/06?monet=curated&searchType=natural&taxonomyId=06&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fall-produce/0617600002?monet=curated&taxonomyId=0617600002&fulfillment=all"
+        },
+        {
+          "name": "Fall Produce",
+          "url": "/pl/fall-produce/0617600002?monet=curated&taxonomyId=0617600002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/berries/0611100673"
+        },
+        {
+          "name": "Berries",
+          "url": "/pl/berries/0611100673"
+        },
+        {
+          "name": "",
+          "url": "/pl/salads/06114"
+        },
+        {
+          "name": "Salad Mix",
+          "url": "/pl/salads/06114"
+        },
+        {
+          "name": "",
+          "url": "/pl/tomatoes/0611200690"
+        },
+        {
+          "name": "Tomatoes",
+          "url": "/pl/tomatoes/0611200690"
+        },
+        {
+          "name": "",
+          "url": "/pl/citrus/0611100671?taxonomyId=0611100671&fulfillment=all"
+        },
+        {
+          "name": "Citrus",
+          "url": "/pl/citrus/0611100671?taxonomyId=0611100671&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-cut-fruit-vegetables/06121"
+        },
+        {
+          "name": "Fresh Cut Fruit & Veggies",
+          "url": "/pl/fresh-cut-fruit-vegetables/06121"
+        },
+        {
+          "name": "",
+          "url": "/pl/grapes-cherries/0611100681?taxonomyId=0611100681&fulfillment=all"
+        },
+        {
+          "name": "Grapes",
+          "url": "/pl/grapes-cherries/0611100681?taxonomyId=0611100681&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/potatoes/0611200691?taxonomyId=0611200691&fulfillment=all"
+        },
+        {
+          "name": "Potatoes",
+          "url": "/pl/potatoes/0611200691?taxonomyId=0611200691&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/apples/0611100667?taxonomyId=0611100667&fulfillment=all"
+        },
+        {
+          "name": "Apples",
+          "url": "/pl/apples/0611100667?taxonomyId=0611100667&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/broccolicauliflower/0611200685?taxonomyId=0611100685&fulfillment=all"
+        },
+        {
+          "name": "Broccoli & Cauliflower",
+          "url": "/pl/broccolicauliflower/0611200685?taxonomyId=0611100685&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/nuts-trail-mix-seeds/01022?taxonomyId=01022&fulfillment=all"
+        },
+        {
+          "name": "Nuts, Trail Mix & Seeds",
+          "url": "/pl/nuts-trail-mix-seeds/01022?taxonomyId=01022&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/carrots/0611200682?taxonomyId=0611200682&fulfillment=all"
+        },
+        {
+          "name": "Carrots",
+          "url": "/pl/carrots/0611200682?taxonomyId=0611200682&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-produce/06123"
+        },
+        {
+          "name": "Fresh Prepared Fruits & Vegetables",
+          "url": "/pl/packaged-produce/06123"
+        },
+        {
+          "name": "",
+          "url": "/pl/onions/0611200692"
+        },
+        {
+          "name": "Onions & Garlic",
+          "url": "/pl/onions/0611200692"
+        },
+        {
+          "name": "",
+          "url": "/pl/ mushrooms/0611200686"
+        },
+        {
+          "name": "Mushrooms",
+          "url": "/pl/ mushrooms/0611200686"
+        },
+        {
+          "name": "",
+          "url": "/pl/peppers/0611200689"
+        },
+        {
+          "name": "Peppers",
+          "url": "/pl/peppers/0611200689"
+        },
+        {
+          "name": "",
+          "url": "/pl/tropicalfruits/0611100675?taxonomyId=0611100675&fulfillment=all"
+        },
+        {
+          "name": "Tropical Fruits",
+          "url": "/pl/tropicalfruits/0611100675?taxonomyId=0611100675&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/avocado/0611100680?taxonomyId=0611100680&fulfillment=all"
+        },
+        {
+          "name": "Avocados",
+          "url": "/pl/avocado/0611100680?taxonomyId=0611100680&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/produce/06?brandName=Kroger&query=kroger&monet=false"
+        },
+        {
+          "name": "Kroger Brand",
+          "url": "/pl/produce/06?brandName=Kroger&query=kroger&monet=false"
+        },
+        {
+          "name": "",
+          "url": "/pl/produce/06?brandName=Private%20Selection&monet=false"
+        },
+        {
+          "name": "Private Selection",
+          "url": "/pl/produce/06?brandName=Private%20Selection&monet=false"
+        },
+        {
+          "name": "",
+          "url": "/pl/produce/06?brandName=Simple%20Truth%7CSimple%20Truth%20Organic&monet=false"
+        },
+        {
+          "name": "Simple Truth",
+          "url": "/pl/produce/06?brandName=Simple%20Truth%7CSimple%20Truth%20Organic&monet=false"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Meat",
+      "url": "https://www.marianos.com/d/meat",
+      "index": 2,
+      "observed_at": "2026-10-24T10:59:46.915Z",
+      "actual_url": "https://www.marianos.com/d/meat",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "16301737f9d41171bb04d606e5ad996e0307a69030434519db3f4b7f3de7727f",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/chicken/05002?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Chicken",
+          "url": "/pl/chicken/05002?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/ground-beef-patties/0500100004?pzn=relevance"
+        },
+        {
+          "name": "Ground Beef",
+          "url": "/pl/ground-beef-patties/0500100004?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/beefroasts/0500100006?&pzn=relevance"
+        },
+        {
+          "name": "Roasts",
+          "url": "/pl/beefroasts/0500100006?&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/pork-ham/05006?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Pork & Ham",
+          "url": "/pl/pork-ham/05006?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/turkey/05012?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Turkey",
+          "url": "/pl/turkey/05012?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/meat-seafood/05?query=organic%20meat&searchType=default_search&taxonomyId=05&fulfillment=all"
+        },
+        {
+          "name": "Organic Meat",
+          "url": "/pl/meat-seafood/05?query=organic%20meat&searchType=default_search&taxonomyId=05&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/hot-dogs-franks/05005?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Hot Dogs & Franks",
+          "url": "/pl/hot-dogs-franks/05005?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/lamb-veal-bison/05014?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Lamb, Veal & Bison",
+          "url": "/pl/lamb-veal-bison/05014?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/bacon-breakfast-sausage/05017?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Bacon & Breakfast Sausage",
+          "url": "/pl/bacon-breakfast-sausage/05017?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/dinner-sausage/05003?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Dinner Sausage",
+          "url": "/pl/dinner-sausage/05003?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-deli-meat/05013?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Lunch Meat",
+          "url": "/pl/packaged-deli-meat/05013?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/pepperoni-salami-summer-sausage/05015?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Pepperoni, Salami & Summer Sausage",
+          "url": "/pl/pepperoni-salami-summer-sausage/05015?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/lunch-snack-kits/05018?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Lunch & Snack Kits",
+          "url": "/pl/lunch-snack-kits/05018?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/heat-serve-meals-and-sides/05016?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "Heat & Serve",
+          "url": "/pl/heat-serve-meals-and-sides/05016?searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/refrigerated-pickles-sauerkraut/05008?pzn=relevance"
+        },
+        {
+          "name": "Enhancements",
+          "url": "/pl/refrigerated-pickles-sauerkraut/05008?pzn=relevance"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Seafood",
+      "url": "https://www.marianos.com/d/seafood",
+      "index": 3,
+      "observed_at": "2026-10-24T10:59:49.376Z",
+      "actual_url": "https://www.marianos.com/d/seafood",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "d470581119bd96cfa325ea588eed29318f8cad80d38f7213903d71c820a9c2f4",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/shrimp/0501000009?pzn=relevance"
+        },
+        {
+          "name": "Shrimp",
+          "url": "/pl/shrimp/0501000009?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/salmon/0500400011?pzn=relevance&taxonomyId=0500400011&fulfillment=all"
+        },
+        {
+          "name": "Salmon",
+          "url": "/pl/salmon/0500400011?pzn=relevance&taxonomyId=0500400011&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-fish/1900800003?pzn=relevance"
+        },
+        {
+          "name": "Breaded Fish",
+          "url": "/pl/frozen-fish/1900800003?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/seafood-salads-dips/0500400020?pzn=relevance"
+        },
+        {
+          "name": "Seafood Salad & Dips",
+          "url": "/pl/seafood-salads-dips/0500400020?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sushi/1300800002?pzn=relevance"
+        },
+        {
+          "name": "Fresh Sushi",
+          "url": "/pl/sushi/1300800002?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/canned-seafood/0100600007?pzn=relevance"
+        },
+        {
+          "name": "Canned Seafood",
+          "url": "/pl/canned-seafood/0100600007?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/seafoodspices-breading/0500400021?pzn=relevance"
+        },
+        {
+          "name": "Sauce & Breading",
+          "url": "/pl/seafoodspices-breading/0500400021?pzn=relevance"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Deli",
+      "url": "https://www.marianos.com/d/deli",
+      "index": 4,
+      "observed_at": "2026-10-24T11:00:16.476Z",
+      "actual_url": "https://www.marianos.com/d/deli",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "5a0989bbddad6aa35369bb5c6e925b501aa5c31ea025cb72b16abd9414466ad6",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "Shop All Deli",
+          "url": "/pl/deli/13"
+        },
+        {
+          "name": "",
+          "url": "/pl/grab-go-meals/13008"
+        },
+        {
+          "name": "Sandwiches & Salads",
+          "url": "/pl/grab-go-meals/13008"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-deli-meats/13001?&pzn=relevance"
+        },
+        {
+          "name": "All Deli Meat",
+          "url": "/pl/fresh-deli-meats/13001?&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-deli-cheese/13002"
+        },
+        {
+          "name": "All Deli Cheese",
+          "url": "/pl/fresh-deli-cheese/13002"
+        },
+        {
+          "name": "",
+          "url": "/pl/ready-to-heat-meals/13006"
+        },
+        {
+          "name": "Ready to Heat Meals & Soups",
+          "url": "/pl/ready-to-heat-meals/13006"
+        },
+        {
+          "name": "",
+          "url": "/pl/party-platters/13010?&pzn=relevance"
+        },
+        {
+          "name": "Party Platters",
+          "url": "/pl/party-platters/13010?&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sushi/13013"
+        },
+        {
+          "name": "Sushi",
+          "url": "/pl/sushi/13013"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-deli-meat/13003?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "Packaged Deli Meat",
+          "url": "/pl/packaged-deli-meat/13003?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/olives-dips-spreads-snacks/13011?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "Hummus, Salsa, Dips & Snacks",
+          "url": "/pl/olives-dips-spreads-snacks/13011?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-deli-cheese/13004"
+        },
+        {
+          "name": "Packaged Deli Cheese",
+          "url": "/pl/packaged-deli-cheese/13004"
+        },
+        {
+          "name": "",
+          "url": "/pl/specialty-cheeses/13005?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "Specialty Cheese",
+          "url": "/pl/specialty-cheeses/13005?fulfillment=all&searchType=natural&monet=promo&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/deli/13?brandName=Simple%20Truth%7CSimple%20Truth%20Organic&monet=false&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/deli/13?brandName=Private%20Selection&monet=false&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/deli/13?taxonomyId=13&brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/deli/13?taxonomyId=13&brandName=Deli%20Kitchen&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Bakery",
+      "url": "https://www.marianos.com/d/bakery",
+      "index": 5,
+      "observed_at": "2026-10-24T11:00:20.189Z",
+      "actual_url": "https://www.marianos.com/d/bakery",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "6f71b3f3cf4f3a77abe7db8374e7e5fea974d3b9d7ebbdb7045ef849599bd5e3",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/d/bakery/custom-cakes"
+        },
+        {
+          "name": "Order Custom Cakes",
+          "url": "/d/bakery/custom-cakes"
+        },
+        {
+          "name": "",
+          "url": "/pl/cakescupcakes/14160"
+        },
+        {
+          "name": "Cakes & Cupcakes",
+          "url": "/pl/cakescupcakes/14160"
+        },
+        {
+          "name": "",
+          "url": "/pl/dinner-bread-and-rolls/14182?taxonomyId=14182&fulfillment=all"
+        },
+        {
+          "name": "Dinner Bread & Rolls",
+          "url": "/pl/dinner-bread-and-rolls/14182?taxonomyId=14182&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/sandwich-bread-buns-and-rolls/14181?taxonomyId=14181&fulfillment=all"
+        },
+        {
+          "name": "Sandwich Bread, Buns & Rolls",
+          "url": "/pl/sandwich-bread-buns-and-rolls/14181?taxonomyId=14181&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/french-italian-breads/1418200001?taxonomyId=1418200001&fulfillment=all"
+        },
+        {
+          "name": "French & Italian Breads",
+          "url": "/pl/french-italian-breads/1418200001?taxonomyId=1418200001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/artisan-breads/14162"
+        },
+        {
+          "name": "Artisan Bread & Baguettes",
+          "url": "/pl/artisan-breads/14162"
+        },
+        {
+          "name": "",
+          "url": "/pl/bake-at-home-breads-rolls/1418200004?taxonomyId=1418200004&fulfillment=all"
+        },
+        {
+          "name": "Bake at Home Bread & Rolls",
+          "url": "/pl/bake-at-home-breads-rolls/1418200004?taxonomyId=1418200004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/flatbreads-wraps-tortillas/1418500001?taxonomyId=1418500001&fulfillment=all"
+        },
+        {
+          "name": "Flatbreads, Wraps & Tortillas",
+          "url": "/pl/flatbreads-wraps-tortillas/1418500001?taxonomyId=1418500001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/donuts-danishes-muffins/14166?taxonomyId=14166&fulfillment=all"
+        },
+        {
+          "name": "Donuts, Danishs & Muffins",
+          "url": "/pl/donuts-danishes-muffins/14166?taxonomyId=14166&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cookies/14187"
+        },
+        {
+          "name": "Cookies",
+          "url": "/pl/cookies/14187"
+        },
+        {
+          "name": "",
+          "url": "/pl/pies/14169?taxonomyId=14169&fulfillment=all"
+        },
+        {
+          "name": "Pies",
+          "url": "/pl/pies/14169?taxonomyId=14169&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cheesecakes/14164?taxonomyId=14164&fulfillment=all"
+        },
+        {
+          "name": "Cheesecakes",
+          "url": "/pl/cheesecakes/14164?taxonomyId=14164&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/croissants/1418300004?taxonomyId=1418300004&fulfillment=all"
+        },
+        {
+          "name": "Croissants",
+          "url": "/pl/croissants/1418300004?taxonomyId=1418300004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/angel-food-pound-pudding-cakes/14161"
+        },
+        {
+          "name": "Angel Food, Pound & Pudding Cakes",
+          "url": "/pl/angel-food-pound-pudding-cakes/14161"
+        },
+        {
+          "name": "",
+          "url": "/pl/brownies/1416500496"
+        },
+        {
+          "name": "Brownies",
+          "url": "/pl/brownies/1416500496"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/bakery/14?pzn=relevance"
+        },
+        {
+          "name": "Order Ahead Custom Cakes & CupcakesFrom graduations and birthdays to holidays and milestones, we have a cake for every celebration.Place An Order",
+          "url": "/d/bakery/custom-cakes"
+        },
+        {
+          "name": "",
+          "url": "/pl/pies/14169"
+        },
+        {
+          "name": "",
+          "url": "/pl/donuts/1416600504"
+        },
+        {
+          "name": "",
+          "url": "/pl/sandwich-bread-buns-and-rolls/14181?taxonomyId=14181&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/bakery/14?brandName=Bakery%20Fresh%20Goodness&searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/bakery/14?brandName=Private%20Selection&searchType=curated&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/bakery/14?brandName=Simple%20Truth%7CSimple%20Truth%20Organic&monet=fale&pzn=relevance"
+        },
+        {
+          "name": "party tray",
+          "url": "/pl/party-trays/14168"
+        },
+        {
+          "name": "cookies",
+          "url": "/pl/cookies/1416500499"
+        },
+        {
+          "name": "brownies",
+          "url": "/pl/brownies/1416500496"
+        },
+        {
+          "name": "artisan breads",
+          "url": "/pl/artisan-breads/14162"
+        },
+        {
+          "name": "French bread",
+          "url": "/pl/french-italian-breads/1416200506"
+        },
+        {
+          "name": "angel food cakes",
+          "url": "/pl/angel-food-pound-pudding-cakes-/14161"
+        },
+        {
+          "name": "hot dog buns",
+          "url": "/pl/buns/1416700656"
+        },
+        {
+          "name": "Hawaiian rolls",
+          "url": "/pl/rolls/1416700503"
+        },
+        {
+          "name": "cheesecake",
+          "url": "/pl/cheesecakes/14164"
+        },
+        {
+          "name": "donuts",
+          "url": "/pl/donuts/1416600504"
+        },
+        {
+          "name": "fresh packaged breads",
+          "url": "/pl/packaged-breads/14167"
+        },
+        {
+          "name": "pie",
+          "url": "/pl/pies/14169"
+        },
+        {
+          "name": "apple pies",
+          "url": "/pl/fruit-nut-pies/1416900505"
+        },
+        {
+          "name": "pumpkin pies",
+          "url": "/pl/pumpkin-custard-pies/1416900509"
+        },
+        {
+          "name": "tortillas",
+          "url": "/pl/sandwich-sliced-bread-tortillas/1417000512"
+        },
+        {
+          "name": "Pita breads",
+          "url": "/pl/pita-flat-breads/1417000658"
+        },
+        {
+          "name": "pizza crust",
+          "url": "/pl/pizza-crust-breadsticks/14171"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Floral",
+      "url": "https://www.marianos.com/d/floral",
+      "index": 6,
+      "observed_at": "2026-10-24T11:00:22.401Z",
+      "actual_url": "https://www.marianos.com/d/floral",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "ce7c7055025e18bf353d1db27be3f4fb9a04891c56420e1eed5d41409be1310e",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-cut-roses/09130"
+        },
+        {
+          "name": "Fresh Cut Roses",
+          "url": "/pl/fresh-cut-roses/09130"
+        },
+        {
+          "name": "",
+          "url": "/pl/bouquets/09126"
+        },
+        {
+          "name": "Bouquets",
+          "url": "/pl/bouquets/09126"
+        },
+        {
+          "name": "",
+          "url": "/pl/floralarrangements/09128"
+        },
+        {
+          "name": "Floral Arrangements",
+          "url": "/pl/floralarrangements/09128"
+        },
+        {
+          "name": "",
+          "url": "/pl/orchids/09132"
+        },
+        {
+          "name": "Orchids",
+          "url": "/pl/orchids/09132"
+        },
+        {
+          "name": "",
+          "url": "/pl/potted-plants/09133"
+        },
+        {
+          "name": "Home & Gift",
+          "url": "/pl/potted-plants/09133"
+        },
+        {
+          "name": "",
+          "url": "/pl/balloons/09125"
+        },
+        {
+          "name": "Balloons",
+          "url": "/pl/balloons/09125"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Grocery",
+      "url": "https://www.marianos.com/d/grocery",
+      "index": 7,
+      "observed_at": "2026-10-24T11:00:26.053Z",
+      "actual_url": "https://www.marianos.com/d/grocery",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "23a993efc7c54f3a5264d29a6c9413a32da3a8bc402fe25ab668dc7a3f5489ef",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-bread/01016"
+        },
+        {
+          "name": "Packaged Bread, Buns, and Rolls",
+          "url": "/pl/packaged-bread/01016"
+        },
+        {
+          "name": "",
+          "url": "/d/snacks"
+        },
+        {
+          "name": "Snacks",
+          "url": "/d/snacks"
+        },
+        {
+          "name": "",
+          "url": "/d/beverages"
+        },
+        {
+          "name": "Beverage",
+          "url": "/d/beverages"
+        },
+        {
+          "name": "",
+          "url": "/pl/snack-cakes-pies/0102000010"
+        },
+        {
+          "name": "Snack Cakes & Pies",
+          "url": "/pl/snack-cakes-pies/0102000010"
+        },
+        {
+          "name": "",
+          "url": "/pl/baking-cooking/01012?searchType=natural&pzn=relevance"
+        },
+        {
+          "name": "Baking & Cooking",
+          "url": "/pl/baking-cooking/01012?searchType=natural&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/pasta-pasta-sauces/01010"
+        },
+        {
+          "name": "Pasta & Pasta Sauce",
+          "url": "/pl/pasta-pasta-sauces/01010"
+        },
+        {
+          "name": "",
+          "url": "/pl/spices-seasonings/01015?pzn=relevance"
+        },
+        {
+          "name": "Spices & Seasonings",
+          "url": "/pl/spices-seasonings/01015?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/grains-beans-rice/01007"
+        },
+        {
+          "name": "Grains, Beans & Rice",
+          "url": "/pl/grains-beans-rice/01007"
+        },
+        {
+          "name": "",
+          "url": "/pl/canned-foods/01006"
+        },
+        {
+          "name": "Canned Foods",
+          "url": "/pl/canned-foods/01006"
+        },
+        {
+          "name": "",
+          "url": "/pl/condiments-sauces/01008"
+        },
+        {
+          "name": "Condiments & Sauces",
+          "url": "/pl/condiments-sauces/01008"
+        },
+        {
+          "name": "",
+          "url": "/pl/packaged-meals-sides/01011"
+        },
+        {
+          "name": "Packaged Meals & Sides",
+          "url": "/pl/packaged-meals-sides/01011"
+        },
+        {
+          "name": "",
+          "url": "/pl/spreads-jelly-honey/01014"
+        },
+        {
+          "name": "Spreads, Jelly & Honey",
+          "url": "/pl/spreads-jelly-honey/01014"
+        },
+        {
+          "name": "",
+          "url": "/pl/international/01013"
+        },
+        {
+          "name": "International Foods",
+          "url": "/pl/international/01013"
+        },
+        {
+          "name": "",
+          "url": "/pl/nuts-trail-mix-seeds/01022?query=nuts&searchType=default_search&taxonomyId=01022&fulfillment=all"
+        },
+        {
+          "name": "Nuts, Trail Mix, & Seeds",
+          "url": "/pl/nuts-trail-mix-seeds/01022?query=nuts&searchType=default_search&taxonomyId=01022&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/grocery/01?brandName=Simple%20Truth%7CSimple%20Truth%20Organic&monet=false&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/grocery/01?brandName=Private%20Selection&monet=false&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/grocery/01?brandName=Kroger&monet=false&pzn=relevance"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Dairy",
+      "url": "https://www.marianos.com/d/dairy",
+      "index": 8,
+      "observed_at": "2026-10-24T11:00:38.125Z",
+      "actual_url": "https://www.marianos.com/d/dairy",
+      "status": "not_found",
+      "store_context_verified": true,
+      "snapshot_sha256": "0d5ed572a77eb2334d3429c28c49849be994fe688f9d3b5961183b9410b6bba2",
+      "category_links": [],
+      "complete": false
+    },
+    {
+      "name": "Frozen",
+      "url": "https://www.marianos.com/d/frozen",
+      "index": 9,
+      "observed_at": "2026-10-24T11:00:42.241Z",
+      "actual_url": "https://www.marianos.com/d/frozen",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "3a7ee4945172f44296b1fedcbcb4aeb66d4f0eda32c128add1c2ee0648a5cec0",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "Shop All Frozen",
+          "url": "/pl/frozen-foods/19?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-pizza/19003"
+        },
+        {
+          "name": "Frozen Pizza",
+          "url": "/pl/frozen-pizza/19003"
+        },
+        {
+          "name": "",
+          "url": "/pl/ice-cream-ice-pops/19002"
+        },
+        {
+          "name": "Ice Cream & Ice Pops",
+          "url": "/pl/ice-cream-ice-pops/19002"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-appetizers-snacks/19006"
+        },
+        {
+          "name": "Frozen Appetizers & Snacks",
+          "url": "/pl/frozen-appetizers-snacks/19006"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-vegetables/19005"
+        },
+        {
+          "name": "Frozen Vegetables",
+          "url": "/pl/frozen-vegetables/19005"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-breakfast/19007"
+        },
+        {
+          "name": "Frozen Breakfast",
+          "url": "/pl/frozen-breakfast/19007"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-meat-seafood-meatless/19008"
+        },
+        {
+          "name": "Frozen Chicken, Meat & Seafood",
+          "url": "/pl/frozen-meat-seafood-meatless/19008"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-potatoes-onion-rings/19010"
+        },
+        {
+          "name": "Frozen Potatoes & Onion Rings",
+          "url": "/pl/frozen-potatoes-onion-rings/19010"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-bread/19009"
+        },
+        {
+          "name": "Frozen Bread",
+          "url": "/pl/frozen-bread/19009"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-fruit/19012"
+        },
+        {
+          "name": "Frozen Fruit",
+          "url": "/pl/frozen-fruit/19012"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-desserts/19001"
+        },
+        {
+          "name": "Frozen Desserts & Pies",
+          "url": "/pl/frozen-desserts/19001"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-juice-mixers/19011"
+        },
+        {
+          "name": "Frozen Juice & Mixers",
+          "url": "/pl/frozen-juice-mixers/19011"
+        },
+        {
+          "name": "",
+          "url": "/pl/international-frozen-foods/19013"
+        },
+        {
+          "name": "Frozen International Foods",
+          "url": "/pl/international-frozen-foods/19013"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozenmeat-alternatives/1900800005?taxonomyId=1900800005&fulfillment=all"
+        },
+        {
+          "name": "Frozen Plant Based Meat",
+          "url": "/pl/frozenmeat-alternatives/1900800005?taxonomyId=1900800005&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        },
+        {
+          "name": "Frozen Family Meals & Sides",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        },
+        {
+          "name": "Frozen Individual Meals",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        },
+        {
+          "name": "Frozen Meatballs",
+          "url": "/pl/frozen-family-meals-sides/19015"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Natural Organic",
+      "url": "https://www.marianos.com/d/natural-organic",
+      "index": 10,
+      "observed_at": "2026-10-24T11:00:44.803Z",
+      "actual_url": "https://www.marianos.com/d/natural-organic",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "d416ac552c888199931e10626336d1e969379e118c61a156606a790b67ad7d80",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/grocery/18012"
+        },
+        {
+          "name": "Grocery",
+          "url": "/pl/grocery/18012"
+        },
+        {
+          "name": "",
+          "url": "/pl/beauty-personal-care/18001"
+        },
+        {
+          "name": "Beauty & Personal Care",
+          "url": "/pl/beauty-personal-care/18001"
+        },
+        {
+          "name": "",
+          "url": "/pl/meat-seafood/18004"
+        },
+        {
+          "name": "Meat & Seafood",
+          "url": "/pl/meat-seafood/18004"
+        },
+        {
+          "name": "",
+          "url": "/pl/organic-produce/18003"
+        },
+        {
+          "name": "Produce",
+          "url": "/pl/organic-produce/18003"
+        },
+        {
+          "name": "",
+          "url": "/pl/dairy-eggs/18007"
+        },
+        {
+          "name": "Dairy & Eggs",
+          "url": "/pl/dairy-eggs/18007"
+        },
+        {
+          "name": "",
+          "url": "/pl/cleaning-household/18011"
+        },
+        {
+          "name": "Cleaning & Household",
+          "url": "/pl/cleaning-household/18011"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby/18002"
+        },
+        {
+          "name": "Baby",
+          "url": "/pl/baby/18002"
+        },
+        {
+          "name": "",
+          "url": "/pl/deli/18008"
+        },
+        {
+          "name": "Deli",
+          "url": "/pl/deli/18008"
+        },
+        {
+          "name": "",
+          "url": "/pl/bakery-bread/18009"
+        },
+        {
+          "name": "Bread & Bakery",
+          "url": "/pl/bakery-bread/18009"
+        },
+        {
+          "name": "",
+          "url": "/pl/frozen/18010"
+        },
+        {
+          "name": "Frozen",
+          "url": "/pl/frozen/18010"
+        },
+        {
+          "name": "",
+          "url": "/pl/spices-baking/18006"
+        },
+        {
+          "name": "Spices & Baking",
+          "url": "/pl/spices-baking/18006"
+        },
+        {
+          "name": "",
+          "url": "/pl/beverages/18005"
+        },
+        {
+          "name": "Beverages",
+          "url": "/pl/beverages/18005"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Beverages",
+      "url": "https://www.marianos.com/d/beverages",
+      "index": 11,
+      "observed_at": "2026-10-24T11:00:47.646Z",
+      "actual_url": "https://www.marianos.com/d/beverages",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "a93b316736c6021b8012b343820286332a0ff113a1f89db9cc827ef39020db38",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/soda-pop/04001"
+        },
+        {
+          "name": "Soda & Pop",
+          "url": "/pl/soda-pop/04001"
+        },
+        {
+          "name": "",
+          "url": "/pl/water/04006"
+        },
+        {
+          "name": "Water",
+          "url": "/pl/water/04006"
+        },
+        {
+          "name": "",
+          "url": "/d/coffee"
+        },
+        {
+          "name": "Coffee Shop",
+          "url": "/d/coffee"
+        },
+        {
+          "name": "",
+          "url": "/pl/juice/04004"
+        },
+        {
+          "name": "Juice & Lemonade",
+          "url": "/pl/juice/04004"
+        },
+        {
+          "name": "",
+          "url": "/pl/milk-plant-based-milk/02001"
+        },
+        {
+          "name": "Milk & Milk Substitutes",
+          "url": "/pl/milk-plant-based-milk/02001"
+        },
+        {
+          "name": "",
+          "url": "/pl/tea-kombucha/04007"
+        },
+        {
+          "name": "Tea",
+          "url": "/pl/tea-kombucha/04007"
+        },
+        {
+          "name": "",
+          "url": "/pl/kombucha-and-gut-health-beverages/04012?pzn=relevance&taxonomyId=04012&fulfillment=all"
+        },
+        {
+          "name": "Kombucha & Gut Health Beverages",
+          "url": "/pl/kombucha-and-gut-health-beverages/04012?pzn=relevance&taxonomyId=04012&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/sparkling-water/04002"
+        },
+        {
+          "name": "Sparkling Water",
+          "url": "/pl/sparkling-water/04002"
+        },
+        {
+          "name": "",
+          "url": "/pl/sports-drinks/04005"
+        },
+        {
+          "name": "Sports Drink",
+          "url": "/pl/sports-drinks/04005"
+        },
+        {
+          "name": "",
+          "url": "/pl/drink-mixes-beverage-enhancers/04008"
+        },
+        {
+          "name": "Drink Mixes & Beverage Enhancers",
+          "url": "/pl/drink-mixes-beverage-enhancers/04008"
+        },
+        {
+          "name": "",
+          "url": "/pl/drink-boxes-pouches/04010"
+        },
+        {
+          "name": "Drink Boxes & Pouches",
+          "url": "/pl/drink-boxes-pouches/04010"
+        },
+        {
+          "name": "",
+          "url": "/pl/energydrinks/04011"
+        },
+        {
+          "name": "Energy Drinks",
+          "url": "/pl/energydrinks/04011"
+        },
+        {
+          "name": "",
+          "url": "/pl/adult-beverage-mixers/08189?pzn=relevance&taxonomyId=08189&fulfillment=all"
+        },
+        {
+          "name": "Adult Beverage Mixers",
+          "url": "/pl/adult-beverage-mixers/08189?pzn=relevance&taxonomyId=08189&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cocoa-mixes/0400700011?taxonomyId=0400700011&fulfillment=all"
+        },
+        {
+          "name": "Cocoa Mixes",
+          "url": "/pl/cocoa-mixes/0400700011?taxonomyId=0400700011&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/proteinshakes/2201000002"
+        },
+        {
+          "name": "Protein Shakes",
+          "url": "/pl/proteinshakes/2201000002"
+        },
+        {
+          "name": "",
+          "url": "/pl/glassware-drinkware/28004?facets=true&pzn=relevance"
+        },
+        {
+          "name": "Glassware & Drinkware",
+          "url": "/pl/glassware-drinkware/28004?facets=true&pzn=relevance"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/beverages/04?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/beverages/04?brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "Kroger",
+          "url": "/pl/beverages/04?brandName=Kroger&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Breakfast",
+      "url": "https://www.marianos.com/d/breakfast",
+      "index": 12,
+      "observed_at": "2026-10-24T11:00:56.297Z",
+      "actual_url": "https://www.marianos.com/d/breakfast",
+      "status": "not_found",
+      "store_context_verified": true,
+      "snapshot_sha256": "0d5ed572a77eb2334d3429c28c49849be994fe688f9d3b5961183b9410b6bba2",
+      "category_links": [],
+      "complete": false
+    },
+    {
+      "name": "Coffee",
+      "url": "https://www.marianos.com/d/coffee",
+      "index": 13,
+      "observed_at": "2026-10-24T11:00:58.868Z",
+      "actual_url": "https://www.marianos.com/d/coffee",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "f8ee86125ef8bc655510f767f0c8e7712edfab7e1ae69bc2d359613c6b900ce7",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/k-cups-coffee-pods/0400300001?taxonomyId=0400300001&fulfillment=all"
+        },
+        {
+          "name": "K-Cups & Pods",
+          "url": "/pl/k-cups-coffee-pods/0400300001?taxonomyId=0400300001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/nespresso-pods-capsules/0400300004?taxonomyId=0400300004&fulfillment=all"
+        },
+        {
+          "name": "Nespresso Pods & Capsules",
+          "url": "/pl/nespresso-pods-capsules/0400300004?taxonomyId=0400300004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/ground-coffee/0400300003?taxonomyId=0400300003&fulfillment=all"
+        },
+        {
+          "name": "Ground Coffee",
+          "url": "/pl/ground-coffee/0400300003?taxonomyId=0400300003&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/whole-coffee-beans/0400300002?taxonomyId=0400300002&fulfillment=all"
+        },
+        {
+          "name": "Whole Coffee Beans",
+          "url": "/pl/whole-coffee-beans/0400300002?taxonomyId=0400300002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/instant-coffee/0400300010?taxonomyId=0400300010&fulfillment=all"
+        },
+        {
+          "name": "Instant Coffee",
+          "url": "/pl/instant-coffee/0400300010?taxonomyId=0400300010&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/seasonal-holiday-flavored-coffee-creamer/0400300005?taxonomyId=0400300005&fulfillment=all"
+        },
+        {
+          "name": "Seasonal & Holiday Flavored Coffee & Creamer",
+          "url": "/pl/seasonal-holiday-flavored-coffee-creamer/0400300005?taxonomyId=0400300005&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cold-brew-iced-bottled-coffee/0400300009?taxonomyId=0400300009&fulfillment=al"
+        },
+        {
+          "name": "Cold Brew, Iced & Bottled Coffee",
+          "url": "/pl/cold-brew-iced-bottled-coffee/0400300009?taxonomyId=0400300009&fulfillment=al"
+        },
+        {
+          "name": "",
+          "url": "/pl/espresso-coffee/0400300007?taxonomyId=0400300007&fulfillment=all"
+        },
+        {
+          "name": "Espresso Coffee",
+          "url": "/pl/espresso-coffee/0400300007?taxonomyId=0400300007&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/decaffeinated-coffee/0400300006?taxonomyId=0400300006&fulfillment=all"
+        },
+        {
+          "name": "Decaffeinated Coffee",
+          "url": "/pl/decaffeinated-coffee/0400300006?taxonomyId=0400300006&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/coffee-creamers-flavoring-syrups/0400300008?taxonomyId=0400300008&fulfillment=all"
+        },
+        {
+          "name": "Coffee Creamers & Flavoring Syrups",
+          "url": "/pl/coffee-creamers-flavoring-syrups/0400300008?taxonomyId=0400300008&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/filters/2801200002?taxonomyId=2801200002&fulfillment=all"
+        },
+        {
+          "name": "Coffee Filters",
+          "url": "/pl/filters/2801200002?taxonomyId=2801200002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/coffee-makers/2800700009?taxonomyId=2800700009&fulfillment=all"
+        },
+        {
+          "name": "Coffee & Espresso Machines",
+          "url": "/pl/coffee-makers/2800700009?taxonomyId=2800700009&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Simple%20Truth%20Organic&fulfillment=all"
+        },
+        {
+          "name": "Simple Truth",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Simple%20Truth%20Organic&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Private%20Selection&fulfillment=all"
+        },
+        {
+          "name": "Private Selection",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Private%20Selection&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "Kroger",
+          "url": "/pl/coffee/04003?taxonomyId=04003&brandName=Kroger&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Candy",
+      "url": "https://www.marianos.com/d/candy",
+      "index": 14,
+      "observed_at": "2026-10-24T11:01:01.309Z",
+      "actual_url": "https://www.marianos.com/d/candy",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "19c3f0cf4e9d602b0deed8488a8cf95c271ee4312290d7931e2c58e8ad591660",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/chocolate/23001?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Chocolate",
+          "url": "/pl/chocolate/23001?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/gum/23002?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Gum & Mints",
+          "url": "/pl/gum/23002?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/gummychewycandy/23003?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Chewy & Gummy",
+          "url": "/pl/gummychewycandy/23003?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/hard-candy/23004?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Hard Candy & Lollipops",
+          "url": "/pl/hard-candy/23004?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/healthieroptions/23009?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Healthier Options",
+          "url": "/pl/healthieroptions/23009?searchType=mktg%20attribute&monet=true&pzn=relevance&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&price=0.36-5.00&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&brandName=Private%20Selection&fulfillment=all"
+        },
+        {
+          "name": "Private Selection",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&brandName=Private%20Selection&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "Kroger Brand",
+          "url": "/pl/candy/23?facets=true&pzn=relevance&taxonomyId=23&brandName=Kroger&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Beer Wine Liquor",
+      "url": "https://www.marianos.com/d/beer-wine-liquor",
+      "index": 15,
+      "observed_at": "2026-10-24T11:01:04.144Z",
+      "actual_url": "https://www.marianos.com/d/beer-wine-liquor",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "a1cdcedb81d3a6fb9f185369e3eafc7e6126a42d103b9e0584e7c68c75a9300b",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/craft-beer/08145"
+        },
+        {
+          "name": "Craft Beer",
+          "url": "/pl/craft-beer/08145"
+        },
+        {
+          "name": "",
+          "url": "/pl/American-Lager-Beer/08119?pzn=relevance"
+        },
+        {
+          "name": "American Lager",
+          "url": "/pl/American-Lager-Beer/08119?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/Import-Beer/08190?pzn=relevance"
+        },
+        {
+          "name": "Imported Beer",
+          "url": "/pl/Import-Beer/08190?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/hard-seltzers/08183?pzn=relevance"
+        },
+        {
+          "name": "Hard Seltzers",
+          "url": "/pl/hard-seltzers/08183?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/hard-teas-hard-lemonades/08191?pzn=relevance"
+        },
+        {
+          "name": "Hard Teas & Lemonades",
+          "url": "/pl/hard-teas-hard-lemonades/08191?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/champagne-sparkling-wine/08180"
+        },
+        {
+          "name": "Champagne & Sparkling Wine",
+          "url": "/pl/champagne-sparkling-wine/08180"
+        },
+        {
+          "name": "",
+          "url": "/pl/rose-blush-wine/08181"
+        },
+        {
+          "name": "Rose and Blush Wine",
+          "url": "/pl/rose-blush-wine/08181"
+        },
+        {
+          "name": "",
+          "url": "/pl/box-wine/08182"
+        },
+        {
+          "name": "Box Wine",
+          "url": "/pl/box-wine/08182"
+        },
+        {
+          "name": "",
+          "url": "/pl/desserts-vermouth-wine/08185"
+        },
+        {
+          "name": "Dessert Wines & Vermouth",
+          "url": "/pl/desserts-vermouth-wine/08185"
+        },
+        {
+          "name": "",
+          "url": "/pl/spirits-liquor/08121"
+        },
+        {
+          "name": "Liquor",
+          "url": "/pl/spirits-liquor/08121"
+        },
+        {
+          "name": "",
+          "url": "/pl/ready-to-drink-cocktails/08193?pzn=relevance"
+        },
+        {
+          "name": "Ready-to-Drink Cocktails",
+          "url": "/pl/ready-to-drink-cocktails/08193?pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/non-alcoholic-beer-wine/08184"
+        },
+        {
+          "name": "Non-Alcoholic",
+          "url": "/pl/non-alcoholic-beer-wine/08184"
+        },
+        {
+          "name": "",
+          "url": "/pl/wine-and-bar-essentials/40008"
+        },
+        {
+          "name": "Bar & Wine Accessories",
+          "url": "/pl/wine-and-bar-essentials/40008"
+        },
+        {
+          "name": "",
+          "url": "/pl/cocktailmixers/08189?taxonomyId=08189&fulfillment=all"
+        },
+        {
+          "name": "Mixers",
+          "url": "/pl/cocktailmixers/08189?taxonomyId=08189&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/beer-wine-liquor/08"
+        },
+        {
+          "name": "",
+          "url": "/pl/beer-wine-liquor-mixers/08?taxonomyId=08&brandName=Simple%20Truth%7CSimple%20Truth%20Organic&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Health",
+      "url": "https://www.marianos.com/d/health",
+      "index": 16,
+      "observed_at": "2026-10-24T11:01:38.889Z",
+      "actual_url": "https://www.marianos.com/d/health",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "77af68b7de79de4f89e6c49e848d80199a8a78a128c2ca79cbcd0e463b52c4cf",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/cold-cough-flu/22011?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Cold, Cough & Flu",
+          "url": "/pl/cold-cough-flu/22011?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/allergy-sinus/22012?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Allergy & Sinus",
+          "url": "/pl/allergy-sinus/22012?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/pain-fever/22005?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Pain & Fever",
+          "url": "/pl/pain-fever/22005?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/children-s-medicine/22014?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Children's Medicine",
+          "url": "/pl/children-s-medicine/22014?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/vitamins-supplements/22013?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "Vitamins & Supplements",
+          "url": "/pl/vitamins-supplements/22013?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/immune-system-supports/2201100003?fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Immune Support",
+          "url": "/pl/immune-system-supports/2201100003?fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/digestive-health-nausea/22001?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Digestive Health & Nausea",
+          "url": "/pl/digestive-health-nausea/22001?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/diet-adult-nutrition/22010?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Protein Shakes & Powders",
+          "url": "/pl/diet-adult-nutrition/22010?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sleep-aids/22006?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Sleep Aids",
+          "url": "/pl/sleep-aids/22006?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/first-aid/22004?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "First Aid",
+          "url": "/pl/first-aid/22004?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/all/00?fulfillment=all&query=sunscreen&searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Sunscreen",
+          "url": "/pl/all/00?fulfillment=all&query=sunscreen&searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/energy-stimulants/22008?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Energy & Stimulants",
+          "url": "/pl/energy-stimulants/22008?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/eye-care/22002?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Eye Care",
+          "url": "/pl/eye-care/22002?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/foot-care/22007?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Foot Care",
+          "url": "/pl/foot-care/22007?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/home-healthcare-solutions/22009?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Home Healthcare Solutions",
+          "url": "/pl/home-healthcare-solutions/22009?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sexual-health/22015?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Sexual Health",
+          "url": "/pl/sexual-health/22015?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/health-wellness/22?fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/health-wellness/22?fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/health-wellness/22?fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/health-wellness/22?brandName=Kroger&facets=true&monet=false"
+        },
+        {
+          "name": "Kroger",
+          "url": "/pl/health-wellness/22?brandName=Kroger&facets=true&monet=false"
+        },
+        {
+          "name": "",
+          "url": "/pl/health-wellness/22?brandName=Simple%20Truth&facets=true&monet=false"
+        },
+        {
+          "name": "Simple Truth",
+          "url": "/pl/health-wellness/22?brandName=Simple%20Truth&facets=true&monet=false"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Personal Care",
+      "url": "https://www.marianos.com/d/personal-care",
+      "index": 17,
+      "observed_at": "2026-10-24T11:01:41.425Z",
+      "actual_url": "https://www.marianos.com/d/personal-care",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "59f5caf065016d2eaee9e7d621674ce0abf59f900c72ccf75a12a7c3ed9138e6",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/oral-care/21003?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Oral Care",
+          "url": "/pl/oral-care/21003?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/hand-soap-sanitizer/21007?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Hand Soap & Sanitizers",
+          "url": "/pl/hand-soap-sanitizer/21007?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/bath-shower/21013?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Bath & Shower",
+          "url": "/pl/bath-shower/21013?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/face‐care/20002?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20002&fulfillment=all"
+        },
+        {
+          "name": "Skin Care",
+          "url": "/pl/face‐care/20002?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/travel-size/20007?query=travel%20size&searchType=default_search&taxonomyId=20007&fulfillment=all"
+        },
+        {
+          "name": "Travel Size Products",
+          "url": "/pl/travel-size/20007?query=travel%20size&searchType=default_search&taxonomyId=20007&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/hair-care/21002?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Hair Care",
+          "url": "/pl/hair-care/21002?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/body-moisturizers/21006?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Body Lotion & Moisturizers",
+          "url": "/pl/body-moisturizers/21006?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/deodorants-antiperspirant/21001?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Deodorants & Antiperspirants",
+          "url": "/pl/deodorants-antiperspirant/21001?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/feminine-care/21009?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Feminine Care",
+          "url": "/pl/feminine-care/21009?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/shaving-grooming/21004?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "Shaving & Hair Removal",
+          "url": "/pl/shaving-grooming/21004?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/mens-grooming/21016?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=21016&fulfillment=all"
+        },
+        {
+          "name": "Men’s Grooming",
+          "url": "/pl/mens-grooming/21016?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=21016&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/incontinence/21008?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Incontinence",
+          "url": "/pl/incontinence/21008?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sunning-%20-tanning/21011?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "Sun Care & Sunless Tanning",
+          "url": "/pl/sunning-%20-tanning/21011?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/sexual-health/21010?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "Sexual Health",
+          "url": "/pl/sexual-health/21010?searchType=mktg attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/beauty-personalcare/18001?pzn=relevance&searchType=mktg%20attribute&taxonomyId=18001&nutrition=Organic%2CLive%20Naturally&fulfillment=all"
+        },
+        {
+          "name": "Natural & Organic",
+          "url": "/pl/beauty-personalcare/18001?pzn=relevance&searchType=mktg%20attribute&taxonomyId=18001&nutrition=Organic%2CLive%20Naturally&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/personal-care/21?fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/oral-care/21003?searchType=mktg%20attribute&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/personal-care/21?taxonomyId=21&brandName=Simple%20Truth&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/personal-care/21?taxonomyId=21&brandName=Kroger&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Beauty",
+      "url": "https://www.marianos.com/d/beauty",
+      "index": 18,
+      "observed_at": "2026-10-24T11:01:47.873Z",
+      "actual_url": "https://www.marianos.com/d/beauty",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "34dc7f2e818cb843ff640d170813db33c9ab393c21da6dd37e5e8485380e636b",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "Tools & AccessoriesShop Tools & Accessories",
+          "url": "/pl/hair-styling-tools-appliances/2000400008?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=2000400008&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/textured-hair/2000400006"
+        },
+        {
+          "name": "",
+          "url": "/pl/hair‐care/20004?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20004&fulfillment=all"
+        },
+        {
+          "name": "Hair Care",
+          "url": "/pl/hair‐care/20004?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/face‐care/20002?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20002&fulfillment=all"
+        },
+        {
+          "name": "Skin Care",
+          "url": "/pl/face‐care/20002?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/makeup/20001?taxonomyId=20001&fulfillment=all"
+        },
+        {
+          "name": "Makeup",
+          "url": "/pl/makeup/20001?taxonomyId=20001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/bath-body/20005"
+        },
+        {
+          "name": "Bath & Body",
+          "url": "/pl/bath-body/20005"
+        },
+        {
+          "name": "",
+          "url": "/d/personal-care"
+        },
+        {
+          "name": "Personal Care",
+          "url": "/d/personal-care"
+        },
+        {
+          "name": "",
+          "url": "/pl/korean-skincare/2000200012"
+        },
+        {
+          "name": "Korean Skin Care",
+          "url": "/pl/korean-skincare/2000200012"
+        },
+        {
+          "name": "",
+          "url": "/pl/sun-tanning/20006?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20006&fulfillment=all"
+        },
+        {
+          "name": "Sun Care",
+          "url": "/pl/sun-tanning/20006?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20006&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fragrance/20003"
+        },
+        {
+          "name": "Fragrance",
+          "url": "/pl/fragrance/20003"
+        },
+        {
+          "name": "",
+          "url": "/pl/nails/2000100003"
+        },
+        {
+          "name": "Nails",
+          "url": "/pl/nails/2000100003"
+        },
+        {
+          "name": "",
+          "url": "/pl/beauty‐personal‐care/18001"
+        },
+        {
+          "name": "Natural & Organic",
+          "url": "/pl/beauty‐personal‐care/18001"
+        },
+        {
+          "name": "",
+          "url": "/pl/minis‐travel‐size/20007?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20007&fulfillment=all"
+        },
+        {
+          "name": "Mini & Travel‐Size",
+          "url": "/pl/minis‐travel‐size/20007?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20007&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/Textured%20Hair/2000400006?taxonomyId=2000400006&monet=false&fulfilment=all"
+        },
+        {
+          "name": "Textured Hair Care",
+          "url": "/pl/Textured%20Hair/2000400006?taxonomyId=2000400006&monet=false&fulfilment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/hair-color/2100200019"
+        },
+        {
+          "name": "Hair Color",
+          "url": "/pl/hair-color/2100200019"
+        },
+        {
+          "name": "",
+          "url": "/pl/personalcare/21?pzn=relevance&searchType=mktg%20attribute&taxonomyId=21&fulfillment=all"
+        },
+        {
+          "name": "Beauty Deals",
+          "url": "/pl/personalcare/21?pzn=relevance&searchType=mktg%20attribute&taxonomyId=21&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/beauty/20?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/beauty/20?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=20&fulfillment=all"
+        },
+        {
+          "name": "Face WashGentle skin cleansing, plus wipes and makeup.Shop Now",
+          "url": "/pl/facial-cleansers/2000200002?monet=true&pzn=relevance&searchType=mktg+attribute&taxonomyId=2000200002&fulfillment=all"
+        },
+        {
+          "name": "MoisturizersNourish and support your skin’s health.Shop Now",
+          "url": "/pl/facial-moisturizers/2000200001?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=2000200001&fulfillment=all"
+        },
+        {
+          "name": "Lip Essentials",
+          "url": "/pl/lips/2000100006?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=2000100006&fulfillment=all"
+        },
+        {
+          "name": "Nail Needs",
+          "url": "/pl/nails/2000100003?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=2000100003&fulfillment=all"
+        },
+        {
+          "name": "Wipes & Removers",
+          "url": "/pl/face-wipes-makeup-remover/2000100005?monet=true&pzn=relevance&searchType=mktg%20attribute&taxonomyId=2000100005&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/beauty/20?taxonomyId=20&brandName=Kroger&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Baby",
+      "url": "https://www.marianos.com/d/baby",
+      "index": 19,
+      "observed_at": "2026-10-24T11:01:50.956Z",
+      "actual_url": "https://www.marianos.com/d/baby",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "8e16dd4294d42468a9dd0f97c27a4ec85d991b20fa1b841367d31a8a38bb2900",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/diapers-training-pants/10003"
+        },
+        {
+          "name": "Diapers & Training Pants",
+          "url": "/pl/diapers-training-pants/10003"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-wipes/10099"
+        },
+        {
+          "name": "Wipes",
+          "url": "/pl/baby-wipes/10099"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-bath-skincare/10005"
+        },
+        {
+          "name": "Bath & Skin Care",
+          "url": "/pl/baby-bath-skincare/10005"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-formula/10093"
+        },
+        {
+          "name": "Baby Formula",
+          "url": "/pl/baby-formula/10093"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-food-snacks/10001?taxonomyId=10001&fulfillment=all"
+        },
+        {
+          "name": "Baby Food & Snacks",
+          "url": "/pl/baby-food-snacks/10001?taxonomyId=10001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-essentials/10006"
+        },
+        {
+          "name": "Baby Essentials",
+          "url": "/pl/baby-essentials/10006"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby-gear-activity-toys/10094"
+        },
+        {
+          "name": "Baby Gear, Activities & Toys",
+          "url": "/pl/baby-gear-activity-toys/10094"
+        },
+        {
+          "name": "Shop All Formula",
+          "url": "/pl/baby-formula/10093"
+        },
+        {
+          "name": "",
+          "url": "/pl/milk-based-formula/1009300788?query=formula&searchType=default_search&taxonomyId=1009300788&fulfillment=all"
+        },
+        {
+          "name": "Milk Based",
+          "url": "/pl/milk-based-formula/1009300788?query=formula&searchType=default_search&taxonomyId=1009300788&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/soy-plant-based-formula/1009300789?query=formula&searchType=default_search&taxonomyId=1009300789&fulfillment=all"
+        },
+        {
+          "name": "Soy & Plant Based",
+          "url": "/pl/soy-plant-based-formula/1009300789?query=formula&searchType=default_search&taxonomyId=1009300789&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/sensitive-gentle-formula/1009300790?query=formula&searchType=default_search&taxonomyId=1009300790&fulfillment=all"
+        },
+        {
+          "name": "Sensitive & Gentle",
+          "url": "/pl/sensitive-gentle-formula/1009300790?query=formula&searchType=default_search&taxonomyId=1009300790&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/hypo-allergenicformula/1009300791?query=formula&searchType=default_search&taxonomyId=1009300791&fulfillment=all"
+        },
+        {
+          "name": "Hypoallergenic",
+          "url": "/pl/hypo-allergenicformula/1009300791?query=formula&searchType=default_search&taxonomyId=1009300791&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/powder-formula/1009300786?query=formula&searchType=default_search&taxonomyId=1009300786&fulfillment=all"
+        },
+        {
+          "name": "Powder",
+          "url": "/pl/powder-formula/1009300786?query=formula&searchType=default_search&taxonomyId=1009300786&fulfillment=all"
+        },
+        {
+          "name": "Shop 4-6 Months",
+          "url": "/pl/stage-1-baby-food/1000100011"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby/10?taxonomyId=10&brandName=Simple%20Truth&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/baby/10?taxonomyId=10&brandName=Comforts&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Household",
+      "url": "https://www.marianos.com/d/household",
+      "index": 20,
+      "observed_at": "2026-10-24T11:01:59.508Z",
+      "actual_url": "https://www.marianos.com/d/household",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "be83885e5ffd81f8c1daabaa83850db15fc9b6f8b63dbe8eb8afbf6910b9fa77",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/laundry/26025?taxonomyId=26025&fulfillment=all"
+        },
+        {
+          "name": "Laundry Detergents",
+          "url": "/pl/laundry/26025?taxonomyId=26025&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/dishwashing-needs/26005?taxonomyId=26005&fulfillment=all"
+        },
+        {
+          "name": "Dishwashing Needs",
+          "url": "/pl/dishwashing-needs/26005?taxonomyId=26005&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cleaning-supplies/26004?taxonomyId=26004&fulfillment=all"
+        },
+        {
+          "name": "Cleaning Supplies",
+          "url": "/pl/cleaning-supplies/26004?taxonomyId=26004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/paper-towels/2602400003?taxonomyId=2602400003&fulfillment=all"
+        },
+        {
+          "name": "Paper Towels",
+          "url": "/pl/paper-towels/2602400003?taxonomyId=2602400003&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/toilet-paper/2602400001?taxonomyId=2602400001&fulfillment=all"
+        },
+        {
+          "name": "Toilet Paper",
+          "url": "/pl/toilet-paper/2602400001?taxonomyId=2602400001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/flushable-wipes/2602400002?taxonomyId=2602400002&fulfillment=all"
+        },
+        {
+          "name": "Flushable Wipes",
+          "url": "/pl/flushable-wipes/2602400002?taxonomyId=2602400002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fabric-softener/2602500005?taxonomyId=2602500005&fulfillment=all"
+        },
+        {
+          "name": "Fabric Softeners",
+          "url": "/pl/fabric-softener/2602500005?taxonomyId=2602500005&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/bleach/2602500002?taxonomyId=2602500002&fulfillment=all"
+        },
+        {
+          "name": "Bleach",
+          "url": "/pl/bleach/2602500002?taxonomyId=2602500002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/scent-booster/2602500011?taxonomyId=2602500011&fulfillment=all"
+        },
+        {
+          "name": "Scent Boosters",
+          "url": "/pl/scent-booster/2602500011?taxonomyId=2602500011&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/air-fresheners/26001?taxonomyId=26001&fulfillment=all"
+        },
+        {
+          "name": "Air Fresheners",
+          "url": "/pl/air-fresheners/26001?taxonomyId=26001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/facial-tissue/2602400004?taxonomyId=2602400004&fulfillment=all"
+        },
+        {
+          "name": "Hand & Facial Tissue",
+          "url": "/pl/facial-tissue/2602400004?taxonomyId=2602400004&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/trash-bags/26020?taxonomyId=26020&fulfillment=all"
+        },
+        {
+          "name": "Trash Bags",
+          "url": "/pl/trash-bags/26020?taxonomyId=26020&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/baking-paper-foils/26019?taxonomyId=26019&fulfillment=all"
+        },
+        {
+          "name": "Baking Paper & Foils",
+          "url": "/pl/baking-paper-foils/26019?taxonomyId=26019&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/disposable-tableware/26018?taxonomyId=26018&fulfillment=all"
+        },
+        {
+          "name": "Disposable Tableware",
+          "url": "/pl/disposable-tableware/26018?taxonomyId=26018&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/food-storage/26006?taxonomyId=26006&fulfillment=all"
+        },
+        {
+          "name": "Food Storage Bags & Containers",
+          "url": "/pl/food-storage/26006?taxonomyId=26006&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/brooms-mops-dusters/26022?taxonomyId=26022&fulfillment=all"
+        },
+        {
+          "name": "Brooms, Mops & Dusters",
+          "url": "/pl/brooms-mops-dusters/26022?taxonomyId=26022&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/vacuums-floor-care/26023?taxonomyId=26023&fulfillment=all"
+        },
+        {
+          "name": "Vacuums & Floor Care",
+          "url": "/pl/vacuums-floor-care/26023?taxonomyId=26023&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/pest-control/26021?taxonomyId=26021&fulfillment=all"
+        },
+        {
+          "name": "Pest Control",
+          "url": "/pl/pest-control/26021?taxonomyId=26021&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/cleaning-and-household/26?searchType=natural&facets=true"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/cleaning-household/18011"
+        },
+        {
+          "name": "",
+          "url": "/pl/cleaning-and-household/26?pzn=relevance&taxonomyId=26&brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "Kroger Brand",
+          "url": "/pl/cleaning-and-household/26?pzn=relevance&taxonomyId=26&brandName=Kroger&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cleaning-and-household/26?pzn=relevance&taxonomyId=26&brandName=Simple%20Truth&fulfillment=all"
+        },
+        {
+          "name": "Simple Truth",
+          "url": "/pl/cleaning-and-household/26?pzn=relevance&taxonomyId=26&brandName=Simple%20Truth&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Kitchen Dining",
+      "url": "https://www.marianos.com/d/kitchen-dining",
+      "index": 21,
+      "observed_at": "2026-10-24T11:02:01.970Z",
+      "actual_url": "https://www.marianos.com/d/kitchen-dining",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "a6f4aabf8913b5237340c4950839462017dc8479ccc0d9e1688f568ff4eaf954",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "Home Essentials",
+          "url": "/d/home-electronics"
+        },
+        {
+          "name": "",
+          "url": "/pl/kitchen-appliances/28005"
+        },
+        {
+          "name": "Kitchen Appliances",
+          "url": "/pl/kitchen-appliances/28005"
+        },
+        {
+          "name": "",
+          "url": "/pl/kitchen-tools-&-gadgets/28001?taxonomyId=28001&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Utensils & Gadgets",
+          "url": "/pl/kitchen-tools-&-gadgets/28001?taxonomyId=28001&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/bakeware/28009?taxonomyId=28009&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Bakeware",
+          "url": "/pl/bakeware/28009?taxonomyId=28009&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/kitchen-storage-organization/28002?taxonomyId=28002&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Storage & Organization",
+          "url": "/pl/kitchen-storage-organization/28002?taxonomyId=28002&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/kitchen-appliances/28003?taxonomyId=28007&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Cookware",
+          "url": "/pl/kitchen-appliances/28003?taxonomyId=28007&monet=TRUE&fulfillment=all&pzn=relevance"
+        },
+        {
+          "name": "Kitchen AppliancesExplore tools, gadgets and more.Let’s Go",
+          "url": "/pl/kitchen-appliances/28005"
+        },
+        {
+          "name": "",
+          "url": "/pl/electric-coffee-makers/2800400007"
+        },
+        {
+          "name": "Coffee Makers",
+          "url": "/pl/electric-coffee-makers/2800400007"
+        },
+        {
+          "name": "",
+          "url": "/pl/blenders-juicers/2800500002"
+        },
+        {
+          "name": "Blenders",
+          "url": "/pl/blenders-juicers/2800500002"
+        },
+        {
+          "name": "",
+          "url": "/pl/toasters-air-fryers/2800500004"
+        },
+        {
+          "name": "Air Fryers",
+          "url": "/pl/toasters-air-fryers/2800500004"
+        },
+        {
+          "name": "",
+          "url": "/pl/rice-slow-cookers/2800500001"
+        },
+        {
+          "name": "Slow Cookers",
+          "url": "/pl/rice-slow-cookers/2800500001"
+        },
+        {
+          "name": "",
+          "url": "/pl/electric-griddles-waffle-makers/2800500005"
+        },
+        {
+          "name": "Griddles & Waffle Makers",
+          "url": "/pl/electric-griddles-waffle-makers/2800500005"
+        },
+        {
+          "name": "",
+          "url": "/pl/microwaves/2800500007"
+        },
+        {
+          "name": "Microwaves",
+          "url": "/pl/microwaves/2800500007"
+        },
+        {
+          "name": "Pots & PansShop cookware essentials for everyday use.View More",
+          "url": "/pl/pots-pans/28003"
+        },
+        {
+          "name": "Smart Way",
+          "url": "/pl/cleaning-andhousehold/26?monet=false&brandName=Smart%20Way&taxonomyId=26&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Pet Supplies",
+      "url": "https://www.marianos.com/d/pet-supplies",
+      "index": 22,
+      "observed_at": "2026-10-24T11:02:07.123Z",
+      "actual_url": "https://www.marianos.com/d/pet-supplies",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "feacf6119a2a20657143fbae4aec8592fee71f4c936dfec6fc95dad22e9588cf",
+      "category_links": [
+        {
+          "name": "Shop All Departments",
+          "url": "/d/shop-all-departments"
+        },
+        {
+          "name": "",
+          "url": "/pl/bird-supplies/27026?facets=true&pzn=relevance&taxonomyId=27026&fulfillment=all"
+        },
+        {
+          "name": "Bird",
+          "url": "/pl/bird-supplies/27026?facets=true&pzn=relevance&taxonomyId=27026&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fish-supplies/27027?pzn=relevance&taxonomyId=27027&fulfillment=all"
+        },
+        {
+          "name": "Fish",
+          "url": "/pl/fish-supplies/27027?pzn=relevance&taxonomyId=27027&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/small-animal-supplies/27029?pzn=relevance&taxonomyId=27029&fulfillment=all"
+        },
+        {
+          "name": "Small Animals",
+          "url": "/pl/small-animal-supplies/27029?pzn=relevance&taxonomyId=27029&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/pet/27?facets=true&pzn=relevance"
+        },
+        {
+          "name": "",
+          "url": "/pl/dry-dog-food/2701700002?taxonomyId=2701700002&fulfillment=all"
+        },
+        {
+          "name": "Dry Dog Food",
+          "url": "/pl/dry-dog-food/2701700002?taxonomyId=2701700002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/wet-dog-food/2701700001?taxonomyId=2701700001&fulfillment=all"
+        },
+        {
+          "name": "Wet Dog Food",
+          "url": "/pl/wet-dog-food/2701700001?taxonomyId=2701700001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/dog-treats/27018?taxonomyId=27018&fulfillment=all"
+        },
+        {
+          "name": "Dog Treats",
+          "url": "/pl/dog-treats/27018?taxonomyId=27018&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-frozen-dog-food/2701700003?taxonomyId=2701700003&fulfillment=all"
+        },
+        {
+          "name": "Fresh & Frozen Dog Food",
+          "url": "/pl/fresh-frozen-dog-food/2701700003?taxonomyId=2701700003&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/dogsupplies/27020?taxonomyId=27020&fulfillment=all"
+        },
+        {
+          "name": "Dog Supplies",
+          "url": "/pl/dogsupplies/27020?taxonomyId=27020&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/dog-toys/27019?taxonomyId=27019&fulfillment=all"
+        },
+        {
+          "name": "Dog Toys",
+          "url": "/pl/dog-toys/27019?taxonomyId=27019&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/dry-cat-food/2702100001?taxonomyId=2702100001&fulfillment=all"
+        },
+        {
+          "name": "Dry Cat Food",
+          "url": "/pl/dry-cat-food/2702100001?taxonomyId=2702100001&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/wet-cat-food/2702100002?taxonomyId=2702100002&fulfillment=all"
+        },
+        {
+          "name": "Wet Cat Food",
+          "url": "/pl/wet-cat-food/2702100002?taxonomyId=2702100002&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cat-treats/27022?taxonomyId=27022&fulfillment=all"
+        },
+        {
+          "name": "Cat Treats",
+          "url": "/pl/cat-treats/27022?taxonomyId=27022&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/fresh-frozen-cat-food/2702100003?taxonomyId=2702100003&fulfillment=all"
+        },
+        {
+          "name": "Fresh & Frozen Cat Food",
+          "url": "/pl/fresh-frozen-cat-food/2702100003?taxonomyId=2702100003&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cat-litter-accessories/27023?taxonomyId=27023&fulfillment=all"
+        },
+        {
+          "name": "Cat Litter & Accessories ",
+          "url": "/pl/cat-litter-accessories/27023?taxonomyId=27023&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cat-toys/27024?taxonomyId=27024&fulfillment=all"
+        },
+        {
+          "name": "Cat Toys",
+          "url": "/pl/cat-toys/27024?taxonomyId=27024&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/cat-supplies/ 27025?taxonomyId= 27025&fulfillment=al l"
+        },
+        {
+          "name": "Cat Supplies",
+          "url": "/pl/cat-supplies/ 27025?taxonomyId= 27025&fulfillment=al l"
+        },
+        {
+          "name": "",
+          "url": "/pl/small-animal-supplies/27029?taxonomyId=27029&fulfillment=all"
+        },
+        {
+          "name": "Small Pet",
+          "url": "/pl/small-animal-supplies/27029?taxonomyId=27029&fulfillment=all"
+        },
+        {
+          "name": "",
+          "url": "/pl/bird-supplies/27026?taxonomyId=27026&fulfillment=all"
+        },
+        {
+          "name": "Bird Care",
+          "url": "/pl/bird-supplies/27026?taxonomyId=27026&fulfillment=all"
+        },
+        {
+          "name": "Shop All",
+          "url": "/pl/bird-supplies/27026?facets=true&pzn=relevance&taxonomyId=27026&fulfillment=all"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Candles Home Fragrances",
+      "url": "https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance",
+      "index": 23,
+      "observed_at": "2026-10-24T11:02:12.261Z",
+      "actual_url": "https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "3d123376ec9fa9152b00d505e5d7a8e5cb0d70245480e20835ca59e331fa9ad6",
+      "category_links": [
+        {
+          "name": "Home Decor",
+          "url": "/pl/home-decor/32"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Batteries",
+      "url": "https://www.marianos.com/pl/batteries/26003?pzn=relevance",
+      "index": 24,
+      "observed_at": "2026-10-24T11:02:22.565Z",
+      "actual_url": "https://www.marianos.com/pl/batteries/26003?pzn=relevance",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "a83165b685ec05eb984ac0480eb4afb332e665fb8ebc4edf132da0d62ff12e86",
+      "category_links": [
+        {
+          "name": "Cleaning and Household",
+          "url": "/pl/cleaning-and-household/26"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "Light Bulbs",
+      "url": "https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance",
+      "index": 25,
+      "observed_at": "2026-10-24T11:02:27.923Z",
+      "actual_url": "https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "df59f5ce38e96a79d405f2fcd29455fd24004df124beced7e5b137ed6d88ec89",
+      "category_links": [
+        {
+          "name": "Cleaning and Household",
+          "url": "/pl/cleaning-and-household/26"
+        }
+      ],
+      "complete": false
+    },
+    {
+      "name": "School Office",
+      "url": "https://www.marianos.com/pl/school-office/35?pzn=relevance",
+      "index": 26,
+      "observed_at": "2026-10-24T11:02:33.196Z",
+      "actual_url": "https://www.marianos.com/pl/school-office/35?pzn=relevance",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "68567685d0bcdb529f077eeb50ce2cc5d50719d6c734bf517bf3945a324661d2",
+      "category_links": [],
+      "complete": false
+    },
+    {
+      "name": "Hardware Home Improvement",
+      "url": "https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance",
+      "index": 27,
+      "observed_at": "2026-10-24T11:02:37.935Z",
+      "actual_url": "https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance",
+      "status": "observed_requires_traversal",
+      "store_context_verified": true,
+      "snapshot_sha256": "24b3c16bbab8663fafc8ff00a871d33a75c502e158b8d562b2f7c500bdc91c43",
+      "category_links": [],
+      "complete": false
+    }
+  ],
+  "route_resolutions": [
+    {
+      "name": "Dairy",
+      "original_url": "https://www.marianos.com/d/dairy",
+      "resolved_url": "https://www.marianos.com/pl/dairy-eggs/02",
+      "method": "retailer breadcrumb navigation",
+      "snapshot_sha256": "9816319d2fd73ffd71bd1d66948d05e3b31d8722bb477219be9b3e4899c535e8",
+      "complete": false
+    },
+    {
+      "name": "Breakfast",
+      "original_url": "https://www.marianos.com/d/breakfast",
+      "resolved_url": "https://www.marianos.com/pl/breakfast/03",
+      "method": "retailer breadcrumb navigation",
+      "snapshot_sha256": "148619932058364e12009301295b5311bf9d68c0edd8085728826672da917f3e",
+      "complete": false
+    }
+  ],
+  "limitations": [
+    "Root route checks do not establish pagination or descendant completeness.",
+    "Initial snapshots can show loading content; not classified as complete.",
+    "One AA Batteries leaf pilot is separate from full-root acceptance."
+  ],
+  "listing_roots_reconciled": 1,
+  "complete_product_export_roots": 0,
+  "listing_reconciliation_report": "BATTERIES_CATEGORY_RECONCILIATION.json"
+}

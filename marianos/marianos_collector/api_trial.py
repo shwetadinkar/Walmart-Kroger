@@ -84,6 +84,23 @@ def normalize(product, store_document, crawl_date):
            'image_url':image,'url':'https://www.marianos.com'+uri,'upc':upc}
     return make_record(raw,store,category,'',crawl_date)
 
+def _displayed_passages(text,value,fragments):
+    """Join complete displayed lines in source order; never clip a number or condition."""
+    if (not isinstance(fragments,list) or not fragments
+            or not all(isinstance(part,str) and bool(part.strip()) for part in fragments)
+            or value!='\n'.join(fragments)):return False
+    position=0
+    for part in fragments:
+        found=text.find(part,position)
+        while found>=0:
+            end=found+len(part)
+            if (found==0 or text[found-1]=='\n') and (end==len(text) or text[end]=='\n'):
+                position=end;break
+            found=text.find(part,found+1)
+        else:return False
+    return True
+
+
 def enrich(record, evidence, store_id):
     if evidence.get('store_id') != store_id or evidence.get('upc') != record['upc']:
         raise ValueError('WEBSITE_STORE_OR_UPC_MISMATCH')
@@ -95,7 +112,12 @@ def enrich(record, evidence, store_id):
     for field in ('ppm','sub_category','volume_deals_description','volume_deals_price',
                   'digital_deals_description','digital_deals_price'):
         value = evidence.get(field,'')
-        if value and (not isinstance(value,str) or value not in text):
+        literal=isinstance(value,str) and value in text
+        supplied=evidence.get('displayed_fragments')
+        if value and field in ('volume_deals_description','digital_deals_description'):
+            if isinstance(supplied,dict) and field in supplied:
+                literal=_displayed_passages(text,value,supplied[field])
+        if value and not literal:
             raise ValueError('VALUE_NOT_DISPLAYED')
         if value: result[field] = value
     if result['digital_deals_description'] and not re.search(r'clip|digital coupon|activat',result['digital_deals_description'],re.I):
