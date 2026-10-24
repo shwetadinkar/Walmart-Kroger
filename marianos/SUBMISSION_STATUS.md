@@ -1,3 +1,4 @@
+> **Continuation:** Linux container build and publication passed. Recovered website navigation is preserved in [continuation evidence](reports/2026-10-24-west-loop/CONTINUATION.md); full coverage and Azure execution remain unverified.
 > **Verified live update — 24 October 2026:** Official Kroger API verified West Loop location 53100508 / ZIP 60661. Real collection: 650 unique products; conservative export after conflict quarantine: 604. Website enrichment: 158 displayed PPM values and 29 volume descriptions in retained rows. See [API trial runbook](API_TRIAL_RUNBOOK.md). This is not complete 28-root or Azure acceptance proof. Older zero-live-data statements below describe the pre-API baseline.
 # Mariano's contest — compliance matrix and blockers (v0.2.0)
 

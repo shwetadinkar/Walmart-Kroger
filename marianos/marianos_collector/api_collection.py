@@ -85,9 +85,7 @@ def main(argv=None):
     budget=BudgetOpener(args.maximum_requests)
     client=KrogerClient(Credentials.from_environment(),opener=budget)
     if args.backend=='azure':
-        connection=os.environ.get('AZURE_STORAGE_CONNECTION_STRING','')
-        if not connection:parser.error('Azure storage connection must be supplied privately')
-        storage=AzureBlobStorage(connection,args.container)
+        storage=AzureBlobStorage.from_environment(args.container)
     else:storage=LocalStorage(args.output)
     with storage.locked(args.location_id):
         status=collect(client,storage,args.location_id,args.zipcode,args.run_id,TERMS,args.maximum_queries,args.target,args.canary_upc)

@@ -1,0 +1,8 @@
+{
+  "run_url": "https://github.com/shwetadinkar/Walmart-Kroger/actions/runs/40074405189",
+  "commit": "0b1959e50d5ce0f30a1eceb2de7ee54fb5241cf3",
+  "conclusion": "success",
+  "tests": 59,
+  "image": "ghcr.io/shwetadinkar/marianos58-collector@sha256:8a1385521ff06ac4b76c920374b992567e72e463ba355edfb4eb4e35cf3286c8",
+  "azure_deployed": false
+}

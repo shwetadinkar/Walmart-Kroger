@@ -50,7 +50,7 @@ Preflight's complete-category recovery simulations are **synthetic**, separate f
 
 Build the existing Dockerfile. `MARIANOS_MODE=api-trial` selects the official API collector with Azure Blob checkpoints. The default provider path remains unchanged. Scheduling a keyword trial does not establish complete-category collection.
 
-Still needed: Azure subscription/resource group/environment, image/registry, existing identity permissions, Key Vault secret URLs and Blob access. No resources or schedules were created. Azure CLI, Docker and Bicep compiler were unavailable locally. Template fields were checked against Microsoft's reference; compilation/build/deployment are unverified. No monthly cost is asserted without the actual region, resources and measured usage.
+Still needed: Azure subscription/resource group/environment, image/registry, existing identity permissions, Key Vault secret URLs and Blob access. No resources or schedules were created. Azure CLI and Docker were unavailable locally. The Linux image build and publication subsequently passed in GitHub Actions run 40074405189; see reports/2026-10-24-west-loop/CONTINUATION.md for the immutable digest. The Bicep compiler download timed out. Template fields were checked against Microsoft's reference; template compilation and Azure deployment remain unverified. No monthly cost is asserted without the actual region, resources and measured usage.
 
 ## Remaining final acceptance
 
