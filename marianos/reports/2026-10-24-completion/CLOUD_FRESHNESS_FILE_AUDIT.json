@@ -1,0 +1,82 @@
+{
+  "two_cloud_exports_verified": true,
+  "runs": [
+    {
+      "export_run": "4edc997d9bd8f04e2aae",
+      "azure_execution": "marianos-westloop-api-pilot-xq7rgog",
+      "records": 5,
+      "unique_upcs": 5,
+      "exact_22_string_fields": true,
+      "store_id": "53100508",
+      "zipcode": "60661",
+      "observed_start": "2026-10-24T15:30:33.187765+00:00",
+      "observed_end": "2026-10-24T15:30:33.187765+00:00",
+      "observed_within_execution": true,
+      "canonical_json_sha256": {
+        "products": "8ee4b598c789d0bec6bff79e631b33b2181c91ba6d2bf335a24fe33b86f5f0e4",
+        "provenance": "f6614f344fdaeb427fa6b1754097b277573f377826a4bc340902acdd39e6f5e5",
+        "validation": "0c3ce6b04f22fd795566847c46897d30b622139aac8de032a32cbb53b3ec3c56"
+      },
+      "copied_artifact_sha256": {
+        "products": "abb59fff895de73ca907090e46e3afead6759393e1b2c6f1bc4a9d46d5e2d6a4",
+        "provenance": "41596e87902f9d7ec0a1467d13c9af8296932a7218ee3ec1038851ee2aabd47c",
+        "validation": "5ec21a944aa13630d1b1119cbd45f766f8451a5338bde8345e4133d0512ffd42"
+      },
+      "ppm_observed": 0,
+      "submission_ready": false
+    },
+    {
+      "export_run": "dd2515fd18ef3c4214c3",
+      "azure_execution": "marianos-westloop-api-pilot-cvl8ue9",
+      "records": 5,
+      "unique_upcs": 5,
+      "exact_22_string_fields": true,
+      "store_id": "53100508",
+      "zipcode": "60661",
+      "observed_start": "2026-10-24T17:34:49.785703+00:00",
+      "observed_end": "2026-10-24T17:34:49.785703+00:00",
+      "observed_within_execution": true,
+      "canonical_json_sha256": {
+        "products": "8ee4b598c789d0bec6bff79e631b33b2181c91ba6d2bf335a24fe33b86f5f0e4",
+        "provenance": "b9883cd06c22a1222332a43f00dcf1bafa155ceb467117da939d4bd6121ad8fb",
+        "validation": "e67d191ce1a093f3657f978f4e8d685aa49cbaec8e1fa0a6ff0bd8997d96a047"
+      },
+      "copied_artifact_sha256": {
+        "products": "861bf3d4fa487508a0a467b6f05bd524078e1742fd04b9fe54a3fad58dd89c71",
+        "provenance": "b146d195d8aff3ca5d48939e5a1c618fc824f3d5c3374b0d9abbde75e63e5261",
+        "validation": "cdf8899f4cefa3ad7b2b15ca38bfed5c21661186f755e1bd42fc69b1017555f7"
+      },
+      "ppm_observed": 0,
+      "submission_ready": false
+    }
+  ],
+  "baseline_records": 650,
+  "baseline_cloud_json_matches_protected_local": {
+    "latest.json": {
+      "json_content_equal": true,
+      "canonical_json_sha256": "22ecb87294f267f7ee5f16fb37a2180a70d5a987298801fbcad121c4df940f07",
+      "original_raw_sha256": "867d187275cb57ecde3bb5d90706dd1e5cbd872c81a3f58517b2431c8994611f"
+    },
+    "products.json": {
+      "json_content_equal": true,
+      "canonical_json_sha256": "e0060ff9d4618e64cb52a53b147405f4d8fa6b925d47c588558ca356e46f37b7",
+      "original_raw_sha256": "d20160282081e74585b7c96bace26fb92d5c4bbbf7b65034e8c09b806d5009b3"
+    },
+    "validation.json": {
+      "json_content_equal": true,
+      "canonical_json_sha256": "10528ab11a5a88bf0f02f032dc8903004a75e7293ed3d7c24ed7a48a9bbdc281",
+      "original_raw_sha256": "9a9cfd594dbf5560c4a56c8466dfe238bedcd1e12084d98ae2d7ee9eff00f86e"
+    },
+    "provenance.json": {
+      "json_content_equal": true,
+      "canonical_json_sha256": "612e5ffbaaa5aa8d8acc079a87d728ece5e94e6cae301327d381fff55a63b67a",
+      "original_raw_sha256": "84f7f23b0824b84eb72454182a56c54018d8b52da5adc12a1fac39a558280b0e"
+    }
+  },
+  "verification_method": "Azure portal Edit view select-all/copy for JSON contents; second products and latest freshness pointer downloaded. No Edit save used.",
+  "hash_boundary": "Canonical JSON hashes compare content independent of clipboard newline normalization. Raw cloud byte hashes are not claimed for copied files.",
+  "baseline_raw_byte_hash_comparison_complete": false,
+  "scheduling_enabled": false,
+  "billing_plan_changed": false,
+  "submission_ready": false
+}

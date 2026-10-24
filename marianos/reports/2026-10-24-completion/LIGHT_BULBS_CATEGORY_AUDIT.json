@@ -1,0 +1,166 @@
+{
+  "root": "Light Bulbs",
+  "configured_url": "https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance",
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "source_kind": "rendered-retailer",
+  "child_listings_visited": 13,
+  "child_listings_terminal": 13,
+  "root_terminal_listing_count": 52,
+  "root_displayed_results": "52 results",
+  "hierarchy_displayed_root_count": 55,
+  "child_union_unique_links": 52,
+  "root_child_union_unique_links": 54,
+  "root_only_product_links": [
+    "/p/phillips-13-5-watt-100-watt-a19led-light-bulb-daylight-5000k-/0004667756541",
+    "/p/phillips-5-5-watt-40-watt-a19-led-daylight-5000k-light-bulb/0004667756535"
+  ],
+  "children_only_product_links": [
+    "/p/philips-11-5-watt-100-watt-a19-led-dimmable-flicker-free-light-bulb-soft-white-2700k-/0004667758700",
+    "/p/philips-9-watt-75-watt-a19-led-dimmable-flicker-free-light-bulb-soft-white-2700k-/0004667758698"
+  ],
+  "status": "incomplete_unreconciled",
+  "complete": false,
+  "submission_ready": false,
+  "limitations": [
+    "Hierarchy count 55 disagrees with terminal result count 52.",
+    "Root and child union have equal counts but different product identities; neither is accepted as exhaustive.",
+    "Listing links and displayed card text are not a verified 22-field product export.",
+    "Selected West Loop pickup context and grid store were checked; some category URLs include fulfillment=all. Product eligibility must be verified individually.",
+    "Potential variant collapsing or live assortment changes remain hypotheses, not established explanations."
+  ],
+  "children": [
+    {
+      "name": "3 Way Light Bulbs",
+      "url": "https://www.marianos.com/pl/3-way-light-bulbs/2600200001?pzn=relevance&taxonomyId=2600200001&fulfillment=all",
+      "expected_products": 1,
+      "unique_product_links": 1,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:51:06.617Z",
+      "evidence_sha256": "67b9803fa2db79578c166fdeca8058b5af6471994756a05e76b7fe0cde321eab"
+    },
+    {
+      "name": "Candelabra Light Bulbs",
+      "url": "https://www.marianos.com/pl/candelabra-light-bulbs/2600200006?pzn=relevance&taxonomyId=2600200006&fulfillment=all",
+      "expected_products": 3,
+      "unique_product_links": 3,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:54:23.662Z",
+      "evidence_sha256": "c77ad09a27961dcd7e3793aa79f42bec97d07b1d24f9261ef2ede2806300da6f"
+    },
+    {
+      "name": "Candle Light Bulbs",
+      "url": "https://www.marianos.com/pl/candle-light-bulbs/2600200007?pzn=relevance&taxonomyId=2600200007&fulfillment=all",
+      "expected_products": 3,
+      "unique_product_links": 3,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:54:09.394Z",
+      "evidence_sha256": "96603c282a2e0be4e69f1f5f87296579bfffd67b6b2592f84842ce45ffcb3853"
+    },
+    {
+      "name": "Chandelier Light Bulbs",
+      "url": "https://www.marianos.com/pl/chandelier-light-bulbs/2600200010?pzn=relevance&taxonomyId=2600200010&fulfillment=all",
+      "expected_products": 1,
+      "unique_product_links": 1,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:51:46.797Z",
+      "evidence_sha256": "da89be47eab70a58a90ceeba0f1c06bc8790bf56370dc47b027c9fa38565dba5"
+    },
+    {
+      "name": "General Purpose Light Bulbs",
+      "url": "https://www.marianos.com/pl/general-purpose-light-bulbs/2600200033?pzn=relevance&taxonomyId=2600200033&fulfillment=all",
+      "expected_products": 21,
+      "unique_product_links": 21,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:55:08.210Z",
+      "evidence_sha256": "c5080eaf59a90bd83999d86ac8f3392b4666231500c9a462b9df4c654a282af3"
+    },
+    {
+      "name": "Globe & Vanity Light Bulbs",
+      "url": "https://www.marianos.com/pl/globe-vanity-light-bulbs/2600200015?pzn=relevance&taxonomyId=2600200015&fulfillment=all",
+      "expected_products": 3,
+      "unique_product_links": 3,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:53:56.612Z",
+      "evidence_sha256": "71769fa5412beed808a67ac1fb351290dc5320d6422a1f77c2a5ddf7ee388849"
+    },
+    {
+      "name": "Incandescent Light Bulbs",
+      "url": "https://www.marianos.com/pl/incandescent-light-bulbs/2600200017?pzn=relevance&taxonomyId=2600200017&fulfillment=all",
+      "expected_products": 4,
+      "unique_product_links": 4,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:54:38.008Z",
+      "evidence_sha256": "059b9ce623dd6cf270a8605cdf296fba5fb4d9411cd1a98897f9b2dcd8d00890"
+    },
+    {
+      "name": "LED Light Bulbs",
+      "url": "https://www.marianos.com/pl/led-light-bulbs/2600200020?fulfillment=all&pzn=relevance&taxonomyId=2600200020&page=2",
+      "expected_products": 44,
+      "unique_product_links": 44,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:55:52.379Z",
+      "evidence_sha256": "efccc9669478e7cc39361adb23ece04481ad76177367a63fb72b4a19bb826496"
+    },
+    {
+      "name": "Nightlight Bulbs",
+      "url": "https://www.marianos.com/pl/nightlight-bulbs/2600200021?pzn=relevance&taxonomyId=2600200021&fulfillment=all",
+      "expected_products": 3,
+      "unique_product_links": 3,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:53:43.390Z",
+      "evidence_sha256": "f10748cb1892f71a06c1a372989b239dcdad0ca292eaa3b034abb58db31338a0"
+    },
+    {
+      "name": "Reflector Light Bulbs",
+      "url": "https://www.marianos.com/pl/reflector-light-bulbs/2600200035?pzn=relevance&taxonomyId=2600200035&fulfillment=all",
+      "expected_products": 5,
+      "unique_product_links": 5,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:54:50.837Z",
+      "evidence_sha256": "2420f82eae25581fbba11e49747fcbbdd01cd29d5b457a6f0b1e1f6f74813701"
+    },
+    {
+      "name": "Soft White Light Bulbs",
+      "url": "https://www.marianos.com/pl/soft-white-light-bulbs/2600200027?fulfillment=all&pzn=relevance&taxonomyId=2600200027&page=2",
+      "expected_products": 32,
+      "unique_product_links": 32,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:55:34.858Z",
+      "evidence_sha256": "3d71fe714666175852d06dcf3d334830ab8e9a004375b197fc7aa8830a02a042"
+    },
+    {
+      "name": "Special Purpose Light Bulbs",
+      "url": "https://www.marianos.com/pl/special-purpose-light-bulbs/2600200028?pzn=relevance&taxonomyId=2600200028&fulfillment=all",
+      "expected_products": 1,
+      "unique_product_links": 1,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:52:51.829Z",
+      "evidence_sha256": "3050b014f0fbffd31c043096695a4a44ea64c83c94843acb3c5c41e28e2667ca"
+    },
+    {
+      "name": "Vintage Light Bulbs",
+      "url": "https://www.marianos.com/pl/vintage-light-bulbs/2600200037?pzn=relevance&taxonomyId=2600200037&fulfillment=all",
+      "expected_products": 2,
+      "unique_product_links": 2,
+      "terminal": true,
+      "no_child_branches_observed": true,
+      "observed_at": "2026-10-24T17:53:01.427Z",
+      "evidence_sha256": "aa3cdb4c649f0cf1e7730cc797684bb9ee71dea8a40d570718de15a26504ad4f"
+    }
+  ],
+  "root_evidence_sha256": "869ea4b24957fe40da85d3fe3c8945471591a9bf5a7591a50ba810a33cbe0599",
+  "hierarchy_snapshot_sha256": "114ba3e2c661a1937cbf4c9e7bba91fdbe93648aed7d8c6071e99b994c0af9a5"
+}
