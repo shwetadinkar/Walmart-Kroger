@@ -22,7 +22,7 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
     if not 1<=maximum_age_seconds<=3600:raise ValueError('Enrichment time window must be 1..3600 seconds')
     sid=store_document['locationId'];zipcode=store_document['address']['zipCode']
     store=verify_store(store_document,sid,zipcode)
-    products=[];quarantine=[];rejected=[];out_provenance=copy.deepcopy(provenance);digital_pending=0
+    products=[];quarantine=[];rejected=[];out_provenance=copy.deepcopy(provenance);digital_pending=0;volume_pending=0
     by_upc={}
     for e in evidence:by_upc.setdefault(e.get('upc'),[]).append(e)
     if len({r['upc'] for r in rows})!=len(rows):raise ValueError('INPUT_DUPLICATE_UPC')
@@ -63,6 +63,8 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
                 rejected.append({'upc':upc,'reason':'WEBSITE_PICKUP_NOT_VERIFIED'})
             else:
                 usable=dict(item)
+                if usable.get('volume_deals_description') and usable.get('volume_terms_complete') is not True:
+                    usable['volume_deals_description']=usable['volume_deals_price']='';volume_pending+=1
                 if usable.get('digital_deals_description') and usable.get('digital_terms_complete') is not True:
                     usable['digital_deals_description']=usable['digital_deals_price']='';digital_pending+=1
                 elif usable.get('digital_details_required'):digital_pending+=1
@@ -78,8 +80,10 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
             'report':{'input_records':len(rows),'records':len(products),'unique_upcs':len({r['upc'] for r in products}),
                       'quarantined_records':len(quarantine),'maximum_observation_gap_seconds':maximum_age_seconds,
                       'rejected_evidence_counts':dict(Counter(e['reason'] for e in rejected)),
-                      'digital_details_pending':digital_pending,'field_completeness':{f:sum(bool(r[f]) for r in products) for f in FIELDS},
-                      'source_is_synthetic':False,'category_complete':False,'submission_ready':False}}
+                      'digital_details_pending':digital_pending,'volume_details_pending':volume_pending,
+                      'field_completeness':{f:sum(bool(r[f]) for r in products) for f in FIELDS},
+                      'source_is_synthetic':None,'source_verification':'not independently determined by merge function',
+                      'category_complete':False,'submission_ready':False}}
 
 
 def main():

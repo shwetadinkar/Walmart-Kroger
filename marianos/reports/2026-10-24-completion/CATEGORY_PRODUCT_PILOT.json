@@ -1,0 +1,18 @@
+{
+  "mode": "LIVE_CATEGORY_DISCOVERED_PRODUCTS_LOCAL_API_PILOT",
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "requested_products": 5,
+  "records": 5,
+  "unique_upcs": 5,
+  "network_requests": 7,
+  "network_request_ceiling": 8,
+  "duration_seconds": 9.454175000020768,
+  "store_pinned_on_every_product_request": true,
+  "source_category": "AA Batteries",
+  "rejected": [],
+  "displayed_ppm_enriched": false,
+  "digital_coupon_terms_complete": false,
+  "azure_execution": false,
+  "submission_ready": false
+}

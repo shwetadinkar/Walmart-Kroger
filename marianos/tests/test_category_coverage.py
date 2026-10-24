@@ -54,4 +54,24 @@ class CoverageTests(unittest.TestCase):
             l=self.ledger();l.observe(self.observation(status=status))
             self.assertFalse(l.report()['all_roots_complete'])
 
+    def test_duplicate_card_placements_can_reconcile_to_exact_distinct_results(self):
+        l=self.ledger();l.observe(self.observation(observed_listing_cards=3))
+        self.assertTrue(l.report()['all_roots_complete'])
+
+    def test_exhaustive_children_can_reconcile_an_incomplete_broad_listing(self):
+        l=self.ledger();a='https://www.marianos.com/pl/eggs/02003';b='https://www.marianos.com/pl/milk/02001'
+        l.observe(self.observation(expected_products=3,children=[a,b]))
+        l.observe(self.observation(url=a,unique_product_urls=['/p/a/1','/p/b/2']))
+        l.observe(self.observation(url=b,expected_products=1,observed_listing_cards=1,unique_product_urls=['/p/c/3']))
+        self.assertTrue(l.report()['all_roots_complete'])
+        self.assertEqual(l.report()['roots'][0]['completion_basis'],'exhaustive-descendant-union')
+
+    def test_child_union_cannot_hide_an_unassigned_parent_product(self):
+        l=self.ledger();a='https://www.marianos.com/pl/eggs/02003'
+        l.observe(self.observation(children=[a],unique_product_urls=['/p/a/1','/p/outside/9']))
+        l.observe(self.observation(url=a,unique_product_urls=['/p/a/1','/p/b/2']))
+        # A reconciled direct root is still complete; force its direct count to be incomplete.
+        l.observe(self.observation(children=[a],expected_products=3,unique_product_urls=['/p/a/1','/p/outside/9']))
+        self.assertFalse(l.report()['all_roots_complete'])
+
 if __name__=='__main__':unittest.main()

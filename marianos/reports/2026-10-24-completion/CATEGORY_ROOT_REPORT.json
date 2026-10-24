@@ -2972,5 +2972,8 @@
     "Root route checks do not establish pagination or descendant completeness.",
     "Initial snapshots can show loading content; not classified as complete.",
     "One AA Batteries leaf pilot is separate from full-root acceptance."
-  ]
+  ],
+  "listing_roots_reconciled": 1,
+  "complete_product_export_roots": 0,
+  "listing_reconciliation_report": "BATTERIES_CATEGORY_RECONCILIATION.json"
 }

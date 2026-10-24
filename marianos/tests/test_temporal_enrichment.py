@@ -56,4 +56,14 @@ class TemporalEnrichmentTests(unittest.TestCase):
         self.assertEqual(result['quarantine'],[])
         self.assertTrue(result['rejected_evidence'])
 
+    def test_volume_teaser_without_verified_full_terms_stays_pending(self):
+        e={**self.e,'volume_deals_description':'Save $1 each when you buy 5 or more',
+           'observed_text':self.e['observed_text']+' Save $1 each when you buy 5 or more'}
+        result=self.merge(e)
+        self.assertEqual(result['products'][0]['volume_deals_description'],'')
+        self.assertEqual(result['report']['volume_details_pending'],1)
+
+    def test_merge_does_not_infer_live_source_status_from_arbitrary_inputs(self):
+        self.assertIsNone(self.merge()['report']['source_is_synthetic'])
+
 if __name__=='__main__':unittest.main()

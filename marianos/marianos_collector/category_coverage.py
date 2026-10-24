@@ -42,7 +42,7 @@ class CoverageLedger:
         self.discover(e['url'],e.get('children',[]))
         self.nodes[e['url']]['observations'].append(e)
 
-    def _own_complete(self,node):
+    def _evidence_valid(self,node):
         if not node['observations']:return False
         e=node['observations'][-1]
         expected,observed=e.get('expected_products'),e.get('observed_listing_cards',e.get('observed_organic_cards'))
@@ -50,16 +50,39 @@ class CoverageLedger:
                 and e.get('listing_present') is True and e.get('terminal') is True
                 and e.get('discovery_complete') is True
                 and bool(re.fullmatch(r'[a-f0-9]{64}',e.get('discovery_evidence_sha256','')))
-                and type(expected) is int and type(observed) is int and expected>=0 and expected==observed
+                and type(expected) is int and type(observed) is int and expected>=0 and observed>=0
                 and (expected>0 or e.get('explicit_empty') is True)
                 and isinstance(e.get('unique_product_urls'),list)
-                and len(set(e['unique_product_urls']))==expected)
+                and all(isinstance(u,str) and u for u in e['unique_product_urls'])
+                and len(set(e['unique_product_urls']))<=observed)
+
+    def _own_complete(self,node):
+        return (self._evidence_valid(node)
+                and len(set(node['observations'][-1]['unique_product_urls']))==node['observations'][-1]['expected_products'])
+
+    def _descendant_products(self,url,seen):
+        if url in seen:return set()
+        node=self.nodes[url];latest=node['observations'][-1] if node['observations'] else {}
+        found=set(latest.get('unique_product_urls',[]))
+        for child in node['children']:found.update(self._descendant_products(child,seen|{url}))
+        return found
+
+    def _basis(self,url,visiting):
+        node=self.nodes[url]
+        if url in visiting or not self._evidence_valid(node):return None
+        if not all(self._basis(c,visiting|{url}) for c in node['children']):return None
+        if self._own_complete(node):return 'direct-listing'
+        if not node['children']:return None
+        latest=node['observations'][-1]
+        union=set()
+        for child in node['children']:union.update(self._descendant_products(child,{url}))
+        if (len(union)==latest['expected_products']
+                and set(latest['unique_product_urls']).issubset(union)):
+            return 'exhaustive-descendant-union'
+        return None
 
     def _complete(self,url,visiting):
-        node=self.nodes[url]
-        if not self._own_complete(node):return False
-        if url in visiting:return True
-        return all(self._complete(c,visiting|{url}) for c in node['children'])
+        return self._basis(url,visiting) is not None
 
     def report(self):
         roots=[]
@@ -69,6 +92,7 @@ class CoverageLedger:
             last=node['observations'][-1] if node['observations'] else {}
             roots.append({**root,'status':'complete' if done else (last.get('status') if last.get('status') not in (None,'ok') else 'incomplete'),
                           'complete':done,'observations':len(node['observations']),
+                          'completion_basis':self._basis(root['url'],set()),
                           'discovered_children':len(node['children']),
                           'unique_product_urls':len(set(last.get('unique_product_urls',[])))})
         return {'store_id':self.store_id,'zipcode':self.zipcode,'configured_roots':len(roots),

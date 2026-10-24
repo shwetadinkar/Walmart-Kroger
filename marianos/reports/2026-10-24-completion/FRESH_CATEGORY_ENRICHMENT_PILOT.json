@@ -1,0 +1,57 @@
+{
+  "input_records": 5,
+  "records": 4,
+  "unique_upcs": 4,
+  "quarantined_records": 1,
+  "maximum_observation_gap_seconds": 3600,
+  "rejected_evidence_counts": {},
+  "digital_details_pending": 0,
+  "volume_details_pending": 1,
+  "field_completeness": {
+    "zipcode": 4,
+    "store_name": 4,
+    "store_location": 4,
+    "store_logo": 0,
+    "store_brand": 4,
+    "category": 4,
+    "sub_category": 4,
+    "product_title": 4,
+    "weight": 4,
+    "regular_price": 4,
+    "sale_price": 1,
+    "volume_deals_description": 0,
+    "volume_deals_price": 0,
+    "digital_deals_description": 0,
+    "digital_deals_price": 0,
+    "image_url": 4,
+    "url": 4,
+    "upc": 4,
+    "gupc": 0,
+    "ppm": 4,
+    "unit_price": 0,
+    "crawl_date": 4
+  },
+  "source_is_synthetic": false,
+  "source_verification": "not independently determined by merge function",
+  "category_complete": false,
+  "submission_ready": false,
+  "collection_mode": "live category listing -> store-pinned official product details -> fresh rendered PDP -> conservative merge",
+  "input_source_verification": "live local API requests and browser observations recorded in this continuation",
+  "source_requests": 7,
+  "requested_products": 5,
+  "products_with_matching_verified_price_and_ppm": 4,
+  "price_conflicts": 1,
+  "azure_execution": false,
+  "not_final_contest_dataset": true,
+  "quarantine_summary": [
+    {
+      "upc": "0003980014520",
+      "api_regular_price": "17.99",
+      "website_regular_price": "17.98",
+      "reasons": [
+        "WEBSITE_API_REGULAR_PRICE_CONFLICT"
+      ],
+      "observation_gap_seconds": 47.636007
+    }
+  ]
+}

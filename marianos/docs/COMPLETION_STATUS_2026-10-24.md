@@ -141,3 +141,11 @@ scheduled-run evidence remain outstanding.
 Sources: [Azure execution variables](https://learn.microsoft.com/en-us/azure/container-apps/environment-variables),
 [Azure jobs and UTC schedules](https://learn.microsoft.com/en-us/azure/container-apps/jobs),
 [official Kroger product filters](https://www.postman.com/kroger/the-kroger-co-s-public-workspace/request/cx3ttq9/product-list).
+
+## Later live category validation
+
+Batteries root pagination ended at 97 card placements and 72 unique product links against 95 stated results. All nine displayed child categories were then traversed to terminal listings and their empty descendant branches verified. Their deduplicated union contains exactly 95 product links. The ledger can reconcile an exhaustive descendant union only when every child passes, the union matches the parent result count, and every parent-observed product is included. This proves listing enumeration for one of 28 roots; UPC and product export acceptance are separate.
+
+Five category-discovered products were independently requested through the official product-details route, with filter.locationId on every request (seven HTTP attempts total including OAuth and store verification). The public API documentation says batch filter.productId ignores other filters; it is not used for store-local prices. Five fresh product pages displayed matching UPC, West Loop context, pickup availability and literal PPM. Four records retained PPM after conservative merging. One was quarantined because the API regular price was 17.99 and the displayed website regular price was 17.98. An incomplete volume-offer teaser remains pending. The protected 650-product baseline is unchanged.
+
+The expanded local suite passes 112 tests. The previously built image from commit 8fe3492 passed 105 CI tests and contains the already-reviewed fresh-execution API fix; later category/product-detail refinements require a subsequent image build before deploying those refinements.
