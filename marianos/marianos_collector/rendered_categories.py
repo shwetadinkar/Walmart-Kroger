@@ -37,7 +37,8 @@ DEPARTMENT_DOM = r'''d => {
  const checked=d.querySelector('input[type="radio"]:checked');
  if(!checked)return {known:false,children:[]};
  const branch=checked.closest('label').parentElement;
- return {known:true,current:checked.getAttribute('aria-label'),children:
+ const count=checked.closest('label').innerText.match(/\(([\d,]+)\)\s*$/);
+ return {known:true,current:checked.getAttribute('aria-label'),expected_products:count?Number(count[1].replace(/,/g,'')):null,children:
  Array.from(branch.querySelectorAll('input[type="radio"]')).filter(r=>r!==checked)
  .map(r=>({name:r.getAttribute('aria-label'),value:r.value})),text:d.innerText};
 }'''
@@ -133,6 +134,7 @@ class RenderedCategoryDriver:
         if close.count():self._action();close.click()
         import json
         result=self._observation(url,e,children,True,'ok',pages,json.dumps(proof,ensure_ascii=False),hierarchy['known'])
+        result['hierarchy_expected_products']=hierarchy.get('expected_products')
         result['snapshot_text']=json.dumps(snapshots,ensure_ascii=False)
         return result
 

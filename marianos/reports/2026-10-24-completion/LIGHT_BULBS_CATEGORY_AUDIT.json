@@ -162,5 +162,18 @@
     }
   ],
   "root_evidence_sha256": "869ea4b24957fe40da85d3fe3c8945471591a9bf5a7591a50ba810a33cbe0599",
-  "hierarchy_snapshot_sha256": "114ba3e2c661a1937cbf4c9e7bba91fdbe93648aed7d8c6071e99b994c0af9a5"
+  "hierarchy_snapshot_sha256": "114ba3e2c661a1937cbf4c9e7bba91fdbe93648aed7d8c6071e99b994c0af9a5",
+  "controlled_checks": {
+    "alphabetical_terminal_unique_links": 52,
+    "alphabetical_matches_child_union": true,
+    "alphabetical_equals_original_best_match_set": false,
+    "explicit_pickup_result_count": "52 results",
+    "explicit_pickup_hierarchy_count": 55,
+    "explicit_pickup_resolves_count_mismatch": false,
+    "original_only_product_0004667756541_pdp_pickup_available": true,
+    "root_cause_established": false,
+    "alphabetical_pages_sha256": "d70798fc793ebf5a9b4ca449550eb73b31e08c2d2d6bf1870762449a7489d0e5",
+    "explicit_pickup_evidence_sha256": "361338c82760d56a6c5fb4cf91917e8eae95c8c655ccc07d75b21adb445c2781",
+    "original_only_product_pdp_snapshot_sha256": "bb68fa6470e91def28f262e85679f945e33e769dd7b144c726ed16f08e4f7c46"
+  }
 }

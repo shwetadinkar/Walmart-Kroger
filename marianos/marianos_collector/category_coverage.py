@@ -46,6 +46,15 @@ class CoverageLedger:
         if not node['observations']:return False
         e=node['observations'][-1]
         expected,observed=e.get('expected_products'),e.get('observed_listing_cards',e.get('observed_organic_cards'))
+        if 'hierarchy_expected_products' in e and e['hierarchy_expected_products'] is not None:
+            if type(e['hierarchy_expected_products']) is not int or e['hierarchy_expected_products']!=expected:
+                return False
+        # A ledger belongs to one collection run. Changing terminal membership is
+        # not reconciled by a later observation merely having the same total.
+        current=set(e.get('unique_product_urls',[]))
+        if any(previous.get('status')=='ok' and previous.get('terminal') is True
+               and set(previous.get('unique_product_urls',[]))!=current
+               for previous in node['observations'][:-1]):return False
         return (e.get('status')=='ok' and e.get('source_kind') in ('rendered-retailer','licensed-retailer-feed')
                 and e.get('listing_present') is True and e.get('terminal') is True
                 and e.get('discovery_complete') is True
@@ -71,7 +80,11 @@ class CoverageLedger:
         node=self.nodes[url]
         if url in visiting or not self._evidence_valid(node):return None
         if not all(self._basis(c,visiting|{url}) for c in node['children']):return None
-        if self._own_complete(node):return 'direct-listing'
+        if self._own_complete(node):
+            parent=set(node['observations'][-1]['unique_product_urls'])
+            if any(not self._descendant_products(child,{url}).issubset(parent) for child in node['children']):
+                return None
+            return 'direct-listing'
         if not node['children']:return None
         latest=node['observations'][-1]
         union=set()

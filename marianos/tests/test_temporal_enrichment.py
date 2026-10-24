@@ -66,4 +66,42 @@ class TemporalEnrichmentTests(unittest.TestCase):
     def test_merge_does_not_infer_live_source_status_from_arbitrary_inputs(self):
         self.assertIsNone(self.merge()['report']['source_is_synthetic'])
 
+    def test_complete_offer_can_join_exact_displayed_passages_without_paraphrasing(self):
+        parts=['Buy any 5 participating items.', 'Mix and match. No coupon needed.']
+        e={**self.e,'volume_terms_complete':True,'volume_deals_description':'\n'.join(parts),
+           'displayed_fragments':{'volume_deals_description':parts},
+           'observed_text':self.e['observed_text']+'\n'+parts[0]+'\nNavigation\n'+parts[1]}
+        result=self.merge(e)
+        self.assertEqual(result['products'][0]['volume_deals_description'],'\n'.join(parts))
+        self.assertEqual(result['products'][0]['volume_deals_price'],'')
+
+    def test_offer_fragment_metadata_cannot_authorize_altered_or_absent_text(self):
+        for parts in (['Buy 5', 'Invented extra saving'], ['', 'Buy 5'], 'Buy 5'):
+            e={**self.e,'volume_terms_complete':True,'volume_deals_description':'Buy 5\nSave $2',
+               'displayed_fragments':{'volume_deals_description':parts},
+               'observed_text':self.e['observed_text']+' Buy 5 Save $2'}
+            self.assertEqual(self.merge(e)['products'][0]['volume_deals_description'],'')
+
+    def test_fragments_cannot_assemble_a_computed_ppm(self):
+        e={**self.e,'ppm':'$0.17/oz','observed_text':self.e['observed_text']+' $0.17 /oz',
+           'displayed_fragments':{'ppm':['$0.17','/oz']}}
+        self.assertEqual(self.merge(e)['products'][0]['ppm'],'')
+
+    def test_malformed_fragment_container_is_rejected_without_crashing_merge(self):
+        for malformed in (['Buy 5'], 'Buy 5', 7):
+            e={**self.e,'volume_terms_complete':True,'volume_deals_description':'Buy 5\nSave $2',
+               'displayed_fragments':malformed}
+            self.assertEqual(self.merge(e)['products'][0]['volume_deals_description'],'')
+
+    def test_fragments_cannot_truncate_prices_or_reorder_offer_conditions(self):
+        for text,parts in (
+            ('Buy 5 participating items. Save $20 when you buy 50.', ['Save $2','Buy 5']),
+            ('Buy 5 participating items.\nSave $20 when you buy 50.', ['Save $20 when you buy 50.','Buy 5 participating items.']),
+            ('Buy 5 participating items.\nSave $20 when you buy 50.', ['Buy 5 participating items.','Save $2']),
+        ):
+            e={**self.e,'volume_terms_complete':True,'volume_deals_description':'\n'.join(parts),
+               'displayed_fragments':{'volume_deals_description':parts},
+               'observed_text':self.e['observed_text']+'\n'+text}
+            self.assertEqual(self.merge(e)['products'][0]['volume_deals_description'],'')
+
 if __name__=='__main__':unittest.main()

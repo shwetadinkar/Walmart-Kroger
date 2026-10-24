@@ -30,7 +30,7 @@ class CoverageTests(unittest.TestCase):
         l=self.ledger();child='https://www.marianos.com/pl/eggs/02003'
         l.observe(self.observation(children=[child]))
         self.assertFalse(l.report()['all_roots_complete'])
-        l.observe(self.observation(url=child,expected_products=1,observed_organic_cards=1,unique_product_urls=['/p/c/3']))
+        l.observe(self.observation(url=child,expected_products=1,observed_organic_cards=1,unique_product_urls=['/p/a/1']))
         self.assertTrue(l.report()['all_roots_complete'])
 
     def test_keyword_or_synthetic_source_cannot_establish_live_completion(self):
@@ -70,8 +70,29 @@ class CoverageTests(unittest.TestCase):
         l=self.ledger();a='https://www.marianos.com/pl/eggs/02003'
         l.observe(self.observation(children=[a],unique_product_urls=['/p/a/1','/p/outside/9']))
         l.observe(self.observation(url=a,unique_product_urls=['/p/a/1','/p/b/2']))
-        # A reconciled direct root is still complete; force its direct count to be incomplete.
+        self.assertFalse(l.report()['all_roots_complete'])
+        # Neither a matching parent count nor descendant count can hide this identity conflict.
         l.observe(self.observation(children=[a],expected_products=3,unique_product_urls=['/p/a/1','/p/outside/9']))
+        self.assertFalse(l.report()['all_roots_complete'])
+
+    def test_child_cannot_introduce_a_product_missing_from_a_directly_complete_parent(self):
+        l=self.ledger();child='https://www.marianos.com/pl/eggs/02003'
+        l.observe(self.observation(children=[child]))
+        l.observe(self.observation(url=child,expected_products=1,observed_listing_cards=1,unique_product_urls=['/p/c/3']))
+        self.assertFalse(l.report()['all_roots_complete'])
+
+    def test_equal_count_terminal_observations_with_changed_membership_are_not_stable(self):
+        l=self.ledger();l.observe(self.observation())
+        l.observe(self.observation(observed_at='2026-10-24T11:02:00Z',unique_product_urls=['/p/a/1','/p/c/3']))
+        self.assertFalse(l.report()['all_roots_complete'])
+
+    def test_same_set_reordered_in_repeat_observation_is_stable(self):
+        l=self.ledger();l.observe(self.observation())
+        l.observe(self.observation(observed_at='2026-10-24T11:02:00Z',unique_product_urls=['/p/b/2','/p/a/1']))
+        self.assertTrue(l.report()['all_roots_complete'])
+
+    def test_hierarchy_count_disagreement_blocks_an_exact_listing_count(self):
+        l=self.ledger();l.observe(self.observation(hierarchy_expected_products=3))
         self.assertFalse(l.report()['all_roots_complete'])
 
 if __name__=='__main__':unittest.main()
