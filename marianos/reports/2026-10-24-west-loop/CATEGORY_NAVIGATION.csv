@@ -1,0 +1,357 @@
+name,url,observed_in
+Fresh Fruit,https://www.marianos.com/pl/fresh-fruit/06111?pzn=relevance,Fresh Fruit & Vegetables
+Fresh Vegetables,https://www.marianos.com/pl/fresh-vegetables/06112?pzn=relevance,Fresh Fruit & Vegetables
+Fresh Herbs,https://www.marianos.com/pl/fresh-herbs/06122?pzn=relevance,Fresh Fruit & Vegetables
+Organic Produce,https://www.marianos.com/pl/organic-produce/18003?pzn=relevance,Fresh Fruit & Vegetables | Natural & Organic
+Salads,https://www.marianos.com/pl/salads/06114?pzn=relevance,Fresh Fruit & Vegetables
+Dressings & Dips,https://www.marianos.com/pl/dressings-dips/06110?pzn=relevance,Fresh Fruit & Vegetables
+Fresh-cut Fruit & Vegetables,https://www.marianos.com/pl/fresh-cut-fruit-vegetables/06121?pzn=relevance,Fresh Fruit & Vegetables
+Packaged Produce,https://www.marianos.com/pl/packaged-produce/06123?pzn=relevance,Fresh Fruit & Vegetables
+Party Trays,https://www.marianos.com/pl/party-trays/06119?pzn=relevance,Fresh Fruit & Vegetables
+Fresh Juice & Smoothies,https://www.marianos.com/pl/fresh-juice-smoothies/06113?pzn=relevance,Fresh Fruit & Vegetables
+Shop All,https://www.marianos.com/d/produce,Fresh Fruit & Vegetables
+"100% Fresh or 100% Refund.Guaranteed fresh, no matter how you shop.Shop Now",https://www.marianos.com/d/produce#guaranteedfresh,Fresh Fruit & Vegetables | Meat | Seafood | Deli | Bakery | Floral
+Beef,https://www.marianos.com/pl/beef/05001?pzn=relevance,Meat
+Chicken,https://www.marianos.com/pl/chicken/05002?pzn=relevance,Meat
+Pork & Ham,https://www.marianos.com/pl/pork-ham/05006?pzn=relevance,Meat
+Turkey,https://www.marianos.com/pl/turkey/05012?pzn=relevance,Meat
+"Lamb, Veal & Bison",https://www.marianos.com/pl/lamb-veal-bison/05014?pzn=relevance,Meat
+Specialty Meat,https://www.marianos.com/pl/specialty-meat/05011?pzn=relevance,Meat
+Bacon & Breakfast Sausage,https://www.marianos.com/pl/bacon-breakfast-sausage/05017?pzn=relevance,Meat
+Packaged & Sliced Deli Meat,https://www.marianos.com/pl/packaged-deli-meat/05013?pzn=relevance,Meat
+Dinner Sausage,https://www.marianos.com/pl/dinner-sausage/05003?pzn=relevance,Meat
+Heat & Serve Meals & Sides,https://www.marianos.com/pl/heat-serve-meals-and-sides/05016?pzn=relevance,Meat
+Hot Dogs & Franks,https://www.marianos.com/pl/hot-dogs-franks/05005?pzn=relevance,Meat
+"Pepperoni, Salami & Summer Sausage",https://www.marianos.com/pl/pepperoni-salami-summer-sausage/05015?pzn=relevance,Meat
+Lunch & Snack Kits,https://www.marianos.com/pl/lunch-snack-kits/05018?pzn=relevance,Meat
+Canned Meat,https://www.marianos.com/pl/canned-meat/0100600006?pzn=relevance,Meat
+Enhancements,https://www.marianos.com/pl/refrigerated-pickles-sauerkraut/05008?pzn=relevance,Meat
+Frozen Meatless Choices,https://www.marianos.com/pl/frozen-meat-alternatives/1900800005?pzn=relevance,Meat
+Shop All,https://www.marianos.com/d/meat,Meat
+Shrimp,https://www.marianos.com/pl/shrimp/0501000009?pzn=relevance,Seafood
+Breaded Fish,https://www.marianos.com/pl/frozen-fish/1900800003?pzn=relevance,Seafood
+Seafood Salads & Dips,https://www.marianos.com/pl/seafood-salads-dips/0500400020?pzn=relevance,Seafood
+Canned Seafood,https://www.marianos.com/pl/canned-seafood/0100600007?pzn=relevance,Seafood
+Sauce & Breading,https://www.marianos.com/pl/seasonings-sauces/05009?facets=true?pzn=relevance,Seafood
+Sushi,https://www.marianos.com/pl/sushi/13013?pzn=relevance,Seafood | Deli
+Shop All,https://www.marianos.com/d/seafood,Seafood
+Shop All,https://www.marianos.com/d/deli,Deli
+Fresh Deli Meats,https://www.marianos.com/pl/fresh-deli-meats/13001?pzn=relevance,Deli
+Fresh Deli Cheeses,https://www.marianos.com/pl/fresh-deli-cheese/13002?pzn=relevance,Deli
+Chicken & Hot Meals,https://www.marianos.com/pl/hot-meals/13007?pzn=relevance,Deli
+Specialty Cheeses,https://www.marianos.com/d/specialty-cheese,Deli
+"Olives, Dips, Spreads & Snacks",https://www.marianos.com/pl/olives-dips-spreads-snacks/13011?pzn=relevance,Deli
+Packaged Deli Meats,https://www.marianos.com/pl/packaged-deli-meat/13003?pzn=relevance,Deli
+Packaged Deli Cheeses,https://www.marianos.com/pl/packaged-deli-cheese/13004?pzn=relevance,Deli
+Ready-to-heat Meals & Soups,https://www.marianos.com/pl/ready-to-heat-meals/13006?pzn=relevance,Deli
+Cold Side Dishes,https://www.marianos.com/pl/cold-side-dishes/13009?pzn=relevance,Deli
+Grab & Go Meals,https://www.marianos.com/pl/grab-go-meals/13008?pzn=relevance,Deli
+Party Platters,https://www.marianos.com/pl/party-platters/13010?pzn=relevance,Deli
+Shop All,https://www.marianos.com/d/bakery,Bakery
+Order Custom Cakes,https://www.marianos.com/d/bakery/custom-cakes,Bakery
+Cakes & Cupcakes,https://www.marianos.com/pl/cakes-cupcakes/14160?pzn=relevance,Bakery
+"Donuts, Danishes & Muffins",https://www.marianos.com/pl/donuts-danishes-muffins/14166?pzn=relevance,Bakery
+Cookies,https://www.marianos.com/pl/cookies/14187?taxonomyId=14187&fulfillment=all,Bakery
+Brownies,https://www.marianos.com/pl/brownies/14165?pzn=relevance,Bakery
+Pies,https://www.marianos.com/pl/pies/14169?pzn=relevance,Bakery
+"Angel Food, Pound & Pudding Cakes",https://www.marianos.com/pl/angel-food-pound-pudding-cakes/14161?pzn=relevance,Bakery
+Cheesecakes,https://www.marianos.com/pl/cheesecakes/14164?pzn=relevance,Bakery
+Sweet Goods & Snacks,https://www.marianos.com/pl/sweet-goods-snacks/14180?pzn=relevance,Bakery
+Artisan Bread,https://www.marianos.com/pl/artisan-breads/14162?pzn=relevance,Bakery
+"Sandwich Bread, Buns and Rolls",https://www.marianos.com/pl/sandwich-bread-buns-and-rolls/14181,Bakery
+Dinner Bread & Rolls,https://www.marianos.com/pl/dinner-bread-and-rolls/14182,Bakery
+Breakfast Breads,https://www.marianos.com/pl/breakfast-breads/14183,Bakery
+Bread by Lifestyle,https://www.marianos.com/pl/bread-by-lifestyle/14184,Bakery
+Specialty Breads & Rolls,https://www.marianos.com/pl/specialty-breads-and-rolls/14185,Bakery
+Specialty Butters & Spreads,https://www.marianos.com/pl/specialty-butters-and-spreads/14186,Bakery
+Fresh Cut Roses,https://www.marianos.com/pl/fresh-cut-roses/09130,Floral
+Bouquets,https://www.marianos.com/pl/bouquets/09126,Floral
+Floral Arrangements,https://www.marianos.com/pl/floralarrangements/09128,Floral
+Orchids,https://www.marianos.com/pl/orchids/09132,Floral
+Plants,https://www.marianos.com/pl/potted-plants/09133,Floral
+Balloons,https://www.marianos.com/pl/balloons/09125,Floral
+Shop All,https://www.marianos.com/d/floral,Floral
+Shop All,https://www.marianos.com/d/grocery,Pantry
+Snacks,https://www.marianos.com/d/snacks,Pantry
+Crackers,https://www.marianos.com/pl/crackers/01026?query=crackers&searchType=default_search&taxonomyId=01026&fulfillment=all,Pantry
+Packaged Breads,https://www.marianos.com/pl/packaged-bread/01016?pzn=relevance,Pantry
+Canned Foods,https://www.marianos.com/pl/canned-foods/01006?pzn=relevance,Pantry
+Baking & Cooking,https://www.marianos.com/pl/baking-cooking/01012?pzn=relevance,Pantry
+Condiments & Salad Dressings,https://www.marianos.com/pl/condiments-sauces/01008?pzn=relevance,Pantry
+Pasta & Pasta Sauces,https://www.marianos.com/pl/pasta-pasta-sauces/01010?pzn=relevance,Pantry
+"Grains, Beans & Rice",https://www.marianos.com/pl/grains-beans-rice/01007?pzn=relevance,Pantry
+"Easy Meals, Sides, Mac & Cheese",https://www.marianos.com/pl/Easy-Meals-Sides-Mac-Cheese/01011?pzn=relevance,Pantry
+"Spreads, Jelly & Honey",https://www.marianos.com/pl/spreads-jelly-honey/01014?pzn=relevance,Pantry
+Spices & Seasonings,https://www.marianos.com/pl/spices-seasonings/01015?pzn=relevance,Pantry
+"Nuts, Trail Mix & Seeds",https://www.marianos.com/pl/nuts-trail-mix-seeds/01022,Pantry
+Shop All,https://www.marianos.com/d/international,Pantry
+Latin American & Mexican,https://www.marianos.com/d/international-latin-mexican,Pantry
+Asian,https://www.marianos.com/d/international-asian,Pantry
+Indian,https://www.marianos.com/pl/indian-foods/0101300170?pzn=relevance,Pantry
+European,https://www.marianos.com/pl/european-foods/0101300166?pzn=relevance,Pantry
+Kosher,https://www.marianos.com/pl/kosher-foods/0101300004?pzn=relevance,Pantry
+Natural & OrganicExplore Simple Truth® picks and more favorites.Shop Now,https://www.marianos.com/d/natural-organic,Pantry | Dairy & Eggs | Frozen | Natural & Organic | Natural & Organic | Beverages | Breakfast | Coffee | Candy
+Milk & Plant-based Milk,https://www.marianos.com/pl/milk-plant-based-%20milk/02001?pzn=relevance,Dairy & Eggs
+Cream & Creamer,https://www.marianos.com/pl/cream-creamer/02005?pzn=relevance,Dairy & Eggs
+Eggs,https://www.marianos.com/pl/eggs/02003?pzn=relevance,Dairy & Eggs
+Cheese,https://www.marianos.com/pl/cheese/02002?pzn=relevance,Dairy & Eggs
+Yogurt,https://www.marianos.com/pl/yogurt/02009?pzn=relevance,Dairy & Eggs
+Butter & Margarine,https://www.marianos.com/pl/butter-margarine/02004?pzn=relevance,Dairy & Eggs
+Cream Cheese,https://www.marianos.com/pl/creamcheese/02010?pzn=relevance,Dairy & Eggs
+Sour Cream & Dips,https://www.marianos.com/pl/sour-cream-dips/02006?pzn=relevance,Dairy & Eggs
+Refrigerated Dough & Crust,https://www.marianos.com/pl/refrigerated-dough-crust/02007?pzn=relevance,Dairy & Eggs
+Pudding & Gelatin,https://www.marianos.com/pl/pudding-gelatin/02008?pzn=relevance,Dairy & Eggs
+Shop All,https://www.marianos.com/d/dairy,Dairy & Eggs
+Frozen Pizza,https://www.marianos.com/pl/frozen-pizza/19003?pzn=relevance,Frozen
+Frozen Appetizers & Snacks,https://www.marianos.com/pl/frozen-appetizers-snacks/19006?pzn=relevance,Frozen
+Frozen Breakfast,https://www.marianos.com/pl/frozen-breakfast/19007?pzn=relevance,Frozen | Breakfast
+Frozen Family Meals & Sides,https://www.marianos.com/pl/frozen-family-meals-sides/19015?pzn=relevance,Frozen
+Frozen Individual Meals,https://www.marianos.com/pl/frozen-individual-meals/19016?pzn=relevance,Frozen
+Frozen Meatballs,https://www.marianos.com/pl/frozen-meatballs/19017?pzn=relevance,Frozen
+Frozen Potatoes & Onion Rings,https://www.marianos.com/pl/frozen-potatoes-onion-rings/19010?pzn=relevance,Frozen
+Frozen International Foods,https://www.marianos.com/pl/international-frozen-foods/19013?pzn=relevance,Frozen
+"Frozen Chicken, Meat & Seafood",https://www.marianos.com/pl/frozen-chicken-meat-seafood/19008,Frozen
+Frozen Bread,https://www.marianos.com/pl/frozen-bread/19009?pzn=relevance,Frozen
+Ice Cream & Ice Pops,https://www.marianos.com/pl/ice-cream-ice-pops/19002?pzn=relevance,Frozen
+Frozen Desserts,https://www.marianos.com/pl/frozen-desserts/19001?pzn=relevance,Frozen
+Frozen Vegetables,https://www.marianos.com/pl/frozen-vegetables/19005?pzn=relevance,Frozen
+Frozen Fruit,https://www.marianos.com/pl/frozen-fruit/19012?pzn=relevance,Frozen
+Frozen Juice & Mixers,https://www.marianos.com/pl/frozen-juice-mixers/19011?pzn=relevance,Frozen
+Ice,https://www.marianos.com/pl/ice/19014?pzn=relevance,Frozen
+Shop All,https://www.marianos.com/d/frozen,Frozen
+Meat & Seafood,https://www.marianos.com/pl/meat-seafood/18004?pzn=relevance,Natural & Organic
+Dairy & Eggs,https://www.marianos.com/pl/dairy-eggs/18007?pzn=relevance,Natural & Organic
+Bakery & Bread,https://www.marianos.com/pl/bakery-bread/18009?pzn=relevance,Natural & Organic
+Deli,https://www.marianos.com/pl/deli/18008?pzn=relevance,Natural & Organic
+Pantry,https://www.marianos.com/pl/grocery/18012?pzn=relevance,Natural & Organic
+Frozen,https://www.marianos.com/pl/frozen/18010?pzn=relevance,Natural & Organic
+Beverages,https://www.marianos.com/pl/beverages/18005?pzn=relevance,Natural & Organic
+Spices & Baking,https://www.marianos.com/pl/spices-baking/18006?pzn=relevance,Natural & Organic
+Cleaning & Household,https://www.marianos.com/pl/cleaning-household/18011?pzn=relevance,Natural & Organic
+Beauty & Personal Care,https://www.marianos.com/pl/beauty-personal-care/18001?pzn=relevance,Natural & Organic
+Baby,https://www.marianos.com/pl/baby/18002?pzn=relevance,Natural & Organic
+Soda & Pop,https://www.marianos.com/pl/soda-pop/04001?pzn=relevance,Beverages
+Juice & Lemonade,https://www.marianos.com/pl/juice/04004?pzn=relevance,Beverages
+Drink Boxes & Pouches,https://www.marianos.com/pl/drink-boxes-pouches/04010?pzn=relevance,Beverages
+Energy Drinks,https://www.marianos.com/pl/energy-drinks/04011,Beverages
+Sports Drinks,https://www.marianos.com/pl/sports-drinks/04005,Beverages
+Drink Mixes & Water Enhancers,https://www.marianos.com/pl/drink-mixes-water-enhancers/04008?pzn=relevance,Beverages
+Water,https://www.marianos.com/pl/water/04006?pzn=relevance,Beverages
+Sparkling Water,https://www.marianos.com/pl/sparkling-water/04002?pzn=relevance,Beverages
+Coffee,https://www.marianos.com/pl/coffee/04003?pzn=relevance,Beverages
+Tea & Kombucha,https://www.marianos.com/pl/tea-kombucha/04007?pzn=relevance,Beverages
+Shop All,https://www.marianos.com/d/beverages,Beverages
+Cereal & Granola,https://www.marianos.com/pl/cereal-granola/03001?pzn=relevance,Breakfast
+Bars & Toaster Pastries,https://www.marianos.com/pl/breakfast-cereal-bars/03002,Breakfast
+"Bread, Bagels & Muffins",https://www.marianos.com/pl/bread-bagels-muffins/03004?pzn=relevance,Breakfast
+Donuts & Pastries,https://www.marianos.com/pl/donuts-pastries/03005?pzn=relevance,Breakfast
+"Pancake, Waffle & Baking Mixes",https://www.marianos.com/pl/pancake-waffle-baking-mixes/03003?pzn=relevance,Breakfast
+Dairy & Refrigerated Breakfast,https://www.marianos.com/pl/dairy-refrigerated-breakfast/03006?pzn=relevance,Breakfast
+Bacon & Breakfast Sausage,https://www.marianos.com/pl/bacon-sausage/05017?pzn=relevance,Breakfast
+Juice & Breakfast Drinks,https://www.marianos.com/pl/juice-breakfast-drinks/03007?pzn=relevance,Breakfast
+Shop All,https://www.marianos.com/d/breakfast,Breakfast
+Shop All,https://www.marianos.com/d/coffee,Coffee
+Ground Coffee,https://www.marianos.com/pl/ground-coffee/0400300003,Coffee
+K-Cups & Coffee Pods,https://www.marianos.com/pl/k-cups-coffee-pods/0400300001,Coffee
+Whole Coffee Beans,https://www.marianos.com/pl/whole-coffee-beans/0400300002,Coffee
+Coffee Creamers & Flavoring Syrups,https://www.marianos.com/pl/coffee-creamers-flavoring-syrups/0400300008,Coffee
+Nespresso Pods & Capsules,https://www.marianos.com/pl/nespresso-pods-capsules/0400300004,Coffee
+Espresso Coffee,https://www.marianos.com/pl/espresso-coffee/0400300007,Coffee
+"Cold Brew, Iced & Bottled Coffee",https://www.marianos.com/pl/cold-brew-iced-bottled-coffee/0400300009,Coffee
+Decaffeinated Coffee,https://www.marianos.com/pl/decaffeinated-coffee/0400300006,Coffee
+Instant Coffee,https://www.marianos.com/pl/instant-coffee/0400300010,Coffee
+Seasonal & Holiday Flavored Coffee & Creamer,https://www.marianos.com/pl/seasonal-holiday-flavored-coffee-creamer/0400300005,Coffee
+Shop All,https://www.marianos.com/d/candy,Candy
+Chocolate,https://www.marianos.com/pl/chocolate/23001?pzn=relevance,Candy
+Premium Chocolate,https://www.marianos.com/pl/premium-chocolate/23008?pzn=relevance,Candy
+Gummy & Chewy,https://www.marianos.com/pl/gummy-chewy/23003?pzn=relevance,Candy
+Hard Candy & Lollipops,https://www.marianos.com/pl/hard-candy-lollipops/23004?pzn=relevance,Candy
+Gums & Mints,https://www.marianos.com/pl/gum-mints/23002?pzn=relevance,Candy
+Healthier Options,https://www.marianos.com/pl/healthier-options/23009?pzn=relevance,Candy
+International,https://www.marianos.com/pl/international/23005?pzn=relevance,Candy
+Seasonal,https://www.marianos.com/pl/seasonal/23007?pzn=relevance,Candy
+Pickup & Delivery Cold Medicine,https://www.marianos.com/pl/cold-cough-flu/22011?searchType=mktg%20attribute&pzn=relevance,Health & Wellness
+"Cold, Cough & Flu",https://www.marianos.com/pl/cold-cough-flu/22011?pzn=relevance,Health & Wellness
+Allergy & Sinus,https://www.marianos.com/pl/allergy-sinus/22012?pzn=relevance,Health & Wellness
+Pain & Fever,https://www.marianos.com/pl/pain-fever/22005?pzn=relevance,Health & Wellness
+Children's Medicine,https://www.marianos.com/pl/children-s-medicine/22014?pzn=relevance,Health & Wellness
+Energy & Stimulants,https://www.marianos.com/pl/energy-stimulants/22008?pzn=relevance,Health & Wellness
+Sports & Adult Nutrition,https://www.marianos.com/pl/diet-adult-nutrition/22010?pzn=relevance,Health & Wellness
+Digestive Health & Nausea,https://www.marianos.com/pl/digestive-health-nausea/22001?pzn=relevance,Health & Wellness
+Immune Support,https://www.marianos.com/pl/immune-system-supports/2201100003?pzn=relevance,Health & Wellness
+Sleep Aids,https://www.marianos.com/pl/sleep-aids/22006?pzn=relevance,Health & Wellness
+Shop All,https://www.marianos.com/d/vitamins-supplements,Health & Wellness
+Multivitamins,https://www.marianos.com/pl/multi-vitamins/2201300005?pzn=relevance,Health & Wellness
+Letter Vitamins,https://www.marianos.com/pl/letter-vitamins/2201300001?pzn=relevance,Health & Wellness
+Children's Vitamins,https://www.marianos.com/pl/children-s-vitamins/2201300002?pzn=relevance,Health & Wellness
+Minerals,https://www.marianos.com/pl/minerals/2201300004?pzn=relevance,Health & Wellness
+Herbal Supplements,https://www.marianos.com/pl/herbal-supplements/2201300003?pzn=relevance,Health & Wellness
+Diet & Nutrition,https://www.marianos.com/pl/nutrition-diet-supplements/2201300008?pzn=relevance,Health & Wellness
+Natural & Organic,https://www.marianos.com/pl/vitaminssupplements/1800100003?pzn=relevance,Health & Wellness
+Prenatal & Postnatal Vitamins,https://www.marianos.com/pl/prenatalpostnatal-vitamins/2201300010?pzn=relevance,Health & Wellness
+Joint Health,https://www.marianos.com/pl/joint-health/2201300007?pzn=relevance,Health & Wellness
+Fish Oils & Omegas,https://www.marianos.com/pl/fish-oil-oils-omegas/2201300006?pzn=relevance,Health & Wellness
+"Hair, Skin & Nails",https://www.marianos.com/pl/hair-skin-nailssupplements/2201300011?pzn=relevance,Health & Wellness
+CoQ-10,https://www.marianos.com/pl/coq-10/2201300012?pzn=relevance,Health & Wellness
+First Aid,https://www.marianos.com/pl/first-aid/22004?pzn=relevance,Health & Wellness
+Foot Care,https://www.marianos.com/pl/foot-care/22007?pzn=relevance,Health & Wellness
+Eye Care,https://www.marianos.com/pl/eye-care/22002?pzn=relevance,Health & Wellness
+Home Healthcare Solutions,https://www.marianos.com/pl/home-healthcare-solutions/22009?pzn=relevance,Health & Wellness
+Sexual Health,https://www.marianos.com/pl/sexual-health/22015?pzn=relevance,Health & Wellness
+Shop All,https://www.marianos.com/d/health,Health & Wellness
+Stay Well this FallShop allergy & flu essentials in one place.Shop Wellness,https://www.marianos.com/pl/health-wellness/22?query=flu%20and%20allergy&searchType=default_search&taxonomyId=22&fulfillment=all,Health & Wellness | Personal Care | Beauty | Baby
+Shop All,https://www.marianos.com/d/personal-care,Personal Care
+Hair Care,https://www.marianos.com/pl/hair-care/21002?pzn=relevance,Personal Care
+Oral Care,https://www.marianos.com/pl/oral-care/21003?pzn=relevance,Personal Care
+Body Lotion,https://www.marianos.com/pl/body-moisturizers/21006?pzn=relevance,Personal Care
+Bath & Shower,https://www.marianos.com/pl/bath-shower/21013?pzn=relevance,Personal Care
+Feminine Care,https://www.marianos.com/pl/feminine-care/21009?pzn=relevance,Personal Care
+Hand Soap & Sanitizers,https://www.marianos.com/pl/hand-soap-sanitizer/21007?pzn=relevance,Personal Care
+Deodorants,https://www.marianos.com/pl/deodorants-antiperspirant/21001?pzn=relevance,Personal Care
+Incontinence,https://www.marianos.com/pl/incontinence/21008?pzn=relevance,Personal Care
+Shaving & Grooming,https://www.marianos.com/pl/shaving-grooming/21004?pzn=relevance,Personal Care
+Shampoo,https://www.marianos.com/pl/shampoo/2000400001?pzn=relevance,Beauty
+Conditioner,https://www.marianos.com/pl/conditioner/2100200016?pzn=relevance&taxonomyId=2100200016&fulfillment=all,Beauty
+Hair Color,https://www.marianos.com/pl/hair-color/2100200019?pzn=relevance&taxonomyId=2100200019&fulfillment=all,Beauty
+Hair Styling Tools & Appliances,https://www.marianos.com/pl/hair-styling-tools-appliances/2000400008?pzn=relevance,Beauty
+Hair Brushes & Accessories,https://www.marianos.com/pl/hair-brushes-accessories/2100200001?pzn=relevance,Beauty
+Facial Treatments,https://www.marianos.com/pl/facialtreatments/2000200004?pzn=relevance,Beauty
+Facial Moisturizers,https://www.marianos.com/pl/facialmoisturizers/2000200001?pzn=relevance,Beauty
+Face Masks,https://www.marianos.com/pl/facial-masks/2000200005?pzn=relevance,Beauty
+Makeup Remover,https://www.marianos.com/pl/face-wipesmakeup-remover/2000100005?pzn=relevance,Beauty
+Bath & Shower,https://www.marianos.com/pl/bath-shower/20005,Beauty
+Sun & Tanning,https://www.marianos.com/pl/sun-tanning/20006?pzn=relevance,Beauty
+Korean Skincare,https://www.marianos.com/pl/korean-skincare/2000200012?pzn=relevance&taxonomyId=2000200012&fulfillment=all,Beauty
+Eyes,https://www.marianos.com/pl/eyes/2000100002?pzn=relevance,Beauty
+Face,https://www.marianos.com/pl/face/2000100007?pzn=relevance,Beauty
+Lips,https://www.marianos.com/pl/lips/2000100006?pzn=relevance,Beauty
+Nails,https://www.marianos.com/pl/nails/2000100003?pzn=relevance,Beauty
+Makeup Tools & Brushes,https://www.marianos.com/pl/tools-brushes/2000100001?pzn=relevance,Beauty
+Shop All,https://www.marianos.com/pl/fragrance/20003,Beauty
+Shop All,https://www.marianos.com/d/beauty,Beauty
+Baby Food & Snacks,https://www.marianos.com/pl/baby-food-snacks/10001,Baby
+Baby Formula,https://www.marianos.com/pl/baby-formula/10093,Baby
+Baby & Toddler Beverages,https://www.marianos.com/pl/baby-toddler-beverage/10098,Baby
+Diapers & Training Pants,https://www.marianos.com/pl/diapers-training-pants/10003?pzn=relevance,Baby
+Baby Wipes,https://www.marianos.com/pl/baby-wipes/10099?pzn=relevance&taxonomyId=10099&fulfillment=all,Baby
+Baby Bath & Skincare,https://www.marianos.com/pl/baby-bath-skincare/10005?pzn=relevance&taxonomyId=10005&fulfillment=all,Baby
+Baby Essentials,https://www.marianos.com/pl/baby-essentials/10006?pzn=relevance&taxonomyId=10006&fulfillment=all,Baby
+Shop All,https://www.marianos.com/d/baby,Baby
+Laundry Detergent Pods,https://www.marianos.com/pl/laundry-detergent-pods-pacs/2602500007?pzn=relevance,Cleaning & Household
+Liquid Laundry Detergent,https://www.marianos.com/pl/liquid-laundry-detergent/2602500001?pzn=relevance,Cleaning & Household
+Powder Laundry Detergent,https://www.marianos.com/pl/powder-laundry-detergent/2602500010?pzn=relevance,Cleaning & Household
+Fabric Softener,https://www.marianos.com/pl/fabric-softener/2602500005?pzn=relevance,Cleaning & Household
+Dryer Sheets,https://www.marianos.com/pl/dryer-sheets/2602500003?pzn=relevance,Cleaning & Household
+Scent Boosters,https://www.marianos.com/pl/scent-booster/2602500011?pzn=relevance,Cleaning & Household
+Bleach,https://www.marianos.com/pl/bleach/2602500002?pzn=relevance,Cleaning & Household
+Stain Remover,https://www.marianos.com/pl/stain-remover/2602500012?pzn=relevance,Cleaning & Household
+Laundry Sanitizer,https://www.marianos.com/pl/laundry-sanitizer/2602500008?pzn=relevance,Cleaning & Household
+Fabric Refreshers,https://www.marianos.com/pl/fabric-refreshers/2602500004?pzn=relevance,Cleaning & Household
+Free & Clear Laundry,https://www.marianos.com/pl/free-clear-laundry/2602500014?pzn=relevance,Cleaning & Household
+Laundry Supplies,https://www.marianos.com/pl/laundry-supplies/2602500009?pzn=relevance,Cleaning & Household
+Paper Towels,https://www.marianos.com/pl/paper-towels/2602400003?pzn=relevance,Cleaning & Household
+Toilet Paper,https://www.marianos.com/pl/toilet-paper/2602400001?pzn=relevance,Cleaning & Household
+Flushable Wipes,https://www.marianos.com/pl/flushable-wipes/2602400002?pzn=relevance,Cleaning & Household
+Facial Tissue,https://www.marianos.com/pl/facial-tissue/2602400004?pzn=relevance,Cleaning & Household
+Bulk Paper Products,https://www.marianos.com/pl/bulk-paper-products/2602400006?pzn=relevance,Cleaning & Household
+Hand Wipes,https://www.marianos.com/pl/hand-wipes/2602400007?pzn=relevance,Cleaning & Household
+Natural & Organic,https://www.marianos.com/pl/natural-organic/2602400008?pzn=relevance,Cleaning & Household
+Napkins,https://www.marianos.com/pl/paper-napkins/2602400005?pzn=relevance,Cleaning & Household
+Dishwashing Needs,https://www.marianos.com/pl/Dishwashing-Needs/26005?pzn=relevance,Cleaning & Household
+Food Storage,https://www.marianos.com/pl/Food-Storage/26006?pzn=relevance,Cleaning & Household
+Disposable Tableware,https://www.marianos.com/pl/Disposable-Tableware/26018?pzn=relevance,Cleaning & Household
+Baking Paper & Foils,https://www.marianos.com/pl/Baking-Paper-&-Foils/26019?pzn=relevance,Cleaning & Household
+Water Filtration,https://www.marianos.com/pl/Water-Filtration/26011?pzn=relevance,Cleaning & Household
+Wipes & Cleaning Supplies,https://www.marianos.com/pl/cleaning-disinfecting-wipes/2600400006?taxonomyId=2600400006&fulfillment=all,Cleaning & Household
+Cleaning Tools,https://www.marianos.com/pl/cleaning-tools/2600400005?taxonomyId=2600400005&fulfillment=all,Cleaning & Household
+Kitchen Cleaners,https://www.marianos.com/pl/kitchen-cleaners/2600400007?taxonomyId=2600400007&fulfillment=all,Cleaning & Household
+All-Purpose Cleaners,https://www.marianos.com/pl/all-purpose-cleaners/2600400008?taxonomyId=2600400008&fulfillment=all,Cleaning & Household
+Bathroom Cleaners,https://www.marianos.com/pl/bathroom-cleaners/2600400009?taxonomyId=2600400009&fulfillment=all,Cleaning & Household
+Carpet & Floor Cleaners,https://www.marianos.com/pl/carpet-floor-cleaners/2600400010?taxonomyId=2600400010&fulfillment=all,Cleaning & Household
+Glass Cleaners,https://www.marianos.com/pl/glass-cleaners/2600400004?taxonomyId=2600400004&fulfillment=all,Cleaning & Household
+Dusters,https://www.marianos.com/pl/dusters/2600400011?taxonomyId=2600400011&fulfillment=all,Cleaning & Household
+Mops,https://www.marianos.com/pl/mops/2600400012?taxonomyId=2600400012&fulfillment=all,Cleaning & Household
+Furniture Cleaner,https://www.marianos.com/pl/furniture-cleaner/2600400013?taxonomyId=2600400013&fulfillment=all,Cleaning & Household
+Brooms & Dust Pans,https://www.marianos.com/pl/brooms-dust-pans/2600400014?taxonomyId=2600400014&fulfillment=all,Cleaning & Household
+Drain Cleaners,https://www.marianos.com/pl/drain-cleaners/2600400015?taxonomyId=2600400015&fulfillment=all,Cleaning & Household
+Natural Cleaners,https://www.marianos.com/pl/natural-cleaners/2600400016?taxonomyId=2600400016&fulfillment=all,Cleaning & Household
+Bulk Cleaning Supplies,https://www.marianos.com/pl/bulk-cleaning-supplies/2600400017?taxonomyId=2600400017&fulfillment,Cleaning & Household
+Pet Cleaning Supplies,https://www.marianos.com/pl/pet-cleaning-supplies/2600400018?taxonomyId=2600400018&fulfillment=all,Cleaning & Household
+Shop All,https://www.marianos.com/d/household,Cleaning & Household
+Household EssentialsStock up on day-to-day must-haves.Shop Now,https://www.marianos.com/d/household#bigpacks,Cleaning & Household
+Kitchen Appliances,https://www.marianos.com/pl/kitchen-appliances/28005?pzn=relevance,Kitchen & Dining
+Kitchen Gadgets,https://www.marianos.com/pl/kitchen-tools-gadgets/28001?pzn=relevance,Kitchen & Dining
+Coffee & Tea Supplies,https://www.marianos.com/pl/coffee-tea/28004?pzn=relevance,Kitchen & Dining
+Cookware,https://www.marianos.com/pl/cookware/28003?pzn=relevance,Kitchen & Dining
+Bakeware,https://www.marianos.com/pl/bakeware/28009?pzn=relevance,Kitchen & Dining
+Kitchen Linens,https://www.marianos.com/pl/kitchen-table-linens/28006?pzn=relevance,Kitchen & Dining
+Kitchen Maintenance,https://www.marianos.com/pl/kitchen-maintenance/28016?pzn=relevance,Kitchen & Dining
+Reusable Bags & Totes,https://www.marianos.com/pl/reusable-bags-totes/28015?pzn=relevance,Kitchen & Dining
+Kitchen Organization,https://www.marianos.com/pl/kitchen-storage-organization/28002?pzn=relevance,Kitchen & Dining
+Glassware & Drinkware,https://www.marianos.com/pl/glassware-drinkware/40003?pzn=relevance,Kitchen & Dining
+Thermal & Water Bottles,https://www.marianos.com/pl/thermal-water-bottles/40004?pzn=relevance,Kitchen & Dining
+Dinnerware,https://www.marianos.com/pl/tableware/40001?pzn=relevance,Kitchen & Dining
+Serveware,https://www.marianos.com/pl/serveware/40006?pzn=relevance,Kitchen & Dining
+Wine & Bar Essentials,https://www.marianos.com/pl/wine-and-bar-essentials/40008?pzn=relevance,Kitchen & Dining
+Cutlery & Knives,https://www.marianos.com/pl/cutlery-knife-accessories/40002?pzn=relevance,Kitchen & Dining
+Flatware,https://www.marianos.com/pl/flatware/40005?pzn=relevance,Kitchen & Dining
+Shop All,https://www.marianos.com/d/kitchen-dining,Kitchen & Dining
+Kitchen EssentialsGet cooking with these appliances.Shop Appliances,https://www.marianos.com/pl/kitchen/28?query=appliances&searchType=default_search&taxonomyId=28&fulfillment=all,Kitchen & Dining | Home | Electronics | Garden & Patio | Toys & Games
+Candles,https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance,Home
+Batteries,https://www.marianos.com/pl/batteries/26003?pzn=relevance,Home
+Light Bulbs,https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance,Home
+Storage & Organization,https://www.marianos.com/pl/storagesolutions/39005?pzn=relevance,Home
+School & Office,https://www.marianos.com/pl/school-office/35?pzn=relevance,Home
+Crafts & Hobbies,https://www.marianos.com/pl/craft-hobby/34?pzn=relevance,Home
+Home Improvement,https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance,Home
+Automotive,https://www.marianos.com/pl/automotive/15043?pzn=relevance,Home
+As Seen on TV,https://www.marianos.com/pl/as-seen-on-tv/15172?pzn=relevance,Home
+Shop All,https://www.marianos.com/d/home-electronics,Home
+Headphones,https://www.marianos.com/pl/headphones-earbuds-headsets/2900300001,Electronics
+Audio & MP3 Players,https://www.marianos.com/pl/audio-mp3-players/29003?pzn=relevance,Electronics
+Phones,https://www.marianos.com/pl/phones/29002?pzn=relevance,Electronics
+Shop All,https://www.marianos.com/d/electronics,Electronics
+Shop All,https://www.marianos.com/d/patio-grilling,Garden & Patio
+Grills & Outdoor Cooking,https://www.marianos.com/pl/grills-outdoor-cooking/24001?pzn=relevance,Garden & Patio
+Lawn & Garden,https://www.marianos.com/pl/lawn-garden/24002,Garden & Patio
+Patio Furniture,https://www.marianos.com/pl/patio-furniture/24003,Garden & Patio
+Shop All,https://www.marianos.com/d/toys,Toys & Games
+Games & Puzzles,https://www.marianos.com/pl/games-puzzles/25001,Toys & Games
+Dolls & Plushies,https://www.marianos.com/pl/dolls-plushies/25004?pzn=relevance&taxonomyId=25004&fulfillment=all,Toys & Games
+Learning & Education,https://www.marianos.com/pl/learning-education/25005?pzn=relevance&taxonomyId=25005&fulfillment=all,Toys & Games
+"Creative, Crafts & Activities",https://www.marianos.com/pl/creative-crafts-activities/25006?pzn=relevance&taxonomyId=25006&fulfillment=all,Toys & Games
+Action Figures & Playsets,https://www.marianos.com/pl/action-figures-playsets/25002,Toys & Games
+Cars & RC Vehicles,https://www.marianos.com/pl/cars-rcvehicles/25008,Toys & Games
+Wheeled Sports & Recreation,https://www.marianos.com/pl/wheeledsports-recreation/25010,Toys & Games
+Building Blocks & Sets,https://www.marianos.com/pl/buildingblocks-sets/25009,Toys & Games
+Outdoor,https://www.marianos.com/pl/outdoor/25003?pzn=relevance&taxonomyId=25003&fulfillment=all,Toys & Games
+Shop All Pet,https://www.marianos.com/d/pet-supplies,Pet | Pet
+Dog Food,https://www.marianos.com/pl/dog-food/27017,Pet
+Dog Treats,https://www.marianos.com/pl/dog-treats/27018,Pet
+Dog Toys,https://www.marianos.com/pl/dog-toys/27019,Pet
+Dog Supplies,https://www.marianos.com/pl/dog-supplies/27020,Pet
+Cat Food,https://www.marianos.com/pl/cat-food/27021,Pet
+Cat Treats,https://www.marianos.com/pl/cat-treats/27022,Pet
+Cat Litter & Accessories,https://www.marianos.com/pl/cat-litter-accessories/27023,Pet
+Cat Toys,https://www.marianos.com/pl/cat-toys/27024,Pet
+Cat Supplies,https://www.marianos.com/pl/cat-supplies/27025,Pet
+Bird Supplies,https://www.marianos.com/pl/bird-supplies/27026,Pet
+Fish Supplies,https://www.marianos.com/pl/fish-supplies/27027,Pet
+Small Animal Supplies,https://www.marianos.com/pl/small-animal-supplies/27029,Pet
+Craft Beer,https://www.marianos.com/pl/craft-beer/08145?pzn=relevance,"Beer, Wine & Liquor"
+American Lager,https://www.marianos.com/pl/American-Lager-Beer/08119?pzn=relevance,"Beer, Wine & Liquor"
+Import Beer,https://www.marianos.com/pl/Import-Beer/08190?pzn=relevance,"Beer, Wine & Liquor"
+Hard Cider,https://www.marianos.com/pl/hard-cider08194?pzn=relevance,"Beer, Wine & Liquor"
+Red Wine,https://www.marianos.com/pl/red-wine/08120?pzn=relevance,"Beer, Wine & Liquor"
+White Wine,https://www.marianos.com/pl/white-wine/08122?pzn=relevance,"Beer, Wine & Liquor"
+Rose & Blush Wine,https://www.marianos.com/pl/rose-blush-wine/08181?pzn=relevance,"Beer, Wine & Liquor"
+Champagne & Sparkling Wine,https://www.marianos.com/pl/champagne-sparkling-wine/08180?pzn=relevance,"Beer, Wine & Liquor"
+Box Wine,https://www.marianos.com/pl/box-wine/08182?pzn=relevance,"Beer, Wine & Liquor"
+Dessert & Vermouth Wine,https://www.marianos.com/pl/desserts-vermouth-wine/08185?pzn=relevance,"Beer, Wine & Liquor"
+Hard Seltzers,https://www.marianos.com/pl/hard-seltzers/08183?pzn=relevance,"Beer, Wine & Liquor"
+Ready to Drink Cocktails,https://www.marianos.com/pl/ready-to-drink-cocktails/08193?pzn=relevance,"Beer, Wine & Liquor"
+Hard Teas & Lemonades,https://www.marianos.com/pl/hard-teas-hard-lemonades/08191?pzn=relevance,"Beer, Wine & Liquor"
+Flavored Malt Beverages,https://www.marianos.com/pl/flavored-malt-beverages/08192?pzn=relevance,"Beer, Wine & Liquor"
+Shop Liquor,https://www.marianos.com/pl/liquor/08121?pzn=relevance,"Beer, Wine & Liquor"
+Shop All,https://www.marianos.com/pl/non-alcoholic/08184?pzn=relevance,"Beer, Wine & Liquor"
+Shop All,https://www.marianos.com/d/beer-wine-liquor,"Beer, Wine & Liquor | Beer, Wine & Liquor"

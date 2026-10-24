@@ -1,0 +1,452 @@
+{
+  "mode": "OFFICIAL_KROGER_API_TRIAL",
+  "store_id": "53100508",
+  "zipcode": "60661",
+  "records": 604,
+  "unique_upcs": 604,
+  "duplicate_placements": 0,
+  "pre_quarantine_records": 650,
+  "quarantined_records": 46,
+  "rejections": {
+    "NO_QUALIFYING_LOCAL_PICKUP_OFFER": 2
+  },
+  "category_counts": {
+    "Natural Organic": 83,
+    "Dairy": 153,
+    "Bakery": 30,
+    "Frozen": 3,
+    "Breakfast": 69,
+    "Pasta, Sauces, Grain": 122,
+    "International": 15,
+    "Canned & Packaged": 53,
+    "Deli": 11,
+    "Condiment & Sauces": 18,
+    "Beverages": 47
+  },
+  "source_pages": [
+    {
+      "file": "page_00.json",
+      "term": "milk",
+      "observed_at": "2026-10-24T06:06:46.518577+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_01.json",
+      "term": "bread",
+      "observed_at": "2026-10-24T06:06:47.864904+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_02.json",
+      "term": "cheese",
+      "observed_at": "2026-10-24T06:06:49.180244+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_03.json",
+      "term": "yogurt",
+      "observed_at": "2026-10-24T06:06:50.562340+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_04.json",
+      "term": "eggs",
+      "observed_at": "2026-10-24T06:06:52.196962+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_05.json",
+      "term": "butter",
+      "observed_at": "2026-10-24T06:06:53.866874+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_06.json",
+      "term": "cereal",
+      "observed_at": "2026-10-24T06:06:55.494827+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_07.json",
+      "term": "pasta",
+      "observed_at": "2026-10-24T06:06:56.735224+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_08.json",
+      "term": "rice",
+      "observed_at": "2026-10-24T06:06:58.304445+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_09.json",
+      "term": "beans",
+      "observed_at": "2026-10-24T06:06:59.973820+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_10.json",
+      "term": "soup",
+      "observed_at": "2026-10-24T06:07:01.460594+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_11.json",
+      "term": "sauce",
+      "observed_at": "2026-10-24T06:07:02.869582+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_12.json",
+      "term": "coffee",
+      "observed_at": "2026-10-24T06:07:04.239400+00:00",
+      "returned": 50
+    },
+    {
+      "file": "page_13.json",
+      "term": "tea",
+      "observed_at": "2026-10-24T06:07:06.529177+00:00",
+      "returned": 50
+    }
+  ],
+  "source_sha256": {
+    "page_00.json": "f9e914b110d687b8eed571bed9348dd097493f6b5c8b46e188736ba8d018862a",
+    "page_01.json": "28f5577a96156629f2e1edbb839c675e67fbbe510a2b335951f7252cabe77b6b",
+    "page_02.json": "c67de3f2ea1ad412a6cce8f819159412d798be72747e87ece27549bb0e1749fb",
+    "page_03.json": "a22b805a7de098e774bc0af9a4d42038ffbd2e0117d93943cbfc89f1243b6191",
+    "page_04.json": "6dde56f95fb2e58948b0e3947eb683b32329e25db394063d4e198b53bc8ac335",
+    "page_05.json": "e3a4d7680d2b124a7b6708618cc1b98e0a11cbe4e943ebfdc6c0768e5ba26b5e",
+    "page_06.json": "3c4879cedc8ebea69f9843e2fe2c5fcfeaf3a42cf87eb960acf30b819283670e",
+    "page_07.json": "11d393d4829b53384ec84542955284c9081f3996b8de0b39187898fc48b1b8b0",
+    "page_08.json": "9e330305f150edb0a3860a8abbc84e6b6b1820970a889518a91de3d4a377bd69",
+    "page_09.json": "a0c4cacf57db6a0de61a0122daa7fad31760a9bc38c2ba879b9c130a2c4c0785",
+    "page_10.json": "cbc25ee6ac9d5def36dc42e39ad33b3e5f06921fdc3baa619219a85599574483",
+    "page_11.json": "bc7349ccf8dfc1dfe8f953a89b19128b182904dc54fb760a825f23d89734259e",
+    "page_12.json": "f06e09fa53888c49a56b03a1d47a7c0b5c3e3f723152e292ab99e2a97424dfbe",
+    "page_13.json": "a6dc393e872e2dcffd283db363c944e82ffce2921a4796a2762e7d7a57a03d64"
+  },
+  "verified_store_sha256": "6c4cb9f9f69d080e54d3253623d7682c73ae9f36a477a684f91ee6352064f4a7",
+  "website_evidence_sha256": "41f3b3adabf1e2a9134b0606b66d4467f17a6d0d8591ba4dd70dceeb3baaeaa3",
+  "website_price_mismatches": [
+    {
+      "upc": "0074236500270",
+      "api_regular": "16.99",
+      "website_regular": "17.98"
+    },
+    {
+      "upc": "0074236500270",
+      "api_sale": "",
+      "website_sale": "16.99"
+    },
+    {
+      "upc": "0074236500416",
+      "api_regular": "8.79",
+      "website_regular": "9.49"
+    },
+    {
+      "upc": "0074236500416",
+      "api_sale": "",
+      "website_sale": "8.79"
+    },
+    {
+      "upc": "0074236500433",
+      "api_regular": "16.99",
+      "website_regular": "17.98"
+    },
+    {
+      "upc": "0074236500433",
+      "api_sale": "",
+      "website_sale": "16.99"
+    },
+    {
+      "upc": "0074236500417",
+      "api_regular": "8.79",
+      "website_regular": "9.49"
+    },
+    {
+      "upc": "0074236500417",
+      "api_sale": "",
+      "website_sale": "8.79"
+    },
+    {
+      "upc": "0074236500434",
+      "api_regular": "16.99",
+      "website_regular": "17.98"
+    },
+    {
+      "upc": "0074236500434",
+      "api_sale": "",
+      "website_sale": "16.99"
+    },
+    {
+      "upc": "0074236500420",
+      "api_regular": "8.79",
+      "website_regular": "9.49"
+    },
+    {
+      "upc": "0074236500420",
+      "api_sale": "",
+      "website_sale": "8.79"
+    },
+    {
+      "upc": "0074236500767",
+      "api_regular": "8.79",
+      "website_regular": "9.49"
+    },
+    {
+      "upc": "0074236500767",
+      "api_sale": "",
+      "website_sale": "8.79"
+    },
+    {
+      "upc": "0074236500766",
+      "api_regular": "16.99",
+      "website_regular": "17.98"
+    },
+    {
+      "upc": "0074236500766",
+      "api_sale": "",
+      "website_sale": "16.99"
+    },
+    {
+      "upc": "0007294561190",
+      "api_regular": "4.39",
+      "website_regular": "4.38"
+    },
+    {
+      "upc": "0001115051937",
+      "api_regular": "2.50",
+      "website_regular": "3.29"
+    },
+    {
+      "upc": "0001115051937",
+      "api_sale": "",
+      "website_sale": "2.50"
+    },
+    {
+      "upc": "0001115052162",
+      "api_regular": "2.50",
+      "website_regular": "3.29"
+    },
+    {
+      "upc": "0001115052162",
+      "api_sale": "",
+      "website_sale": "2.50"
+    },
+    {
+      "upc": "0001115050700",
+      "api_regular": "2.50",
+      "website_regular": "3.99"
+    },
+    {
+      "upc": "0001115050700",
+      "api_sale": "",
+      "website_sale": "2.50"
+    },
+    {
+      "upc": "0004610000121",
+      "api_regular": "3.99",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0004610000121",
+      "api_sale": "",
+      "website_sale": "3.99"
+    },
+    {
+      "upc": "0004610000113",
+      "api_regular": "3.99",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0004610000113",
+      "api_sale": "",
+      "website_sale": "3.99"
+    },
+    {
+      "upc": "0001115052667",
+      "api_regular": "2.50",
+      "website_regular": "3.29"
+    },
+    {
+      "upc": "0001115052667",
+      "api_sale": "",
+      "website_sale": "2.50"
+    },
+    {
+      "upc": "0084037090134",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090134",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090157",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090157",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090131",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090131",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090155",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090155",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090136",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090136",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090137",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090137",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090156",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090156",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0084037090158",
+      "api_regular": "3.29",
+      "website_regular": "4.49"
+    },
+    {
+      "upc": "0084037090158",
+      "api_sale": "",
+      "website_sale": "3.29"
+    },
+    {
+      "upc": "0001111008391",
+      "api_regular": "3.49",
+      "website_regular": "3.99"
+    },
+    {
+      "upc": "0001111008391",
+      "api_sale": "",
+      "website_sale": "3.49"
+    },
+    {
+      "upc": "0001111008389",
+      "api_regular": "3.49",
+      "website_regular": "3.99"
+    },
+    {
+      "upc": "0001111008389",
+      "api_sale": "",
+      "website_sale": "3.49"
+    },
+    {
+      "upc": "0007047000439",
+      "api_regular": "3.49",
+      "website_regular": "3.99"
+    },
+    {
+      "upc": "0007047000439",
+      "api_sale": "",
+      "website_sale": "3.49"
+    },
+    {
+      "upc": "0007047000430",
+      "api_regular": "3.49",
+      "website_regular": "3.99"
+    },
+    {
+      "upc": "0007047000430",
+      "api_sale": "",
+      "website_sale": "3.49"
+    }
+  ],
+  "website_pages_checked": 204,
+  "website_digital_details_pending": 0,
+  "field_completeness": {
+    "zipcode": 604,
+    "store_name": 604,
+    "store_location": 604,
+    "store_logo": 0,
+    "store_brand": 604,
+    "category": 604,
+    "sub_category": 158,
+    "product_title": 604,
+    "weight": 604,
+    "regular_price": 604,
+    "sale_price": 234,
+    "volume_deals_description": 29,
+    "volume_deals_price": 0,
+    "digital_deals_description": 0,
+    "digital_deals_price": 0,
+    "image_url": 604,
+    "url": 604,
+    "upc": 604,
+    "gupc": 0,
+    "ppm": 158,
+    "unit_price": 0,
+    "crawl_date": 604
+  },
+  "coverage_scope": "bounded_keyword_search_trial",
+  "full_category_coverage_verified": false,
+  "category_label_policy": "Known aliases mapped; otherwise original API category label. Not proof of CSV-root coverage.",
+  "source_is_synthetic": false,
+  "submission_ready": false,
+  "limitations": [
+    "Keyword search is not complete category enumeration.",
+    "Blank PPM or offer fields are unobserved, not confirmed absent.",
+    "Website enrichment applies only to explicitly matched store/UPC evidence.",
+    "Azure execution and human acceptance are not established by this export."
+  ],
+  "live_evidence": {
+    "api_source_pages": 14,
+    "initial_api_records": 650,
+    "api_response_timestamp_window_seconds": 20.0106,
+    "runtime_note": "Response timestamp window excludes OAuth/startup and is not total job runtime.",
+    "repeat_records": 650,
+    "shared_upcs_with_repeat": 650,
+    "actual_interruption_recovery": "Integrated live run failed at 598; resumed to 650 using four network requests.",
+    "final_canary_live_test": {
+      "records": 5,
+      "fresh_network_requests": 3,
+      "checkpoint_replay_network_requests": 2
+    },
+    "website_checked": 204,
+    "website_blocked_attempts": 24,
+    "azure_execution_verified": false,
+    "full_28_root_coverage_verified": false
+  }
+}

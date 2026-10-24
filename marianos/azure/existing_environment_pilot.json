@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {"type": "string", "defaultValue": "southindia"},
+    "environmentName": {"type": "string", "defaultValue": "env-walmart63"},
+    "jobName": {"type": "string", "defaultValue": "marianos-westloop-api-pilot"},
+    "image": {"type": "string", "metadata": {"description": "Immutable digest from the managed-identity image build; do not use the earlier image."}},
+    "krogerClientId": {"type": "securestring"},
+    "krogerClientSecret": {"type": "securestring"},
+    "runId": {"type": "string", "defaultValue": "azure-westloop-five-20261024"},
+    "storageAccountUrl": {"type": "string", "defaultValue": "https://stwalmart63trial1024.blob.core.windows.net"},
+    "blobContainer": {"type": "string", "defaultValue": "retail-collection"}
+  },
+  "resources": [{
+    "type": "Microsoft.App/jobs",
+    "apiVersion": "2024-03-01",
+    "name": "[parameters('jobName')]",
+    "location": "[parameters('location')]",
+    "identity": {"type": "SystemAssigned"},
+    "properties": {
+      "environmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('environmentName'))]",
+      "configuration": {
+        "triggerType": "Manual",
+        "replicaTimeout": 600,
+        "replicaRetryLimit": 0,
+        "manualTriggerConfig": {"parallelism": 1, "replicaCompletionCount": 1},
+        "secrets": [
+          {"name": "kroger-client-id", "value": "[parameters('krogerClientId')]"},
+          {"name": "kroger-client-secret", "value": "[parameters('krogerClientSecret')]"}
+        ]
+      },
+      "template": {
+        "containers": [{
+          "name": "collector",
+          "image": "[parameters('image')]",
+          "resources": {"cpu": 0.5, "memory": "1Gi"},
+          "env": [
+            {"name": "MARIANOS_MODE", "value": "api-trial"},
+            {"name": "MARIANOS_STORE_ID", "value": "53100508"},
+            {"name": "MARIANOS_ZIPCODE", "value": "60661"},
+            {"name": "MARIANOS_RUN_ID", "value": "[parameters('runId')]"},
+            {"name": "MARIANOS_TARGET", "value": "5"},
+            {"name": "MARIANOS_MINIMUM", "value": "5"},
+            {"name": "MARIANOS_MAX_QUERIES", "value": "1"},
+            {"name": "MARIANOS_MAX_REQUESTS", "value": "6"},
+            {"name": "AZURE_STORAGE_ACCOUNT_URL", "value": "[parameters('storageAccountUrl')]"},
+            {"name": "AZURE_BLOB_CONTAINER", "value": "[parameters('blobContainer')]"},
+            {"name": "KROGER_CLIENT_ID", "secretRef": "kroger-client-id"},
+            {"name": "KROGER_CLIENT_SECRET", "secretRef": "kroger-client-secret"}
+          ]
+        }]
+      }
+    }
+  }],
+  "outputs": {
+    "principalId": {"type": "string", "value": "[reference(resourceId('Microsoft.App/jobs', parameters('jobName')), '2024-03-01', 'Full').identity.principalId]"},
+    "jobResourceId": {"type": "string", "value": "[resourceId('Microsoft.App/jobs', parameters('jobName'))]"}
+  }
+}

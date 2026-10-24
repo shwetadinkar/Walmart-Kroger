@@ -1,0 +1,29 @@
+category,configured_url,trial_primary_label_count,complete_enumeration_verified,status
+Coupons,https://www.marianos.com/savings/cl/coupons/,0,false,Not established; not a verified empty category
+Produce,https://www.marianos.com/d/produce,0,false,Not established; not a verified empty category
+Meat,https://www.marianos.com/d/meat,0,false,Not established; not a verified empty category
+Seafood,https://www.marianos.com/d/seafood,0,false,Not established; not a verified empty category
+Deli,https://www.marianos.com/d/deli,11,false,Partial keyword trial; label count is not exhaustion proof
+Bakery,https://www.marianos.com/d/bakery,30,false,Partial keyword trial; label count is not exhaustion proof
+Floral,https://www.marianos.com/d/floral,0,false,Not established; not a verified empty category
+Grocery,https://www.marianos.com/d/grocery,0,false,Not established; not a verified empty category
+Dairy,https://www.marianos.com/d/dairy,153,false,Partial keyword trial; label count is not exhaustion proof
+Frozen,https://www.marianos.com/d/frozen,3,false,Partial keyword trial; label count is not exhaustion proof
+Natural Organic,https://www.marianos.com/d/natural-organic,83,false,Partial keyword trial; label count is not exhaustion proof
+Beverages,https://www.marianos.com/d/beverages,47,false,Partial keyword trial; label count is not exhaustion proof
+Breakfast,https://www.marianos.com/d/breakfast,69,false,Partial keyword trial; label count is not exhaustion proof
+Coffee,https://www.marianos.com/d/coffee,0,false,Not established; not a verified empty category
+Candy,https://www.marianos.com/d/candy,0,false,Not established; not a verified empty category
+Beer Wine Liquor,https://www.marianos.com/d/beer-wine-liquor,0,false,Not established; not a verified empty category
+Health,https://www.marianos.com/d/health,0,false,Not established; not a verified empty category
+Personal Care,https://www.marianos.com/d/personal-care,0,false,Not established; not a verified empty category
+Beauty,https://www.marianos.com/d/beauty,0,false,Not established; not a verified empty category
+Baby,https://www.marianos.com/d/baby,0,false,Not established; not a verified empty category
+Household,https://www.marianos.com/d/household,0,false,Not established; not a verified empty category
+Kitchen Dining,https://www.marianos.com/d/kitchen-dining,0,false,Not established; not a verified empty category
+Pet Supplies,https://www.marianos.com/d/pet-supplies,0,false,Not established; not a verified empty category
+Candles Home Fragrances,https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance,0,false,Not established; not a verified empty category
+Batteries,https://www.marianos.com/pl/batteries/26003?pzn=relevance,0,false,Not established; not a verified empty category
+Light Bulbs,https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance,0,false,Not established; not a verified empty category
+School Office,https://www.marianos.com/pl/school-office/35?pzn=relevance,0,false,Not established; not a verified empty category
+Hardware Home Improvement,https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance,0,false,Not established; not a verified empty category
