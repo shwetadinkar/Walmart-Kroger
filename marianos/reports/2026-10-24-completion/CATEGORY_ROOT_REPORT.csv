@@ -1,0 +1,29 @@
+name,url,status,complete,discovered_links,snapshot_sha256
+Coupons,https://www.marianos.com/savings/cl/coupons/,observed_requires_traversal,False,0,da00603dc4fc52e4066b8def331b48a8e7cd9c7e94d52ffaf3837d88bb5f659d
+Produce,https://www.marianos.com/d/produce,observed_requires_traversal,False,23,8b457667b63360715e71947effdfe595c475a5654a35ede42599a1344dc90071
+Meat,https://www.marianos.com/d/meat,observed_requires_traversal,False,16,16301737f9d41171bb04d606e5ad996e0307a69030434519db3f4b7f3de7727f
+Seafood,https://www.marianos.com/d/seafood,observed_requires_traversal,False,8,d470581119bd96cfa325ea588eed29318f8cad80d38f7213903d71c820a9c2f4
+Deli,https://www.marianos.com/d/deli,observed_requires_traversal,False,16,5a0989bbddad6aa35369bb5c6e925b501aa5c31ea025cb72b16abd9414466ad6
+Bakery,https://www.marianos.com/d/bakery,observed_requires_traversal,False,35,6f71b3f3cf4f3a77abe7db8374e7e5fea974d3b9d7ebbdb7045ef849599bd5e3
+Floral,https://www.marianos.com/d/floral,observed_requires_traversal,False,7,ce7c7055025e18bf353d1db27be3f4fb9a04891c56420e1eed5d41409be1310e
+Grocery,https://www.marianos.com/d/grocery,observed_requires_traversal,False,18,23a993efc7c54f3a5264d29a6c9413a32da3a8bc402fe25ab668dc7a3f5489ef
+Dairy,https://www.marianos.com/d/dairy,not_found,False,0,0d5ed572a77eb2334d3429c28c49849be994fe688f9d3b5961183b9410b6bba2
+Frozen,https://www.marianos.com/d/frozen,observed_requires_traversal,False,16,3a7ee4945172f44296b1fedcbcb4aeb66d4f0eda32c128add1c2ee0648a5cec0
+Natural Organic,https://www.marianos.com/d/natural-organic,observed_requires_traversal,False,13,d416ac552c888199931e10626336d1e969379e118c61a156606a790b67ad7d80
+Beverages,https://www.marianos.com/d/beverages,observed_requires_traversal,False,19,a93b316736c6021b8012b343820286332a0ff113a1f89db9cc827ef39020db38
+Breakfast,https://www.marianos.com/d/breakfast,not_found,False,0,0d5ed572a77eb2334d3429c28c49849be994fe688f9d3b5961183b9410b6bba2
+Coffee,https://www.marianos.com/d/coffee,observed_requires_traversal,False,16,f8ee86125ef8bc655510f767f0c8e7712edfab7e1ae69bc2d359613c6b900ce7
+Candy,https://www.marianos.com/d/candy,observed_requires_traversal,False,10,19c3f0cf4e9d602b0deed8488a8cf95c271ee4312290d7931e2c58e8ad591660
+Beer Wine Liquor,https://www.marianos.com/d/beer-wine-liquor,observed_requires_traversal,False,17,a1cdcedb81d3a6fb9f185369e3eafc7e6126a42d103b9e0584e7c68c75a9300b
+Health,https://www.marianos.com/d/health,observed_requires_traversal,False,20,77af68b7de79de4f89e6c49e848d80199a8a78a128c2ca79cbcd0e463b52c4cf
+Personal Care,https://www.marianos.com/d/personal-care,observed_requires_traversal,False,20,59f5caf065016d2eaee9e7d621674ce0abf59f900c72ccf75a12a7c3ed9138e6
+Beauty,https://www.marianos.com/d/beauty,observed_requires_traversal,False,24,34dc7f2e818cb843ff640d170813db33c9ab393c21da6dd37e5e8485380e636b
+Baby,https://www.marianos.com/d/baby,observed_requires_traversal,False,16,8e16dd4294d42468a9dd0f97c27a4ec85d991b20fa1b841367d31a8a38bb2900
+Household,https://www.marianos.com/d/household,observed_requires_traversal,False,23,be83885e5ffd81f8c1daabaa83850db15fc9b6f8b63dbe8eb8afbf6910b9fa77
+Kitchen Dining,https://www.marianos.com/d/kitchen-dining,observed_requires_traversal,False,15,a6f4aabf8913b5237340c4950839462017dc8479ccc0d9e1688f568ff4eaf954
+Pet Supplies,https://www.marianos.com/d/pet-supplies,observed_requires_traversal,False,20,feacf6119a2a20657143fbae4aec8592fee71f4c936dfec6fc95dad22e9588cf
+Candles Home Fragrances,https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance,observed_requires_traversal,False,1,3d123376ec9fa9152b00d505e5d7a8e5cb0d70245480e20835ca59e331fa9ad6
+Batteries,https://www.marianos.com/pl/batteries/26003?pzn=relevance,observed_requires_traversal,False,1,a83165b685ec05eb984ac0480eb4afb332e665fb8ebc4edf132da0d62ff12e86
+Light Bulbs,https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance,observed_requires_traversal,False,1,df59f5ce38e96a79d405f2fcd29455fd24004df124beced7e5b137ed6d88ec89
+School Office,https://www.marianos.com/pl/school-office/35?pzn=relevance,observed_requires_traversal,False,0,68567685d0bcdb529f077eeb50ce2cc5d50719d6c734bf517bf3945a324661d2
+Hardware Home Improvement,https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance,observed_requires_traversal,False,0,24b3c16bbab8663fafc8ff00a871d33a75c502e158b8d562b2f7c500bdc91c43

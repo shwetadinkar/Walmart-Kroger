@@ -2,7 +2,7 @@
 import os
 import sys
 import re
-from datetime import datetime, timezone
+from marianos_collector.run_context import execution_context
 
 def command():
     sid = os.getenv('MARIANOS_STORE_ID', '')
@@ -20,10 +20,12 @@ def command():
         requests=int(os.getenv('MARIANOS_MAX_REQUESTS','60'))
         if not (1 <= minimum <= target <= 650 and 1 <= queries <= 40 and 1 <= requests <= 60):
             raise ValueError('Azure trial bounds exceed the approved ceiling')
-        run_id=os.getenv('MARIANOS_RUN_ID') or datetime.now(timezone.utc).strftime('%Y%m%d')
+        context=execution_context()
         return [sys.executable,'-m','marianos_collector.api_collection','--backend','azure',
-                '--location-id',sid,'--zipcode',zipcode,'--run-id',run_id,
+                '--location-id',sid,'--zipcode',zipcode,'--run-id',context.run_id,
+                '--execution-id',context.execution_name,'--run-origin',context.origin,
                 '--container',os.getenv('AZURE_BLOB_CONTAINER','marianos-api-trials'),
+                '--output-prefix',os.getenv('MARIANOS_OUTPUT_PREFIX','trials'),
                 '--target',str(target),'--minimum',str(minimum),'--maximum-queries',str(queries),
                 '--maximum-requests',str(requests)]
     return [sys.executable, '-m', 'marianos_collector', 'run', '--source', 'provider',
