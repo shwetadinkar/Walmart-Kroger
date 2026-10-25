@@ -5,6 +5,7 @@ from pathlib import Path
 from .production_config import validate_discovery_config
 from .category_traversal import CategoryTraversal,CategoryAccessBlocked,encoded
 from .storage import LocalStorage,AzureBlobStorage
+from .operations import save_execution_report
 
 def _now():return datetime.now(timezone.utc)
 
@@ -33,7 +34,7 @@ def run_discovery(document,storage,run_id,driver_factory):
             state['actions']+=1
             storage.write(prefix+'/budget.json',encoded(state)) # count before any external action, including bootstrap
         receipt={'execution_id':run_id,'store_id':sid,'started_at':state['started_at'],'status':'running','submission_ready':False}
-        storage.write(prefix+'/receipt.json',encoded(receipt));driver=None
+        storage.write(prefix+'/receipt.json',encoded(receipt));driver=None;report=None
         try:
             if remaining()<=0:raise RuntimeError('DISCOVERY_WALL_BUDGET_EXHAUSTED')
             driver=driver_factory(c,guard,remaining())
@@ -64,6 +65,7 @@ def run_discovery(document,storage,run_id,driver_factory):
         finally:
             receipt.update(finished_at=_now().isoformat(),browser_actions_consumed=state['actions'],page_navigation_actions_consumed=state.get('page_actions',0))
             storage.write(prefix+'/receipt.json',encoded(receipt))
+            save_execution_report(storage,prefix+'/operational-report.json','discovery',receipt,c,report)
             if driver is not None:driver.close()
 
 def main():

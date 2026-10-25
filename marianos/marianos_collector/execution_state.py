@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import re
+from .operations import save_execution_report
 
 
 def _encode(value):
@@ -87,3 +88,4 @@ def execute_once(storage,store_id,run_id,configuration,budget,work):
         raise
     finally:
         budget.on_attempt=None
+        save_execution_report(storage,f'executions/{store_id}/{run_id}.operations.json','api-trial',receipt,configuration)
