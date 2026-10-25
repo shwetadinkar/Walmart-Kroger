@@ -6,6 +6,7 @@ from datetime import datetime,timezone
 from decimal import Decimal,InvalidOperation
 import hashlib
 import json
+import re
 from pathlib import Path
 from urllib.parse import urlsplit
 from .api_trial import encode,enrich,verify_store,usable_product_selection
@@ -22,7 +23,7 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
     if not 1<=maximum_age_seconds<=3600:raise ValueError('Enrichment time window must be 1..3600 seconds')
     sid=store_document['locationId'];zipcode=store_document['address']['zipCode']
     store=verify_store(store_document,sid,zipcode)
-    products=[];quarantine=[];rejected=[];out_provenance=copy.deepcopy(provenance);digital_pending=0;volume_pending=0
+    products=[];quarantine=[];rejected=[];availability_audit=[];out_provenance=copy.deepcopy(provenance);digital_pending=0;volume_pending=0
     by_upc={}
     for e in evidence:by_upc.setdefault(e.get('upc'),[]).append(e)
     if len({r['upc'] for r in rows})!=len(rows):raise ValueError('INPUT_DUPLICATE_UPC')
@@ -46,18 +47,42 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
                 rejected.append({'upc':upc,'reason':'WEBSITE_PRODUCT_URL_MISMATCH'});continue
             if gap>maximum_age_seconds:
                 rejected.append({'upc':upc,'reason':'OBSERVATION_TIME_GAP','seconds':gap});continue
-            if not item.get('displayed_regular_price'):
+            if item.get('pickup_available') is False:
+                primary=item.get('primary_text','')
+                text=item.get('observed_text','')
+                verified=(isinstance(primary,str) and isinstance(text,str)
+                    and re.findall(r'UPC:\s*(\d+)\b',primary)==[upc]
+                    and re.search(r'\bPickup\s*\n\s*(?:Out of Stock|Unavailable|Not Available)\b',primary,re.I)
+                    and upc in text and store.store_location.split(',')[0] in text
+                    and 'Pickup at Marianos' in text)
+                if not verified:
+                    rejected.append({'upc':upc,'reason':'WEBSITE_UNAVAILABILITY_UNVERIFIED'});continue
+            if item.get('pickup_available') is not False and not item.get('displayed_regular_price'):
+
                 rejected.append({'upc':upc,'reason':'WEBSITE_PRICE_UNVERIFIED'});continue
             candidates.append((gap,item))
         if candidates:
             gap,item=min(candidates,key=lambda value:value[0])
+            if item.get('pickup_available') is False:
+                # Genuine identity stays in assortment; old API prices are not current pickup quotes.
+                for field in ('regular_price','sale_price','ppm','volume_deals_description',
+                              'volume_deals_price','digital_deals_description','digital_deals_price'):
+                    row[field]=''
+                digest=hashlib.sha256(encode(item)).hexdigest()
+                audit={'upc':upc,'status':'pickup_unavailable','store_id':sid,'observed_at':item['observed_at'],
+                       'observation_gap_seconds':gap,'evidence_sha256':digest,
+                       'api_record':copy.deepcopy(original),'website_evidence':copy.deepcopy(item)}
+                availability_audit.append(audit)
+                out_provenance[upc]['availability']={k:copy.deepcopy(v) for k,v in audit.items()
+                    if k not in ('api_record','website_evidence')}
+                products.append(row)
+                continue
             conflicts=[]
             for field,observed in [('regular_price','displayed_regular_price'),('sale_price','displayed_sale_price')]:
                 if observed in item:
                     try:matches=Decimal(item[observed] or '0')==Decimal(row[field] or '0')
                     except (InvalidOperation,TypeError):matches=False
                     if not matches:conflicts.append('WEBSITE_API_'+field.upper()+'_CONFLICT')
-            if item.get('pickup_available') is False:conflicts.append('WEBSITE_PICKUP_UNAVAILABLE')
             if conflicts:
                 quarantine.append({'api_record':original,'website_evidence':item,'reasons':conflicts,'observation_gap_seconds':gap})
                 continue
@@ -78,9 +103,9 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
                     out_provenance[upc]['website_fields']={f:{'observed_at':item['observed_at'],'source_url':item['url'],
                         'evidence_sha256':digest,'observation_gap_seconds':gap} for f in FIELDS if row[f]!=original[f]}
         products.append(row)
-    return {'products':products,'quarantine':quarantine,'rejected_evidence':rejected,'provenance':out_provenance,
+    return {'products':products,'quarantine':quarantine,'availability_audit':availability_audit,'rejected_evidence':rejected,'provenance':out_provenance,
             'report':{'input_records':len(rows),'records':len(products),'unique_upcs':len({r['upc'] for r in products}),
-                      'quarantined_records':len(quarantine),'maximum_observation_gap_seconds':maximum_age_seconds,
+                      'unavailable_records_retained':len(availability_audit),'quarantined_records':len(quarantine),'maximum_observation_gap_seconds':maximum_age_seconds,
                       'rejected_evidence_counts':dict(Counter(e['reason'] for e in rejected)),
                       'digital_details_pending':digital_pending,'volume_details_pending':volume_pending,
                       'field_completeness':{f:sum(bool(r[f]) for r in products) for f in FIELDS},

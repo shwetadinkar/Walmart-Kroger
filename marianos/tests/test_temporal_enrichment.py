@@ -119,12 +119,16 @@ class TemporalEnrichmentTests(unittest.TestCase):
         self.assertEqual(result['quarantine'],[])
         self.assertEqual(result['products'],[self.row])
 
-    def test_resolved_out_of_stock_variant_is_quarantined_as_availability_conflict(self):
+    def test_resolved_out_of_stock_variant_stays_in_assortment_with_unpriced_record(self):
         e={**self.e,'pickup_available':False,
            'primary_text':'UPC: '+self.row['upc']+'\nOption: Large\nSize: 18 ct\nThis selection is unavailable. Please choose another option.\nPickup\nOut of Stock'}
         result=self.merge(e)
-        self.assertEqual(result['products'],[])
-        self.assertIn('WEBSITE_PICKUP_UNAVAILABLE',result['quarantine'][0]['reasons'])
+        self.assertEqual(len(result['products']),1)
+        self.assertEqual(result['products'][0]['upc'],self.row['upc'])
+        self.assertEqual(result['products'][0]['regular_price'],'')
+        self.assertEqual(result['quarantine'],[])
+        self.assertEqual(result['availability_audit'][0]['status'],'pickup_unavailable')
+        self.assertEqual(result['availability_audit'][0]['api_record'],self.row)
 
     def test_malformed_selection_complete_flag_cannot_authorize_enrichment(self):
         for value in ('false',0,None):
@@ -138,5 +142,38 @@ class TemporalEnrichmentTests(unittest.TestCase):
             result=self.merge(e)
             self.assertEqual(result['quarantine'],[])
             self.assertEqual(result['products'],[self.row])
+
+    def test_unavailable_missing_price_and_conflicting_price_both_preserve_identity(self):
+        for price in ('', '999.99'):
+            e={**self.e,'pickup_available':False,'displayed_regular_price':price,
+               'primary_text':'UPC: '+self.row['upc']+'\nPickup\nOut of Stock'}
+            result=self.merge(e)
+            self.assertEqual(len(result['products']),1)
+            row=result['products'][0]
+            self.assertEqual(list(row),list(self.row))
+            for field in ('regular_price','sale_price','ppm','volume_deals_description','volume_deals_price','digital_deals_description','digital_deals_price'):
+                self.assertEqual(row[field],'')
+            self.assertEqual(result['availability_audit'][0]['website_evidence'],e)
+            self.assertEqual(result['report']['unavailable_records_retained'],1)
+            self.assertEqual(self.row['regular_price'],'2.98')
+
+    def test_stale_or_wrong_store_unavailability_does_not_blank_current_record(self):
+        for change in ({'store_id':'53100503'},{'observed_at':'2026-10-23T10:00:00Z'}):
+            e={**self.e,'pickup_available':False,'primary_text':'UPC: '+self.row['upc'],**change}
+            result=self.merge(e)
+            self.assertEqual(result['products'],[self.row])
+            self.assertEqual(result['availability_audit'],[])
+
+    def test_unknown_availability_cannot_erase_api_prices(self):
+        changes=[{'observed_text':''},{'primary_text':''},
+                 {'primary_text':'UPC: '+self.row['upc']+'\nPickup'},
+                 {'observed_text':'UPC: '+self.row['upc']+' Pickup Out of Stock'}]
+        for change in changes:
+            e={**self.e,'pickup_available':False,
+               'primary_text':'UPC: '+self.row['upc']+'\nPickup\nOut of Stock',**change}
+            result=self.merge(e)
+            self.assertEqual(result['products'],[self.row])
+            self.assertEqual(result['availability_audit'],[])
+            self.assertTrue(result['rejected_evidence'])
 
 if __name__=='__main__':unittest.main()

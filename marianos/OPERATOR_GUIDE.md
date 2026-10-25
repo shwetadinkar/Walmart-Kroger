@@ -102,3 +102,10 @@ All paths, queries, fragments, user information and external destinations are re
 Default tests require no browser. To run optional offline Chromium integration checks, install the pinned browser extra and Chromium, set `MARIANOS_OFFLINE_BROWSER_TESTS=1`, then run the test suite. These tests intercept all requests before navigation; they never contact the retailer.
 
 The earlier HTTP/2 failure remains unresolved. A future live test requires a concrete reviewed image, separate bounded approval and protected rollback; this source change does not authorize execution or scheduling.
+
+
+## 9. Unavailable assortment retention
+
+Temporal enrichment retains a genuine matched product when fresh, store-specific evidence reports pickup unavailable. Its 22-field identity record remains in products.json; current pickup prices, PPM and deal fields are blanked because availability does not validate those quotes. availability_audit.json preserves the dated observation, original API record and evidence hash. Availability alone is no longer a quarantine reason.
+
+Stale observations, wrong stores, unresolved variant identities and mismatched URLs cannot authorize this change. Ordinary available-product price conflicts retain the existing separate quarantine behavior. This change does not discover products omitted by an upstream source; complete unavailable assortment coverage remains a live source acceptance requirement. Historical deliverables are unchanged; reprocessed samples must keep their original observation dates and be labelled separately.
