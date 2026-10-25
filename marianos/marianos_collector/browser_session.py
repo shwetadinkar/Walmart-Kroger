@@ -3,6 +3,7 @@ import re
 from datetime import datetime,timezone
 from .category_traversal import CategoryAccessBlocked
 from .rendered_categories import RenderedCategoryDriver
+from .navigation_diagnostics import NavigationDiagnostics
 
 def safe_browser_error_code(error):
     """Whitelist diagnostic codes; never persist exception URLs, headers or credentials."""
@@ -45,24 +46,32 @@ def prepare_store(page,config,guard):
 def create_discovery_driver(config,guard,remaining_seconds):
     try:from playwright.sync_api import sync_playwright
     except ImportError as exc:raise RuntimeError('Install optional browser dependency and Chromium before unattended discovery') from exc
-    runtime=sync_playwright().start();browser=None;page=None
+    runtime=sync_playwright().start();browser=None;page=None;diagnostics=None
     try:
         # A fresh context is intentional: do not attach to the user's browser or copy cookies/tokens.
         browser=runtime.chromium.launch(headless=True)
         context=browser.new_context(locale='en-US')
         page=context.new_page();page.set_default_timeout(min(15000,max(1,int(remaining_seconds*1000))))
-        prepare_store(page,config,guard)
+        diagnostics=NavigationDiagnostics(page,browser.version)
+        diagnostics.attach()
+        try:
+            prepare_store(page,config,guard)
+        finally:
+            diagnostics.detach()
         s=config['store'];driver=RenderedCategoryDriver(page,s['id'],s['zipcode'],s['name'],s['street'],
             maximum_actions=config['limits']['browser_actions'],timeout_seconds=remaining_seconds,action_guard=guard)
         def close():
             try:browser.close()
             finally:runtime.stop()
+        driver.navigation_diagnostics=diagnostics.snapshot()
         driver.close=close
         return driver
     except Exception as exc:
         code=safe_browser_error_code(exc)
         evidence={'observed_at':datetime.now(timezone.utc).isoformat(),'error_code':code,
                   'isolated_unsigned_browser':True,'stage':'browser_setup'}
+        if diagnostics is not None:
+            evidence['navigation_diagnostics']=diagnostics.snapshot()
         if page is not None:
             try:
                 text=page.locator('body').inner_text(timeout=2000)
@@ -70,7 +79,7 @@ def create_discovery_driver(config,guard,remaining_seconds):
             except CategoryAccessBlocked as blocked:
                 exc=blocked
             except Exception: text='Body unavailable'
-            evidence.update(url=page.url,body_text=text[:12000])
+            evidence.update(url=NavigationDiagnostics.target(page.url),body_text_retained=False)
         exc.discovery_evidence=evidence
         if browser is not None:browser.close()
         runtime.stop()

@@ -91,3 +91,14 @@ Monitor authoritative execution status plus receipt/report availability, observa
 6. Show current source/image references, package hashes, recovery rules and the manual/approval boundary.
 
 This is an exact demonstration script, not a recorded video. Recording remains outstanding. The client receives source and instructions, with no hidden remote shutdown, paid service or weekly manual page-inspection dependency represented as solved automation.
+
+
+## 8. Browser setup diagnostics (offline verified, not deployed)
+
+Setup failure evidence now includes `navigation_diagnostics`: up to 32 ordered main-frame request/response/failure events, relative elapsed milliseconds, HTTP status where received, a whitelisted error code and numeric browser version. Listeners attach before the first navigation and detach when setup finishes or fails. Success retains a snapshot on the driver; this is not a continuous network log.
+
+All paths, queries, fragments, user information and external destinations are redacted. No headers, cookies, payloads or rendered body text are stored by browser setup evidence. This does not change other existing collection evidence contracts. Events dropped at the cap are counted; an empty list is not proof no traffic occurred (for example, an unavailable frame cannot be attributed safely).
+
+Default tests require no browser. To run optional offline Chromium integration checks, install the pinned browser extra and Chromium, set `MARIANOS_OFFLINE_BROWSER_TESTS=1`, then run the test suite. These tests intercept all requests before navigation; they never contact the retailer.
+
+The earlier HTTP/2 failure remains unresolved. A future live test requires a concrete reviewed image, separate bounded approval and protected rollback; this source change does not authorize execution or scheduling.
