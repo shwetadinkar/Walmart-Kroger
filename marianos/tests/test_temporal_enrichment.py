@@ -104,4 +104,39 @@ class TemporalEnrichmentTests(unittest.TestCase):
                'observed_text':self.e['observed_text']+'\n'+text}
             self.assertEqual(self.merge(e)['products'][0]['volume_deals_description'],'')
 
+    def test_unfinished_or_unavailable_variant_cannot_enrich_a_good_api_record(self):
+        for change in (
+            {'selection_complete':False},
+            {'observed_text':self.e['observed_text']+' This selection is unavailable. Please choose another option.'},
+            {'primary_text':'Option: 9-Watt (60-Watt)\nSize:\nButton Group Options\n2 pk\n4 pk'},
+        ):
+            result=self.merge({**self.e,**change})
+            self.assertEqual(result['products'][0]['ppm'],'')
+            self.assertEqual(result['rejected_evidence'][0]['reason'],'WEBSITE_VARIANT_SELECTION_UNUSABLE')
+
+    def test_unfinished_variant_price_does_not_quarantine_the_valid_api_record(self):
+        result=self.merge({**self.e,'selection_complete':False,'displayed_regular_price':'99.99'})
+        self.assertEqual(result['quarantine'],[])
+        self.assertEqual(result['products'],[self.row])
+
+    def test_resolved_out_of_stock_variant_is_quarantined_as_availability_conflict(self):
+        e={**self.e,'pickup_available':False,
+           'primary_text':'UPC: '+self.row['upc']+'\nOption: Large\nSize: 18 ct\nThis selection is unavailable. Please choose another option.\nPickup\nOut of Stock'}
+        result=self.merge(e)
+        self.assertEqual(result['products'],[])
+        self.assertIn('WEBSITE_PICKUP_UNAVAILABLE',result['quarantine'][0]['reasons'])
+
+    def test_malformed_selection_complete_flag_cannot_authorize_enrichment(self):
+        for value in ('false',0,None):
+            result=self.merge({**self.e,'selection_complete':value})
+            self.assertEqual(result['products'][0]['ppm'],'')
+
+    def test_an_old_primary_upc_plus_a_matching_recommendation_cannot_quarantine_api(self):
+        for notice in ('This selection is unavailable.',''):
+            e={**self.e,'pickup_available':False,
+               'primary_text':'UPC: 0001111060934\n'+notice+'\nRecommended UPC: '+self.row['upc']}
+            result=self.merge(e)
+            self.assertEqual(result['quarantine'],[])
+            self.assertEqual(result['products'],[self.row])
+
 if __name__=='__main__':unittest.main()

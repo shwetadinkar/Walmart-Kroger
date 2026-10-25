@@ -1,0 +1,55 @@
+{
+  "quarantined_records": 5,
+  "conflicts": [
+    {
+      "upc": "0004122666065",
+      "api_regular": "12.49",
+      "api_sale": "",
+      "website_regular": "12.49",
+      "website_sale": "",
+      "reasons": [
+        "WEBSITE_PICKUP_UNAVAILABLE"
+      ]
+    },
+    {
+      "upc": "0004667741675",
+      "api_regular": "9.99",
+      "api_sale": "",
+      "website_regular": "9.99",
+      "website_sale": "",
+      "reasons": [
+        "WEBSITE_PICKUP_UNAVAILABLE"
+      ]
+    },
+    {
+      "upc": "0004667756545",
+      "api_regular": "10.49",
+      "api_sale": "7.99",
+      "website_regular": "10.49",
+      "website_sale": "7.99",
+      "reasons": [
+        "WEBSITE_PICKUP_UNAVAILABLE"
+      ]
+    },
+    {
+      "upc": "0004667756665",
+      "api_regular": "13.99",
+      "api_sale": "11.19",
+      "website_regular": "13.99",
+      "website_sale": "11.19",
+      "reasons": [
+        "WEBSITE_PICKUP_UNAVAILABLE"
+      ]
+    },
+    {
+      "upc": "0004667757403",
+      "api_regular": "11.99",
+      "api_sale": "",
+      "website_regular": "11.99",
+      "website_sale": "",
+      "reasons": [
+        "WEBSITE_PICKUP_UNAVAILABLE"
+      ]
+    }
+  ]
+}

@@ -101,7 +101,24 @@ def _displayed_passages(text,value,fragments):
     return True
 
 
+def usable_product_selection(evidence):
+    """Resolve SKU selection separately from current pickup availability."""
+    if 'selection_complete' in evidence and evidence['selection_complete'] is not True:return False
+    primary=evidence.get('primary_text','')
+    primary_upcs=re.findall(r'UPC:\s*(\d+)\b',primary) if isinstance(primary,str) else []
+    if 'primary_text' in evidence and primary_upcs!=[str(evidence.get('upc',''))]:return False
+    resolved_unavailable=(evidence.get('pickup_available') is False and isinstance(primary,str)
+        and bool(evidence.get('upc')) and primary_upcs==[str(evidence['upc'])])
+    for text in (evidence.get('observed_text',''),evidence.get('primary_text','')):
+        if not isinstance(text,str):return False
+        if re.search(r'^(?:Option|Size):[ \t]*$',text,re.M):return False
+        if re.search(r'This selection is unavailable|Please choose another option',text,re.I) and not resolved_unavailable:return False
+    return True
+
+
 def enrich(record, evidence, store_id):
+    if not usable_product_selection(evidence):raise ValueError('WEBSITE_VARIANT_SELECTION_UNUSABLE')
+    if evidence.get('pickup_available') is False:raise ValueError('WEBSITE_PICKUP_UNAVAILABLE')
     if evidence.get('store_id') != store_id or evidence.get('upc') != record['upc']:
         raise ValueError('WEBSITE_STORE_OR_UPC_MISMATCH')
     text = evidence.get('observed_text','')

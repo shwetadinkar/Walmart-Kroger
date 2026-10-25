@@ -8,7 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 from urllib.parse import urlsplit
-from .api_trial import encode,enrich,verify_store
+from .api_trial import encode,enrich,verify_store,usable_product_selection
 from .schema import FIELDS
 
 
@@ -34,6 +34,8 @@ def merge_export(rows,provenance,evidence,store_document,maximum_age_seconds=360
         if api_stamp.astimezone(timezone.utc).date().isoformat()!=row['crawl_date']:raise ValueError('API_CRAWL_DATE_MISMATCH')
         candidates=[]
         for item in by_upc.get(upc,[]):
+            if not usable_product_selection(item):
+                rejected.append({'upc':upc,'reason':'WEBSITE_VARIANT_SELECTION_UNUSABLE'});continue
             try:gap=abs((_stamp(item['observed_at'])-api_stamp).total_seconds())
             except (ValueError,KeyError,TypeError):
                 rejected.append({'upc':upc,'reason':'INVALID_OBSERVATION_TIME'});continue
