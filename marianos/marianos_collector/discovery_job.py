@@ -51,7 +51,9 @@ def run_discovery(document,storage,run_id,driver_factory):
             if evidence is None and driver is not None and callable(getattr(driver,'capture_failure',None)):
                 try:evidence=driver.capture_failure()
                 except Exception:receipt['failure_capture_unavailable']=True
-            if evidence is not None:storage.write(prefix+'/failure-source.json',encoded(evidence))
+            if evidence is not None:
+                storage.write(prefix+'/failure-source.json',encoded(evidence))
+                if evidence.get('error_code'):receipt['error_code']=evidence['error_code']
             if isinstance(exc,CategoryAccessBlocked):
                 state['access_blocked']=True;storage.write(prefix+'/budget.json',encoded(state))
                 receipt['status']='access_blocked'

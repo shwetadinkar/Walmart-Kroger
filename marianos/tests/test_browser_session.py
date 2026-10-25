@@ -1,11 +1,16 @@
 import unittest
-from marianos_collector.browser_session import assert_accessible,verify_rendered_store
+from marianos_collector.browser_session import assert_accessible,verify_rendered_store,safe_browser_error_code
 from marianos_collector.category_traversal import CategoryAccessBlocked
 
 class Response:
     def __init__(self,status):self.status=status
 
 class BrowserSetupTests(unittest.TestCase):
+    def test_transport_error_retains_numeric_subtype_without_raw_sensitive_message(self):
+        error=RuntimeError('Page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://example.invalid/?token=private-value')
+        self.assertEqual(safe_browser_error_code(error),'net::ERR_HTTP2_PROTOCOL_ERROR')
+        self.assertEqual(safe_browser_error_code(RuntimeError('secret text')),'BROWSER_OPERATION_FAILED')
+        self.assertEqual(safe_browser_error_code(RuntimeError("Executable doesn't exist at private-path")),'BROWSER_EXECUTABLE_MISSING')
     def test_http_and_rendered_restrictions_stop_without_retry(self):
         for status,text in [(403,'Forbidden'),(429,'Busy'),(200,'Please verify you are human'),(200,'Access Denied')]:
             with self.assertRaises(CategoryAccessBlocked):assert_accessible(Response(status),text)

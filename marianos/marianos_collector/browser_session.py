@@ -4,6 +4,15 @@ from datetime import datetime,timezone
 from .category_traversal import CategoryAccessBlocked
 from .rendered_categories import RenderedCategoryDriver
 
+def safe_browser_error_code(error):
+    """Whitelist diagnostic codes; never persist exception URLs, headers or credentials."""
+    text=str(error)
+    code=re.search(r'\bnet::ERR_[A-Z0-9_]+\b',text)
+    if code:return code.group()
+    if "Executable doesn't exist" in text:return 'BROWSER_EXECUTABLE_MISSING'
+    if 'Timeout' in type(error).__name__:return 'BROWSER_OPERATION_TIMEOUT'
+    return 'BROWSER_OPERATION_FAILED'
+
 def assert_accessible(response,text):
     if (response is not None and response.status in (401,403,429)) or re.search(r'access denied|verify you are human|captcha|unusual traffic',text,re.I):
         raise CategoryAccessBlocked('CATEGORY_ACCESS_BLOCKED_STOP')
@@ -51,6 +60,9 @@ def create_discovery_driver(config,guard,remaining_seconds):
         driver.close=close
         return driver
     except Exception as exc:
+        code=safe_browser_error_code(exc)
+        evidence={'observed_at':datetime.now(timezone.utc).isoformat(),'error_code':code,
+                  'isolated_unsigned_browser':True,'stage':'browser_setup'}
         if page is not None:
             try:
                 text=page.locator('body').inner_text(timeout=2000)
@@ -58,8 +70,8 @@ def create_discovery_driver(config,guard,remaining_seconds):
             except CategoryAccessBlocked as blocked:
                 exc=blocked
             except Exception: text='Body unavailable'
-            exc.discovery_evidence={'observed_at':datetime.now(timezone.utc).isoformat(),'url':page.url,
-                                    'body_text':text[:12000],'isolated_unsigned_browser':True}
+            evidence.update(url=page.url,body_text=text[:12000])
+        exc.discovery_evidence=evidence
         if browser is not None:browser.close()
         runtime.stop()
         raise exc

@@ -9,7 +9,7 @@ requires-python = ">=3.11"
 dependencies = []
 [project.optional-dependencies]
 azure = ["azure-storage-blob>=12.19,<13", "azure-identity>=1.17,<2"]
-browser = ["playwright>=1.45,<2"]
+browser = ["playwright==1.63.0"]
 [project.scripts]
 marianos-collector = "marianos_collector.cli:main"
 [tool.setuptools.packages.find]
