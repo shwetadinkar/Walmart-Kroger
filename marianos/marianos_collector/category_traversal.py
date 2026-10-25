@@ -18,20 +18,25 @@ class CategoryAccessBlocked(RuntimeError):
 
 
 class CategoryTraversal:
-    def __init__(self,storage,driver,roots,store_id,zipcode,run_id,*,max_categories=500,maximum_pages=100):
+    def __init__(self,storage,driver,roots,store_id,zipcode,run_id,*,max_categories=500,maximum_pages=100,
+                 maximum_total_pages=None,output_prefix='category-runs'):
         if not (1<=max_categories<=1000 and 1<=maximum_pages<=500):
             raise ValueError('Category traversal bounds exceeded')
         self.storage,self.driver=storage,driver
         self.roots=[{'name':r['name'],'url':category_url(r['url'])} for r in roots]
         self.store_id,self.zipcode,self.run_id=store_id,zipcode,run_id
         self.max_categories,self.maximum_pages=max_categories,maximum_pages
+        if maximum_total_pages is not None and (type(maximum_total_pages) is not int or not 1<=maximum_total_pages<=5000):
+            raise ValueError('Invalid aggregate category page limit')
+        self.maximum_total_pages=maximum_total_pages
         # Storage's key validation rejects unsafe run/store identifiers.
-        self.prefix=f'category-runs/{store_id}/{run_id}'
+        self.prefix=f'{output_prefix}/{store_id}/{run_id}'
         self.key=self.prefix+'/checkpoint.json'
 
     def run(self):
         configuration={'roots':self.roots,'store_id':self.store_id,'zipcode':self.zipcode,
                        'source_kind':self.driver.source_kind,'maximum_pages':self.maximum_pages}
+        if self.maximum_total_pages is not None:configuration['maximum_total_pages']=self.maximum_total_pages
         fingerprint=hashlib.sha256(encoded(configuration)).hexdigest()
         raw=self.storage.read(self.key)
         state=json.loads(raw) if raw else {'configuration_sha256':fingerprint,
@@ -48,16 +53,19 @@ class CategoryTraversal:
             ledger.observe(e)
         visited={e['url'] for e in state['observations']}
         while state['pending'] and len(visited)<self.max_categories:
+            remaining=self.maximum_pages if self.maximum_total_pages is None else min(self.maximum_pages,self.maximum_total_pages-state['pages_observed'])
+            if remaining<=0:break
             url=state['pending'][0]
             state['attempts']+=1
             self.storage.write(self.key,encoded(state)) # persist before external activity
             try:
-                e=dict(self.driver.visit(url,self.maximum_pages))
+                e=dict(self.driver.visit(url,remaining))
             except CategoryAccessBlocked:
                 state.update(access_blocked=True,blocked_url=url)
                 self.storage.write(self.key,encoded(state))
                 raise
             if category_url(e['url'])!=url:raise ValueError('CATEGORY_UNEXPECTED_REDIRECT')
+            if type(e.get('pages')) is not int or not 1<=e['pages']<=remaining:raise ValueError('CATEGORY_PAGE_ACCOUNTING_INVALID')
             token=hashlib.sha256(url.encode()).hexdigest()
             for field,key_field,hash_field in (
                 ('snapshot_text','snapshot_key','snapshot_sha256'),

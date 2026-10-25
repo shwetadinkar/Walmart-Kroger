@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "store": {
+    "id": "53100508",
+    "zipcode": "60661",
+    "name": "Marianos West Loop",
+    "street": "40 S Halsted St"
+  },
+  "roots": [
+    {
+      "name": "Coupons",
+      "url": "https://www.marianos.com/savings/cl/coupons/"
+    },
+    {
+      "name": "Produce",
+      "url": "https://www.marianos.com/d/produce"
+    },
+    {
+      "name": "Meat",
+      "url": "https://www.marianos.com/d/meat"
+    },
+    {
+      "name": "Seafood",
+      "url": "https://www.marianos.com/d/seafood"
+    },
+    {
+      "name": "Deli",
+      "url": "https://www.marianos.com/d/deli"
+    },
+    {
+      "name": "Bakery",
+      "url": "https://www.marianos.com/d/bakery"
+    },
+    {
+      "name": "Floral",
+      "url": "https://www.marianos.com/d/floral"
+    },
+    {
+      "name": "Grocery",
+      "url": "https://www.marianos.com/d/grocery"
+    },
+    {
+      "name": "Dairy",
+      "url": "https://www.marianos.com/d/dairy"
+    },
+    {
+      "name": "Frozen",
+      "url": "https://www.marianos.com/d/frozen"
+    },
+    {
+      "name": "Natural Organic",
+      "url": "https://www.marianos.com/d/natural-organic"
+    },
+    {
+      "name": "Beverages",
+      "url": "https://www.marianos.com/d/beverages"
+    },
+    {
+      "name": "Breakfast",
+      "url": "https://www.marianos.com/d/breakfast"
+    },
+    {
+      "name": "Coffee",
+      "url": "https://www.marianos.com/d/coffee"
+    },
+    {
+      "name": "Candy",
+      "url": "https://www.marianos.com/d/candy"
+    },
+    {
+      "name": "Beer Wine Liquor",
+      "url": "https://www.marianos.com/d/beer-wine-liquor"
+    },
+    {
+      "name": "Health",
+      "url": "https://www.marianos.com/d/health"
+    },
+    {
+      "name": "Personal Care",
+      "url": "https://www.marianos.com/d/personal-care"
+    },
+    {
+      "name": "Beauty",
+      "url": "https://www.marianos.com/d/beauty"
+    },
+    {
+      "name": "Baby",
+      "url": "https://www.marianos.com/d/baby"
+    },
+    {
+      "name": "Household",
+      "url": "https://www.marianos.com/d/household"
+    },
+    {
+      "name": "Kitchen Dining",
+      "url": "https://www.marianos.com/d/kitchen-dining"
+    },
+    {
+      "name": "Pet Supplies",
+      "url": "https://www.marianos.com/d/pet-supplies"
+    },
+    {
+      "name": "Candles Home Fragrances",
+      "url": "https://www.marianos.com/pl/candles-home-fragrances/32001?pzn=relevance"
+    },
+    {
+      "name": "Batteries",
+      "url": "https://www.marianos.com/pl/batteries/26003?pzn=relevance"
+    },
+    {
+      "name": "Light Bulbs",
+      "url": "https://www.marianos.com/pl/Light-Bulbs/26002?pzn=relevance"
+    },
+    {
+      "name": "School Office",
+      "url": "https://www.marianos.com/pl/school-office/35?pzn=relevance"
+    },
+    {
+      "name": "Hardware Home Improvement",
+      "url": "https://www.marianos.com/pl/hardware-home-improvement/33?pzn=relevance"
+    }
+  ],
+  "limits": {
+    "categories": 1000,
+    "pages_per_category": 100,
+    "total_pages": 1000,
+    "browser_actions": 5000,
+    "wall_seconds": 3600
+  },
+  "output_prefix": "discovery-all-roots-review",
+  "schedule": {
+    "enabled": false,
+    "cron_utc": "0 6 * * 1,4"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "store": {"id": "53100508", "zipcode": "60661", "name": "Marianos West Loop", "street": "40 S Halsted St"},
+  "roots": [{"name": "Batteries", "url": "https://www.marianos.com/pl/batteries/26003"}],
+  "limits": {"categories": 1, "pages_per_category": 3, "total_pages": 3, "browser_actions": 24, "wall_seconds": 90},
+  "output_prefix": "discovery-review",
+  "schedule": {"enabled": false, "cron_utc": "0 6 * * 1,4"}
+}

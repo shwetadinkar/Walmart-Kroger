@@ -46,18 +46,20 @@ DEPARTMENT_DOM = r'''d => {
 
 class RenderedCategoryDriver:
     source_kind='rendered-retailer'
-    def __init__(self,page,store_id,zipcode,store_name,street,*,maximum_actions=200,timeout_seconds=900):
+    def __init__(self,page,store_id,zipcode,store_name,street,*,maximum_actions=200,timeout_seconds=900,action_guard=None):
         if not re.fullmatch(r'\d{8}',store_id) or not re.fullmatch(r'\d{5}',zipcode):
             raise ValueError('Verified store ID and ZIP required')
         self.page,self.store_id,self.zipcode=page,store_id,zipcode
         self.store_name,self.street=store_name,street
         self.maximum_actions,self.actions=maximum_actions,0
+        self.action_guard=action_guard
         self.deadline=time.monotonic()+timeout_seconds
         self.page.set_default_timeout(15000)
 
-    def _action(self):
+    def _action(self,navigation=False):
         if self.actions>=self.maximum_actions or time.monotonic()>=self.deadline:
             raise RuntimeError('CATEGORY_BROWSER_BUDGET_EXHAUSTED')
+        if self.action_guard is not None:self.action_guard('page' if navigation else 'action')
         self.actions+=1
 
     def _read(self):
@@ -87,7 +89,7 @@ class RenderedCategoryDriver:
         return self._read()
 
     def _goto(self,url):
-        self._action();response=self.page.goto(url,wait_until='domcontentloaded')
+        self._action(navigation=True);response=self.page.goto(url,wait_until='domcontentloaded')
         if response and response.status in (401,403,429):raise CategoryAccessBlocked('CATEGORY_ACCESS_BLOCKED_STOP')
         e=self._settled()
         if category_url(e['url'])!=category_url(url):raise ValueError('CATEGORY_UNEXPECTED_REDIRECT')
@@ -116,7 +118,7 @@ class RenderedCategoryDriver:
             if not e['load_more']:break
             if pages>=maximum_pages:
                 return self._observation(url,e,[],False,'page_budget_exhausted',pages,str(snapshots),False)
-            before=len(e['cards']);self._action()
+            before=len(e['cards']);self._action(navigation=True)
             self.page.get_by_role('button',name='Load More Results',exact=True).click()
             self.page.wait_for_function('(n) => document.querySelectorAll(\'main [data-testid="auto-grid"] .ProductCard\').length > n',arg=before,timeout=20000)
             e=self._settled();pages+=1
@@ -125,7 +127,7 @@ class RenderedCategoryDriver:
         # A missing/ambiguous checked branch cannot establish exhaustive discovery.
         for child in hierarchy['children']:
             self._action();self.page.get_by_role('radio',name=child['name'],exact=True).check()
-            self._action();self.page.get_by_role('button',name='View results',exact=True).click()
+            self._action(navigation=True);self.page.get_by_role('button',name='View results',exact=True).click()
             child_page=self._settled();child_url=category_url(child_page['url'])
             if child_url==url:raise RuntimeError('CATEGORY_CHILD_DID_NOT_NAVIGATE')
             children.append(child_url);proof.append({'selection':child,'url':child_url})
@@ -137,6 +139,15 @@ class RenderedCategoryDriver:
         result['hierarchy_expected_products']=hierarchy.get('expected_products')
         result['snapshot_text']=json.dumps(snapshots,ensure_ascii=False)
         return result
+
+    def capture_failure(self):
+        from urllib.parse import urlsplit,urlunsplit
+        parsed=urlsplit(self.page.url)
+        # No query parameters or fragments from an unexpected redirect enter receipts.
+        return {'observed_at':datetime.now(timezone.utc).isoformat(),
+                'url':urlunsplit((parsed.scheme,parsed.hostname or '',parsed.path,'','')),
+                'body_text':self.page.locator('body').inner_text(timeout=2000)[:12000],
+                'isolated_unsigned_browser':True}
 
     def _observation(self,url,e,children,terminal,status,pages,proof,discovery_complete):
         import json
