@@ -59,3 +59,14 @@ class CloudRecoveryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 run_attempt(storage, Client(), budget, 'trial1', 'execution-A', 'interrupt', lambda: None)
             self.assertEqual(json.loads(storage.read('recovery-review/53100508/trial1/budget.json'))['attempts'], 8)
+
+    def test_thin_source_cannot_create_successful_interruption_marker(self):
+        with tempfile.TemporaryDirectory() as d:
+            storage = LocalStorage(Path(d))
+            class Client:
+                def get(self, path): return {'data': store()}
+                def products(self, *args, **kwargs): return {'data': [product()]}
+            def crash(): raise AssertionError('thin source must not reach approved crash point')
+            with self.assertRaises(ValueError):
+                run_attempt(storage, Client(), BudgetOpener(6), 'thin', 'execution-A', 'interrupt', crash)
+            self.assertIsNone(storage.read('recovery-review/53100508/thin/durable-checkpoint.json'))

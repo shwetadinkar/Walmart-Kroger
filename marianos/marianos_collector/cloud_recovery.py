@@ -69,6 +69,8 @@ def run_attempt(storage, client, budget, trial_id, platform_execution, stage, cr
             def write(self, key, data):
                 storage.write(prefix + key, data)
                 if stage == 'interrupt' and key.endswith('/progress.json'):
+                    if json.loads(data).get('unique_records') != 5:
+                        raise ValueError('RECOVERY_REQUIRES_FIVE_SELECTED_RECORDS')
                     body = storage.read(prefix + page_key)
                     marker = {'sha256': hashlib.sha256(body).hexdigest(),
                               'logical_run_id': logical_id, 'persisted_at': now()}
@@ -82,6 +84,8 @@ def run_attempt(storage, client, budget, trial_id, platform_execution, stage, cr
         try:
             status = collect(client, ScopedStorage(), SID, '60661', logical_id,
                              terms=('milk',), maximum_queries=1, target=5)
+            if status['unique_records'] != 5:
+                raise ValueError('RECOVERY_REQUIRES_FIVE_SELECTED_RECORDS')
             if stage == 'resume':
                 body = storage.read(prefix + page_key)
                 unchanged = hashlib.sha256(body).hexdigest() == json.loads(ready)['sha256']
