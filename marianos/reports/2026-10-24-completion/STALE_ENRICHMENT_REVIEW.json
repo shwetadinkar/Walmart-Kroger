@@ -1,0 +1,38 @@
+{
+  "input_records": 650,
+  "records": 650,
+  "unique_upcs": 650,
+  "quarantined_records": 0,
+  "maximum_observation_gap_seconds": 3600,
+  "rejected_evidence_counts": {
+    "OBSERVATION_TIME_GAP": 203
+  },
+  "digital_details_pending": 0,
+  "field_completeness": {
+    "zipcode": 650,
+    "store_name": 650,
+    "store_location": 650,
+    "store_logo": 0,
+    "store_brand": 650,
+    "category": 650,
+    "sub_category": 0,
+    "product_title": 650,
+    "weight": 650,
+    "regular_price": 650,
+    "sale_price": 244,
+    "volume_deals_description": 0,
+    "volume_deals_price": 0,
+    "digital_deals_description": 0,
+    "digital_deals_price": 0,
+    "image_url": 650,
+    "url": 650,
+    "upc": 650,
+    "gupc": 0,
+    "ppm": 0,
+    "unit_price": 0,
+    "crawl_date": 650
+  },
+  "source_is_synthetic": false,
+  "category_complete": false,
+  "submission_ready": false
+}

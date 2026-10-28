@@ -1,0 +1,51 @@
+{
+  "mode": "LOCAL_LIVE_OFFICIAL_API_NOT_AZURE_EXECUTION",
+  "first": {
+    "event": "api_trial_validated",
+    "records": 5,
+    "product_queries": 1,
+    "cached_product_pages": 0,
+    "duplicate_skipped": false,
+    "execution_run_id": "20261024T105446Z-e0c0f2a7c7ea4a15912ab24c5fdd2564",
+    "network_requests": 3,
+    "execution_network_requests": 3,
+    "duration_seconds": 5.703243,
+    "superseded_by_later_success": false,
+    "submission_ready": false,
+    "measured_duration_seconds": 5.712370499968529
+  },
+  "second": {
+    "event": "api_trial_validated",
+    "records": 5,
+    "product_queries": 1,
+    "cached_product_pages": 0,
+    "duplicate_skipped": false,
+    "execution_run_id": "20261024T105446Z-badf2545e4c549a0ab7a2fe4bfe2b6dc",
+    "network_requests": 3,
+    "execution_network_requests": 3,
+    "duration_seconds": 2.797676,
+    "superseded_by_later_success": false,
+    "submission_ready": false,
+    "measured_duration_seconds": 2.8023495000088587
+  },
+  "completed_retry": {
+    "event": "api_trial_duplicate_skipped",
+    "cached_product_pages": 0,
+    "product_queries": 1,
+    "records": 5,
+    "duplicate_skipped": true,
+    "execution_run_id": "20261024T105446Z-e0c0f2a7c7ea4a15912ab24c5fdd2564",
+    "network_requests": 0,
+    "execution_network_requests": 3,
+    "submission_ready": false,
+    "measured_duration_seconds": 0.01086019998183474
+  },
+  "separate_observations": [
+    "2026-10-24T10:54:51.766517+00:00",
+    "2026-10-24T10:54:54.588654+00:00"
+  ],
+  "previous_pointer_preserved_on_older_retry": true,
+  "azure_mutations": false,
+  "submission_ready": false,
+  "metric_note": "Original completed_retry product_queries=1 is the original execution total, not a retry call. Network_requests=0 is the measured retry count. Current code reports current product_queries=0 plus original_product_queries."
+}

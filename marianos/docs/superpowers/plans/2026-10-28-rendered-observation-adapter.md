@@ -1,0 +1,9 @@
+# Reproducible rendered-observation import
+
+The user authorized continuing implementation without further design questions. Scope is a pure offline adapter for the saved rendered text and selected-store dialog captured on October 28. No retailer requests, copied sessions, browser-security changes, Azure deployment or scheduling.
+
+Implementation: verify selected store ID, address, ZIP and at most one-hour observation separation; bind displayed UPC to the exact retailer URL when present; preserve blank UPC by stable URL identity; read selected option and size, primary-product price/PPM and pickup availability; exclude recommendations. Literal PPM is never recalculated. Distinct unexplained displayed prices remain blank with a discrepancy. Missing and unavailable identities remain in output. Full promotional terms are unsupported by this input: preserve teaser text in audit and leave delivered terms blank. Batch import uses existing retention reconciliation and exact 22-field schema. The CLI requires a new output directory and never changes latest/production pointers.
+
+RED: missing module; later store-address regression reproduced dialog chrome being mistaken for the address. GREEN: six meaningful tests cover literal PPM/selected size, missing UPC and unavailable identity, wrong store/window/UPC rejection, ambiguous prices, actual dialog structure, batch retention and mixed-window rejection. Reprocess all five genuine saved observations separately; full suite and optional intercepted-browser checks before commit.
+
+Boundary: this adapter does not solve unattended access, enumerate all variants, prove complete promotion discovery, or produce complete-category acceptance. The older five-row ad hoc export remains preserved; the reproducible export uses the established date-only crawl_date with precise timestamps in sidecars.

@@ -1,0 +1,30 @@
+{
+  "quarantined_records": 2,
+  "source_is_synthetic": false,
+  "conflicts": [
+    {
+      "upc": "0007457000400",
+      "api_regular_price": "6.49",
+      "api_sale_price": "",
+      "website_regular_price": "6.99",
+      "website_sale_price": "6.49",
+      "reasons": [
+        "WEBSITE_API_REGULAR_PRICE_CONFLICT",
+        "WEBSITE_API_SALE_PRICE_CONFLICT"
+      ]
+    },
+    {
+      "upc": "0007457001400",
+      "api_regular_price": "6.49",
+      "api_sale_price": "",
+      "website_regular_price": "6.99",
+      "website_sale_price": "6.49",
+      "reasons": [
+        "WEBSITE_API_REGULAR_PRICE_CONFLICT",
+        "WEBSITE_API_SALE_PRICE_CONFLICT"
+      ]
+    }
+  ],
+  "baseline_modified": false,
+  "submission_ready": false
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Dairy",
+    "original_url": "https://www.marianos.com/d/dairy",
+    "resolved_url": "https://www.marianos.com/pl/dairy-eggs/02",
+    "method": "retailer breadcrumb navigation",
+    "snapshot_sha256": "9816319d2fd73ffd71bd1d66948d05e3b31d8722bb477219be9b3e4899c535e8",
+    "complete": false
+  },
+  {
+    "name": "Breakfast",
+    "original_url": "https://www.marianos.com/d/breakfast",
+    "resolved_url": "https://www.marianos.com/pl/breakfast/03",
+    "method": "retailer breadcrumb navigation",
+    "snapshot_sha256": "148619932058364e12009301295b5311bf9d68c0edd8085728826672da917f3e",
+    "complete": false
+  }
+]

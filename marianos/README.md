@@ -1,28 +1,21 @@
-> **Continuation:** Linux container build and publication passed. Recovered website navigation is preserved in [continuation evidence](reports/2026-10-24-west-loop/CONTINUATION.md); full coverage and Azure execution remain unverified.
-> **Verified live update — 24 October 2026:** Official Kroger API verified West Loop location 53100508 / ZIP 60661. Real collection: 650 unique products; conservative export after conflict quarantine: 604. Website enrichment: 158 displayed PPM values and 29 volume descriptions in retained rows. See [API trial runbook](API_TRIAL_RUNBOOK.md). This is not complete 28-root or Azure acceptance proof. Older zero-live-data statements below describe the pre-API baseline.
-> **24 OCT 2026 — NEW TEST / IMAGE WORKFLOW:** [Manual Mariano's offline verification and GHCR Docker build](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/marianos-ghcr.yml). Trigger only via GitHub Actions **Run workflow**. It runs unit tests and the 28-root synthetic preflight, then publishes a separate `marianos58-collector` image to GHCR. **No real Mariano's products are collected, no Azure job is started, and no paid API call is made.** The resulting image is not a 500-product contest demonstration. The complete data-source feasibility gate remains [here](MARIANOS_LIVE_DATA_SOURCE_PLAN.md).
+# Mariano’s collector — current handover
 
-# Mariano's Azure Collector v0.2.1 — live-access testing handoff
+**Current status:** source-independent configuration, recovery and reporting work is available; full live production acceptance remains open. The real 650-product West Loop API baseline is preserved. Ordinary Windows/Azure browser source tests failed, and the registered app has only public API permissions. Automated complete categories, displayed PPM and full coupon coverage are not yet accepted. `submission_ready=false`.
 
-**Current status: software-complete for offline integration, not buyer-accepted and NOT a genuine 500-product contest entry.** We have no authorized full-coverage Mariano's data feed, verified production Kroger location IDs, actual product collection, or observed Azure deployment. Never present offline generated records as if they came from Mariano's.
+Start with [the current operator guide](OPERATOR_GUIDE.md). It covers client configuration, one-command offline verification, JSON/Markdown run reports, secure credentials, recovery, rollback, known limitations and deployment/scheduling gates. No new cloud run or paid service is needed for its offline workflow.
 
-## One-command developer test
-
-```bash
+```powershell
 python tools/preflight.py
+python -m marianos_collector.operations check --config config/discovery.westloop.example.json --store-id 53100508 --zipcode 60661 --output .operator-output/config-check
 ```
 
-This runs automated tests for the collector and mock API, checks two illustrative Chicago stores, and simulates a 560-item **SYNTHETIC** complete 28-root run with a crash/restart. A separate `tools/submission_gate.py` refuses to mark the entry ready without live data AND manually signed-off acceptance evidence.
+New source changes are not deployed to Azure. The job remains on the restored approved API image/manual trigger. Existing dated reports and [the API trial runbook](API_TRIAL_RUNBOOK.md) remain historical evidence; do not combine observations from different dates as one fresh dataset.
 
-## Key improvements in 0.2.0
+The manual GitHub build workflow verifies and publishes an image only; it does not deploy or collect products. Full source compatibility and production acceptance remain separate gates.
 
-- 28-root/560-product offline acceptance simulation with simulated interruption and resume.
-- Subset trial releases live under `trials/...`, isolated from full `published/...` releases.
-- Actual Azure Container Apps Jobs creation script (dry-run first), with mandatory verified store IDs, provider secrets, blob storage and UTC twice-weekly schedule.
-- Final live-data verification gate with product schema checks, >=500 genuine records, category counts, human sign-off, coupon/PPM/store spotchecks and Azure evidence.
-- Full recipient instructions in `HANDOVER.md`, `SUBMISSION_STATUS.md`, `azure/README.md`.
+## Historical notes below
 
----
+The following original notes describe earlier project states. Their zero-live-data/deployment statements are historical, not the current status. Use the operator guide and dated evidence for present limitations.
 
 ## Original v0.1.0 notes (preserved for reference)
 

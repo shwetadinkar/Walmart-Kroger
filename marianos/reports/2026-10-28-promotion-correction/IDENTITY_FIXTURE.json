@@ -1,0 +1,18 @@
+{
+  "retained_output_upcs": [
+    "0002100061223",
+    "0002100065893",
+    "0007457001310"
+  ],
+  "retained_terms_upcs": [
+    "0002100061223",
+    "0002100065893",
+    "0007457001310"
+  ],
+  "coupon_source_upc": "0007457001400",
+  "coupon_applicable_retained_upc": "0007457001310",
+  "redemption_terms_end_literal": "November 3",
+  "expiry_badge_literal": "Nov. 04",
+  "expiry_discrepancy_resolved": false,
+  "private_products_sha256": "8afc5f159d9ba7ecef823f11b73af5ddd38ddcd8ab0fcb9cefcac36db8d33535"
+}
