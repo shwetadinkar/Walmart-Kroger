@@ -1,0 +1,19 @@
+{
+  "correction_date": "2026-10-28",
+  "observation_date": "2026-10-24",
+  "historical_package_unchanged": true,
+  "identity_fixture": "IDENTITY_FIXTURE.json",
+  "full_audit_delivery": "Private B_PROMOTION_CORRECTION/DISCREPANCY_AUDIT.json",
+  "historical_retained_upcs": [
+    "0002100061223",
+    "0002100065893",
+    "0007457001310"
+  ],
+  "historical_withheld_upcs": [
+    "0007457000400",
+    "0007457001400"
+  ],
+  "coupon_source_upc": "0007457001400",
+  "coupon_applicable_retained_upc": "0007457001310",
+  "expiry_discrepancy_resolved": false
+}

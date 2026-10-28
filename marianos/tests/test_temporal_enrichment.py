@@ -30,7 +30,8 @@ class TemporalEnrichmentTests(unittest.TestCase):
 
     def test_current_price_conflict_preserves_both_values_in_quarantine(self):
         result=self.merge({**self.e,'displayed_regular_price':'3.99'})
-        self.assertEqual(result['products'],[])
+        self.assertEqual(len(result['products']),1)
+        self.assertEqual(result['products'][0]['regular_price'],'')
         self.assertEqual(result['quarantine'][0]['api_record']['regular_price'],'2.98')
         self.assertEqual(result['quarantine'][0]['website_evidence']['displayed_regular_price'],'3.99')
 
@@ -175,5 +176,20 @@ class TemporalEnrichmentTests(unittest.TestCase):
             self.assertEqual(result['products'],[self.row])
             self.assertEqual(result['availability_audit'],[])
             self.assertTrue(result['rejected_evidence'])
+
+    def test_verified_website_price_fills_missing_api_price_with_website_timestamp(self):
+        self.row['regular_price']='';self.row['sale_price']=''
+        e={**self.e,'displayed_regular_price':'2.98','displayed_sale_price':'2.49',
+            'observed_text':self.e['observed_text']+' Sale $2.49'}
+        result=self.merge(e);row=result['products'][0]
+        self.assertEqual((row['regular_price'],row['sale_price']),('2.98','2.49'))
+        identity=next(iter(result['retention']))
+        self.assertEqual(result['retention'][identity]['price_observed_at']['regular_price'],e['observed_at'])
+        self.assertEqual(result['retention'][identity]['price_observed_at']['sale_price'],e['observed_at'])
+
+    def test_substring_price_is_not_a_direct_displayed_price(self):
+        self.row['regular_price']=''
+        e={**self.e,'displayed_regular_price':'2.98','observed_text':self.e['observed_text'].replace('$2.98','$12.98')}
+        self.assertEqual(self.merge(e)['products'][0]['regular_price'],'')
 
 if __name__=='__main__':unittest.main()

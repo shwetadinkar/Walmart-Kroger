@@ -42,9 +42,9 @@ class ApiTrialTests(unittest.TestCase):
         p=product();p['items'][0]['fulfillment']={'shipToHome':True}
         with self.assertRaises(ValueError):api.normalize(p,store(),'2026-10-24')
 
-    def test_reject_missing_price_and_fragment_product_uri(self):
+    def test_preserve_missing_price_but_reject_fragment_product_uri(self):
         p=product();p['items'][0].pop('price')
-        with self.assertRaises(ValueError):api.normalize(p,store(),'2026-10-24')
+        self.assertEqual(api.normalize(p,store(),'2026-10-24')['regular_price'],'')
         p=product();p['productPageURI']='/p/fake-#1/0001111060933'
         with self.assertRaises(ValueError):api.normalize(p,store(),'2026-10-24')
 
@@ -134,15 +134,17 @@ class ApiTrialTests(unittest.TestCase):
             (src/'verified_store.json').write_text(json.dumps({'data':store()}))
             (src/'page_00.json').write_text(json.dumps({'locationId':'53100508','term':'eggs',
                 'observed_at':'2026-10-24T06:00:00+00:00','response':{'data':[product(),product('0001111060934')]}}))
-            e={'store_id':'53100508','upc':'0001111060933',
+            e={'store_id':'53100508','upc':'0001111060933','observed_at':'2026-10-24T06:05:00Z',
+               'url':'https://www.marianos.com/p/kroger-eggs/0001111060933?cid=source',
                'observed_text':'UPC: 0001111060933 Pickup at Marianos West Loop 40 S Halsted St',
                'displayed_regular_price':'9.99'}
             r=api.import_snapshot(src,out,'53100508','60661',1,2,[e])
-            self.assertEqual(r['records'],1)
+            self.assertEqual(r['records'],2)
             self.assertEqual(r['quarantined_records'],1)
             pointer=json.loads((out/'latest.json').read_text())
             rows=json.loads((out/pointer['data_key']).read_text())
-            self.assertEqual(rows[0]['upc'],'0001111060934')
+            self.assertEqual({x['upc'] for x in rows},{'0001111060933','0001111060934'})
+            self.assertEqual(next(x for x in rows if x['upc']=='0001111060933')['regular_price'],'')
 
     def test_website_sale_conflict_is_quarantined_even_when_regular_matches(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -151,11 +153,12 @@ class ApiTrialTests(unittest.TestCase):
             (src/'verified_store.json').write_text(json.dumps({'data':store()}))
             (src/'page_00.json').write_text(json.dumps({'locationId':'53100508','term':'eggs',
                 'observed_at':'2026-10-24T06:00:00+00:00','response':{'data':[p,product('0001111060934')]}}))
-            e={'store_id':'53100508','upc':'0001111060933',
+            e={'store_id':'53100508','upc':'0001111060933','observed_at':'2026-10-24T06:05:00Z',
+               'url':'https://www.marianos.com/p/kroger-eggs/0001111060933?cid=source',
                'observed_text':'UPC: 0001111060933 Pickup at Marianos West Loop 40 S Halsted St $2.98 $2.19',
                'displayed_regular_price':'2.98','displayed_sale_price':'2.19'}
             r=api.import_snapshot(src,out,'53100508','60661',1,2,[e])
-            self.assertEqual(r['records'],1)
+            self.assertEqual(r['records'],2)
             self.assertEqual(r['quarantined_records'],1)
 
 if __name__=='__main__': unittest.main()

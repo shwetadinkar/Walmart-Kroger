@@ -1,0 +1,58 @@
+[
+  {
+    "upc": "0002100061223",
+    "accepted": true,
+    "api_file": "product_0.json",
+    "api_original_sha256": "4006b839f03de2cf7304d2db5cae56f3d897905ed761721abc3b505707e8a510",
+    "api_observed_at": "2026-10-24T18:04:33.480049+00:00",
+    "website_observed_at": "2026-10-24T18:05:17.784Z",
+    "quarantine_reasons": [],
+    "historical_disposition": "retained"
+  },
+  {
+    "upc": "0002100065893",
+    "accepted": true,
+    "api_file": "product_1.json",
+    "api_original_sha256": "2c41f2f5d4dec3aca91c4ffd276b3a7f69eba80d2c301a011576cac15f8aa33d",
+    "api_observed_at": "2026-10-24T18:04:34.531833+00:00",
+    "website_observed_at": "2026-10-24T18:05:24.628Z",
+    "quarantine_reasons": [],
+    "historical_disposition": "retained"
+  },
+  {
+    "upc": "0007457001310",
+    "accepted": true,
+    "api_file": "product_3.json",
+    "api_original_sha256": "8258d1d2f245d0a1f707ed60d0fb4fe779136f861bb05f602f0019a0e6b985e1",
+    "api_observed_at": "2026-10-24T18:04:36.496753+00:00",
+    "website_observed_at": "2026-10-24T18:05:39.109Z",
+    "quarantine_reasons": [],
+    "historical_disposition": "retained"
+  },
+  {
+    "upc": "0007457000400",
+    "accepted": false,
+    "api_file": "product_2.json",
+    "api_original_sha256": "a21807a2c625d6c6abea69198d52cecc450d1983e381440561257812870975df",
+    "api_observed_at": "2026-10-24T18:04:35.561801+00:00",
+    "website_observed_at": "2026-10-24T18:05:32.323Z",
+    "quarantine_reasons": [
+      "WEBSITE_API_REGULAR_PRICE_CONFLICT",
+      "WEBSITE_API_SALE_PRICE_CONFLICT"
+    ],
+    "historical_disposition": "withheld_price_conflict"
+  },
+  {
+    "upc": "0007457001400",
+    "accepted": false,
+    "api_file": "product_4.json",
+    "api_original_sha256": "f2e8b57cd67c94d52416ce15a58faadd9ba8d879ae23f9f4e69ee2802b93cbb2",
+    "api_observed_at": "2026-10-24T18:04:37.501848+00:00",
+    "website_observed_at": "2026-10-24T18:05:45.217Z",
+    "quarantine_reasons": [
+      "WEBSITE_API_REGULAR_PRICE_CONFLICT",
+      "WEBSITE_API_SALE_PRICE_CONFLICT"
+    ],
+    "historical_disposition": "withheld_price_conflict"
+  }
+]

@@ -13,6 +13,7 @@ from .api_trial import TERMS, encode, import_snapshot, normalize, verify_store
 from .kroger import Credentials, KrogerClient
 from .storage import LocalStorage, AzureBlobStorage
 from .execution_state import execute_once
+from .retention import stable_identity
 
 class BudgetOpener:
     def __init__(self,maximum,opener=urlopen):
@@ -59,9 +60,9 @@ def collect(client,storage,location_id,zipcode,run_id,terms=TERMS,maximum_querie
             page={'locationId':location_id,'term':term,'observed_at':datetime.now(timezone.utc).isoformat(),'response':payload}
             storage.write(key,encode(page));new_queries+=1
         for product in page['response']['data']:
-            try:row=normalize(product,store_document,page['observed_at'][:10])
+            try:row=normalize(product,store_document,page['observed_at'][:10],assortment_verified=True)
             except (ValueError,KeyError,TypeError):continue
-            records.setdefault(row['upc'],row)
+            records.setdefault(stable_identity(row,location_id),row)
             if len(records)>=target:break
         completed.append(term)
         status={'location_id':location_id,'source_prefix':prefix,'unique_records':len(records),
@@ -114,11 +115,23 @@ def _collect_and_export(args,client,storage):
         for name in ['verified_store.json']+[f'page_{i:02d}.json' for i in range(len(status['completed_terms']))]:
             (source/name).write_bytes(storage.read(prefix+'/'+name))
         export=Path(scratch)/'normalized'
+        destination=f'{args.output_prefix}/{args.location_id}'
+        prior=storage.read(destination+'/latest.json')
+        if prior:
+            export.mkdir();(export/'latest.json').write_bytes(prior)
+            pointer=json.loads(prior)
+            for field in ('data_key','report_key','provenance_key','retention_key'):
+                if pointer.get(field):
+                    key=pointer[field]
+                    if not key.startswith('runs/') or '..' in key or '\\' in key:raise ValueError('INVALID_PRIOR_OUTPUT_KEY')
+                    body=storage.read(destination+'/'+key)
+                    if body is None:raise ValueError('PRIOR_OUTPUT_MISSING')
+                    target=export/key;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(body)
         report=import_snapshot(source,export,args.location_id,args.zipcode,args.minimum,args.target)
         pointer=json.loads((export/'latest.json').read_text(encoding='utf-8'))
         destination=f'{args.output_prefix}/{args.location_id}'
         previous=storage.read(destination+'/latest.json')
-        if previous and report['records']<int(json.loads(previous).get('records',0))*0.8:
+        if previous and report['current_records']<int(json.loads(previous).get('current_records',json.loads(previous).get('records',0)))*0.8:
             raise ValueError('MATERIAL_YIELD_DROP: previous trial preserved')
         for file in (export/'runs').rglob('*.json'):
             if hasattr(storage,'assert_lock_held'):storage.assert_lock_held()

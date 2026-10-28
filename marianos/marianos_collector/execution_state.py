@@ -55,7 +55,7 @@ def execute_once(storage,store_id,run_id,configuration,budget,work):
             receipt['state']='running';save()
             pointer,metrics=work()
             hashes={}
-            for field in ('data_key','report_key','provenance_key'):
+            for field in ('data_key','report_key','provenance_key')+tuple(f for f in ('retention_key',) if pointer.get(f)):
                 key=pointer[field]
                 if not isinstance(key,str) or not key.startswith('runs/') or '..' in key or '\\' in key:
                     raise ValueError('INVALID_IMMUTABLE_OUTPUT_KEY')
