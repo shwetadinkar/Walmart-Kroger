@@ -157,6 +157,46 @@ def _format_price(value):
     return v if re.fullmatch(r"\d+(?:\.\d{1,2})?", v) else ""
 
 
+def _freshness(incoming, prior):
+    """Decide whether an incoming observation may replace persisted history.
+
+    Stored history is only ever replaced by an observation that is *provably*
+    newer. Undated, equal or older observations are retained as audit evidence
+    and must never move stored values or observation dates backwards, including
+    when they arrive in a separate import run.
+
+    `_iso` normalises every timestamp to UTC `...Z`, so a lexical comparison of
+    two non-empty values is a correct chronological comparison.
+    """
+    if not prior:
+        return True, "first_observation"
+    stored = prior.get("last_source_observed_at") or ""
+    if not incoming and not stored:
+        return False, "undated_incoming_and_undated_stored_not_orderable"
+    if not incoming:
+        return False, "undated_incoming_cannot_prove_newer_than_stored"
+    if not stored:
+        return True, "stored_observation_undated_incoming_dated"
+    if incoming > stored:
+        return True, "newer_than_stored"
+    if incoming == stored:
+        return False, "same_observation_time_as_stored"
+    return False, "older_than_stored"
+
+
+def _conflicting_fields(raw, store, prior):
+    """Fields where a non-applied observation disagrees with stored history.
+
+    Converted without carry-forward so the comparison reflects only what this
+    observation itself asserts.
+    """
+    candidate, _ = _convert(raw, store, None)
+    stored = (prior or {}).get("record", {})
+    return sorted(name for name in FIELDS
+                  if candidate.get(name) and stored.get(name)
+                  and candidate[name] != stored[name])
+
+
 def _convert(raw, store, history):
     """Produce 22-field rows; only a pickup-specific confirmed price may populate it."""
     record = OrderedDict((name, "") for name in FIELDS)
@@ -261,12 +301,32 @@ def import_snapshots(paths, store, outdir, prior_history=None):
 
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     evidence = {}
+    stale_inputs, stale_conflicts = 0, 0
     for identity, value in sorted(candidates.items()):
         item = value["item"]
         key = f'{store["store_id"]}:{identity}'
         prior = history.get(key)
-        record, provenance = _convert(item, store, prior)
         stamp = _iso(item.get("timestamp"))
+        applied, freshness = _freshness(stamp, prior)
+        if not applied:
+            # Stale, undated or repeat observations are audited, never applied.
+            # Stored values and observation dates are left exactly as they were,
+            # so an older import run cannot regress newer persisted history.
+            conflicts = _conflicting_fields(item, store, prior)
+            stale_inputs += 1
+            stale_conflicts += bool(conflicts)
+            prior["last_seen_import_at"] = now
+            evidence[key] = {
+                **value["source_ref"], "source_row_sha256": value["source_row_sha256"],
+                "fresh_in_this_import": False, "applied_to_history": False,
+                "freshness_decision": freshness,
+                "incoming_source_observed_at": stamp or None,
+                "stored_source_observed_at": prior.get("last_source_observed_at"),
+                "conflicting_fields": conflicts,
+                "classification": "stale_or_unorderable_input_retained_as_audit_only",
+            }
+            continue
+        record, provenance = _convert(item, store, prior)
         field_dates = dict((prior or {}).get("field_observed_at", {}))
         for field in FIELDS:
             if record[field] and field not in provenance["carried_fields"]:
@@ -277,7 +337,8 @@ def import_snapshots(paths, store, outdir, prior_history=None):
             "field_observed_at": field_dates,
             "availability_at_last_observation": provenance["pickup_status"],
         }
-        evidence[key] = {**value["source_ref"], "source_row_sha256": value["source_row_sha256"], **provenance}
+        evidence[key] = {**value["source_ref"], "source_row_sha256": value["source_row_sha256"],
+                         "applied_to_history": True, "freshness_decision": freshness, **provenance}
     # Do not declare absent products out of stock: this is a partial category/sample import.
     for key, prior in history.items():
         if key not in evidence:
@@ -305,6 +366,9 @@ def import_snapshots(paths, store, outdir, prior_history=None):
         "source_error_rows": sum(error_codes.values()), "source_errors": dict(error_codes),
         "rejected_product_rows": sum(reject_codes.values()), "rejected_reasons": dict(reject_codes),
         "duplicate_product_rows": collisions, "current_candidate_store_products": len(candidates),
+        "stale_or_unorderable_input_rows": stale_inputs,
+        "stale_inputs_with_conflicting_values": stale_conflicts,
+        "history_regression_guard": "stored history is replaced only by a provably newer observation",
         "historical_products_in_trial_export": len(records),
         "pickup_available_candidates": sum(v["item"].get("available_for_pickup") is True for v in candidates.values()),
         "pickup_unavailable_candidates": sum(v["item"].get("available_for_pickup") is False for v in candidates.values()),
