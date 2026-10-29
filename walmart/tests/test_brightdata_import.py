@@ -144,4 +144,111 @@ class BrightDataImporterTests(unittest.TestCase):
             self.assertEqual(m['duplicate_product_rows'],1)
             self.assertEqual(m['current_candidate_store_products'],1)
 
+class SeparateImportHistoryRegressionTests(unittest.TestCase):
+    """An older import run must never regress newer persisted history.
+
+    Reproduces the reported defect: an October 23 observation priced 10.00 was
+    imported, then an October 22 observation priced 5.00 was replayed against
+    the resulting history.json, and the stored record and
+    last_source_observed_at both moved backwards.
+    """
+
+    @staticmethod
+    def _priced(ts, price):
+        item = raw(ts=ts)
+        item["pickup_extras"] = dict(item["pickup_extras"], fulfillment_price=price)
+        return item
+
+    def _run(self, tmp, name, items, history=None):
+        path = Path(tmp) / name
+        path.write_text(json.dumps(items), encoding="utf-8")
+        trial, manifest = import_snapshots([path], STORE, Path(tmp) / "out", history)
+        stored = json.loads((trial / "history.json").read_text(encoding="utf-8"))
+        evidence = json.loads((trial / "evidence.json").read_text(encoding="utf-8"))
+        return trial, manifest, stored, evidence
+
+    def test_older_separate_import_does_not_overwrite_newer_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._run(
+                tmp, "newer.json", [self._priced("2026-10-23T12:00:00Z", "10.00")])
+            _, manifest, stored, evidence = self._run(
+                tmp, "older.json", [self._priced("2026-10-22T12:00:00Z", "5.00")],
+                history=first / "history.json")
+
+            entry = stored["products"]["100:1234"]
+            self.assertEqual(entry["record"]["regular_price"], "10.00")
+            self.assertEqual(entry["last_source_observed_at"], "2026-10-23T12:00:00Z")
+            self.assertEqual(entry["record"]["crawl_date"], "2026-10-23")
+            self.assertEqual(entry["field_observed_at"]["regular_price"],
+                             "2026-10-23T12:00:00Z")
+
+            audit = evidence["100:1234"]
+            self.assertFalse(audit["applied_to_history"])
+            self.assertEqual(audit["freshness_decision"], "older_than_stored")
+            self.assertEqual(audit["incoming_source_observed_at"], "2026-10-22T12:00:00Z")
+            self.assertEqual(audit["stored_source_observed_at"], "2026-10-23T12:00:00Z")
+            self.assertIn("regular_price", audit["conflicting_fields"])
+            self.assertEqual(manifest["stale_or_unorderable_input_rows"], 1)
+            self.assertEqual(manifest["stale_inputs_with_conflicting_values"], 1)
+
+    def test_newer_separate_import_still_updates_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._run(
+                tmp, "older.json", [self._priced("2026-10-22T12:00:00Z", "5.00")])
+            _, manifest, stored, evidence = self._run(
+                tmp, "newer.json", [self._priced("2026-10-23T12:00:00Z", "10.00")],
+                history=first / "history.json")
+
+            entry = stored["products"]["100:1234"]
+            self.assertEqual(entry["record"]["regular_price"], "10.00")
+            self.assertEqual(entry["last_source_observed_at"], "2026-10-23T12:00:00Z")
+            self.assertTrue(evidence["100:1234"]["applied_to_history"])
+            self.assertEqual(evidence["100:1234"]["freshness_decision"], "newer_than_stored")
+            self.assertEqual(manifest["stale_or_unorderable_input_rows"], 0)
+
+    def test_undated_observation_cannot_replace_dated_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._run(
+                tmp, "dated.json", [self._priced("2026-10-23T12:00:00Z", "10.00")])
+            undated = self._priced("2026-10-23T12:00:00Z", "5.00")
+            undated["timestamp"] = ""
+            _, manifest, stored, evidence = self._run(
+                tmp, "undated.json", [undated], history=first / "history.json")
+
+            entry = stored["products"]["100:1234"]
+            self.assertEqual(entry["record"]["regular_price"], "10.00")
+            self.assertEqual(entry["last_source_observed_at"], "2026-10-23T12:00:00Z")
+            self.assertEqual(evidence["100:1234"]["freshness_decision"],
+                             "undated_incoming_cannot_prove_newer_than_stored")
+            self.assertEqual(manifest["stale_or_unorderable_input_rows"], 1)
+
+    def test_identical_timestamp_reimport_is_audited_not_reapplied(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._run(
+                tmp, "a.json", [self._priced("2026-10-23T12:00:00Z", "10.00")])
+            _, manifest, stored, evidence = self._run(
+                tmp, "b.json", [self._priced("2026-10-23T12:00:00Z", "5.00")],
+                history=first / "history.json")
+
+            self.assertEqual(stored["products"]["100:1234"]["record"]["regular_price"], "10.00")
+            self.assertEqual(evidence["100:1234"]["freshness_decision"],
+                             "same_observation_time_as_stored")
+            self.assertIn("regular_price", evidence["100:1234"]["conflicting_fields"])
+            self.assertEqual(manifest["stale_inputs_with_conflicting_values"], 1)
+
+    def test_stale_import_preserves_first_seen_and_records_the_visit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, first_stored, _ = self._run(
+                tmp, "newer.json", [self._priced("2026-10-23T12:00:00Z", "10.00")])
+            original_first_seen = first_stored["products"]["100:1234"]["first_seen_import_at"]
+            _, _, stored, _ = self._run(
+                tmp, "older.json", [self._priced("2026-10-22T12:00:00Z", "5.00")],
+                history=first / "history.json")
+
+            entry = stored["products"]["100:1234"]
+            self.assertEqual(entry["first_seen_import_at"], original_first_seen)
+            self.assertGreaterEqual(entry["last_seen_import_at"], original_first_seen)
+            self.assertEqual(entry["availability_at_last_observation"], "IN_STOCK")
+
+
 if __name__=='__main__':unittest.main()
