@@ -1,0 +1,33 @@
+{
+  "_note": "Search terms per client category root. The Kroger public Products API has no category enumeration: /products requires filter.term. Each product's own 'categories' field is recorded alongside the term's category so the two can be compared rather than assumed.",
+  "terms": {
+    "Produce": ["banana", "apple", "orange", "lemon", "lime", "grapes", "strawberry", "blueberry", "avocado", "tomato", "potato", "onion", "carrot", "lettuce", "spinach", "broccoli", "cucumber", "pepper", "mushroom", "celery", "melon", "pineapple", "salad kit", "fresh herbs"],
+    "Meat": ["chicken breast", "ground beef", "steak", "pork chop", "bacon", "sausage", "turkey", "ham", "ribs", "chicken thigh", "roast", "lamb", "hot dogs", "meatballs"],
+    "Seafood": ["salmon", "shrimp", "tilapia", "cod", "tuna", "crab", "lobster", "scallops", "catfish", "mahi", "fish fillet", "clams"],
+    "Deli": ["deli turkey", "deli ham", "sliced cheese", "rotisserie chicken", "hummus", "potato salad", "coleslaw", "deli meat", "charcuterie", "prepared sandwich"],
+    "Bakery": ["bread", "bagel", "muffin", "croissant", "donut", "cake", "cookies bakery", "tortilla", "buns", "pie", "baguette", "dinner rolls"],
+    "Floral": ["flowers", "bouquet", "roses", "orchid", "potted plant", "succulent", "floral arrangement"],
+    "Grocery": ["pasta", "rice", "canned soup", "beans", "flour", "sugar", "cooking oil", "peanut butter", "jelly", "cereal bar", "ketchup", "mayonnaise", "mustard", "salsa", "pasta sauce", "canned tomatoes", "tuna can", "broth", "spices", "vinegar", "honey", "noodles", "taco shells", "crackers"],
+    "Dairy": ["milk", "eggs", "butter", "cheese", "yogurt", "cream cheese", "sour cream", "heavy cream", "cottage cheese", "half and half", "whipped topping", "string cheese"],
+    "Frozen": ["frozen pizza", "ice cream", "frozen vegetables", "frozen fruit", "frozen waffles", "frozen dinner", "frozen chicken", "frozen fries", "popsicle", "frozen shrimp", "frozen breakfast"],
+    "Natural Organic": ["organic milk", "organic eggs", "organic produce", "gluten free", "plant based", "almond milk", "oat milk", "tofu", "quinoa", "kombucha", "protein powder", "organic snacks"],
+    "Beverages": ["soda", "sparkling water", "juice", "bottled water", "energy drink", "sports drink", "iced tea", "lemonade", "seltzer", "drink mix", "coconut water"],
+    "Breakfast": ["cereal", "oatmeal", "pancake mix", "syrup", "granola", "breakfast bar", "pop tarts", "grits", "breakfast sausage"],
+    "Coffee": ["coffee", "ground coffee", "coffee beans", "k cups", "instant coffee", "espresso", "coffee creamer", "tea bags", "green tea"],
+    "Candy": ["chocolate", "candy", "gum", "mints", "gummy", "lollipop", "candy bar", "caramel", "licorice"],
+    "Beer Wine Liquor": ["beer", "wine", "red wine", "white wine", "whiskey", "vodka", "tequila", "rum", "hard seltzer", "champagne", "cider"],
+    "Health": ["vitamins", "pain reliever", "cold medicine", "allergy", "first aid", "bandages", "antacid", "cough drops", "thermometer", "supplements"],
+    "Personal Care": ["shampoo", "conditioner", "body wash", "soap", "deodorant", "toothpaste", "toothbrush", "razor", "shaving cream", "lotion", "floss", "mouthwash", "feminine care"],
+    "Beauty": ["makeup", "lipstick", "mascara", "foundation makeup", "nail polish", "face cream", "sunscreen", "hair color", "hair spray", "cosmetic"],
+    "Baby": ["diapers", "baby wipes", "baby formula", "baby food", "baby lotion", "pacifier", "baby shampoo", "training pants"],
+    "Household": ["paper towels", "toilet paper", "laundry detergent", "dish soap", "trash bags", "cleaner", "bleach", "fabric softener", "sponges", "air freshener", "disinfectant wipes"],
+    "Kitchen Dining": ["food storage", "aluminum foil", "plastic wrap", "paper plates", "napkins", "cutlery", "water bottle", "travel mug", "baking pan", "mixing bowl"],
+    "Pet Supplies": ["dog food", "cat food", "dog treats", "cat litter", "pet toy", "pet shampoo", "bird seed", "fish food", "dog collar"],
+    "Candles Home Fragrances": ["candle", "air freshener spray", "wax melts", "reed diffuser", "scented candle", "room spray"],
+    "Batteries": ["aa batteries", "aaa batteries", "9v battery", "c batteries", "d batteries", "button cell", "rechargeable batteries", "lithium battery"],
+    "Light Bulbs": ["light bulb", "led bulb", "night light", "flashlight", "lamp bulb", "string lights"],
+    "School Office": ["notebook", "pens", "pencils", "markers", "glue", "scissors", "tape", "paper ream", "binder", "backpack", "envelopes"],
+    "Hardware Home Improvement": ["extension cord", "duct tape", "light switch", "batteries charger", "tool", "screwdriver", "furnace filter", "work gloves", "zip ties"],
+    "Coupons": ["coupon", "weekly special", "savings"]
+  }
+}
