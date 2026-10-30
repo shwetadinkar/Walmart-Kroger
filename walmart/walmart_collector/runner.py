@@ -204,7 +204,12 @@ class Collector:
             "example_digital_deals":[{"title":r["product_title"],"description":r["digital_deals_description"],"displayed_price":r["digital_deals_price"]} for r in records if r["digital_deals_description"]][:5],
             "pages_by_category":{k:len(v) for k,v in all_stages.items()},
             "location_evidence_urls":[st["page"].get("location_evidence_url", "") for stages in all_stages.values() for st in stages if st["page"].get("location_evidence_url")][:15],
-            "caution":"This is NOT contest proof if source_is_synthetic=true. Live providers require independent verification."
+            "caution":"This is NOT contest proof if source_is_synthetic=true. Live providers require independent verification.",
+            # A composed run can take different fields from different sources,
+            # so the report has to say which source produced what. Sources that
+            # do not compose have nothing to add here.
+            **({"provenance": self.source.provenance_report()}
+               if hasattr(self.source, "provenance_report") else {}),
         }
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
         prefix = f"{self._published_root(store)}/runs/{release}"
