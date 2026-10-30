@@ -135,8 +135,6 @@ class AutomaticTests(unittest.TestCase):
             self.assertEqual(main(["--trigger", "--dry-run", "--inputs-csv", str(path), "--max-records", "10"]), 0)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 class SeedHistoryTests(unittest.TestCase):
     def test_seed_is_fail_closed_and_one_time(self):
@@ -153,3 +151,7 @@ class SeedHistoryTests(unittest.TestCase):
             self.assertEqual(seed(path,target,confirm=True)['products'],1)
             with self.assertRaises(RuntimeError):
                 seed(path,target,confirm=True)
+
+
+if __name__ == "__main__":
+    unittest.main()

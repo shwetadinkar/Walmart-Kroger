@@ -80,5 +80,6 @@ class ProviderHttpAdapterTests(unittest.TestCase):
             with self.assertRaises(SourceError):
                 self.source.fetch(STORES['100'],CATS[0],CATS[0].url,'')
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

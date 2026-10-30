@@ -146,3 +146,7 @@ class Tests(unittest.TestCase):
                 Collector(LocalStorage(Path(root)),Repeater(),CATS[:1],min_products=1).run(STORES[0])
 
 if __name__=='__main__':unittest.main()
+
+
+if __name__ == "__main__":
+    unittest.main()

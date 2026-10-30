@@ -1,4 +1,7 @@
 import unittest
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from tools.source_feasibility_audit import audit, get_path
 
 MAPPING = {
@@ -38,6 +41,7 @@ class SourceAuditTest(unittest.TestCase):
         self.assertEqual(report["field_coverage"]["ppm_display"]["observed"], 0)
         self.assertIn("NO_DIRECTLY_DISPLAYED_PPM", report["blockers"])
         self.assertEqual(report["requests_per_product_observed"], 3)
+
 
 if __name__ == "__main__":
     unittest.main()

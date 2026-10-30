@@ -206,4 +206,6 @@ class AdditionalSafetyTests(unittest.TestCase):
                 Collector(store,LowerYield(ROOT / "fixtures"),CATEGORIES,min_products=11,previous_ratio=.75).run(STORES[0])
             self.assertEqual(read_json(store,"published/100/latest.json"),before)
 
-if __name__ == "__main__": unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()

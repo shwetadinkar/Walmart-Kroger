@@ -109,4 +109,6 @@ class TestSafetyRegression(unittest.TestCase):
         review["attestations"]["pickup_and_in_store_eligibility_audit"] = False
         self.assertEqual(inspect(rows,report,review,["Food"],raw)["status"],"BLOCKED")
 
-if __name__ == "__main__": unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()

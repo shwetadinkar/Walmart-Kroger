@@ -3,6 +3,9 @@ import unittest
 from unittest.mock import patch
 from contextlib import redirect_stdout, redirect_stderr
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from tools import walmart_opd_smoke_test as probe
 
 
@@ -52,5 +55,5 @@ class OfficialOpdProbeTests(unittest.TestCase):
         self.assertNotIn('secret', str(result))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

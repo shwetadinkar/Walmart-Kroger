@@ -287,8 +287,6 @@ class OutputShapeTests(unittest.TestCase):
         self.assertEqual(record["digital_deals_price"], "3.49")
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class EntrypointTests(unittest.TestCase):
@@ -344,3 +342,7 @@ class EntrypointTests(unittest.TestCase):
         self.set(WALMART_STORE_ID="100", WALMART_SOURCE="fixture")
         with self.assertRaises(ValueError):
             self.module.command()
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -779,9 +779,77 @@ class CompositeDelegationTests(unittest.TestCase):
                 for _ in range(3):
                     Collector(storage, source, CATEGORIES, min_products=1,
                               trial=True).run(STORE)
-                    traced.append(source.provenance_report()["products_traced"])
+                    values = source.provenance_report()["values_by_field_and_source"]
+                    traced.append(sum(sum(d.values()) for d in values.values()))
+        # products_traced is identity-keyed and constant either way, so it
+        # cannot detect the defect. The per-source value counter does: without
+        # the reset it rises run on run.
         self.assertEqual(len(set(traced)), 1,
                          f"provenance must not accumulate across runs: {traced}")
+        self.assertGreater(traced[0], 0, "the counter must actually be counting")
+
+
+class UnguardedFixTests(unittest.TestCase):
+    """Fixes that mutation testing showed no test would have caught.
+
+    Reverting the pre-artifact gate, and reverting the manifest hash type
+    check, both left the whole suite green. A fix no test defends is a fix that
+    silently regresses.
+    """
+
+    def test_a_refused_full_publication_writes_no_artifacts_at_all(self):
+        """Gating only the pointer still left data.json, report.json and
+        manifest.json under published/, including a report reading scope=full
+        with source_coverage_attested=false."""
+        with tempfile.TemporaryDirectory() as base:
+            root = Path(base) / "data"
+            storage = LocalStorage(root)
+            # The source must stop attesting DURING the run. Swapping it before
+            # run() only trips the entry gate, which leaves the pre-artifact
+            # check unexercised: reverting that line still left this test green
+            # until it was written this way.
+            class StopsAttesting:
+                source_mode = "synthetic_fixture_stops_attesting"
+                coverage_attested = True
+
+                def __init__(self):
+                    self._inner = FixtureSource(ROOT / "fixtures")
+
+                def fetch(self, store, category, url, cursor):
+                    page = self._inner.fetch(store, category, url, cursor)
+                    self.coverage_attested = False
+                    return page
+
+            # Real configured categories, so the fixture lookup resolves.
+            from walmart_collector.config import categories_from_csv
+            real_categories = categories_from_csv(ROOT / "config/categories.csv")[:2]
+            collector = Collector(storage, StopsAttesting(), real_categories,
+                                  min_products=1)
+            with self.assertRaises(ValidationFailure):
+                collector.run(STORE)
+            published = root / "published"
+            leaked = sorted(str(q.relative_to(root)) for q in published.rglob("*")
+                            if q.is_file()) if published.exists() else []
+            self.assertEqual(leaked, [], f"nothing may be written: found {leaked}")
+
+    def test_a_non_string_hash_value_is_refused_not_reported_as_altered(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        import verify_snapshot_manifest as vsm
+        import hashlib
+        with tempfile.TemporaryDirectory() as base:
+            snaps = Path(base) / "snaps"; snaps.mkdir()
+            (snaps / "a.json").write_text("hello", encoding="utf-8")
+            good = hashlib.sha256(b"hello").hexdigest()
+            for label, value in (("int", 12345), ("list", ["x"]), ("bool", True),
+                                 ("dict", {"a": 1}), ("float", 1.5), ("none", None)):
+                manifest = Path(base) / f"m_{label}.json"
+                manifest.write_text(json.dumps({"files": [
+                    {"file": "a.json", "redacted_sha256": good},
+                    {"file": "b.json", "redacted_sha256": value}]}), encoding="utf-8")
+                code = vsm.main(["--snapshots", str(snaps), "--manifest",
+                                 str(manifest), "--quiet"])
+                self.assertEqual(code, 2, f"{label} hash must be unverifiable, not altered")
 
 
 if __name__ == "__main__":

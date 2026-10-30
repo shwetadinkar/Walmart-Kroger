@@ -254,7 +254,7 @@ def api_post(budget, label, token, client_id, path, body):
         raise ProbeFailure(f"{label} did not return JSON") from exc
 
 
-def parse_feed_body(body, kind):
+def parse_feed_body(body, kind, limit=None):
     """Parse a feed body the way walmart_collector/opd.py does.
 
     The two feeds are NOT the same format, which an earlier version of this
@@ -266,11 +266,20 @@ def parse_feed_body(body, kind):
     """
     text = body.decode("utf-8-sig", "replace")
     if kind == "price":
-        return [dict(row) for row in csv.DictReader(io.StringIO(text), delimiter="^")]
+        rows = []
+        # Stop at the limit rather than materialising the whole feed. A 16 MiB
+        # compressed price feed is a few hundred MB of dicts, which defeats the
+        # bounded-memory property this module advertises.
+        for row in csv.DictReader(io.StringIO(text), delimiter="^"):
+            rows.append(dict(row))
+            if limit is not None and len(rows) >= limit:
+                break
+        return rows
     stripped = text.lstrip()
     if stripped.startswith("["):
         parsed = json.loads(stripped)
-        return [r for r in parsed if isinstance(r, dict)]
+        kept = [r for r in parsed if isinstance(r, dict)]
+        return kept[:limit] if limit is not None else kept
     rows = []
     for line in stripped.splitlines():
         line = line.strip()
@@ -282,6 +291,8 @@ def parse_feed_body(body, kind):
             continue
         if isinstance(row, dict):
             rows.append(row)
+        if limit is not None and len(rows) >= limit:
+            break
     return rows
 
 
@@ -299,7 +310,7 @@ def signed_rows(budget, label, url, limit, kind):
             body = gzip.decompress(body)
         except OSError as exc:
             raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
-    rows = parse_feed_body(body, kind)[:limit]
+    rows = parse_feed_body(body, kind, limit)
     if not rows:
         raise ProbeFailure(
             f"{label} yielded no parseable {kind} rows from {len(body)} bytes. "

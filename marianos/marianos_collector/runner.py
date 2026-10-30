@@ -113,6 +113,13 @@ class Collector:
         return stages
 
     def run(self, store):
+        # A source that tracks offers it could not publish, or accumulates
+        # provenance, starts each run clean. Without this a reused source
+        # reports another run's numbers: three runs of one CompositeSource gave
+        # per-source value totals of 178, then 356, then 534. The walmart runner
+        # already did this; the marianos delegation was dead code until now.
+        if hasattr(self.source, "reset_unresolved"):
+            self.source.reset_unresolved()
         start = time.monotonic()
         with self.storage.locked(store.store_id):
             return self._run_locked(store, start)
@@ -191,6 +198,16 @@ class Collector:
             "location_evidence_urls":[st["page"].get("location_evidence_url", "") for stages in all_stages.values() for st in stages if st["page"].get("location_evidence_url")][:15],
             "coverage_scope": "subset_trial" if self.trial else "all_configured_roots",
             "independent_live_review_required": True,
+            # Offers the source saw but could not publish, and why. Without this
+            # the record lives only on the source object, which the CLI discards
+            # after run(), so the gap between what was seen and what was
+            # published would be unexplainable from the release itself.
+            **({"unresolved_offers": {
+                    "count": len(self.source.unresolved_offers),
+                    "by_reason": dict(Counter(u.get("reason", "")
+                                              for u in self.source.unresolved_offers)),
+                    "sample": self.source.unresolved_offers[:25]}}
+               if hasattr(self.source, "unresolved_offers") else {}),
             # A composed run can take different fields from different sources,
             # so the report has to say which source produced what. Sources that
             # do not compose have nothing to add here.

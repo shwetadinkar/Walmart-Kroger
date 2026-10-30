@@ -273,5 +273,43 @@ class OutputShapeTests(unittest.TestCase):
         self.assertEqual(record["digital_deals_price"], "3.49")
 
 
+class RunnerResetTests(unittest.TestCase):
+    """The runner must reset a reused source each run.
+
+    Mutation testing showed the whole marianos delegation block could be
+    deleted with the suite still green, because nothing called it: three runs of
+    one CompositeSource reported per-source value totals of 178, then 356, then
+    534.
+    """
+
+    def _run_three(self):
+        import tempfile
+        from pathlib import Path
+        from marianos_collector.config import categories_from_csv, stores_from_json
+        from marianos_collector.runner import Collector
+        from marianos_collector.sources import FixtureSource
+        from marianos_collector.storage import LocalStorage
+
+        root = Path(__file__).resolve().parent.parent
+        cats = categories_from_csv(root / "config/categories.csv")[:2]
+        store = stores_from_json(root / "config/stores_demo.json")[0]
+        totals = []
+        with tempfile.TemporaryDirectory() as base:
+            source = CompositeSource(FixtureSource(root / "fixtures"), "fixture",
+                                     [unavailable_crawl("blocked")])
+            storage = LocalStorage(Path(base))
+            for _ in range(3):
+                Collector(storage, source, cats, min_products=1, trial=True).run(store)
+                values = source.provenance_report()["values_by_field_and_source"]
+                totals.append(sum(sum(d.values()) for d in values.values()))
+        return totals
+
+    def test_provenance_does_not_accumulate_across_runs(self):
+        totals = self._run_three()
+        self.assertGreater(totals[0], 0, "the counter must actually be counting")
+        self.assertEqual(len(set(totals)), 1,
+                         f"a reused source must not accumulate: {totals}")
+
+
 if __name__ == "__main__":
     unittest.main()

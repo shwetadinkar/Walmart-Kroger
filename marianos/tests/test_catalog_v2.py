@@ -351,8 +351,6 @@ class ProvenanceTests(unittest.TestCase):
         self.assertEqual(record["products_swept"], 1)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class EntrypointTests(unittest.TestCase):
@@ -416,3 +414,7 @@ class EntrypointTests(unittest.TestCase):
         self.set(MARIANOS_STORE_ID="70100485", MARIANOS_SOURCE="fixture")
         with self.assertRaises(ValueError):
             self.module.command()
+
+
+if __name__ == "__main__":
+    unittest.main()

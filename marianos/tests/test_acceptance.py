@@ -3,11 +3,11 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from tools.acceptance_simulation import execute
-from tools.submission_gate import run
 import sys as _sys, pathlib as _pathlib
 _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
 
+from tools.acceptance_simulation import execute
+from tools.submission_gate import run
 from marianos_collector.config import categories_from_csv, stores_from_json
 from marianos_collector.sources import FixtureSource
 from marianos_collector.runner import Collector
@@ -40,3 +40,7 @@ class AcceptanceTests(unittest.TestCase):
             self.assertFalse(result['checks']['human_reviewer_identified'])
 
 if __name__=='__main__':unittest.main()
+
+
+if __name__ == "__main__":
+    unittest.main()

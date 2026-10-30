@@ -4,6 +4,9 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from tools.live_access_preflight import diagnose_kroger, diagnose_provider, main
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -59,4 +62,6 @@ class LiveAccessTests(unittest.TestCase):
             self.assertIn('api_secret_included', written)
             self.assertNotIn('Bearer ', written)
 
-if __name__ == '__main__': unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()

@@ -96,9 +96,14 @@ commit is an ancestor, and the five corrections sit on top of it:
 5. `tools/opd_bounded_probe.py` is the bounded first test, with one cumulative
    budget and no retries.
 
-Tests: 155 on Walmart, 91 on Mariano's. Every test file also runs directly,
-not only under pytest, so a file invoked by hand cannot report a false pass by
-quietly executing a subset.
+Tests: 160 on Walmart, 92 on Mariano's.
+
+Every test file runs directly as well as under pytest, and the two agree:
+`python3 tests/<file>.py` and `python3 -m pytest tests` execute the same
+counts. That is worth stating because it was not true a few commits ago. Four
+files failed to import at all when invoked by hand, and three had a stray
+`unittest.main()` sitting above a class, so running them directly executed a
+subset and reported OK.
 
 ## Regenerating the ledger
 
