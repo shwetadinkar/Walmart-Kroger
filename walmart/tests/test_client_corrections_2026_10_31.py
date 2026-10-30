@@ -4,6 +4,7 @@ Each test reproduces the case he described and asserts the corrected
 behaviour. Synthetic feeds throughout; nothing here touches the network or the
 delivered 615 products.
 """
+import io
 import json
 import tempfile
 import unittest
@@ -290,3 +291,116 @@ class ManifestStrictnessTests(unittest.TestCase):
             {"file": "a.json", "redacted_sha256": self.good_hash},
             {"file": "gone.json", "redacted_sha256": self.good_hash}]})
         self.assertEqual(self.run_tool(path), 1)
+
+
+class BoundedProbeTests(unittest.TestCase):
+    """5. The bounded probe must honour one cumulative budget and never retry."""
+
+    def setUp(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        import opd_bounded_probe as probe
+        self.probe = probe
+
+    def test_the_request_ceiling_is_cumulative_and_refuses_the_next_one(self):
+        budget = self.probe.Budget(max_requests=3)
+        for n in range(3):
+            budget.charge(f"call {n}", "https://example.com/x")
+        with self.assertRaises(self.probe.BudgetExceeded) as caught:
+            budget.charge("one too many", "https://example.com/x")
+        self.assertIn("request ceiling reached", str(caught.exception))
+        self.assertEqual(budget.requests, 3)
+
+    def test_a_redirect_hop_is_charged_as_a_request(self):
+        budget = self.probe.Budget(max_requests=2)
+        handler = self.probe._CountingRedirects(budget)
+        budget.charge("initial", "https://example.com/a")
+        # The redirect itself must consume the remaining allowance.
+        try:
+            handler.redirect_request(None, None, 302, "Found", {}, "https://example.com/b")
+        except Exception:
+            pass
+        self.assertEqual(budget.requests, 2)
+        with self.assertRaises(self.probe.BudgetExceeded):
+            budget.charge("after redirect", "https://example.com/c")
+
+    def test_the_time_ceiling_stops_the_run(self):
+        budget = self.probe.Budget(max_requests=99, max_seconds=600)
+        budget.charge("first", "https://example.com/x")
+        # Wind the clock back rather than sleeping for ten minutes.
+        budget.started -= 601
+        with self.assertRaises(self.probe.BudgetExceeded) as caught:
+            budget.charge("second", "https://example.com/x")
+        self.assertIn("time ceiling reached", str(caught.exception))
+        self.assertEqual(budget.requests, 1, "the refused call must not be counted")
+
+    def test_an_oversized_single_response_is_refused(self):
+        budget = self.probe.Budget(max_response_bytes=10)
+        with self.assertRaises(self.probe.BudgetExceeded) as caught:
+            budget.record_body(11)
+        self.assertIn("exceeds", str(caught.exception))
+
+    def test_the_cumulative_traffic_ceiling_is_enforced(self):
+        budget = self.probe.Budget(max_total_bytes=100, max_response_bytes=100)
+        budget.record_body(60)
+        with self.assertRaises(self.probe.BudgetExceeded) as caught:
+            budget.record_body(60)
+        self.assertIn("traffic ceiling reached", str(caught.exception))
+
+    def test_a_503_spends_exactly_one_request_and_does_not_retry(self):
+        """The production client retries three times on 503. This must not."""
+        from urllib.error import HTTPError
+        budget = self.probe.Budget()
+        opened = []
+
+        class Failing:
+            def open(self, request, timeout=None):
+                opened.append(request.full_url)
+                raise HTTPError(request.full_url, 503, "Service Unavailable", {},
+                                io.BytesIO(b"upstream down"))
+
+        with patch.object(self.probe, "build_opener", lambda *a, **k: Failing()):
+            with self.assertRaises(self.probe.ProbeFailure) as caught:
+                self.probe.fetch(budget, "price feed listing", "https://example.com/x")
+        self.assertEqual(len(opened), 1, "probe must not retry")
+        self.assertEqual(budget.requests, 1)
+        self.assertIn("does not retry", str(caught.exception))
+
+    def test_the_budget_report_states_zero_retries(self):
+        report = self.probe.Budget().report()
+        self.assertEqual(report["retries_performed"], 0)
+        self.assertTrue(report["redirects_counted_as_requests"])
+
+    def test_the_request_log_records_hosts_not_signed_query_strings(self):
+        budget = self.probe.Budget()
+        budget.charge("signed catalog file",
+                      "https://storage.googleapis.com/bucket/f.json.gz?X-Goog-Signature=secret")
+        entry = budget.report()["requests"][0]
+        self.assertEqual(entry["host"], "storage.googleapis.com")
+        self.assertNotIn("Signature", json.dumps(entry))
+
+    def test_a_signed_url_on_an_unexpected_host_is_refused(self):
+        budget = self.probe.Budget()
+        with self.assertRaises(self.probe.ProbeFailure) as caught:
+            self.probe.signed_rows(budget, "signed file", "https://evil.example/f.json.gz", 5)
+        self.assertIn("unexpected host", str(caught.exception))
+
+    def test_the_dry_run_plan_declares_the_bounds_and_makes_no_request(self):
+        args = type("A", (), {"store": "100", "zipcode": "72712", "products": 5,
+                              "max_requests": 10, "max_seconds": 600})()
+        plan = self.probe.plan(args)
+        self.assertEqual(plan["retries"], 0)
+        self.assertEqual(plan["cumulative_bounds"]["requests"], 10)
+        self.assertEqual(plan["cumulative_bounds"]["seconds"], 600)
+        for stage in ("oauth", "token refresh", "locator", "metadata",
+                      "signed file downloads", "redirects"):
+            self.assertIn(stage, plan["covers"])
+        self.assertIn("isolated", plan["writes"])
+
+    def test_price_field_observation_reports_absence_without_deriving(self):
+        rows = [{"currentPrice": "2.99", "storeCode": "100"},
+                {"storeCode": "100", "currentPrice": ""}]
+        summary = self.probe.observe_price_fields(rows)
+        self.assertEqual(summary["currentPrice"]["present_on_rows"], 2)
+        self.assertEqual(summary["currentPrice"]["non_empty_on_rows"], 1)
+        self.assertEqual(summary["unitPriceDisplay"]["absent_on_rows"], 2)
