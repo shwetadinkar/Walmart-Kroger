@@ -120,7 +120,15 @@ def resolve_store(store_response, location_id, expected_zipcode=""):
     chain = data.get("chain")
     chain_name = str(chain.get("name") if isinstance(chain, dict) else chain or "")
     name = str(data.get("name") or "").strip()
-    parts = [p for p in (chain_name.strip(), name) if p]
+    # Kroger's `name` often already carries the chain, e.g. chain "MARIANOS"
+    # with name "Marianos - Marianos West Loop". Prepending the chain there
+    # produces a triple and, worse, a store_name that no longer matches an
+    # earlier run against the same store. Only prepend when it is absent.
+    chain_name = chain_name.strip()
+    if chain_name and name.lower().startswith(chain_name.lower()):
+        parts = [name]
+    else:
+        parts = [p for p in (chain_name, name) if p]
     line = str(address.get("addressLine1") or "").strip()
     city = str(address.get("city") or "").strip()
     state = str(address.get("state") or "").strip()
