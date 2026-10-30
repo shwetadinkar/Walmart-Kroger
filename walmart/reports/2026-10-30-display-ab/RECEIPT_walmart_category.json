@@ -1,0 +1,125 @@
+{
+  "run_id": "20261030T171215Z_7916a44e",
+  "purpose": "egress_region_ab_probe",
+  "started_utc": "2026-10-30T17:12:15.453480Z",
+  "ended_utc": "2026-10-30T17:12:23.966788Z",
+  "claimed_region_label": "anthropic-cloud-container",
+  "client_method": "browser",
+  "method_note": "A plain client and a real browser are treated differently by edge protection. Only runs using the same method are comparable.",
+  "observed_egress": {
+    "lookup": "https://ipinfo.io/json",
+    "ip": "160.79.106.21",
+    "country": "US",
+    "region": "Ohio",
+    "city": "Columbus",
+    "org": "AS396982 Google LLC",
+    "resolved": true
+  },
+  "target_url": "https://www.walmart.com/cp/food/976759",
+  "retailer_requests_made": 1,
+  "retries": 0,
+  "user_agent_overridden": false,
+  "tls_or_header_manipulation": false,
+  "proxy_used": false,
+  "challenge_solving_attempted": false,
+  "neutral_control": {
+    "verdict": "SHELL_WITHOUT_PRODUCTS",
+    "method": "browser",
+    "browser_version": "153.0.8010.12",
+    "http_status": 200,
+    "elapsed_ms": 672,
+    "response_bytes": 2373,
+    "transport_error": null,
+    "product_links": 0,
+    "final_url": "https://example.com/",
+    "refusal_markers_found": [],
+    "antibot_markers_found": [],
+    "challenge_markers_found": [],
+    "shopping_markers_found": []
+  },
+  "target": {
+    "verdict": "REFUSED_OR_CHALLENGED",
+    "method": "browser",
+    "browser_version": "153.0.8010.12",
+    "http_status": 200,
+    "elapsed_ms": 907,
+    "response_bytes": 15265,
+    "transport_error": null,
+    "product_links": 0,
+    "final_url": "https://www.walmart.com/blocked?url=L2NwL2Zvb2QvOTc2NzU5&uuid=0ef8dde7-d485-11f1-90a1-e6ea5b601e5f&vid=&g=b",
+    "refusal_markers_found": [
+      "robot or human"
+    ],
+    "antibot_markers_found": [
+      "captcha",
+      "px-captcha"
+    ],
+    "challenge_markers_found": [
+      "captcha",
+      "px-captcha",
+      "robot or human"
+    ],
+    "shopping_markers_found": []
+  },
+  "display_ab": {
+    "controlled": true,
+    "reason": "",
+    "primary_arm_in_receipt": "browser",
+    "headless": {
+      "verdict": "REFUSED_OR_CHALLENGED",
+      "method": "browser",
+      "browser_version": "153.0.8010.12",
+      "http_status": 200,
+      "elapsed_ms": 907,
+      "response_bytes": 15265,
+      "transport_error": null,
+      "product_links": 0,
+      "final_url": "https://www.walmart.com/blocked?url=L2NwL2Zvb2QvOTc2NzU5&uuid=0ef8dde7-d485-11f1-90a1-e6ea5b601e5f&vid=&g=b",
+      "refusal_markers_found": [
+        "robot or human"
+      ],
+      "antibot_markers_found": [
+        "captcha",
+        "px-captcha"
+      ],
+      "challenge_markers_found": [
+        "captcha",
+        "px-captcha",
+        "robot or human"
+      ],
+      "shopping_markers_found": []
+    },
+    "headed": {
+      "verdict": "SERVED_ANTIBOT_PRESENT",
+      "method": "headed",
+      "browser_version": "153.0.8010.12",
+      "http_status": 200,
+      "elapsed_ms": 6273,
+      "response_bytes": 1272555,
+      "transport_error": null,
+      "product_links": 39,
+      "final_url": "https://www.walmart.com/cp/food/976759",
+      "refusal_markers_found": [],
+      "antibot_markers_found": [
+        "captcha",
+        "perimeterx"
+      ],
+      "challenge_markers_found": [
+        "captcha",
+        "perimeterx"
+      ],
+      "shopping_markers_found": [
+        "add to cart",
+        "pickup",
+        "price"
+      ]
+    },
+    "verdict_changed": true,
+    "window_changes_the_answer": true,
+    "note": "Same target, same address, same run. The only deliberate difference is the browser window."
+  },
+  "target_response_sha256": "39f89de05815e754d0246cb28736f7ed03154d90f7955e990ba3aec654e13c73",
+  "source_mode": "diagnostic_probe_not_production",
+  "production_ready": false,
+  "touches_collector_state": false
+}

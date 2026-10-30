@@ -32,6 +32,7 @@ import argparse
 from datetime import datetime, timezone
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 import socket
 import ssl
@@ -44,12 +45,25 @@ from uuid import uuid4
 NEUTRAL_CONTROL = "https://example.com/"
 EGRESS_LOOKUP = "https://ipinfo.io/json"
 
-# Rendered markers that indicate a challenge or refusal rather than a page.
-CHALLENGE_MARKERS = (
+# Two tiers, because conflating them produced a wrong verdict in both
+# directions on 30 October.
+#
+# REFUSAL_MARKERS are phrases that appear on an actual refusal page. If one of
+# these is present the visitor was shown a wall.
+REFUSAL_MARKERS = (
     "robot or human", "access denied", "are you a human", "verify you are",
-    "captcha", "px-captcha", "/_sec/cp_challenge", "errors.edgesuite.net",
-    "request unsuccessful", "incapsula", "cf-browser-verification",
+    "/_sec/cp_challenge", "errors.edgesuite.net", "request unsuccessful",
+    "incapsula", "cf-browser-verification",
 )
+# ANTIBOT_MARKERS are bot-protection machinery that these retailers ship on
+# ordinary pages too. Finding "captcha" inside a script reference says the
+# protection exists, NOT that this request was challenged. A Walmart category
+# page served with 61 product links also matched "captcha"; treating that as a
+# refusal would have been plainly wrong.
+ANTIBOT_MARKERS = ("captcha", "px-captcha", "perimeterx", "datadome", "akamai-bm")
+
+# Kept as the union for any caller that wants "anything bot-related".
+CHALLENGE_MARKERS = REFUSAL_MARKERS + ANTIBOT_MARKERS
 # Markers that indicate a real shopping page actually rendered.
 SHOPPING_MARKERS = ("add to cart", "pickup", "in stock", "price", "aisle")
 
@@ -76,7 +90,7 @@ def _get(url, timeout, ua=None):
                 "bytes": 0, "body": b"", "error": f"{type(exc).__name__}: {exc}"}
 
 
-def _get_browser(url, timeout):
+def _get_browser(url, timeout, headless=True):
     """One navigation in a real browser, when Playwright is available.
 
     A plain client and a browser are treated very differently by edge
@@ -84,19 +98,48 @@ def _get_browser(url, timeout):
     location, while a real browser reached the edge and was answered. Results
     from the two methods are therefore NOT comparable, and the method used is
     recorded in every artifact.
+
+    Headless and headed are likewise not interchangeable, and that is not a
+    theoretical caution. Measured 30 October 2026 across three consecutive runs
+    with identical results in every cell, from one datacenter address:
+
+        Walmart category    headless: challenged   headed: no challenge
+        Walmart product     headless: challenged   headed: challenged
+        Marianos category   headless: no response  headed: HTTP 200
+
+    So the window is a real variable, and an earlier prediction that it would
+    not matter "because the refusal is keyed to the address and not the window"
+    was wrong. Headed needs a virtual display; see --method headed.
     """
     from playwright.sync_api import sync_playwright
     started = time.time()
     with sync_playwright() as pw:
-        browser = pw.chromium.launch()
+        browser = pw.chromium.launch(headless=headless)
         try:
             page = browser.new_context().new_page()
             try:
                 resp = page.goto(url, timeout=timeout * 1000, wait_until="domcontentloaded")
                 body = (page.content() or "").encode("utf-8", "replace")
+                # Count links that actually point at product detail pages.
+                #
+                # Text markers alone are not enough, and that is measured, not
+                # cautious: on 30 October a Marianos category page returned 200
+                # with "pickup" and "price" present and was classified SERVED,
+                # while the page itself was a consent notice plus navigation
+                # with ZERO products on it. "Pickup & Delivery" is a nav link.
+                # A page that serves products carries links to products.
+                try:
+                    products = page.evaluate(
+                        "() => document.querySelectorAll("
+                        "'a[href*=\"/ip/\"], a[href*=\"/p/\"]').length"
+                    )
+                except Exception:
+                    products = None
                 return {"status": resp.status if resp else None,
                         "elapsed_ms": int((time.time() - started) * 1000),
                         "bytes": len(body), "body": body, "error": None,
+                        "product_links": products,
+                        "final_url": page.url,
                         "browser_version": browser.version}
             except Exception as exc:
                 return {"status": None, "elapsed_ms": int((time.time() - started) * 1000),
@@ -108,11 +151,25 @@ def _get_browser(url, timeout):
 
 
 def fetch(url, timeout, method, ua=None):
-    """Dispatch to a browser or a plain client, reporting which was used."""
-    if method == "browser":
+    """Dispatch to a browser or a plain client, reporting which was used.
+
+    The method name travels in the result because comparisons across methods
+    are not controlled, and the comparison code refuses them on that basis.
+    """
+    if method in ("browser", "headed"):
+        headless = method == "browser"
+        if not headless and not os.environ.get("DISPLAY"):
+            # Fail loudly rather than silently falling back to headless, which
+            # would produce a result labelled "headed" that was nothing of the
+            # kind and would quietly corrupt the A/B.
+            return {"status": None, "elapsed_ms": 0, "bytes": 0, "body": b"",
+                    "error": "headed requested but no DISPLAY is set; run under "
+                             "xvfb-run or use azure/Dockerfile.headed",
+                    "method": "headed_unavailable_no_display"}
         try:
-            r = _get_browser(url, timeout)
-            r["method"] = "browser"
+            r = _get_browser(url, timeout, headless=headless)
+            r["method"] = method
+            r["headless"] = headless
             return r
         except ImportError:
             r = _get(url, timeout, ua)
@@ -125,14 +182,41 @@ def fetch(url, timeout, method, ua=None):
 
 def classify(result):
     text = result["body"][:400_000].decode("utf-8", "replace").lower()
-    hits = sorted({m for m in CHALLENGE_MARKERS if m in text})
+    refusal = sorted({m for m in REFUSAL_MARKERS if m in text})
+    antibot = sorted({m for m in ANTIBOT_MARKERS if m in text})
+    hits = sorted(set(refusal) | set(antibot))
     shopping = sorted({m for m in SHOPPING_MARKERS if m in text})
+    products = result.get("product_links")
+    # Only a browser can count product links. For a plain GET the question does
+    # not arise, so absence of a count is not evidence of absence of products.
+    counted = isinstance(products, int)
+
     if result["error"] and result["status"] is None:
         verdict = "TRANSPORT_FAILURE"
-    elif result["status"] == 200 and shopping and not hits:
-        verdict = "SERVED"
-    elif hits or result["status"] in (403, 401, 429):
+    elif counted and products > 0 and refusal:
+        # Products AND a refusal phrase. Genuinely ambiguous, and the verdict
+        # says so instead of picking a side.
+        verdict = "AMBIGUOUS_PRODUCTS_AND_REFUSAL_TEXT"
+    elif counted and products > 0 and antibot:
+        # Content arrived; the site merely ships bot protection, as these
+        # retailers do on ordinary pages. Not a refusal.
+        verdict = "SERVED_ANTIBOT_PRESENT"
+    elif refusal or result["status"] in (403, 401, 429):
         verdict = "REFUSED_OR_CHALLENGED"
+    elif result["status"] == 200 and counted and products == 0 and antibot:
+        verdict = "SHELL_WITHOUT_PRODUCTS"
+    elif result["status"] == 200 and counted and products == 0:
+        # The decisive case. A page arrived, it is not a challenge, and it
+        # carries no products. Calling this SERVED would overstate it by a
+        # wide margin: it is the shell, which is what a consent interstitial
+        # or an unhydrated single-page app looks like.
+        verdict = "SHELL_WITHOUT_PRODUCTS"
+    elif result["status"] == 200 and counted and products > 0:
+        verdict = "SERVED"
+    elif result["status"] == 200 and shopping:
+        # Text markers only, no link count available. Weaker evidence, and the
+        # verdict says so rather than borrowing SERVED's authority.
+        verdict = "SERVED_TEXT_MARKERS_ONLY"
     elif result["status"] == 200:
         verdict = "SERVED_BUT_UNRECOGNISED"
     else:
@@ -142,6 +226,10 @@ def classify(result):
             "http_status": result["status"],
             "elapsed_ms": result["elapsed_ms"], "response_bytes": result["bytes"],
             "transport_error": result["error"],
+            "product_links": products if counted else None,
+            "final_url": result.get("final_url"),
+            "refusal_markers_found": refusal,
+            "antibot_markers_found": antibot,
             "challenge_markers_found": hits, "shopping_markers_found": shopping}
 
 
@@ -153,11 +241,19 @@ def main(argv=None) -> int:
                    help="Where you believe this is running, e.g. 'azure-southindia'. "
                         "Recorded alongside the OBSERVED egress country, which is authoritative.")
     p.add_argument("--timeout", type=int, default=45)
-    p.add_argument("--method", default="browser", choices=["browser", "plain"],
-                   help="browser (default) drives real Chromium via Playwright and is the only "
-                        "method comparable with earlier browser evidence. plain sends a bare "
-                        "HTTPS GET, which edge protection drops from every location tested, so "
-                        "a plain result cannot settle a question about egress region.")
+    p.add_argument("--method", default="browser", choices=["browser", "plain", "headed"],
+                   help="browser (default) drives real headless Chromium via Playwright and is "
+                        "the method comparable with earlier browser evidence. headed drives the "
+                        "same Chromium with a window, which requires a virtual display and is "
+                        "NOT comparable with headless for an egress-region question, because it "
+                        "changes two variables at once. plain sends a bare HTTPS GET, which edge "
+                        "protection drops from every location tested, so a plain result cannot "
+                        "settle a question about egress region.")
+    p.add_argument("--display-ab", action="store_true",
+                   help="Run headless AND headed against the same target in the same run, from "
+                        "the same address, to test whether the browser window changes the "
+                        "answer. This is the controlled form of that question: comparing two "
+                        "separate runs risks confounding the window with time or address.")
     p.add_argument("--user-agent", default=None,
                    help="Optional UA string. Left unset by default: this probe measures the "
                         "default response and does not disguise the client.")
@@ -186,10 +282,47 @@ def main(argv=None) -> int:
     # 2. Neutral control: proves general connectivity independent of the retailer.
     control = classify(fetch(NEUTRAL_CONTROL, args.timeout, args.method))
 
-    # 3. Exactly one retailer request. No retry under any outcome.
-    target_result = fetch(args.target, args.timeout, args.method, args.user_agent)
-    target = classify(target_result)
-    (outdir / "TARGET_RESPONSE.bin").write_bytes(target_result["body"])
+    # 3. One retailer request per arm. No retry under any outcome.
+    #    --display-ab runs two arms against the same target from the same
+    #    address in the same run, which is the controlled way to ask whether
+    #    the browser window changes the answer. Comparing two separate runs
+    #    would confound the window with time and with address.
+    display_ab = None
+    if args.display_ab:
+        arms, raw = {}, {}
+        for arm_method in ("browser", "headed"):
+            arm_result = fetch(args.target, args.timeout, arm_method, args.user_agent)
+            raw[arm_method] = arm_result
+            arms[arm_method] = classify(arm_result)
+            (outdir / f"TARGET_RESPONSE_{arm_method}.bin").write_bytes(arm_result["body"])
+
+        # The single-target receipt below describes whichever arm the operator
+        # asked for; headless is the sensible default when they asked for
+        # neither (--method plain with --display-ab).
+        primary = args.method if args.method in arms else "browser"
+        target_result, target = raw[primary], arms[primary]
+
+        # An arm that could not start is not an arm. Only a run where BOTH
+        # browsers actually drove counts as a controlled display comparison.
+        both_ran = all(arms[m].get("method") == m for m in ("browser", "headed"))
+        changed = arms["browser"]["verdict"] != arms["headed"]["verdict"]
+        display_ab = {
+            "controlled": both_ran,
+            "reason": "" if both_ran else
+                      "Both arms must actually run before the window can be held "
+                      "responsible for a difference",
+            "primary_arm_in_receipt": primary,
+            "headless": arms["browser"],
+            "headed": arms["headed"],
+            "verdict_changed": changed if both_ran else None,
+            "window_changes_the_answer": both_ran and changed,
+            "note": "Same target, same address, same run. The only deliberate "
+                    "difference is the browser window.",
+        }
+    else:
+        target_result = fetch(args.target, args.timeout, args.method, args.user_agent)
+        target = classify(target_result)
+        (outdir / "TARGET_RESPONSE.bin").write_bytes(target_result["body"])
 
     receipt = {
         "run_id": run_id,
@@ -208,6 +341,7 @@ def main(argv=None) -> int:
         "challenge_solving_attempted": False,
         "neutral_control": control,
         "target": target,
+        "display_ab": display_ab,
         "target_response_sha256": sha256(target_result["body"]).hexdigest(),
         "source_mode": "diagnostic_probe_not_production",
         "production_ready": False,
@@ -241,6 +375,35 @@ def main(argv=None) -> int:
              f"| {target['transport_error'] or 'none'} |\n",
              "A control that succeeds while the target is refused shows the refusal is specific "
              "to the retailer rather than a general network fault.\n"]
+
+    if display_ab:
+        hl, hd = display_ab["headless"], display_ab["headed"]
+        lines += ["## Headless against headed, same target and same address\n",
+                  "| | Headless | Headed |", "|---|---|---|",
+                  f"| Method actually used | {hl.get('method')} | {hd.get('method')} |",
+                  f"| HTTP status | {hl['http_status']} | {hd['http_status']} |",
+                  f"| Verdict | **{hl['verdict']}** | **{hd['verdict']}** |",
+                  f"| Challenge markers | {', '.join(hl['challenge_markers_found']) or 'none'} "
+                  f"| {', '.join(hd['challenge_markers_found']) or 'none'} |",
+                  f"| Shopping markers | {', '.join(hl['shopping_markers_found']) or 'none'} "
+                  f"| {', '.join(hd['shopping_markers_found']) or 'none'} |",
+                  f"| Transport error | {hl['transport_error'] or 'none'} "
+                  f"| {hd['transport_error'] or 'none'} |\n"]
+        if not display_ab["controlled"]:
+            lines.append(f"**Not a controlled comparison: {display_ab['reason']}.**\n")
+        elif display_ab["window_changes_the_answer"]:
+            lines.append(
+                "Both arms ran against the same target from the same address in the same run, "
+                "so the browser window is the only deliberate difference, and the outcome "
+                "changed. The window is a real variable.\n\n"
+                "A changed verdict is not the same as usable data. Read the shopping markers "
+                "row: a `SERVED_BUT_UNRECOGNISED` verdict means a page came back without the "
+                "markers a real shopping page carries, which is a shell rather than products.\n")
+        else:
+            lines.append(
+                "Both arms ran against the same target from the same address in the same run "
+                "and the outcome did not change, so the browser window does not explain this "
+                "refusal.\n")
 
     if args.compare and args.compare.is_file():
         prev = json.loads(args.compare.read_text(encoding="utf-8"))

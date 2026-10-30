@@ -1,0 +1,127 @@
+{
+  "run_id": "20261030T171224Z_e2c2057f",
+  "purpose": "egress_region_ab_probe",
+  "started_utc": "2026-10-30T17:12:24.140239Z",
+  "ended_utc": "2026-10-30T17:12:30.908964Z",
+  "claimed_region_label": "anthropic-cloud-container",
+  "client_method": "browser",
+  "method_note": "A plain client and a real browser are treated differently by edge protection. Only runs using the same method are comparable.",
+  "observed_egress": {
+    "lookup": "https://ipinfo.io/json",
+    "ip": "160.79.106.143",
+    "country": "US",
+    "region": "Ohio",
+    "city": "Columbus",
+    "org": "AS396982 Google LLC",
+    "resolved": true
+  },
+  "target_url": "https://www.walmart.com/ip/938273658",
+  "retailer_requests_made": 1,
+  "retries": 0,
+  "user_agent_overridden": false,
+  "tls_or_header_manipulation": false,
+  "proxy_used": false,
+  "challenge_solving_attempted": false,
+  "neutral_control": {
+    "verdict": "SHELL_WITHOUT_PRODUCTS",
+    "method": "browser",
+    "browser_version": "153.0.8010.12",
+    "http_status": 200,
+    "elapsed_ms": 689,
+    "response_bytes": 2373,
+    "transport_error": null,
+    "product_links": 0,
+    "final_url": "https://example.com/",
+    "refusal_markers_found": [],
+    "antibot_markers_found": [],
+    "challenge_markers_found": [],
+    "shopping_markers_found": []
+  },
+  "target": {
+    "verdict": "REFUSED_OR_CHALLENGED",
+    "method": "browser",
+    "browser_version": "153.0.8010.12",
+    "http_status": 200,
+    "elapsed_ms": 1113,
+    "response_bytes": 15265,
+    "transport_error": null,
+    "product_links": 0,
+    "final_url": "https://www.walmart.com/blocked?url=L2lwLzkzODI3MzY1OA==&uuid=1454a94b-d485-11f1-8049-cd1a67db1b17&vid=&g=b",
+    "refusal_markers_found": [
+      "robot or human"
+    ],
+    "antibot_markers_found": [
+      "captcha",
+      "px-captcha"
+    ],
+    "challenge_markers_found": [
+      "captcha",
+      "px-captcha",
+      "robot or human"
+    ],
+    "shopping_markers_found": []
+  },
+  "display_ab": {
+    "controlled": true,
+    "reason": "",
+    "primary_arm_in_receipt": "browser",
+    "headless": {
+      "verdict": "REFUSED_OR_CHALLENGED",
+      "method": "browser",
+      "browser_version": "153.0.8010.12",
+      "http_status": 200,
+      "elapsed_ms": 1113,
+      "response_bytes": 15265,
+      "transport_error": null,
+      "product_links": 0,
+      "final_url": "https://www.walmart.com/blocked?url=L2lwLzkzODI3MzY1OA==&uuid=1454a94b-d485-11f1-8049-cd1a67db1b17&vid=&g=b",
+      "refusal_markers_found": [
+        "robot or human"
+      ],
+      "antibot_markers_found": [
+        "captcha",
+        "px-captcha"
+      ],
+      "challenge_markers_found": [
+        "captcha",
+        "px-captcha",
+        "robot or human"
+      ],
+      "shopping_markers_found": []
+    },
+    "headed": {
+      "verdict": "SERVED_ANTIBOT_PRESENT",
+      "method": "headed",
+      "browser_version": "153.0.8010.12",
+      "http_status": 200,
+      "elapsed_ms": 4161,
+      "response_bytes": 587691,
+      "transport_error": null,
+      "product_links": 12,
+      "final_url": "https://www.walmart.com/ip/Ol-Roy-Complete-Nutrition-Roasted-Chicken-Rice-Flavor-Dry-Dog-Food-4-lbs/938273658",
+      "refusal_markers_found": [],
+      "antibot_markers_found": [
+        "captcha",
+        "perimeterx"
+      ],
+      "challenge_markers_found": [
+        "captcha",
+        "perimeterx"
+      ],
+      "shopping_markers_found": [
+        "add to cart",
+        "aisle",
+        "in stock",
+        "pickup",
+        "price"
+      ]
+    },
+    "verdict_changed": true,
+    "window_changes_the_answer": true,
+    "note": "Same target, same address, same run. The only deliberate difference is the browser window."
+  },
+  "target_response_sha256": "39f89de05815e754d0246cb28736f7ed03154d90f7955e990ba3aec654e13c73",
+  "source_mode": "diagnostic_probe_not_production",
+  "production_ready": false,
+  "touches_collector_state": false
+}
