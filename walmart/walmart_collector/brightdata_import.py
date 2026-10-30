@@ -157,6 +157,24 @@ def _format_price(value):
     return v if re.fullmatch(r"\d+(?:\.\d{1,2})?", v) else ""
 
 
+def _instant(stamp):
+    """Parse an `_iso` timestamp into a comparable UTC datetime, or None.
+
+    `_iso` keeps whatever fractional-second precision the source supplied, so
+    two otherwise valid timestamps can differ in precision. Comparing them as
+    strings is NOT chronological: "...00Z" sorts after "...00.500Z" because
+    "Z" is a higher codepoint than ".", which would read a half-second-older
+    observation as newer. Every ordering decision therefore compares parsed
+    instants, never the raw strings.
+    """
+    if not stamp:
+        return None
+    try:
+        return datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
 def _freshness(incoming, prior):
     """Decide whether an incoming observation may replace persisted history.
 
@@ -165,21 +183,22 @@ def _freshness(incoming, prior):
     and must never move stored values or observation dates backwards, including
     when they arrive in a separate import run.
 
-    `_iso` normalises every timestamp to UTC `...Z`, so a lexical comparison of
-    two non-empty values is a correct chronological comparison.
+    Ordering is by parsed UTC instant, so observations recorded at different
+    fractional-second precisions compare correctly in both directions.
     """
     if not prior:
         return True, "first_observation"
-    stored = prior.get("last_source_observed_at") or ""
-    if not incoming and not stored:
+    incoming_at = _instant(incoming)
+    stored_at = _instant(prior.get("last_source_observed_at") or "")
+    if incoming_at is None and stored_at is None:
         return False, "undated_incoming_and_undated_stored_not_orderable"
-    if not incoming:
+    if incoming_at is None:
         return False, "undated_incoming_cannot_prove_newer_than_stored"
-    if not stored:
+    if stored_at is None:
         return True, "stored_observation_undated_incoming_dated"
-    if incoming > stored:
+    if incoming_at > stored_at:
         return True, "newer_than_stored"
-    if incoming == stored:
+    if incoming_at == stored_at:
         return False, "same_observation_time_as_stored"
     return False, "older_than_stored"
 
@@ -294,7 +313,11 @@ def import_snapshots(paths, store, outdir, prior_history=None):
             if identity in candidates:
                 collisions += 1
                 prev = candidates[identity]
-                if (_iso(item.get("timestamp")) or "") <= (_iso(prev["item"].get("timestamp")) or ""):
+                # Ordered by parsed instant, not string, so mixed fractional-second
+                # precision cannot make an older row win the duplicate contest.
+                incoming_at = _instant(_iso(item.get("timestamp")))
+                kept_at = _instant(_iso(prev["item"].get("timestamp")))
+                if incoming_at is None or (kept_at is not None and incoming_at <= kept_at):
                     continue
             candidates[identity] = {"item": item, "source_ref": ref,
                                     "source_row_sha256": sha256(json.dumps(item, sort_keys=True, default=str).encode()).hexdigest()}

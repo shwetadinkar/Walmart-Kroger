@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from walmart_collector.brightdata_import import import_snapshots, _validate, _convert
+from walmart_collector.brightdata_import import import_snapshots, _validate, _convert, _instant
 from walmart_collector.schema import FIELDS
 
 STORE = {"store_id": "100", "zipcode":"72712", "store_name":"Walmart Supercenter #100",
@@ -249,6 +249,86 @@ class SeparateImportHistoryRegressionTests(unittest.TestCase):
             self.assertEqual(entry["first_seen_import_at"], original_first_seen)
             self.assertGreaterEqual(entry["last_seen_import_at"], original_first_seen)
             self.assertEqual(entry["availability_at_last_observation"], "IN_STOCK")
+
+
+class MixedTimestampPrecisionTests(unittest.TestCase):
+    """Ordering must hold when observations differ in fractional-second precision.
+
+    `_iso` keeps whatever precision the source supplied, so a batch can contain
+    both "...00Z" and "...00.500Z". Compared as strings, "Z" (0x5A) sorts after
+    "." (0x2E), which makes the coarser, OLDER observation look newer. These
+    tests pin both directions and the within-batch duplicate contest.
+    """
+
+    COARSE = "2026-10-23T12:00:00Z"            # earlier, no fractional part
+    FINE = "2026-10-23T12:00:00.500Z"          # half a second later
+    # _iso() re-formats to microsecond precision, so this is how FINE is stored.
+    FINE_ISO = "2026-10-23T12:00:00.500000Z"
+
+    @staticmethod
+    def _priced(ts, price, id="1234"):
+        item = raw(id=id, ts=ts)
+        item["pickup_extras"] = dict(item["pickup_extras"], fulfillment_price=price)
+        return item
+
+    def _import(self, tmp, name, items, history=None):
+        path = Path(tmp) / name
+        path.write_text(json.dumps(items), encoding="utf-8")
+        trial, manifest = import_snapshots([path], STORE, Path(tmp) / "out", history)
+        stored = json.loads((trial / "history.json").read_text(encoding="utf-8"))
+        evidence = json.loads((trial / "evidence.json").read_text(encoding="utf-8"))
+        return trial, manifest, stored["products"], evidence
+
+    def test_string_comparison_would_have_misordered_these_fixtures(self):
+        # Guards the premise: if this ever fails, the fixtures stopped exercising the bug.
+        self.assertGreater(self.COARSE, self.FINE)                      # wrong, lexically
+        self.assertLess(_instant(self.COARSE), _instant(self.FINE))     # right, chronologically
+
+    def test_older_coarse_observation_cannot_overwrite_newer_fractional(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._import(tmp, "fine.json", [self._priced(self.FINE, "10.00")])
+            _, manifest, stored, evidence = self._import(
+                tmp, "coarse.json", [self._priced(self.COARSE, "5.00")],
+                history=first / "history.json")
+            entry = stored["100:1234"]
+            self.assertEqual(entry["record"]["regular_price"], "10.00")
+            self.assertEqual(entry["last_source_observed_at"], self.FINE_ISO)
+            self.assertEqual(evidence["100:1234"]["freshness_decision"], "older_than_stored")
+            self.assertEqual(manifest["stale_or_unorderable_input_rows"], 1)
+
+    def test_newer_fractional_observation_is_accepted_over_coarse_stored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, _, _, _ = self._import(tmp, "coarse.json", [self._priced(self.COARSE, "5.00")])
+            _, manifest, stored, evidence = self._import(
+                tmp, "fine.json", [self._priced(self.FINE, "10.00")],
+                history=first / "history.json")
+            entry = stored["100:1234"]
+            self.assertEqual(entry["record"]["regular_price"], "10.00")
+            self.assertEqual(entry["last_source_observed_at"], self.FINE_ISO)
+            self.assertEqual(evidence["100:1234"]["freshness_decision"], "newer_than_stored")
+            self.assertEqual(manifest["stale_or_unorderable_input_rows"], 0)
+
+    def test_within_batch_duplicate_keeps_the_later_instant(self):
+        # Both orderings in the file must settle on the fractional, later row.
+        for order, label in (((self.COARSE, self.FINE), "coarse_first"),
+                             ((self.FINE, self.COARSE), "fine_first")):
+            with self.subTest(order=label), tempfile.TemporaryDirectory() as tmp:
+                items = [self._priced(order[0], "5.00"), self._priced(order[1], "10.00")]
+                prices = {order[0]: "5.00", order[1]: "10.00"}
+                _, manifest, stored, _ = self._import(tmp, "batch.json", items)
+                entry = stored["100:1234"]
+                self.assertEqual(manifest["duplicate_product_rows"], 1)
+                self.assertEqual(entry["last_source_observed_at"], self.FINE_ISO)
+                self.assertEqual(entry["record"]["regular_price"], prices[self.FINE])
+
+    def test_undated_row_never_wins_a_duplicate_contest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            undated = self._priced(self.FINE, "99.00"); undated["timestamp"] = ""
+            _, _, stored, _ = self._import(
+                tmp, "batch.json", [self._priced(self.COARSE, "5.00"), undated])
+            entry = stored["100:1234"]
+            self.assertEqual(entry["last_source_observed_at"], self.COARSE)
+            self.assertEqual(entry["record"]["regular_price"], "5.00")
 
 
 if __name__=='__main__':unittest.main()
