@@ -8,6 +8,8 @@ import os
 import sys
 from pathlib import Path
 
+from .catalog_v2 import CatalogV2Client,CatalogV2Source
+from .catalog_v2 import Credentials as CatalogV2Credentials
 from .config import categories_from_csv,stores_from_json
 from .kroger import Credentials,KrogerClient,KrogerError,location_candidates,trial
 from .runner import Collector
@@ -28,7 +30,7 @@ def parser_():
     p.add_argument('--stores',type=Path,default=ROOT/'config/stores.json')
     p.add_argument('--categories',type=Path,default=ROOT/'config/categories.csv')
     p.add_argument('--store',default='DEMO-LAKESHORE-60601')
-    p.add_argument('--source',choices=['fixture','provider'],default='fixture')
+    p.add_argument('--source',choices=['fixture','provider','catalog_v2'],default='fixture')
     p.add_argument('--fixtures',type=Path,default=ROOT/'fixtures')
     p.add_argument('--backend',choices=['local','azure'],default='local')
     p.add_argument('--output',type=Path,default=ROOT/'.collector-output')
@@ -102,7 +104,20 @@ def main(argv=None):
                 for cat in categories:storage.delete(f'{checkpoint_root}/{store.store_id}/{cat.slug}.json')
             print('Partial checkpoints reset; published releases untouched');return 0
         if a.minimum_products is not None and a.minimum_products<1:p.error('minimum must be >=1')
-        if a.source=='provider':
+        if a.source=='catalog_v2':
+            # Partner tier. The public Products API is NOT an alternative here:
+            # Kroger's acceptable use policy for public APIs prohibits gathering
+            # response data into a database and prohibits cross-retailer price
+            # comparison, which is what this collector does.
+            if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
+                p.error('Catalog V2 mode requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
+            if store.store_id.upper().startswith(('DEMO','REPLACE','UNRESOLVED')):
+                p.error('Catalog V2 mode requires a verified real store ID, not a demo placeholder')
+            location_id=a.location_id or store.store_id
+            client=CatalogV2Client(CatalogV2Credentials.from_environment())
+            src=CatalogV2Source(client,location_id)
+            minp=a.minimum_products or 500
+        elif a.source=='provider':
             if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
                 p.error('Provider mode requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
             if store.store_id.upper().startswith(('DEMO','REPLACE','UNRESOLVED')):

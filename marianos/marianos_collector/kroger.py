@@ -157,7 +157,22 @@ def diagnostic_product(product):
       'regular_price':_price_string(price.get('regular')),
       'sale_price':_price_string(price.get('promo')),
       'image_url':image,
-      'ppm':'',  # Public products API does not document retailer-displayed PPM.
+      # Correction, 2026-11-06: an earlier comment here claimed the public
+      # Products API does not document a per-unit price. It does. The published
+      # OpenAPI 1.3.0 price model carries regularPerUnitEstimate and
+      # promoPerUnitEstimate alongside regular and promo.
+      #
+      # It stays blank anyway, for a different and stronger reason: Kroger's
+      # "Acceptable Use of Public APIs" prohibits systematically gathering
+      # response data to create a database, and prohibits comparing prices
+      # among other retailers. This collector does both, so nothing reached
+      # through the public tier is publishable here no matter what it contains.
+      # The production route is the partner tier; see catalog_v2.py.
+      #
+      # Note also that the field is an *estimate* supplied by Kroger, which is
+      # not the same thing as the shelf-displayed price per measure the brief
+      # asks for. That is a client decision, not ours.
+      'ppm':'',
       'digital_deals_description':'',
       'volume_deals_description':'',
       'category_coverage_verified':False,
