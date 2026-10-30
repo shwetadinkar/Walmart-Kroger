@@ -14,7 +14,13 @@ FIELDS = (
 )
 PRICE_FIELDS = ("regular_price", "sale_price", "volume_deals_price", "digital_deals_price")
 _PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth", "simple truth organic", "kroger", "home chef", "hemisfares", "p$$t", "murray's", "comforts", "abound"}
-_APPROX = re.compile(r"\b(?:approx\.?|approximately|approximate|variable[- ]weight|estimated weight|about\s+\d)\b", re.I)
+# Wording that means the printed figure is not what the customer receives.
+# "average weight" and "avg weight" were missing entirely, so a product
+# labelled "Average Weight 1 lb" passed even in the weight field itself.
+_APPROX = re.compile(
+    r"\b(?:approx\.?|approximately|approximate|variable[- ]weight|estimated weight"
+    r"|avg\.?[- ]weight|average[- ]weight|weight[- ]varies|sold by weight|about\s+\d)\b",
+    re.I)
 _PRICE = re.compile(r"^\$?\d+(?:\.\d{1,2})?$")
 
 class RecordRejected(ValueError):
@@ -38,6 +44,14 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     url = str(raw.get("url") or "").strip()
     if not title:
         raise RecordRejected("MISSING_TITLE")
+    # The weight field is not the only place this wording appears. A product
+    # titled "Chicken Breast, Average Weight 1 lb" with size "1 lb" passed every
+    # check, because only the weight field was ever searched. The title carries
+    # the retailer's own description of what is being sold, so it is searched
+    # too. Fixed-weight family packs and multipacks are untouched: nothing here
+    # matches "Family Pack", a count, or a plain weight.
+    if _APPROX.search(title):
+        raise RecordRejected("APPROXIMATE_WEIGHT_IN_TITLE")
     p = urlparse(url)
     if p.scheme != "https" or not p.hostname or not (p.hostname == "marianos.com" or p.hostname.endswith(".marianos.com")):
         raise RecordRejected("INVALID_PRODUCT_URL")

@@ -81,13 +81,21 @@ class TestOPD(unittest.TestCase):
                     yield from records_for(url,kind,store.store_id)
                 with patch("walmart_collector.opd.signed_records",files):
                     source=WalmartOPDSnapshotSource(fake,Path(base)/"cache",MAP,page_size=1)
-                    result=Collector(LocalStorage(Path(base)/"data"),source,CATEGORIES,min_products=2).run(store)
+                    result=Collector(LocalStorage(Path(base)/"data"),source,CATEGORIES,min_products=2,trial=True).run(store)
                 self.assertEqual(result["manifest"]["records"],2)
                 self.assertEqual(result["report"]["category_counts"],{"Food":1,"Beauty":1})
                 self.assertEqual(result["report"]["field_completeness"]["ppm"]["nonempty"],2)
-                latest = read_json(LocalStorage(Path(base)/"data"),f"published/{store.store_id}/latest.json")
-                manifest = read_json(LocalStorage(Path(base)/"data"),latest["manifest_key"])
-                data = read_json(LocalStorage(Path(base)/"data"),manifest["data_key"])
+                storage = LocalStorage(Path(base)/"data")
+                # OPD cannot attest full category coverage, so its output must
+                # stay isolated in the trial namespace and must never appear as
+                # a published release.
+                self.assertIsNone(
+                    read_json(storage, f"published/{store.store_id}/latest.json"),
+                    "OPD output must not reach the published namespace")
+                data = read_json(storage, result["manifest"]["data_key"])
+                self.assertIn("trials/", result["manifest"]["data_key"])
+                self.assertEqual(result["report"]["scope"], "trial")
+                self.assertFalse(result["report"]["source_coverage_attested"])
                 self.assertEqual(data[0]["sub_category"], "Shampoo")
                 self.assertEqual(data[0]["unit_price"], "")
                 self.assertEqual(data[0]["gupc"], "")
@@ -101,7 +109,7 @@ class TestOPD(unittest.TestCase):
             fake=FakeClient()
             source=WalmartOPDSnapshotSource(fake,Path(base)/"cache",MAP)
             with patch("walmart_collector.opd.signed_records",files):
-                Collector(storage,source,CATEGORIES,min_products=2).run(store)
+                Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
             previous=read_json(storage,"published/100/latest.json")
             # Force the next run to use fresh snapshot cache.
             for db in (Path(base)/"cache/100").glob("*.sqlite3"):
@@ -119,10 +127,10 @@ class TestOPD(unittest.TestCase):
                 yield from records_for(url,kind,store.store_id)
             with patch("walmart_collector.opd.signed_records",interrupted):
                 with self.assertRaises(SourceError):
-                    Collector(storage,source,CATEGORIES,min_products=2).run(store)
+                    Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
             self.assertEqual(read_json(storage,"published/100/latest.json"),previous)
             with patch("walmart_collector.opd.signed_records",files):
-                result=Collector(storage,source,CATEGORIES,min_products=2).run(store)
+                result=Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
             self.assertEqual(result["manifest"]["records"],2)
 
     def test_credentials_required(self):

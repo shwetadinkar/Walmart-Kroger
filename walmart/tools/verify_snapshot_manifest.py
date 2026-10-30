@@ -58,17 +58,35 @@ def load_entries(manifest):
     else:
         raise ManifestError(f"Unrecognised manifest of type {type(manifest).__name__}")
 
-    entries = [e for e in entries if isinstance(e, dict) and e.get("file")]
+    # Every declared entry must be checkable. Filtering the bad ones out and
+    # verifying the remainder let a manifest containing one good entry and one
+    # malformed entry exit 0, reporting a clean pass over a file set that was
+    # never fully examined. A manifest that declares something this tool cannot
+    # check is a manifest this tool cannot vouch for.
+    declared = len(entries)
+    malformed = []
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            malformed.append(f"entry {index}: expected an object, found {type(entry).__name__}")
+        elif not entry.get("file"):
+            malformed.append(f"entry {index}: no file name")
+    if malformed:
+        raise ManifestError(
+            f"Manifest declares {declared} entries and {len(malformed)} cannot be "
+            "verified, so no clean result can be reported: " + "; ".join(malformed[:10])
+            + ("; ..." if len(malformed) > 10 else ""))
     if not entries:
         raise ManifestError("Manifest lists no files, so there is nothing to verify")
 
     for key in HASH_KEYS:
         if all(e.get(key) for e in entries):
-            return entries, key
+            return entries, key, declared
+    without = [str(e.get("file")) for e in entries if not any(e.get(k) for k in HASH_KEYS)]
     present = sorted({k for e in entries for k in e if k.endswith("sha256")})
     raise ManifestError(
         "No hash field is present on every entry. Looked for "
-        + ", ".join(HASH_KEYS) + "; entries carry: " + (", ".join(present) or "none"))
+        + ", ".join(HASH_KEYS) + "; entries carry: " + (", ".join(present) or "none")
+        + ("; entries with no hash at all: " + ", ".join(without[:5]) if without else ""))
 
 
 def verify(snapshots: Path, manifest_path: Path):
@@ -81,7 +99,7 @@ def verify(snapshots: Path, manifest_path: Path):
     except ValueError as exc:
         raise ManifestError(f"Manifest is not valid JSON: {exc}") from exc
 
-    entries, key = load_entries(manifest)
+    entries, key, declared = load_entries(manifest)
     ok, altered, missing = [], [], []
     for entry in entries:
         target = snapshots / entry["file"]
@@ -93,7 +111,14 @@ def verify(snapshots: Path, manifest_path: Path):
             ok.append(entry["file"])
         else:
             altered.append({"file": entry["file"], "recorded": entry[key], "actual": actual})
-    return ok, altered, missing, key
+    checked = len(ok) + len(altered) + len(missing)
+    if checked != declared:
+        # Cannot happen once malformed entries are rejected above, but a
+        # verifier that silently checks fewer files than were declared is the
+        # exact failure this tool already shipped once.
+        raise ManifestError(
+            f"Manifest declared {declared} entries but {checked} were examined")
+    return ok, altered, missing, key, declared
 
 
 def main(argv=None) -> int:
@@ -107,13 +132,14 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
 
     try:
-        ok, altered, missing, key = verify(args.snapshots, args.manifest)
+        ok, altered, missing, key, declared = verify(args.snapshots, args.manifest)
     except ManifestError as exc:
         print(f"MANIFEST ERROR: {exc}", file=sys.stderr)
         print("Nothing was verified. This is a failure, not a pass.", file=sys.stderr)
         return 2
 
-    print(f"Verifying against '{key}'.\n")
+    print(f"Verifying against '{key}'.")
+    print(f"Manifest declares {declared} entries; {declared} examined.\n")
     if not args.quiet:
         for name in ok:
             print(f"OK       {name}")
@@ -123,7 +149,8 @@ def main(argv=None) -> int:
     for name in missing:
         print(f"MISSING  {name}")
 
-    print(f"\n{len(ok)} verified, {len(altered)} altered, {len(missing)} missing")
+    print(f"\n{declared} declared, {len(ok)} verified, {len(altered)} altered, "
+          f"{len(missing)} missing")
     if altered or missing:
         print("Do not rebuild a ledger from this directory until it matches the manifest.",
               file=sys.stderr)

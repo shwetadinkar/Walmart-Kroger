@@ -72,6 +72,14 @@ class Page:
 
 class FixtureSource:
     source_mode = "synthetic_fixture_NOT_contest_proof"
+    # Declared explicitly because the publication gate defaults to refusing any
+    # source that does not state its position. A fixture page carries
+    # subcategories_complete and the runner enforces it, so coverage is attested
+    # in the same structural sense as a live crawl. That this data is synthetic
+    # is a separate matter, reported as source_is_synthetic and in the caution
+    # line, and is not what this flag is for.
+    coverage_attested = True
+
     def __init__(self, directory: Path):
         self.directory = directory
     def fetch(self, store, category, url: str, cursor: str) -> Page:

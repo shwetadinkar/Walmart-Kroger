@@ -61,6 +61,10 @@ class TestSafetyRegression(unittest.TestCase):
     def test_revision_switch_rejected_without_publishing(self):
         class ChangingSource:
             source_mode = "synthetic_fixture_revision_change"
+            # This double exists to test revision-switch rejection. Without the
+            # declaration the publication gate fires first and masks what the
+            # test is actually asserting.
+            coverage_attested = True
             def fetch(self, store, category, url, cursor):
                 fixture = FixtureSource(ROOT/"fixtures")
                 page = fixture.fetch(store,category,url,cursor)

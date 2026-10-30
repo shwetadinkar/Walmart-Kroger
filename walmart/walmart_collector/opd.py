@@ -242,11 +242,29 @@ def _valid_offer(product):
 
 
 def _to_raw(product, price, store):
-    price_str = str(price.get("currentPrice") or "").strip()
-    if price.get("availability", "").upper() != "AVAILABLE" or not price_str:
+    """Map one catalog offer plus its store price row into a raw record.
+
+    RETENTION. A product the store carries but cannot currently sell stays in
+    the output with its unsupported values empty. Availability is recorded, not
+    used as a filter. Dropping those identities removed them from the dataset
+    entirely, which is the opposite of the retention the brief requires.
+
+    ELIGIBILITY. Store membership is established by the PRICE feed, which is
+    store scoped, not by the catalog feed, which is per category. So a catalog
+    offer with no price row for this store has not been shown to be carried
+    here. Those are returned as unresolved rather than published with an
+    invented store context. See `unresolved_offers`.
+    """
+    if not price:
         return None
     if str(price.get("storeCode")) != store.store_id:
         raise SourceError("Snapshot price store mismatch")
+    available = price.get("availability", "").upper() == "AVAILABLE"
+    price_str = str(price.get("currentPrice") or "").strip()
+    # An unavailable offer has no current price to report, and a price carried
+    # on an unavailable row is not one a shopper could pay today.
+    if not available:
+        price_str = ""
     url = str(product.get("productUrlText") or "")
     if url.startswith("/ip/"):
         url = "https://www.walmart.com" + url
@@ -264,7 +282,11 @@ def _to_raw(product, price, store):
         "sale_price":"", "volume_deals_description":"", "volume_deals_price":"",
         "digital_deals_description":"", "digital_deals_price":"",
         "url":url, "image_url":product.get("productImage") or "",
-        "upc":str(product.get("upc") or ""), "ppm":price.get("unitPriceDisplay") or "",
+        "upc":str(product.get("upc") or ""),
+        # unitPriceDisplay belongs to a live offer. On an unavailable row it is
+        # not a figure the shelf is showing, so it is left empty rather than
+        # carried forward as if it were current.
+        "ppm":(price.get("unitPriceDisplay") or "") if available else "",
         "brand":str(product.get("brandName") or ""),
         "sub_category":parts[-1] if parts else ""
     }
@@ -289,6 +311,10 @@ class WalmartOPDSnapshotSource:
             raise SourceError("Invalid OPD local page size")
         self.root.mkdir(parents=True, exist_ok=True)
         self._verified = set()
+        # Catalog offers seen for a configured category that carry no price row
+        # for the requested store. Their eligibility is genuinely unknown, so
+        # they are neither published nor discarded.
+        self.unresolved_offers = []
 
     def _db_path(self, store, category):
         return self.root / store.store_id / (category.slug + ".sqlite3")
@@ -346,15 +372,24 @@ class WalmartOPDSnapshotSource:
                         else:
                             if not isinstance(item, dict) or str(item.get("storeCode")) != store.store_id:
                                 continue
-                            if item.get("availability", "").upper() != "AVAILABLE":
-                                continue
+                            # Store the price row whatever it says. Dropping
+                            # non-AVAILABLE or unpriced rows here removed the
+                            # identity from the dataset entirely, which defeats
+                            # the retention requirement: a product the store
+                            # carries but cannot currently sell must stay in the
+                            # output with its unsupported values left empty, not
+                            # disappear. Availability is recorded, not used as a
+                            # filter.
                             offer = str(item.get("offerId") or "")
-                            if offer and item.get("currentPrice") not in (None, ""):
+                            if offer:
                                 db.execute("INSERT OR REPLACE INTO price VALUES(?,?)", (offer,json.dumps(item)))
                     db.execute("INSERT INTO done VALUES(?,?,?)", (kind,path,snapshot))
-        count = db.execute("SELECT COUNT(*) FROM catalog c INNER JOIN price p ON c.offer=p.offer").fetchone()[0]
+        # Catalog membership, not the price join, is what decides whether this
+        # category yielded anything. A category whose products are all currently
+        # unavailable is a real state of the store and must still be retained.
+        count = db.execute("SELECT COUNT(*) FROM catalog").fetchone()[0]
         if count == 0:
-            raise SourceError(f"OPD snapshot join for {category.name} found zero local available offers")
+            raise SourceError(f"OPD snapshot for {category.name} found zero eligible local offers")
         with db:
             db.execute("INSERT OR REPLACE INTO meta VALUES('built_on', ?)",(today,))
 
@@ -368,16 +403,37 @@ class WalmartOPDSnapshotSource:
             self._prepare(db,store,category)
             revision_row = db.execute("SELECT value FROM meta WHERE key='signature'").fetchone()
             revision = revision_row[0] if revision_row else ""
-            count = db.execute("SELECT COUNT(*) FROM catalog c JOIN price p ON c.offer=p.offer").fetchone()[0]
+            # LEFT JOIN, not INNER. An inner join silently deleted every catalog
+            # identity that had no matching price row, which is exactly the
+            # unavailable and unpriced population the brief requires be kept.
+            count = db.execute("SELECT COUNT(*) FROM catalog").fetchone()[0]
             offset = int(cursor) if cursor else 0
             if offset < 0 or offset >= count:
                 raise SourceError("Invalid OPD pagination cursor")
-            items = db.execute("SELECT c.payload,p.payload FROM catalog c JOIN price p ON c.offer=p.offer ORDER BY c.offer LIMIT ? OFFSET ?", (self.page_size, offset)).fetchall()
+            items = db.execute(
+                "SELECT c.payload, p.payload FROM catalog c "
+                "LEFT JOIN price p ON c.offer=p.offer ORDER BY c.offer LIMIT ? OFFSET ?",
+                (self.page_size, offset)).fetchall()
         finally:
             db.close()
         products = []
         for p,q in items:
-            rec = _to_raw(json.loads(p),json.loads(q),store)
+            catalog = json.loads(p)
+            if not q:
+                # No store price row, so this store's assortment has not been
+                # shown to include it. Recorded as unresolved rather than
+                # published with a store context we cannot evidence.
+                self.unresolved_offers.append({
+                    "offer_id": str(catalog.get("offerId") or ""),
+                    "item_id": str(catalog.get("itemId") or ""),
+                    "name": str(catalog.get("name") or ""),
+                    "store_id": store.store_id,
+                    "category": category.name,
+                    "reason": "catalog offer has no price row for this store; "
+                              "store assortment membership unestablished",
+                })
+                continue
+            rec = _to_raw(catalog, json.loads(q), store)
             if rec:
                 products.append(rec)
         next_cursor = str(offset + self.page_size) if offset + self.page_size < count else ""

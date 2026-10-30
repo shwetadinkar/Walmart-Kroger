@@ -32,6 +32,21 @@ class Collector:
         self.max_pages = max_pages
         self.canaries = canaries or {}
         self.trial = trial
+        # A source that cannot attest complete coverage must not produce a full
+        # release. Reporting source_coverage_attested=false alongside
+        # scope=full and status=validated is a disclosure, not a gate, and a
+        # reviewer reading the status line would reasonably take the release as
+        # complete. Feed exhaustion and a local join do not establish that every
+        # required website category, subcategory and page is represented.
+        #
+        # Diagnostic output from such a source stays isolated in the trial
+        # namespace until a real full-coverage reconciliation exists.
+        if not trial and not getattr(source, "coverage_attested", False):
+            raise ValidationFailure(
+                f"Source {source.source_mode!r} does not attest complete coverage, so it "
+                "cannot publish a full release. Run it as a trial, or supply a source "
+                "that reconciles against the full configured category set."
+            )
         # Trial and full releases, checkpoints and staging never share a namespace.
         # A trial of Food/Beauty cannot replace the 11-category latest pointer.
         definition = [(c.name, c.url) for c in categories]
