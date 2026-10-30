@@ -94,6 +94,45 @@ class Budget:
         pass
 
 
+def resolve_store(store_response, location_id, expected_zipcode=""):
+    """Build the store columns from Kroger's own /locations response.
+
+    Refuses rather than guesses: a missing location, a different locationId,
+    or a zipcode that contradicts the one asked for all stop the run, because
+    every record would carry the wrong store context.
+    """
+    data = store_response.get("data") if isinstance(store_response, dict) else None
+    if not isinstance(data, dict):
+        raise KrogerError(f"No location data returned for {location_id!r}")
+    got = str(data.get("locationId") or "")
+    if got != str(location_id):
+        raise KrogerError(
+            f"Asked for location {location_id!r}, response describes {got!r}")
+    address = data.get("address")
+    if not isinstance(address, dict):
+        raise KrogerError(f"Location {location_id!r} carries no address")
+    zipcode = str(address.get("zipCode") or "").strip()[:5]
+    if not zipcode:
+        raise KrogerError(f"Location {location_id!r} carries no zipCode")
+    if expected_zipcode and zipcode != str(expected_zipcode).strip():
+        raise KrogerError(
+            f"Location {location_id!r} is in {zipcode}, not {expected_zipcode}")
+    chain = data.get("chain")
+    chain_name = str(chain.get("name") if isinstance(chain, dict) else chain or "")
+    name = str(data.get("name") or "").strip()
+    parts = [p for p in (chain_name.strip(), name) if p]
+    line = str(address.get("addressLine1") or "").strip()
+    city = str(address.get("city") or "").strip()
+    state = str(address.get("state") or "").strip()
+    if not line or not city:
+        raise KrogerError(f"Location {location_id!r} has an incomplete address")
+    return {
+        "zipcode": zipcode,
+        "store_name": " - ".join(parts) if parts else f"Store {location_id}",
+        "store_location": f"{line}, {city}, {state} {zipcode}".strip(),
+    }
+
+
 def _image(product):
     for im in product.get("images") or []:
         if not isinstance(im, dict):
@@ -152,9 +191,12 @@ def to_record(product, store, category, sub_category, crawl_date):
 
 
 def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
-          checkpoint_path=None, state=None, log=print):
+          checkpoint_path=None, state=None, log=print, max_start=1000):
     state = state or {"records": {}, "done_terms": [], "term_counts": {},
-                      "category_disagreements": [], "errors": []}
+                      "category_disagreements": [], "errors": [],
+                      "page_failures": [], "terms_hit_start_cap": []}
+    state.setdefault("page_failures", [])
+    state.setdefault("terms_hit_start_cap", [])
     records = state["records"]
     done = set(state["done_terms"])
     crawl_date = date.today().isoformat()
@@ -168,9 +210,25 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     continue
                 found = 0
                 for page in range(pages_per_term):
+                    # filter.start is 1-based: the first record is 1, not 0.
+                    # api_collection.py passes offset=1 for its single page.
+                    # Using 0 here would have shifted every page by one and
+                    # made page boundaries overlap.
+                    start = 1 + page * 50
+                    if start > max_start:
+                        state["terms_hit_start_cap"].append(key)
+                        break
                     budget.spend()
-                    result = client.products(location_id, term,
-                                             offset=page * 50, limit=50)
+                    # A term that fails is one term, not the run. Only the
+                    # budget stops everything; a long sweep must not die on
+                    # page 7 of 301 terms.
+                    try:
+                        result = client.products(location_id, term,
+                                                 offset=start, limit=50)
+                    except KrogerError as exc:
+                        state["page_failures"].append(
+                            {"term": key, "start": start, "error": str(exc)})
+                        break
                     data = result.get("data") or []
                     for raw in data:
                         if not isinstance(raw, dict):
@@ -261,6 +319,9 @@ def build_report(state, store, location_id, budget, args):
             "the product's own categories do not contain the client root, the "
             "disagreement is listed below rather than hidden."),
         "category_disagreements": len(state["category_disagreements"]),
+        "page_failures": state.get("page_failures", []),
+        "terms_that_hit_the_start_cap": sorted(set(state.get("terms_hit_start_cap", []))),
+        "max_start": args.max_start,
         "record_errors": len(state["errors"]),
     }
 
@@ -271,13 +332,16 @@ def main(argv=None):
     p.add_argument("--location-id")
     p.add_argument("--zipcode")
     p.add_argument("--address-contains", default="")
-    p.add_argument("--store-name", default="Mariano's")
+    p.add_argument("--store-name", default="")
     p.add_argument("--store-location", default="")
     p.add_argument("--terms", default=str(ROOT / "config/sweep_terms.json"))
     p.add_argument("--only-category", action="append", default=[])
-    p.add_argument("--pages-per-term", type=int, default=4)
-    p.add_argument("--max-requests", type=int, default=2000)
-    p.add_argument("--max-seconds", type=float, default=5400)
+    p.add_argument("--pages-per-term", type=int, default=20)
+    p.add_argument("--max-start", type=int, default=1000,
+                   help="Highest filter.start to request. Kroger caps deep paging; "
+                        "terms that reach it are named in the report.")
+    p.add_argument("--max-requests", type=int, default=8000)
+    p.add_argument("--max-seconds", type=float, default=14400)
     p.add_argument("--output", default="out/kroger_sweep")
     p.add_argument("--resume", action="store_true")
     args = p.parse_args(argv)
@@ -302,7 +366,25 @@ def main(argv=None):
               file=sys.stderr)
         return 0
 
+    # Resolve the store from Kroger rather than from flags, so a repeat run
+    # against the same location produces byte-identical store columns and the
+    # two runs are actually comparable. Also the brief's "evidence that the
+    # correct store was selected".
+    store_response = client.get("/locations/" + args.location_id)
+    store = resolve_store(store_response, args.location_id, args.zipcode)
+    if args.store_name:
+        store["store_name"] = args.store_name
+    if args.store_location:
+        store["store_location"] = args.store_location
+    print(f"Store {args.location_id}: {store['store_name']}, "
+          f"{store['store_location']}, {store['zipcode']}\n")
+
     out = Path(args.output)
+    _write(out / "store_verification.json",
+           {"locationId": args.location_id,
+            "resolved": store,
+            "verified_utc": datetime.now(timezone.utc).isoformat(),
+            "response": store_response})
     checkpoint = out / "checkpoint.json"
     state = None
     if args.resume and checkpoint.exists():
@@ -327,9 +409,10 @@ def main(argv=None):
     print(f"Sweeping location {args.location_id}: "
           f"{sum(len(v) for v in terms_by_category.values())} terms, "
           f"up to {args.pages_per_term} pages each, "
-          f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s\n")
+          f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s, "
+          f"filter.start capped at {args.max_start}\n")
     state = sweep(client, args.location_id, store, terms_by_category, budget,
-                  args.pages_per_term, checkpoint, state)
+                  args.pages_per_term, checkpoint, state, max_start=args.max_start)
 
     rows = list(state["records"].values())
     _write(out / "data_22_fields.json", rows)
