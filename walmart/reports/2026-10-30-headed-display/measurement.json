@@ -1,0 +1,165 @@
+{
+  "probe": "headed_display_probe",
+  "question": "Does a headed browser under a virtual display change what this environment receives?",
+  "timestamp_utc": "2026-10-30T15:17:10.184334+00:00",
+  "egress": {
+    "observed": "160.79.106.132",
+    "error": ""
+  },
+  "xvfb_available": true,
+  "method": {
+    "navigations_per_url": 1,
+    "retries": 0,
+    "proxy": "none",
+    "header_tls_or_fingerprint_manipulation": "none",
+    "challenge_solving": "none",
+    "bypass_attempted": false
+  },
+  "arms": [
+    {
+      "arm": "headless",
+      "headless": true,
+      "display": ":99",
+      "browser_version": "153.0.8010.12",
+      "results": [
+        {
+          "name": "neutral_control",
+          "url": "https://example.com/",
+          "role": "control",
+          "status": 200,
+          "title": "Example Domain",
+          "challenge_markers": [],
+          "error": "",
+          "elapsed_ms": 545.4
+        },
+        {
+          "name": "walmart_category",
+          "url": "https://www.walmart.com/cp/food/976759",
+          "role": "target",
+          "status": 200,
+          "title": "Robot or human?",
+          "challenge_markers": [
+            "robot or human"
+          ],
+          "error": "",
+          "elapsed_ms": 720.5
+        },
+        {
+          "name": "walmart_product",
+          "url": "https://www.walmart.com/ip/938273658",
+          "role": "target",
+          "status": 200,
+          "title": "Robot or human?",
+          "challenge_markers": [
+            "robot or human"
+          ],
+          "error": "",
+          "elapsed_ms": 913.9
+        },
+        {
+          "name": "marianos_category",
+          "url": "https://www.marianos.com/c/dairy",
+          "role": "target",
+          "status": null,
+          "title": "",
+          "challenge_markers": [],
+          "error": "TimeoutError: Page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.marianos.com/c/dairy\", waiting until \"domcontentloaded\"\n",
+          "elapsed_ms": 20006.8
+        }
+      ],
+      "arm_error": ""
+    },
+    {
+      "arm": "headed_xvfb",
+      "headless": false,
+      "display": ":99",
+      "browser_version": "153.0.8010.12",
+      "results": [
+        {
+          "name": "neutral_control",
+          "url": "https://example.com/",
+          "role": "control",
+          "status": 200,
+          "title": "Example Domain",
+          "challenge_markers": [],
+          "error": "",
+          "elapsed_ms": 598.6
+        },
+        {
+          "name": "walmart_category",
+          "url": "https://www.walmart.com/cp/food/976759",
+          "role": "target",
+          "status": 200,
+          "title": "Shop Food Snacks and Treats Online",
+          "challenge_markers": [],
+          "error": "",
+          "elapsed_ms": 5862.4
+        },
+        {
+          "name": "walmart_product",
+          "url": "https://www.walmart.com/ip/938273658",
+          "role": "target",
+          "status": 200,
+          "title": "Robot or human?",
+          "challenge_markers": [
+            "robot or human"
+          ],
+          "error": "",
+          "elapsed_ms": 1158.3
+        },
+        {
+          "name": "marianos_category",
+          "url": "https://www.marianos.com/c/dairy",
+          "role": "target",
+          "status": 200,
+          "title": "Mariano\u2019s",
+          "challenge_markers": [],
+          "error": "",
+          "elapsed_ms": 3126.4
+        }
+      ],
+      "arm_error": ""
+    }
+  ],
+  "comparison": {
+    "comparable": true,
+    "controls_returned_200": {
+      "headless": true,
+      "headed_xvfb": true
+    },
+    "targets_compared": 3,
+    "targets_that_differ": 2,
+    "differences": [
+      {
+        "target": "marianos_category",
+        "headless": {
+          "status": null,
+          "markers": [],
+          "error": "TimeoutError: Page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.marianos.com/c/dairy\", waiting until \"domcontentloaded\"\n"
+        },
+        "headed_xvfb": {
+          "status": 200,
+          "markers": [],
+          "error": ""
+        }
+      },
+      {
+        "target": "walmart_category",
+        "headless": {
+          "status": 200,
+          "markers": [
+            "robot or human"
+          ],
+          "error": ""
+        },
+        "headed_xvfb": {
+          "status": 200,
+          "markers": [],
+          "error": ""
+        }
+      }
+    ],
+    "headed_display_changes_the_answer": true
+  },
+  "caution": "A refusal here is the measurement, not a failure to work around. If the headed arm is also refused, that is the finding."
+}
