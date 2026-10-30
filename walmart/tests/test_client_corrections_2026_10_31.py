@@ -218,9 +218,6 @@ class ApproximateWeightTests(unittest.TestCase):
             self.assertEqual(record["product_title"], title)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ManifestStrictnessTests(unittest.TestCase):
     """4. A manifest entry this tool cannot check must fail, not be filtered out."""
@@ -293,6 +290,20 @@ class ManifestStrictnessTests(unittest.TestCase):
         self.assertEqual(self.run_tool(path), 1)
 
 
+class _FakeRequest:
+    """Minimal stand-in for urllib's Request in redirect tests."""
+    full_url = "https://developer.api.walmart.com/start"
+    def get_full_url(self): return self.full_url
+    def has_header(self, name): return False
+    def get_method(self): return "GET"
+    headers = {}
+    unredirected_hdrs = {}
+    timeout = None
+    data = None
+    origin_req_host = "developer.api.walmart.com"
+    unverifiable = False
+
+
 class BoundedProbeTests(unittest.TestCase):
     """5. The bounded probe must honour one cumulative budget and never retry."""
 
@@ -311,18 +322,37 @@ class BoundedProbeTests(unittest.TestCase):
         self.assertIn("request ceiling reached", str(caught.exception))
         self.assertEqual(budget.requests, 3)
 
-    def test_a_redirect_hop_is_charged_as_a_request(self):
-        budget = self.probe.Budget(max_requests=2)
+    def test_a_redirect_to_an_allowed_host_is_charged_as_a_request(self):
+        budget = self.probe.Budget(max_requests=5)
         handler = self.probe._CountingRedirects(budget)
-        budget.charge("initial", "https://example.com/a")
-        # The redirect itself must consume the remaining allowance.
-        try:
-            handler.redirect_request(None, None, 302, "Found", {}, "https://example.com/b")
-        except Exception:
-            pass
-        self.assertEqual(budget.requests, 2)
-        with self.assertRaises(self.probe.BudgetExceeded):
-            budget.charge("after redirect", "https://example.com/c")
+        handler.redirect_request(
+            _FakeRequest(), None, 302, "Found", {},
+            "https://storage.googleapis.com/bucket/f.json.gz")
+        self.assertEqual(budget.requests, 1)
+
+    def test_a_redirect_off_the_allowlist_is_refused_not_merely_counted(self):
+        """urllib forwards Authorization across hosts, so counting is not enough."""
+        budget = self.probe.Budget()
+        handler = self.probe._CountingRedirects(budget)
+        with self.assertRaises(self.probe.ProbeFailure) as caught:
+            handler.redirect_request(_FakeRequest(), None, 302, "Found", {},
+                                     "https://evil.example/collect")
+        self.assertIn("evil.example", str(caught.exception))
+        self.assertIn("bearer token", str(caught.exception).lower())
+        self.assertEqual(budget.requests, 0, "a refused hop must not be charged")
+
+    def test_the_redirect_handler_is_actually_installed_in_the_opener(self):
+        """The handler being correct is useless if fetch() does not use it."""
+        seen = {}
+
+        def fake_build_opener(*handlers):
+            seen["types"] = [type(h).__name__ for h in handlers]
+            raise self.probe.ProbeFailure("stop here")
+
+        with patch.object(self.probe, "build_opener", fake_build_opener):
+            with self.assertRaises(self.probe.ProbeFailure):
+                self.probe.fetch(self.probe.Budget(), "x", "https://example.com/a")
+        self.assertIn("_CountingRedirects", seen["types"])
 
     def test_the_time_ceiling_stops_the_run(self):
         budget = self.probe.Budget(max_requests=99, max_seconds=600)
@@ -392,9 +422,14 @@ class BoundedProbeTests(unittest.TestCase):
         self.assertEqual(plan["retries"], 0)
         self.assertEqual(plan["cumulative_bounds"]["requests"], 10)
         self.assertEqual(plan["cumulative_bounds"]["seconds"], 600)
-        for stage in ("oauth", "token refresh", "locator", "metadata",
+        # Only stages the probe actually issues. An earlier version claimed a
+        # token-refresh path and a locator call it never made, and this test
+        # asserted those strings, which locked the false claim in.
+        for stage in ("oauth", "locator", "feed listings",
                       "signed file downloads", "redirects"):
-            self.assertIn(stage, plan["covers"])
+            self.assertIn(stage, plan["covers_what_it_issues"])
+        self.assertNotIn("token refresh", plan["covers_what_it_issues"])
+        self.assertIn("does not refresh", plan["token_refresh"])
         self.assertIn("isolated", plan["writes"])
 
     def test_price_field_observation_reports_absence_without_deriving(self):
@@ -404,3 +439,243 @@ class BoundedProbeTests(unittest.TestCase):
         self.assertEqual(summary["currentPrice"]["present_on_rows"], 2)
         self.assertEqual(summary["currentPrice"]["non_empty_on_rows"], 1)
         self.assertEqual(summary["unitPriceDisplay"]["absent_on_rows"], 2)
+
+
+class ProbeEndToEndTests(unittest.TestCase):
+    """`run()` had no test at all, which is why three defects reached the branch."""
+
+    def setUp(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        import opd_bounded_probe as probe
+        self.probe = probe
+
+    def _fake_opener(self, *, gzip_bodies=True, signed_query=True):
+        """Serves the shapes walmart_collector/opd.py documents."""
+        import gzip as gziplib
+        probe = self.probe
+        suffix = "?X-Goog-Signature=abc" if signed_query else ""
+        cat_url = f"https://storage.googleapis.com/b/catalog.json.gz{suffix}"
+        price_url = f"https://storage.googleapis.com/b/price.json.gz{suffix}"
+
+        def body_for(url):
+            if "/token" in url:
+                return json.dumps({"access_token": "T"}).encode()
+            if url.startswith(probe.BASE + probe.LOCATOR.split("?")[0]):
+                return json.dumps({"status": "OK", "payload": {"accessPointList": [
+                    {"fulfillmentStoreId": "100", "fulfillmentType": "INSTORE_PICKUP"}]}}).encode()
+            if probe.CATALOG_FEEDS in url and "price" not in url:
+                return json.dumps({"product_snapshot_data": [cat_url]}).encode()
+            if probe.PRICE_FEEDS in url:
+                return json.dumps({"price_avail_snapshot_data": [price_url]}).encode()
+            if "catalog.json.gz" in url:
+                rows = b"\n".join(json.dumps({
+                    "offerId": f"o{i}", "itemId": i, "name": f"P{i}",
+                    "size": "12 oz", "upc": "0001"}).encode() for i in range(5))
+                return gziplib.compress(rows) if gzip_bodies else rows
+            if "price.json.gz" in url:
+                rows = b"\n".join(json.dumps({
+                    "offerId": f"o{i}", "storeCode": "100", "availability": "AVAILABLE",
+                    "currentPrice": "1.99", "unitPriceDisplay": "(16 c/oz)"}).encode()
+                    for i in range(5))
+                return gziplib.compress(rows) if gzip_bodies else rows
+            raise AssertionError("unexpected url " + url)
+
+        class Response:
+            def __init__(self, b): self.body, self.status = b, 200
+            def read(self, n=None): return self.body
+            def __enter__(self): return self
+            def __exit__(self, *a): pass
+
+        class Opener:
+            def open(self, request, timeout=None):
+                return Response(body_for(request.full_url))
+
+        return lambda *a, **k: Opener()
+
+    def args(self, **over):
+        base = dict(store="100", zipcode="72712", category_id="976759", products=5,
+                    max_requests=10, max_seconds=600)
+        base.update(over)
+        return type("A", (), base)()
+
+    def test_a_complete_run_produces_five_records_within_budget(self):
+        budget = self.probe.Budget()
+        with patch.dict("os.environ", {"WALMART_OPD_CLIENT_ID": "id",
+                                       "WALMART_OPD_CLIENT_SECRET": "secret"}):
+            with patch.object(self.probe, "build_opener", self._fake_opener()):
+                result = self.probe.run(self.args(), budget)
+        self.assertEqual(len(result["records"]), 5)
+        self.assertTrue(result["store_confirmed_as_pickup_store"])
+        self.assertTrue(all(r["price_row_found_for_this_store"] for r in result["records"]))
+        self.assertEqual(result["records"][0]["currentPrice"], "1.99")
+        self.assertLessEqual(budget.requests, 10)
+
+    def test_a_signed_url_with_a_query_string_is_still_decompressed(self):
+        """url.endswith('.gz') is false for every real signed URL. That bug made
+        the probe return zero rows and then report a vacuous pass."""
+        budget = self.probe.Budget()
+        with patch.dict("os.environ", {"WALMART_OPD_CLIENT_ID": "id",
+                                       "WALMART_OPD_CLIENT_SECRET": "secret"}):
+            with patch.object(self.probe, "build_opener",
+                              self._fake_opener(signed_query=True)):
+                result = self.probe.run(self.args(), budget)
+        self.assertEqual(result["store_rows_seen"], 5)
+        self.assertNotEqual(result["store_rows_seen"], 0)
+
+    def test_zero_parseable_rows_fails_rather_than_reporting_a_vacuous_pass(self):
+        budget = self.probe.Budget()
+        with self.assertRaises(self.probe.ProbeFailure) as caught:
+            self.probe.signed_rows(budget, "signed catalog file",
+                                   "https://storage.googleapis.com/b/f.json", 5)
+        # It must fail on the fetch or on the empty parse, never return [].
+        self.assertTrue(caught.exception)
+
+    def test_the_feed_listing_shape_matches_the_production_client(self):
+        self.assertEqual(
+            self.probe.feed_urls({"product_snapshot_data": ["https://x/a.gz"]},
+                                 "product_snapshot_data", "catalog"),
+            ["https://x/a.gz"])
+        with self.assertRaises(self.probe.ProbeFailure) as caught:
+            self.probe.feed_urls({"product_snapshot_data": [{"url": "https://x/a.gz"}]},
+                                 "product_snapshot_data", "catalog")
+        self.assertIn("no URL strings", str(caught.exception))
+        with self.assertRaises(self.probe.ProbeFailure):
+            self.probe.feed_urls({"wrong_key": ["x"]}, "price_avail_snapshot_data", "price")
+
+    def test_a_receipt_is_written_even_on_an_unexpected_exception(self):
+        with tempfile.TemporaryDirectory() as out:
+            def boom(*a, **k):
+                raise ValueError("gateway returned HTML, not JSON")
+            with patch.dict("os.environ", {"WALMART_OPD_CLIENT_ID": "id",
+                                           "WALMART_OPD_CLIENT_SECRET": "secret"}):
+                with patch.object(self.probe, "run", boom):
+                    code = self.probe.main(["--output", out, "--i-have-entitlement"])
+            self.assertEqual(code, 1)
+            receipt = json.loads((Path(out) / "RECEIPT.json").read_text())
+            self.assertTrue(receipt["stopped_on_failure"])
+            self.assertIn("ValueError", receipt["failure"])
+            self.assertIn("budget", receipt)
+
+    def test_an_http_error_body_is_not_echoed_into_the_receipt(self):
+        from urllib.error import HTTPError
+        budget = self.probe.Budget()
+        secret_xml = b"<Error><StringToSign>SECRETSIG</StringToSign></Error>"
+
+        class Failing:
+            def open(self, request, timeout=None):
+                raise HTTPError(request.full_url, 403, "Forbidden", {},
+                                io.BytesIO(secret_xml))
+
+        with patch.object(self.probe, "build_opener", lambda *a, **k: Failing()):
+            with self.assertRaises(self.probe.ProbeFailure) as caught:
+                self.probe.fetch(budget, "signed price file", "https://x/f.gz")
+        self.assertNotIn("SECRETSIG", str(caught.exception))
+        self.assertIn("withheld", str(caught.exception))
+
+
+class OPDRetentionRegressionTests(unittest.TestCase):
+    """Defects the independent review found in the retention correction itself."""
+
+    def test_a_null_availability_raises_rather_than_crashing_or_blanking(self):
+        from walmart_collector.opd import _to_raw, SourceError
+        with self.assertRaises(SourceError) as caught:
+            _to_raw(catalog_offer("X", "o", 1, "Food"),
+                    {"storeCode": "100", "currentPrice": "1.99", "availability": None},
+                    STORE)
+        self.assertIn("no availability value", str(caught.exception))
+
+    def test_a_missing_availability_key_raises_rather_than_silently_blanking(self):
+        from walmart_collector.opd import _to_raw, SourceError
+        with self.assertRaises(SourceError):
+            _to_raw(catalog_offer("X", "o", 1, "Food"),
+                    {"storeCode": "100", "currentPrice": "1.99"}, STORE)
+
+    def test_unresolved_offers_do_not_accumulate_across_runs(self):
+        def files(url, kind):
+            category = "Food" if "976759" in url else "Beauty"
+            if kind == "catalog":
+                return iter([catalog_offer("Orphan", f"{category}-orphan", 300, category),
+                             catalog_offer("Priced", f"{category}-ok", 301, category)])
+            return iter([dict(offerId=f"{category}-ok", storeCode=STORE.store_id,
+                              availability="AVAILABLE", currentPrice="1.50")])
+
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", files):
+                source = WalmartOPDSnapshotSource(FakeClient(), Path(base) / "cache",
+                                                  MAP, page_size=10)
+                storage = LocalStorage(Path(base) / "data")
+                counts = []
+                for _ in range(3):
+                    Collector(storage, source, CATEGORIES, min_products=1,
+                              trial=True).run(STORE)
+                    counts.append(len(source.unresolved_offers))
+        self.assertEqual(counts, [2, 2, 2], "a reused source must not accumulate")
+
+    def test_unresolved_offers_reach_the_run_report(self):
+        def files(url, kind):
+            category = "Food" if "976759" in url else "Beauty"
+            if kind == "catalog":
+                return iter([catalog_offer("Orphan", f"{category}-orphan", 300, category),
+                             catalog_offer("Priced", f"{category}-ok", 301, category)])
+            return iter([dict(offerId=f"{category}-ok", storeCode=STORE.store_id,
+                              availability="AVAILABLE", currentPrice="1.50")])
+
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", files):
+                source = WalmartOPDSnapshotSource(FakeClient(), Path(base) / "cache",
+                                                  MAP, page_size=10)
+                result = Collector(LocalStorage(Path(base) / "data"), source,
+                                   CATEGORIES, min_products=1, trial=True).run(STORE)
+        unresolved = result["report"]["unresolved_offers"]
+        self.assertEqual(unresolved["count"], 2)
+        self.assertIn("store assortment membership unestablished",
+                      " ".join(unresolved["by_reason"]))
+
+    def test_an_offer_with_no_usable_url_is_recorded_not_silently_dropped(self):
+        def files(url, kind):
+            category = "Food" if "976759" in url else "Beauty"
+            if kind == "catalog":
+                bad = catalog_offer("NoUrl", f"{category}-bad", 400, category)
+                bad["productUrlText"] = ""
+                return iter([bad, catalog_offer("Good", f"{category}-ok", 401, category)])
+            return iter([dict(offerId=f"{category}-bad", storeCode=STORE.store_id,
+                              availability="AVAILABLE", currentPrice="1.00"),
+                         dict(offerId=f"{category}-ok", storeCode=STORE.store_id,
+                              availability="AVAILABLE", currentPrice="1.50")])
+
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", files):
+                source = WalmartOPDSnapshotSource(FakeClient(), Path(base) / "cache",
+                                                  MAP, page_size=10)
+                result = Collector(LocalStorage(Path(base) / "data"), source,
+                                   CATEGORIES, min_products=1, trial=True).run(STORE)
+        reasons = " ".join(result["report"]["unresolved_offers"]["by_reason"])
+        self.assertIn("no usable product URL", reasons)
+
+
+class CoverageGateAtPublicationTests(unittest.TestCase):
+    """The gate must not be defeatable by mutating the collector after construction."""
+
+    def test_flipping_trial_off_after_construction_still_cannot_publish_full(self):
+        with tempfile.TemporaryDirectory() as base:
+            source = WalmartOPDSnapshotSource(FakeClient(), Path(base) / "cache", MAP)
+            collector = Collector(LocalStorage(Path(base) / "data"), source,
+                                  CATEGORIES, min_products=1, trial=True)
+            collector.trial = False
+            with self.assertRaises(ValidationFailure):
+                collector.run(STORE)
+
+    def test_swapping_in_an_unattested_source_after_construction_is_caught(self):
+        with tempfile.TemporaryDirectory() as base:
+            collector = Collector(LocalStorage(Path(base) / "data"),
+                                  FixtureSource(ROOT / "fixtures"),
+                                  CATEGORIES, min_products=1)
+            collector.source = WalmartOPDSnapshotSource(
+                FakeClient(), Path(base) / "cache", MAP)
+            with self.assertRaises(ValidationFailure):
+                collector.run(STORE)
+
+
+if __name__ == "__main__":
+    unittest.main()

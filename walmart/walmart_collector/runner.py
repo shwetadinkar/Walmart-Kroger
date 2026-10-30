@@ -140,7 +140,27 @@ class Collector:
             stages.append(stage)
         return stages
 
+    def _publication_allowed(self):
+        """The coverage gate, evaluated where the release actually happens.
+
+        Also checked in the constructor so a misconfiguration fails early, but
+        the constructor cannot be the only check: `collector.trial = False` or
+        swapping `collector.source` afterwards would otherwise produce exactly
+        the scope=full with source_coverage_attested=false release this gate
+        exists to prevent.
+        """
+        if not self.trial and not getattr(self.source, "coverage_attested", False):
+            raise ValidationFailure(
+                f"Source {self.source.source_mode!r} does not attest complete coverage, "
+                "so it cannot publish a full release. Run it as a trial, or supply a "
+                "source that reconciles against the full configured category set.")
+
     def run(self, store):
+        self._publication_allowed()
+        # A source that tracks offers it could not publish starts each run with
+        # a clean slate, so a reused instance does not report another run's.
+        if hasattr(self.source, "reset_unresolved"):
+            self.source.reset_unresolved()
         start = time.monotonic()
         with self.storage.locked(store.store_id):
             return self._run_locked(store, start)
@@ -219,7 +239,17 @@ class Collector:
             "example_digital_deals":[{"title":r["product_title"],"description":r["digital_deals_description"],"displayed_price":r["digital_deals_price"]} for r in records if r["digital_deals_description"]][:5],
             "pages_by_category":{k:len(v) for k,v in all_stages.items()},
             "location_evidence_urls":[st["page"].get("location_evidence_url", "") for stages in all_stages.values() for st in stages if st["page"].get("location_evidence_url")][:15],
-            "caution":"This is NOT contest proof if source_is_synthetic=true. Live providers require independent verification."
+            "caution":"This is NOT contest proof if source_is_synthetic=true. Live providers require independent verification.",
+            # Offers the source saw but could not publish, and why. Without this
+            # the record lives only on the source object, which the CLI discards
+            # after run(), so the gap between what was seen and what was
+            # published would be unexplainable from the release itself.
+            **({"unresolved_offers": {
+                    "count": len(self.source.unresolved_offers),
+                    "by_reason": dict(Counter(u.get("reason","")
+                                              for u in self.source.unresolved_offers)),
+                    "sample": self.source.unresolved_offers[:25]}}
+               if hasattr(self.source, "unresolved_offers") else {}),
         }
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
         prefix = f"{self._published_root(store)}/runs/{release}"
@@ -233,6 +263,8 @@ class Collector:
         write_json(self.storage, manifest_key, manifest)
         if hasattr(self.storage, "assert_lock_held"):
             self.storage.assert_lock_held()
+        # Last check before the release becomes visible.
+        self._publication_allowed()
         write_json(self.storage, pointer_key, {"manifest_key":manifest_key,"release":release})
         # Checkpoints are discarded after successful publication; staged pages remain for audit.
         for cat in self.categories:

@@ -259,7 +259,19 @@ def _to_raw(product, price, store):
         return None
     if str(price.get("storeCode")) != store.store_id:
         raise SourceError("Snapshot price store mismatch")
-    available = price.get("availability", "").upper() == "AVAILABLE"
+
+    # `availability` decides whether a price is reportable, so an absent or null
+    # value is a feed contract violation and not a quiet "no". Treating it as
+    # falsey would blank the price on every row if the field were ever renamed,
+    # turning the whole dataset into unpriced records with nothing raised. The
+    # old code could not reach this because it filtered such rows out earlier;
+    # retaining them makes this line the first to touch them.
+    raw_availability = price.get("availability")
+    if raw_availability is None:
+        raise SourceError(
+            f"Price row for offer {price.get('offerId')!r} carries no availability value; "
+            "refusing to infer one")
+    available = str(raw_availability).upper() == "AVAILABLE"
     price_str = str(price.get("currentPrice") or "").strip()
     # An unavailable offer has no current price to report, and a price carried
     # on an unavailable row is not one a shopper could pay today.
@@ -311,10 +323,36 @@ class WalmartOPDSnapshotSource:
             raise SourceError("Invalid OPD local page size")
         self.root.mkdir(parents=True, exist_ok=True)
         self._verified = set()
-        # Catalog offers seen for a configured category that carry no price row
-        # for the requested store. Their eligibility is genuinely unknown, so
-        # they are neither published nor discarded.
-        self.unresolved_offers = []
+        # Catalog offers seen for a configured category that could not be
+        # published, and why. Their eligibility is genuinely unknown, so they
+        # are neither published nor discarded.
+        #
+        # Keyed rather than appended. A source instance is reused across stores,
+        # categories and repeat runs (the repository's own OPD tests reuse one
+        # across three Collector runs), so a plain list duplicated entries on
+        # every pass and grew without bound. On a real multi-category run most
+        # of a nationwide catalog feed has no price row for one store, so that
+        # growth is not hypothetical.
+        self._unresolved = {}
+
+    @property
+    def unresolved_offers(self):
+        return list(self._unresolved.values())
+
+    def reset_unresolved(self):
+        """Called by the runner at the start of a run, when present."""
+        self._unresolved = {}
+
+    def _record_unresolved(self, catalog, store, category, reason):
+        key = (store.store_id, category.name, str(catalog.get("offerId") or ""))
+        self._unresolved.setdefault(key, {
+            "offer_id": str(catalog.get("offerId") or ""),
+            "item_id": str(catalog.get("itemId") or ""),
+            "name": str(catalog.get("name") or ""),
+            "store_id": store.store_id,
+            "category": category.name,
+            "reason": reason,
+        })
 
     def _db_path(self, store, category):
         return self.root / store.store_id / (category.slug + ".sqlite3")
@@ -389,7 +427,7 @@ class WalmartOPDSnapshotSource:
         # unavailable is a real state of the store and must still be retained.
         count = db.execute("SELECT COUNT(*) FROM catalog").fetchone()[0]
         if count == 0:
-            raise SourceError(f"OPD snapshot for {category.name} found zero eligible local offers")
+            raise SourceError(f"OPD snapshot for {category.name} found zero catalog offers")
         with db:
             db.execute("INSERT OR REPLACE INTO meta VALUES('built_on', ?)",(today,))
 
@@ -403,9 +441,12 @@ class WalmartOPDSnapshotSource:
             self._prepare(db,store,category)
             revision_row = db.execute("SELECT value FROM meta WHERE key='signature'").fetchone()
             revision = revision_row[0] if revision_row else ""
-            # LEFT JOIN, not INNER. An inner join silently deleted every catalog
-            # identity that had no matching price row, which is exactly the
-            # unavailable and unpriced population the brief requires be kept.
+            # Catalog membership decides the page count, and the query below
+            # LEFT JOINs rather than INNER JOINs, so the two agree on which rows
+            # exist. An inner join silently deleted every catalog identity with
+            # no matching price row, which is exactly the unavailable and
+            # unpriced population the brief requires be kept. price.offer is a
+            # PRIMARY KEY, so the left join cannot multiply rows either.
             count = db.execute("SELECT COUNT(*) FROM catalog").fetchone()[0]
             offset = int(cursor) if cursor else 0
             if offset < 0 or offset >= count:
@@ -423,19 +464,21 @@ class WalmartOPDSnapshotSource:
                 # No store price row, so this store's assortment has not been
                 # shown to include it. Recorded as unresolved rather than
                 # published with a store context we cannot evidence.
-                self.unresolved_offers.append({
-                    "offer_id": str(catalog.get("offerId") or ""),
-                    "item_id": str(catalog.get("itemId") or ""),
-                    "name": str(catalog.get("name") or ""),
-                    "store_id": store.store_id,
-                    "category": category.name,
-                    "reason": "catalog offer has no price row for this store; "
-                              "store assortment membership unestablished",
-                })
+                self._record_unresolved(
+                    catalog, store, category,
+                    "catalog offer has no price row for this store; "
+                    "store assortment membership unestablished")
                 continue
             rec = _to_raw(catalog, json.loads(q), store)
             if rec:
                 products.append(rec)
+            else:
+                # The only remaining drop path: no usable walmart.com /ip/ URL.
+                # Recorded rather than silently discarded, so the gap between
+                # catalog count and published count is always accounted for.
+                self._record_unresolved(
+                    catalog, store, category,
+                    "no usable product URL on the catalog offer")
         next_cursor = str(offset + self.page_size) if offset + self.page_size < count else ""
         return Page(store_id=store.store_id, zipcode=store.zipcode,
             store_context_verified=True, source_url=url, products=products,

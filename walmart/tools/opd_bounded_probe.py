@@ -60,12 +60,15 @@ TOKEN_URL = "https://developer.api.walmart.com/api-proxy/service/identity/oauth/
 BASE = "https://developer.api.walmart.com/api-proxy/service"
 CATALOG_FEEDS = "/affil/catalog-api/v2/product/feeds/items"
 PRICE_FEEDS = "/affil/catalog-api/v2/product/feeds/items/price-availability"
+LOCATOR = "/affil/storeservice/v1/storeServiceLocator?storesLimit=20"
 
 MAX_REQUESTS = 10
 MAX_SECONDS = 600
 MAX_TOTAL_BYTES = 64 * 1024 * 1024
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
 SIGNED_HOSTS = ("storage.googleapis.com",)
+API_HOST = "developer.api.walmart.com"
+ALLOWED_HOSTS = (API_HOST,) + SIGNED_HOSTS
 
 PRICE_FIELDS_OF_INTEREST = (
     "currentPrice", "unitPriceDisplay", "availability", "storeCode",
@@ -141,12 +144,23 @@ class Budget:
 
 
 class _CountingRedirects(HTTPRedirectHandler):
-    """Charge each redirect hop to the budget. A redirect is a request."""
+    """Charge each redirect hop, and refuse one that leaves the allowlist.
+
+    Counting is not sufficient. urllib forwards the Authorization header across
+    a cross-host redirect, so a 302 on the token or feed call would hand the
+    Bearer token to whatever host the redirect names. Verified on this
+    interpreter rather than assumed.
+    """
 
     def __init__(self, budget):
         self.budget = budget
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
+        host = urlparse(newurl).hostname or ""
+        if host not in ALLOWED_HOSTS:
+            raise ProbeFailure(
+                f"Refusing a {code} redirect to {host!r}, which is not an expected "
+                "host. The request carries a bearer token and urllib would forward it.")
         self.budget.charge(f"redirect {code}", newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
@@ -162,10 +176,13 @@ def fetch(budget, label, url, *, headers=None, data=None, method="GET"):
             budget.record_body(len(body))
             return response.status, body
     except HTTPError as exc:
-        body = exc.read(65536)
+        # Deliberately NOT echoing the body. A signed-URL 403 from the object
+        # store returns XML that can contain StringToSign and signature
+        # material, and this message is written into the receipt.
+        exc.read(4096)
         raise ProbeFailure(
             f"{label} returned HTTP {exc.code}. Stopping; this probe does not retry. "
-            f"First bytes: {body[:200]!r}") from exc
+            "Response body withheld: it can carry signature material.") from exc
     except (URLError, TimeoutError, OSError) as exc:
         raise ProbeFailure(f"{label} failed: {type(exc).__name__}: {exc}") from exc
 
@@ -195,13 +212,50 @@ def api_get(budget, label, token, client_id, path, params=None):
         raise ProbeFailure(f"{label} did not return JSON") from exc
 
 
+def feed_urls(document, key, kind):
+    """Signed URLs from a feed listing, accepting only the documented shape."""
+    feeds = document.get(key)
+    if not isinstance(feeds, list) or not feeds:
+        raise ProbeFailure(
+            f"{kind} feed listing has no {key!r} list; keys present: "
+            + (", ".join(sorted(document)) or "none"))
+    urls = [f for f in feeds if isinstance(f, str) and f]
+    if not urls:
+        raise ProbeFailure(
+            f"{kind} feed listing {key!r} carried no URL strings "
+            f"(found {type(feeds[0]).__name__})")
+    return urls
+
+
+def api_post(budget, label, token, client_id, path, body):
+    url = BASE + path
+    status, raw = fetch(budget, label, url, method="POST",
+                        data=json.dumps(body).encode(),
+                        headers={"Authorization": f"Bearer {token}",
+                                 "WM_SEC.ACCESS_TOKEN": token,
+                                 "WM_CONSUMER.ID": client_id,
+                                 "Content-Type": "application/json",
+                                 "Accept": "application/json"})
+    try:
+        return json.loads(raw)
+    except ValueError as exc:
+        raise ProbeFailure(f"{label} did not return JSON") from exc
+
+
 def signed_rows(budget, label, url, limit):
     if urlparse(url).hostname not in SIGNED_HOSTS:
         raise ProbeFailure(f"Refusing a signed URL on an unexpected host: "
                            f"{urlparse(url).hostname}")
     status, body = fetch(budget, label, url)
-    if url.endswith(".gz"):
-        body = gzip.decompress(body)
+    # Decide on the PATH, not the whole URL. Every real signed URL carries a
+    # query string, so url.endswith(".gz") is always false for them: the body
+    # was never decompressed, every json.loads failed, the except below ate the
+    # error, and the probe returned zero rows while reporting a vacuous pass.
+    if urlparse(url).path.endswith(".gz") or body[:2] == b"\x1f\x8b":
+        try:
+            body = gzip.decompress(body)
+        except OSError as exc:
+            raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
     rows = []
     for line in io.BytesIO(body):
         line = line.strip()
@@ -215,6 +269,10 @@ def signed_rows(budget, label, url, limit):
             rows.append(row)
         if len(rows) >= limit:
             break
+    if not rows:
+        raise ProbeFailure(
+            f"{label} yielded no parseable JSON rows from {len(body)} bytes. "
+            "Reporting zero rows as a result would be a vacuous pass.")
     return rows
 
 
@@ -236,6 +294,7 @@ def plan(args):
         "products_to_inspect": args.products,
         "requests_planned": [
             "1 OAuth token",
+            "1 store locator, to confirm the store is a pickup store",
             "1 catalog feed listing",
             "1 price feed listing",
             "1 signed catalog file download",
@@ -244,8 +303,14 @@ def plan(args):
         "cumulative_bounds": {
             "requests": args.max_requests, "seconds": args.max_seconds,
             "total_bytes": MAX_TOTAL_BYTES, "single_response_bytes": MAX_RESPONSE_BYTES},
-        "covers": ["oauth", "token refresh", "locator", "metadata",
-                   "signed file downloads", "redirects"],
+        # Every outbound request is charged, so anything added later is covered
+        # automatically. Listed here is what this probe actually issues; a token
+        # refresh would be charged if one occurred, but the probe takes a token
+        # once and never refreshes, so that is not claimed as exercised.
+        "covers_what_it_issues": ["oauth", "locator", "feed listings",
+                                  "signed file downloads", "redirects"],
+        "token_refresh": "charged if it occurred; this probe takes one token and "
+                         "does not refresh, so the path is not exercised",
         "retries": 0,
         "on_failure": "stop immediately and write the receipt",
         "writes": "an isolated directory only; merges into no dataset",
@@ -263,17 +328,32 @@ def run(args, budget):
 
     token = get_token(budget, client_id, client_secret)
 
+    # Confirm the store is actually a pickup store before reading any price.
+    # A matching storeCode on a price row is not by itself evidence of the
+    # offer's fulfilment context, which is the point the client made.
+    locator = api_post(budget, "store locator", token, client_id, LOCATOR,
+                       {"payload": {"postalCode": args.zipcode,
+                                    "filter": ["INSTORE_PICKUP"]}})
+    access_points = (locator.get("payload") or {}).get("accessPointList") or []
+    pickup = [a for a in access_points if isinstance(a, dict)
+              and str(a.get("fulfillmentStoreId")) == args.store
+              and a.get("fulfillmentType") == "INSTORE_PICKUP"]
+    if not pickup:
+        raise ProbeFailure(
+            f"Store {args.store} is not listed as an INSTORE_PICKUP store for "
+            f"ZIP {args.zipcode}; not reading prices for a store context I cannot confirm")
+
     catalog = api_get(budget, "catalog feed listing", token, client_id,
                       CATALOG_FEEDS, {"categoryId": args.category_id})
     prices = api_get(budget, "price feed listing", token, client_id,
                      PRICE_FEEDS, {"categoryId": args.category_id})
 
-    catalog_urls = [f.get("url") for f in catalog.get("product_snapshot_data", [])
-                    if isinstance(f, dict) and f.get("url")]
-    price_urls = [f.get("url") for f in prices.get("product_snapshot_data", [])
-                  if isinstance(f, dict) and f.get("url")]
-    if not catalog_urls or not price_urls:
-        raise ProbeFailure("Feed listings carried no signed file URLs")
+    # The two feeds use DIFFERENT keys, and the entries are URL strings rather
+    # than objects. Both facts are asserted in walmart_collector/opd.py, which
+    # is the only code here that has ever spoken to this API. An earlier draft
+    # of this probe guessed both wrong and could never have completed a run.
+    catalog_urls = feed_urls(catalog, "product_snapshot_data", "catalog")
+    price_urls = feed_urls(prices, "price_avail_snapshot_data", "price")
 
     catalog_rows = signed_rows(budget, "signed catalog file", catalog_urls[0], args.products)
     price_rows = signed_rows(budget, "signed price file", price_urls[0], args.products * 20)
@@ -302,6 +382,10 @@ def run(args, budget):
         "records": records,
         "price_field_observations": observe_price_fields(for_store[:args.products * 5]),
         "store_rows_seen": len(for_store),
+        # The locator confirmed this store serves INSTORE_PICKUP before any
+        # price was read, so a matching storeCode is not the only evidence of
+        # the fulfilment context.
+        "store_confirmed_as_pickup_store": True,
         "checks": {
             "every_price_row_matches_requested_store": all(
                 str(r.get("storeCode")) == args.store for r in for_store),
@@ -338,6 +422,15 @@ def main(argv=None) -> int:
 
     if args.products < 1 or args.products > 25:
         p.error("--products must be between 1 and 25")
+    # The proposal to the client states ten requests and ten minutes. These may
+    # be tightened for a smaller test, never raised: a flag that loosens the
+    # declared bound makes the declaration meaningless.
+    if not 1 <= args.max_requests <= MAX_REQUESTS:
+        p.error(f"--max-requests must be between 1 and {MAX_REQUESTS}; the proposed "
+                "ceiling cannot be raised from the command line")
+    if not 1 <= args.max_seconds <= MAX_SECONDS:
+        p.error(f"--max-seconds must be between 1 and {MAX_SECONDS}; the proposed "
+                "ceiling cannot be raised from the command line")
 
     if args.dry_run:
         print(json.dumps(plan(args), indent=2))
@@ -352,6 +445,13 @@ def main(argv=None) -> int:
         outcome = run(args, budget)
     except (ProbeFailure, BudgetExceeded) as exc:
         failure = f"{type(exc).__name__}: {exc}"
+    except Exception as exc:  # noqa: BLE001
+        # The docstring promises a receipt whether the run succeeded or not, and
+        # a narrow except broke that promise for two ordinary cases: an HTML
+        # gateway page on the token call raising JSONDecodeError, and a
+        # truncated download raising BadGzipFile. Both produced a traceback and
+        # no receipt at all.
+        failure = f"unexpected {type(exc).__name__}: {exc}"
 
     receipt = {
         "probe": "opd_bounded_probe",

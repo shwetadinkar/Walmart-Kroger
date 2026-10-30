@@ -42,7 +42,11 @@ def digest(path: Path) -> str:
 
 
 def load_entries(manifest):
-    """Return (entries, hash_key). Raises ManifestError rather than verifying nothing."""
+    """Return (entries, hash_key, declared_count).
+
+    Raises ManifestError rather than verifying nothing, or verifying only the
+    part of a manifest it happens to understand.
+    """
     if isinstance(manifest, list):
         entries = manifest
     elif isinstance(manifest, dict):
@@ -54,7 +58,7 @@ def load_entries(manifest):
             raise ManifestError(
                 "Unrecognised manifest: expected a list, or an object with a "
                 "'files' or 'originals' list. Found keys: "
-                + ", ".join(sorted(manifest)) or "none")
+                + (", ".join(sorted(manifest)) or "none"))
     else:
         raise ManifestError(f"Unrecognised manifest of type {type(manifest).__name__}")
 
@@ -70,6 +74,15 @@ def load_entries(manifest):
             malformed.append(f"entry {index}: expected an object, found {type(entry).__name__}")
         elif not entry.get("file"):
             malformed.append(f"entry {index}: no file name")
+        elif not isinstance(entry["file"], str):
+            # Without this the entry survived the scan and then raised TypeError
+            # on `snapshots / entry["file"]`, surfacing as exit 1 ("files were
+            # altered") rather than exit 2 ("this manifest is unverifiable").
+            malformed.append(
+                f"entry {index}: file name must be text, found "
+                f"{type(entry['file']).__name__}")
+        elif ".." in Path(str(entry["file"])).parts or Path(str(entry["file"])).is_absolute():
+            malformed.append(f"entry {index}: file name escapes the snapshot directory")
     if malformed:
         raise ManifestError(
             f"Manifest declares {declared} entries and {len(malformed)} cannot be "
@@ -139,7 +152,7 @@ def main(argv=None) -> int:
         return 2
 
     print(f"Verifying against '{key}'.")
-    print(f"Manifest declares {declared} entries; {declared} examined.\n")
+    print(f"Manifest declares {declared} entries; all {declared} were examined.\n")
     if not args.quiet:
         for name in ok:
             print(f"OK       {name}")

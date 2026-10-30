@@ -110,7 +110,13 @@ class TestOPD(unittest.TestCase):
             source=WalmartOPDSnapshotSource(fake,Path(base)/"cache",MAP)
             with patch("walmart_collector.opd.signed_records",files):
                 Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
-            previous=read_json(storage,"published/100/latest.json")
+            # Read the pointer the run ACTUALLY writes. These reads used to
+            # target published/, which under a trial is never written, so
+            # `previous` was None and the assertion below compared None to None
+            # and proved nothing.
+            trial_pointer = f"{Collector(storage,source,CATEGORIES,min_products=2,trial=True)._published_root(store)}/latest.json"
+            previous=read_json(storage,trial_pointer)
+            self.assertIsNotNone(previous, "the first run must have published a trial pointer")
             # Force the next run to use fresh snapshot cache.
             for db in (Path(base)/"cache/100").glob("*.sqlite3"):
                 import sqlite3
@@ -128,7 +134,10 @@ class TestOPD(unittest.TestCase):
             with patch("walmart_collector.opd.signed_records",interrupted):
                 with self.assertRaises(SourceError):
                     Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
-            self.assertEqual(read_json(storage,"published/100/latest.json"),previous)
+            # The interrupted run must not have replaced the earlier release.
+            self.assertEqual(read_json(storage,trial_pointer),previous)
+            # And nothing may ever appear in the published namespace from OPD.
+            self.assertIsNone(read_json(storage,"published/100/latest.json"))
             with patch("walmart_collector.opd.signed_records",files):
                 result=Collector(storage,source,CATEGORIES,min_products=2,trial=True).run(store)
             self.assertEqual(result["manifest"]["records"],2)

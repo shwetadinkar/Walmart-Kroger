@@ -15,12 +15,30 @@ FIELDS = (
 PRICE_FIELDS = ("regular_price", "sale_price", "volume_deals_price", "digital_deals_price")
 _PRIVATE_BRANDS = {"great value", "equate", "mainstays", "onn.", "onn", "parent's choice", "bettergoods", "marketside", "sam's choice", "hyper tough", "athletic works"}
 # Wording that means the printed figure is not what the customer receives.
-# "average weight" and "avg weight" were missing entirely, so a product
-# labelled "Average Weight 1 lb" passed even in the weight field itself.
-_APPROX = re.compile(
-    r"\b(?:approx\.?|approximately|approximate|variable[- ]weight|estimated weight"
-    r"|avg\.?[- ]weight|average[- ]weight|weight[- ]varies|sold by weight|about\s+\d)\b",
-    re.I)
+#
+# Two patterns, because the two fields are not equally ambiguous. In the WEIGHT
+# field a bare "about 2" can only be about weight. In a TITLE it usually is not:
+# "Guacamole, 8 oz, about 4 servings" is a fixed-weight, fixed-price product and
+# must not be excluded. So the title pattern requires an actual weight unit
+# after "about", and the weight pattern additionally accepts a bare number.
+#
+# The trailing \d also has to be \d+: "about 12 oz" and "about 100 lb" would
+# not match a single-digit pattern, so the loose form missed most real
+# approximate weights while firing on small counts.
+_APPROX_COMMON = (
+    r"approx\.?|approximately|approximate"
+    r"|(?:variable|average|avg\.?|estimated|random)[-\s]?weight"
+    r"|weights?\s+(?:may\s+)?var(?:y|ies)"
+    r"|(?:sold|priced)\s+by\s+weight"
+)
+_ABOUT_UNIT = (
+    r"about\s+\d+(?:\.\d+)?\s*"
+    r"(?:lbs?\.?|pounds?|ozs?\.?|ounces?|kgs?|kilograms?|gs?|grams?)"
+)
+# Titles: approximate wording, or "about N <weight unit>".
+_APPROX = re.compile(rf"\b(?:{_APPROX_COMMON}|{_ABOUT_UNIT})\b", re.I)
+# Weight field: the same, plus a bare "about N", which is unambiguous there.
+_APPROX_WEIGHT = re.compile(rf"\b(?:{_APPROX_COMMON}|about\s+\d+)\b", re.I)
 _PRICE = re.compile(r"^\$?\d+(?:\.\d{1,2})?$")
 
 class RecordRejected(ValueError):
@@ -38,7 +56,7 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     if raw.get("store_context_verified") is not True:
         raise RecordRejected("UNVERIFIED_PRODUCT_LOCATION")
     weight = str(raw.get("weight") or "")
-    if _APPROX.search(weight):
+    if _APPROX_WEIGHT.search(weight):
         raise RecordRejected("APPROXIMATE_WEIGHT")
     title = str(raw.get("product_title") or "").strip()
     url = str(raw.get("url") or "").strip()
