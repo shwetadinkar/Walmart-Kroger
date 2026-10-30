@@ -350,3 +350,66 @@ class ProvenanceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EntrypointTests(unittest.TestCase):
+    """The Azure job must be able to select Catalog V2, and must refuse fixtures."""
+
+    def setUp(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "container_entrypoint", ROOT / "azure" / "container_entrypoint.py"
+        )
+        self.module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.module)
+        import os
+        self._saved = {
+            k: os.environ.pop(k, None)
+            for k in ("MARIANOS_STORE_ID", "MARIANOS_SOURCE", "KROGER_LOCATION_ID")
+        }
+
+    def tearDown(self):
+        import os
+        for key, value in self._saved.items():
+            os.environ.pop(key, None)
+            if value is not None:
+                os.environ[key] = value
+
+    def set(self, **kwargs):
+        import os
+        for key, value in kwargs.items():
+            os.environ[key] = value
+
+    def test_default_source_is_still_the_provider(self):
+        self.set(MARIANOS_STORE_ID="70100485")
+        self.assertIn("provider", self.module.command())
+
+    def test_catalog_v2_is_selectable_and_passes_the_location_id(self):
+        self.set(
+            MARIANOS_STORE_ID="70100485",
+            MARIANOS_SOURCE="catalog_v2",
+            KROGER_LOCATION_ID="70100485",
+        )
+        argv = self.module.command()
+        self.assertIn("catalog_v2", argv)
+        self.assertIn("--location-id", argv)
+        self.assertEqual(argv[argv.index("--location-id") + 1], "70100485")
+
+    def test_catalog_v2_without_a_location_id_is_refused(self):
+        self.set(MARIANOS_STORE_ID="70100485", MARIANOS_SOURCE="catalog_v2")
+        with self.assertRaises(ValueError):
+            self.module.command()
+
+    def test_a_placeholder_location_id_is_refused(self):
+        self.set(
+            MARIANOS_STORE_ID="70100485",
+            MARIANOS_SOURCE="catalog_v2",
+            KROGER_LOCATION_ID="REPLACE_ME",
+        )
+        with self.assertRaises(ValueError):
+            self.module.command()
+
+    def test_a_scheduled_job_cannot_run_synthetic_fixtures(self):
+        self.set(MARIANOS_STORE_ID="70100485", MARIANOS_SOURCE="fixture")
+        with self.assertRaises(ValueError):
+            self.module.command()

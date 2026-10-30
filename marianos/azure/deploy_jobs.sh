@@ -18,11 +18,36 @@ fi
 : "${RESOURCE_GROUP:?Set RESOURCE_GROUP}"
 : "${CONTAINERAPPS_ENVIRONMENT:?Set CONTAINERAPPS_ENVIRONMENT}"
 : "${IMAGE:?Set IMAGE to published container image}"
-: "${PROVIDER_BASE_URL:?Set PROVIDER_BASE_URL to approved HTTPS provider endpoint}"
-[[ "$PROVIDER_BASE_URL" == https://* ]] || { echo 'PROVIDER_BASE_URL must start with https://' >&2; exit 2; }
+
+# Which authorized route this deployment uses. Both run the same image.
+#   provider   - approved third-party feed implementing the Page contract
+#   catalog_v2 - Kroger Catalog V2 partner API (see marianos/CATALOG_V2_RUNBOOK.md)
+# The synthetic fixture source is intentionally not deployable.
+MARIANOS_SOURCE="${MARIANOS_SOURCE:-provider}"
+case "$MARIANOS_SOURCE" in
+  provider|catalog_v2) ;;
+  *) echo "MARIANOS_SOURCE must be 'provider' or 'catalog_v2', not '$MARIANOS_SOURCE'" >&2; exit 2;;
+esac
+
+if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
+  : "${PROVIDER_BASE_URL:?Set PROVIDER_BASE_URL to approved HTTPS provider endpoint}"
+  [[ "$PROVIDER_BASE_URL" == https://* ]] || { echo 'PROVIDER_BASE_URL must start with https://' >&2; exit 2; }
+else
+  # Kroger's locationId is not necessarily the collector's store_id.
+  : "${KROGER_LOCATION_ID:?Set KROGER_LOCATION_ID from a verified Kroger Locations response}"
+  case "$KROGER_LOCATION_ID" in
+    DEMO*|REPLACE*|UNRESOLVED*) echo 'KROGER_LOCATION_ID must be a verified location, not a placeholder' >&2; exit 2;;
+  esac
+fi
+
 if [[ "$MODE" == '--execute' ]]; then
-  : "${PROVIDER_API_TOKEN:?Required; use Azure Key Vault in production}"
   : "${AZURE_STORAGE_CONNECTION_STRING:?Required; use Azure Key Vault in production}"
+  if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
+    : "${PROVIDER_API_TOKEN:?Required; use Azure Key Vault in production}"
+  else
+    : "${KROGER_CLIENT_ID:?Required; use Azure Key Vault in production}"
+    : "${KROGER_CLIENT_SECRET:?Required; use Azure Key Vault in production}"
+  fi
   command -v az >/dev/null || { echo 'Azure CLI not installed' >&2; exit 2; }
   az account show --output none || { echo 'az login required' >&2; exit 2; }
 fi
@@ -56,7 +81,7 @@ for STORE_ID in "${STORE_IDS[@]}"; do
   CLEAN_ID="$(printf %s "$STORE_ID" | tr '[:upper:]_' '[:lower:]-' | cut -c1-20)"
   JOB_NAME="marianos-$CLEAN_ID"
   CRON="${CRON_EXPRESSION:-0 6 * * 1,4}"
-  echo "Job: $JOB_NAME | store_id: $STORE_ID | schedule (UTC): $CRON"
+  echo "Job: $JOB_NAME | store_id: $STORE_ID | source: $MARIANOS_SOURCE | schedule (UTC): $CRON"
   if [[ "$MODE" == '--dry-run' ]]; then
     echo 'DRY RUN: no network requests or Azure changes. Never include secrets in logs.'
     continue
@@ -67,6 +92,27 @@ for STORE_ID in "${STORE_IDS[@]}"; do
   fi
   # NOTE: Passing secret values to CLI args exposes them to local process inspection.
   # Preferred production method is managed identity + Key Vault references set by Azure admin.
+  SECRETS=("marianos-blob=$AZURE_STORAGE_CONNECTION_STRING")
+  ENVVARS=('AZURE_STORAGE_CONNECTION_STRING=secretref:marianos-blob'
+           'MARIANOS_DATA_AUTHORIZED=yes'
+           "MARIANOS_SOURCE=$MARIANOS_SOURCE"
+           "AZURE_BLOB_CONTAINER=${AZURE_BLOB_CONTAINER:-marianos-collection}"
+           "MARIANOS_STORE_ID=$STORE_ID")
+  if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
+    SECRETS+=("marianos-provider-token=$PROVIDER_API_TOKEN")
+    ENVVARS+=("PROVIDER_BASE_URL=$PROVIDER_BASE_URL"
+              'PROVIDER_API_TOKEN=secretref:marianos-provider-token')
+  else
+    SECRETS+=("kroger-client-id=$KROGER_CLIENT_ID" "kroger-client-secret=$KROGER_CLIENT_SECRET")
+    ENVVARS+=('KROGER_CLIENT_ID=secretref:kroger-client-id'
+              'KROGER_CLIENT_SECRET=secretref:kroger-client-secret'
+              "KROGER_LOCATION_ID=$KROGER_LOCATION_ID"
+              "CATALOG_V2_FULFILLMENT=${CATALOG_V2_FULFILLMENT:-curbside}")
+    # Only set when the partner agreement issues a scope other than the default,
+    # or when a live response has shown the `unit` field to be displayed PPM.
+    [[ -n "${CATALOG_V2_SCOPE:-}" ]] && ENVVARS+=("CATALOG_V2_SCOPE=$CATALOG_V2_SCOPE")
+    [[ -n "${CATALOG_V2_UNIT_IS_PPM:-}" ]] && ENVVARS+=("CATALOG_V2_UNIT_IS_PPM=$CATALOG_V2_UNIT_IS_PPM")
+  fi
   az containerapp job create \
     --name "$JOB_NAME" --resource-group "$RESOURCE_GROUP" \
     --environment "$CONTAINERAPPS_ENVIRONMENT" \
@@ -75,13 +121,8 @@ for STORE_ID in "${STORE_IDS[@]}"; do
     --replica-timeout "${REPLICA_TIMEOUT:-7200}" --replica-retry-limit 0 \
     --cpu "${CPU:-0.5}" --memory "${MEMORY:-1.0Gi}" \
     --image "$IMAGE" \
-    --secrets "marianos-provider-token=$PROVIDER_API_TOKEN" "marianos-blob=$AZURE_STORAGE_CONNECTION_STRING" \
-    --env-vars "PROVIDER_BASE_URL=$PROVIDER_BASE_URL" \
-               'PROVIDER_API_TOKEN=secretref:marianos-provider-token' \
-               'AZURE_STORAGE_CONNECTION_STRING=secretref:marianos-blob' \
-               'MARIANOS_DATA_AUTHORIZED=yes' \
-               "AZURE_BLOB_CONTAINER=${AZURE_BLOB_CONTAINER:-marianos-collection}" \
-               "MARIANOS_STORE_ID=$STORE_ID" \
+    --secrets "${SECRETS[@]}" \
+    --env-vars "${ENVVARS[@]}" \
     --output none
   echo "Created: $JOB_NAME (not yet live-validated)"
 done
