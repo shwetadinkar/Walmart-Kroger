@@ -191,6 +191,14 @@ class Collector:
             "location_evidence_urls":[st["page"].get("location_evidence_url", "") for stages in all_stages.values() for st in stages if st["page"].get("location_evidence_url")][:15],
             "coverage_scope": "subset_trial" if self.trial else "all_configured_roots",
             "independent_live_review_required": True,
+            # A composed run can take different fields from different sources,
+            # so the report has to say which source produced what. Sources that
+            # do not compose have nothing to add here.
+            **(
+                {"provenance": self.source.provenance_report()}
+                if hasattr(self.source, "provenance_report")
+                else {}
+            ),
             "caution":"This is NOT contest proof if source_is_synthetic=true, or coverage_scope=subset_trial. Live providers require independent verification."
         }
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
