@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.brightdata_import import import_snapshots, _validate, _convert, _instant
 from walmart_collector.schema import FIELDS
 

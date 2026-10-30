@@ -7,6 +7,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.schema import FIELDS
 from walmart_collector.brightdata_automatic import AzureBlobStore, LocalStore, blob_smoke
 

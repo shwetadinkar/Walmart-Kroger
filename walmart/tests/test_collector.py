@@ -7,6 +7,9 @@ from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.config import categories_from_csv, stores_from_json, is_excluded_subcategory
 from walmart_collector.schema import FIELDS, RecordRejected, make_record
 from walmart_collector.sources import FixtureSource, SourceError

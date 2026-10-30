@@ -1,6 +1,9 @@
 """Field-level composition: precedence, provenance, conflicts and honest gaps."""
 import unittest
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from marianos_collector.composition import (
     COMPOSABLE_FIELDS,
     Availability,

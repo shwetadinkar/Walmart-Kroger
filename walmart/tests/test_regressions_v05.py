@@ -7,6 +7,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.config import Category, Store
 from walmart_collector.runner import Collector, ValidationFailure
 from walmart_collector.sources import Page, FixtureSource

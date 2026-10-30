@@ -238,6 +238,29 @@ class CompositeSource:
         self._conflicts: list = []
         self._skipped: dict[str, str] = {}
 
+    # --- delegation ----------------------------------------------------
+    #
+    # A composite wraps a spine, and anything the runner asks of a source must
+    # reach it. Without these, `--source composite --spine opd` silently lost
+    # the spine's record of offers it could not publish: the run report carried
+    # no `unresolved_offers`, and because `reset_unresolved` never arrived the
+    # spine accumulated across stores and repeat runs. That is the same defect
+    # that was fixed inside the spine, reintroduced one layer up by wrapping it.
+
+    @property
+    def unresolved_offers(self):
+        return getattr(self.spine, "unresolved_offers", [])
+
+    def reset_unresolved(self):
+        if hasattr(self.spine, "reset_unresolved"):
+            self.spine.reset_unresolved()
+        # Provenance is per run too. Accumulating it across runs on a reused
+        # instance would misreport which source produced how many values.
+        self._traces = {}
+        self._field_sources = Counter()
+        self._conflicts = []
+        self._skipped = {}
+
     @property
     def source_mode(self) -> str:
         parts = [self.spine_name] + [

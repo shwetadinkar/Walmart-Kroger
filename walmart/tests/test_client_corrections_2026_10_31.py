@@ -12,6 +12,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.config import Category, Store
 from walmart_collector.opd import WalmartOPDSnapshotSource, _to_raw
 from walmart_collector.runner import Collector, ValidationFailure
@@ -324,7 +327,7 @@ class BoundedProbeTests(unittest.TestCase):
 
     def test_a_redirect_to_an_allowed_host_is_charged_as_a_request(self):
         budget = self.probe.Budget(max_requests=5)
-        handler = self.probe._CountingRedirects(budget)
+        handler = self.probe._CountingRedirects(budget, self.probe.SIGNED_HOSTS)
         handler.redirect_request(
             _FakeRequest(), None, 302, "Found", {},
             "https://storage.googleapis.com/bucket/f.json.gz")
@@ -333,12 +336,12 @@ class BoundedProbeTests(unittest.TestCase):
     def test_a_redirect_off_the_allowlist_is_refused_not_merely_counted(self):
         """urllib forwards Authorization across hosts, so counting is not enough."""
         budget = self.probe.Budget()
-        handler = self.probe._CountingRedirects(budget)
+        handler = self.probe._CountingRedirects(budget, self.probe.ALLOWED_HOSTS)
         with self.assertRaises(self.probe.ProbeFailure) as caught:
             handler.redirect_request(_FakeRequest(), None, 302, "Found", {},
                                      "https://evil.example/collect")
         self.assertIn("evil.example", str(caught.exception))
-        self.assertIn("bearer token", str(caught.exception).lower())
+        self.assertIn("credentials", str(caught.exception).lower())
         self.assertEqual(budget.requests, 0, "a refused hop must not be charged")
 
     def test_the_redirect_handler_is_actually_installed_in_the_opener(self):
@@ -412,7 +415,7 @@ class BoundedProbeTests(unittest.TestCase):
     def test_a_signed_url_on_an_unexpected_host_is_refused(self):
         budget = self.probe.Budget()
         with self.assertRaises(self.probe.ProbeFailure) as caught:
-            self.probe.signed_rows(budget, "signed file", "https://evil.example/f.json.gz", 5)
+            self.probe.signed_rows(budget, "signed file", "https://evil.example/f.json.gz", 5, "catalog")
         self.assertIn("unexpected host", str(caught.exception))
 
     def test_the_dry_run_plan_declares_the_bounds_and_makes_no_request(self):
@@ -474,10 +477,12 @@ class ProbeEndToEndTests(unittest.TestCase):
                     "size": "12 oz", "upc": "0001"}).encode() for i in range(5))
                 return gziplib.compress(rows) if gzip_bodies else rows
             if "price.json.gz" in url:
-                rows = b"\n".join(json.dumps({
-                    "offerId": f"o{i}", "storeCode": "100", "availability": "AVAILABLE",
-                    "currentPrice": "1.99", "unitPriceDisplay": "(16 c/oz)"}).encode()
-                    for i in range(5))
+                # Caret-delimited CSV: the shape walmart_collector/opd.py
+                # actually reads for the price feed. Serving NDJSON here was
+                # the test asserting its own mock rather than the client.
+                header = b"offerId^storeCode^availability^currentPrice^unitPriceDisplay\n"
+                rows = header + b"\n".join(
+                    f"o{i}^100^AVAILABLE^1.99^(16 c/oz)".encode() for i in range(5))
                 return gziplib.compress(rows) if gzip_bodies else rows
             raise AssertionError("unexpected url " + url)
 
@@ -524,12 +529,56 @@ class ProbeEndToEndTests(unittest.TestCase):
         self.assertNotEqual(result["store_rows_seen"], 0)
 
     def test_zero_parseable_rows_fails_rather_than_reporting_a_vacuous_pass(self):
+        """Must reach the empty-parse branch, not merely raise something.
+
+        An earlier version of this test did not patch the opener, so it issued a
+        real request, passed on the resulting HTTP 400, and never exercised the
+        branch it is named after. Its only assertion was that some exception
+        existed, which is true of any failure.
+        """
+        class Empty:
+            def open(self, request, timeout=None):
+                class R:
+                    status = 200
+                    def read(self, n=None): return b"   \n  \n"
+                    def __enter__(self): return self
+                    def __exit__(self, *a): pass
+                return R()
+
         budget = self.probe.Budget()
+        with patch.object(self.probe, "build_opener", lambda *a, **k: Empty()):
+            with self.assertRaises(self.probe.ProbeFailure) as caught:
+                self.probe.signed_rows(budget, "signed catalog file",
+                                       "https://storage.googleapis.com/b/f.json",
+                                       5, "catalog")
+        self.assertIn("no parseable catalog rows", str(caught.exception))
+        self.assertIn("vacuous", str(caught.exception))
+
+    def test_the_price_feed_is_read_as_caret_delimited_csv(self):
+        """The two feeds are different formats. Asserting against the shape the
+        production client documents, not against this test's own mock."""
+        rows = self.probe.parse_feed_body(
+            b"offerId^storeCode^availability^currentPrice\n"
+            b"o1^100^AVAILABLE^1.99\n", "price")
+        self.assertEqual(rows, [{"offerId": "o1", "storeCode": "100",
+                                 "availability": "AVAILABLE", "currentPrice": "1.99"}])
+
+    def test_the_catalog_feed_accepts_ndjson_and_a_json_array(self):
+        nd = b'{"offerId":"o1"}\n{"offerId":"o2"}'
+        arr = b'[{"offerId":"o1"},{"offerId":"o2"}]'
+        self.assertEqual(len(self.probe.parse_feed_body(nd, "catalog")), 2)
+        self.assertEqual(len(self.probe.parse_feed_body(arr, "catalog")), 2)
+
+    def test_an_api_call_may_not_redirect_to_the_signed_download_host(self):
+        """The allowlist is per request. A global one let a 302 on the OAuth
+        call reach the multi-tenant object store carrying Basic credentials."""
+        budget = self.probe.Budget()
+        handler = self.probe._CountingRedirects(budget, (self.probe.API_HOST,))
         with self.assertRaises(self.probe.ProbeFailure) as caught:
-            self.probe.signed_rows(budget, "signed catalog file",
-                                   "https://storage.googleapis.com/b/f.json", 5)
-        # It must fail on the fetch or on the empty parse, never return [].
-        self.assertTrue(caught.exception)
+            handler.redirect_request(_FakeRequest(), None, 302, "Found", {},
+                                     "https://storage.googleapis.com/evil")
+        self.assertIn("storage.googleapis.com", str(caught.exception))
+        self.assertEqual(budget.requests, 0)
 
     def test_the_feed_listing_shape_matches_the_production_client(self):
         self.assertEqual(
@@ -675,6 +724,64 @@ class CoverageGateAtPublicationTests(unittest.TestCase):
                 FakeClient(), Path(base) / "cache", MAP)
             with self.assertRaises(ValidationFailure):
                 collector.run(STORE)
+
+
+class CompositeDelegationTests(unittest.TestCase):
+    """A composite must not swallow what the runner asks of its spine.
+
+    `--source composite --spine opd` is the CLI's default composite, and on that
+    path the spine's unresolved record was absent from every run report and the
+    spine accumulated across runs, because CompositeSource exposed neither
+    attribute. The same defect that was fixed inside the spine, reintroduced by
+    wrapping it.
+    """
+
+    def _feed(self, url, kind):
+        category = "Food" if "976759" in url else "Beauty"
+        if kind == "catalog":
+            return iter([catalog_offer("Orphan", f"{category}-orphan", 500, category),
+                         catalog_offer("Priced", f"{category}-ok", 501, category)])
+        return iter([dict(offerId=f"{category}-ok", storeCode=STORE.store_id,
+                          availability="AVAILABLE", currentPrice="1.50")])
+
+    def _composite(self, base):
+        from walmart_collector.composition import CompositeSource, unavailable_crawl
+        spine = WalmartOPDSnapshotSource(FakeClient(), Path(base) / "cache",
+                                         MAP, page_size=10)
+        return CompositeSource(spine, "opd", [unavailable_crawl("blocked")])
+
+    def test_the_composite_exposes_the_spines_unresolved_offers(self):
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", self._feed):
+                source = self._composite(base)
+                result = Collector(LocalStorage(Path(base) / "data"), source,
+                                   CATEGORIES, min_products=1, trial=True).run(STORE)
+        self.assertEqual(result["report"]["unresolved_offers"]["count"], 2)
+
+    def test_the_composite_does_not_accumulate_across_runs(self):
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", self._feed):
+                source = self._composite(base)
+                storage = LocalStorage(Path(base) / "data")
+                counts = []
+                for _ in range(3):
+                    Collector(storage, source, CATEGORIES, min_products=1,
+                              trial=True).run(STORE)
+                    counts.append(len(source.unresolved_offers))
+        self.assertEqual(counts, [2, 2, 2])
+
+    def test_composite_provenance_is_per_run_not_cumulative(self):
+        with tempfile.TemporaryDirectory() as base:
+            with patch("walmart_collector.opd.signed_records", self._feed):
+                source = self._composite(base)
+                storage = LocalStorage(Path(base) / "data")
+                traced = []
+                for _ in range(3):
+                    Collector(storage, source, CATEGORIES, min_products=1,
+                              trial=True).run(STORE)
+                    traced.append(source.provenance_report()["products_traced"])
+        self.assertEqual(len(set(traced)), 1,
+                         f"provenance must not accumulate across runs: {traced}")
 
 
 if __name__ == "__main__":

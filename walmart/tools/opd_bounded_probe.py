@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import csv
 import gzip
 import io
 import json
@@ -144,7 +145,7 @@ class Budget:
 
 
 class _CountingRedirects(HTTPRedirectHandler):
-    """Charge each redirect hop, and refuse one that leaves the allowlist.
+    """Charge each redirect hop, and refuse one that leaves THIS request's host.
 
     Counting is not sufficient. urllib forwards the Authorization header across
     a cross-host redirect, so a 302 on the token or feed call would hand the
@@ -152,23 +153,34 @@ class _CountingRedirects(HTTPRedirectHandler):
     interpreter rather than assumed.
     """
 
-    def __init__(self, budget):
+    def __init__(self, budget, allowed_hosts):
         self.budget = budget
+        # Per request. A global allowlist let a 302 on the OAuth call redirect
+        # to the signed-download host, which is multi-tenant, carrying the
+        # Basic credentials with it. An API call may only redirect within the
+        # API host; a signed download only within the object store.
+        self.allowed_hosts = tuple(allowed_hosts)
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         host = urlparse(newurl).hostname or ""
-        if host not in ALLOWED_HOSTS:
+        if host not in self.allowed_hosts:
             raise ProbeFailure(
-                f"Refusing a {code} redirect to {host!r}, which is not an expected "
-                "host. The request carries a bearer token and urllib would forward it.")
+                f"Refusing a {code} redirect to {host!r}; this request may only "
+                f"redirect within {self.allowed_hosts}. The request carries credentials "
+                "and urllib would forward them across hosts.")
         self.budget.charge(f"redirect {code}", newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def fetch(budget, label, url, *, headers=None, data=None, method="GET"):
+def fetch(budget, label, url, *, headers=None, data=None, method="GET",
+          allowed_hosts=None):
     """One request. No retry under any status, by design."""
+    host = urlparse(url).hostname or ""
+    allowed = tuple(allowed_hosts) if allowed_hosts else (host,)
+    if host not in allowed:
+        raise ProbeFailure(f"{label} targets {host!r}, which is not in {allowed}")
     budget.charge(label, url)
-    opener = build_opener(_CountingRedirects(budget))
+    opener = build_opener(_CountingRedirects(budget, allowed))
     request = Request(url, data=data, headers=headers or {}, method=method)
     try:
         with opener.open(request, timeout=60) as response:
@@ -190,7 +202,7 @@ def fetch(budget, label, url, *, headers=None, data=None, method="GET"):
 def get_token(budget, client_id, client_secret):
     basic = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
     status, body = fetch(
-        budget, "oauth token", TOKEN_URL, method="POST",
+        budget, "oauth token", TOKEN_URL, method="POST", allowed_hosts=(API_HOST,),
         data=urlencode({"grant_type": "client_credentials"}).encode(),
         headers={"Authorization": f"Basic {basic}",
                  "Content-Type": "application/x-www-form-urlencoded",
@@ -203,7 +215,7 @@ def get_token(budget, client_id, client_secret):
 
 def api_get(budget, label, token, client_id, path, params=None):
     url = BASE + path + (("?" + urlencode(params)) if params else "")
-    status, body = fetch(budget, label, url, headers={
+    status, body = fetch(budget, label, url, allowed_hosts=(API_HOST,), headers={
         "Authorization": f"Bearer {token}", "WM_SEC.ACCESS_TOKEN": token,
         "WM_CONSUMER.ID": client_id, "Accept": "application/json"})
     try:
@@ -230,7 +242,7 @@ def feed_urls(document, key, kind):
 def api_post(budget, label, token, client_id, path, body):
     url = BASE + path
     status, raw = fetch(budget, label, url, method="POST",
-                        data=json.dumps(body).encode(),
+                        data=json.dumps(body).encode(), allowed_hosts=(API_HOST,),
                         headers={"Authorization": f"Bearer {token}",
                                  "WM_SEC.ACCESS_TOKEN": token,
                                  "WM_CONSUMER.ID": client_id,
@@ -242,22 +254,25 @@ def api_post(budget, label, token, client_id, path, body):
         raise ProbeFailure(f"{label} did not return JSON") from exc
 
 
-def signed_rows(budget, label, url, limit):
-    if urlparse(url).hostname not in SIGNED_HOSTS:
-        raise ProbeFailure(f"Refusing a signed URL on an unexpected host: "
-                           f"{urlparse(url).hostname}")
-    status, body = fetch(budget, label, url)
-    # Decide on the PATH, not the whole URL. Every real signed URL carries a
-    # query string, so url.endswith(".gz") is always false for them: the body
-    # was never decompressed, every json.loads failed, the except below ate the
-    # error, and the probe returned zero rows while reporting a vacuous pass.
-    if urlparse(url).path.endswith(".gz") or body[:2] == b"\x1f\x8b":
-        try:
-            body = gzip.decompress(body)
-        except OSError as exc:
-            raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
+def parse_feed_body(body, kind):
+    """Parse a feed body the way walmart_collector/opd.py does.
+
+    The two feeds are NOT the same format, which an earlier version of this
+    probe assumed. opd.py:215 reads the PRICE feed with
+    csv.DictReader(delimiter="^") and the CATALOG feed as newline-delimited
+    JSON *or* a JSON array. Assuming NDJSON for both meant a live run would
+    have failed on its last request, and the test that claimed conformance
+    served NDJSON from its own mock rather than the documented shape.
+    """
+    text = body.decode("utf-8-sig", "replace")
+    if kind == "price":
+        return [dict(row) for row in csv.DictReader(io.StringIO(text), delimiter="^")]
+    stripped = text.lstrip()
+    if stripped.startswith("["):
+        parsed = json.loads(stripped)
+        return [r for r in parsed if isinstance(r, dict)]
     rows = []
-    for line in io.BytesIO(body):
+    for line in stripped.splitlines():
         line = line.strip()
         if not line:
             continue
@@ -267,11 +282,27 @@ def signed_rows(budget, label, url, limit):
             continue
         if isinstance(row, dict):
             rows.append(row)
-        if len(rows) >= limit:
-            break
+    return rows
+
+
+def signed_rows(budget, label, url, limit, kind):
+    if urlparse(url).hostname not in SIGNED_HOSTS:
+        raise ProbeFailure(f"Refusing a signed URL on an unexpected host: "
+                           f"{urlparse(url).hostname}")
+    status, body = fetch(budget, label, url, allowed_hosts=SIGNED_HOSTS)
+    # Decide on the PATH, not the whole URL. Every real signed URL carries a
+    # query string, so url.endswith(".gz") is always false for them: the body
+    # was never decompressed, every json.loads failed, the except below ate the
+    # error, and the probe returned zero rows while reporting a vacuous pass.
+    if urlparse(url).path.endswith(".gz") or body[:2] == b"\x1f\x8b":
+        try:
+            body = gzip.decompress(body)
+        except OSError as exc:
+            raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
+    rows = parse_feed_body(body, kind)[:limit]
     if not rows:
         raise ProbeFailure(
-            f"{label} yielded no parseable JSON rows from {len(body)} bytes. "
+            f"{label} yielded no parseable {kind} rows from {len(body)} bytes. "
             "Reporting zero rows as a result would be a vacuous pass.")
     return rows
 
@@ -355,8 +386,10 @@ def run(args, budget):
     catalog_urls = feed_urls(catalog, "product_snapshot_data", "catalog")
     price_urls = feed_urls(prices, "price_avail_snapshot_data", "price")
 
-    catalog_rows = signed_rows(budget, "signed catalog file", catalog_urls[0], args.products)
-    price_rows = signed_rows(budget, "signed price file", price_urls[0], args.products * 20)
+    catalog_rows = signed_rows(budget, "signed catalog file", catalog_urls[0],
+                               args.products, "catalog")
+    price_rows = signed_rows(budget, "signed price file", price_urls[0],
+                             args.products * 20, "price")
 
     for_store = [r for r in price_rows if str(r.get("storeCode")) == args.store]
     by_offer = {str(r.get("offerId")): r for r in for_store}

@@ -11,6 +11,9 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlparse
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.config import categories_from_csv, stores_from_json
 from walmart_collector.runner import Collector
 from walmart_collector.sources import AuthorizedProviderSource, AccessChallenge, Page, SourceError

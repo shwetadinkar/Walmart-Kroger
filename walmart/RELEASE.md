@@ -5,8 +5,10 @@ Prepared by Shweta, 31 October 2026.
 Your review asked for one authoritative release, because `main` still resolved
 to `ad67fd3` and the regeneration instructions named an older branch. A
 reviewer following them would have used the defective importer and the
-defective verifier. This file is the answer, and the regeneration instructions
-now point here.
+defective verifier. This file is the answer. The regeneration instructions are
+in this file, under "Regenerating the ledger" below; the copy inside the
+package delivered on 29 October still names the old branch and cannot be
+edited where it sits, so the next package carries a corrected one.
 
 ## Use this
 
@@ -49,8 +51,10 @@ Walmart:
 | `marianos-fresh-runs-category-evidence` | 17 commits of Mariano's runbooks, retention policy and Azure pilot configuration |
 | `marianos-live-api-west-loop` | 2 commits of Mariano's West Loop API trial evidence |
 
-Neither contains Walmart code. They belong to the Mariano's submission and are
-deliberately not folded into a Walmart corrections release.
+Neither branch CHANGES any Walmart file. Both carry the Walmart tree, as every
+branch in this repository does, but `git diff <merge-base>..<branch> -- walmart/`
+is empty for each. They belong to the Mariano's submission and are deliberately
+not folded into a Walmart corrections release.
 
 One file was deliberately **removed** rather than carried forward:
 `tools/headed_display_probe.py`. Its headless-and-headed comparison was folded
@@ -92,7 +96,9 @@ commit is an ancestor, and the five corrections sit on top of it:
 5. `tools/opd_bounded_probe.py` is the bounded first test, with one cumulative
    budget and no retries.
 
-Tests: 152 on Walmart, 91 on Mariano's.
+Tests: 155 on Walmart, 91 on Mariano's. Every test file also runs directly,
+not only under pytest, so a file invoked by hand cannot report a false pass by
+quietly executing a subset.
 
 ## Regenerating the ledger
 

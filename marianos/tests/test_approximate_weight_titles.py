@@ -7,6 +7,9 @@ the pattern had no "average weight" wording in it at all, so a product titled
 """
 import unittest
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from marianos_collector.config import Store
 from marianos_collector.schema import RecordRejected, make_record
 

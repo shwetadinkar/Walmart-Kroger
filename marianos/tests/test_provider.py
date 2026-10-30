@@ -7,6 +7,9 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from io import BytesIO
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from marianos_collector.config import categories_from_csv,stores_from_json
 from marianos_collector.sources import AuthorizedProviderSource,SourceError,AccessChallenge,Page
 from marianos_collector.runner import Collector,ValidationFailure

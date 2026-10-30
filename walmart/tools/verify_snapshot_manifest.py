@@ -93,6 +93,18 @@ def load_entries(manifest):
 
     for key in HASH_KEYS:
         if all(e.get(key) for e in entries):
+            # The file NAME was type-checked above but the hash VALUE was not,
+            # so {"sha256": 12345} reached the comparison and raised TypeError,
+            # surfacing as exit 1 ("files were altered") rather than exit 2
+            # ("this manifest is unverifiable"). {"sha256": ["x"]} was worse: it
+            # compared cleanly against nothing and was reported as ALTERED.
+            bad = [f"entry {i}: {key} must be text, found {type(e[key]).__name__}"
+                   for i, e in enumerate(entries) if not isinstance(e[key], str)]
+            if bad:
+                raise ManifestError(
+                    f"Manifest declares {declared} entries and {len(bad)} carry an "
+                    "unusable hash value: " + "; ".join(bad[:10])
+                    + ("; ..." if len(bad) > 10 else ""))
             return entries, key, declared
     without = [str(e.get("file")) for e in entries if not any(e.get(k) for k in HASH_KEYS)]
     present = sorted({k for e in entries for k in e if k.endswith("sha256")})

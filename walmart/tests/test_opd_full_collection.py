@@ -7,6 +7,9 @@ from datetime import datetime,timezone
 from pathlib import Path
 from unittest.mock import patch
 
+import sys as _sys, pathlib as _pathlib
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
+
 from walmart_collector.config import Category,Store
 from walmart_collector.opd import (
     WalmartOPDSnapshotSource, OPDClient, SourceError,
@@ -145,7 +148,6 @@ class TestOPD(unittest.TestCase):
     def test_credentials_required(self):
         with self.assertRaises(SourceError): OPDClient("","")
 
-if __name__ == "__main__":unittest.main()
 
 class TestStreaming(unittest.TestCase):
     def test_array_and_ndjson(self):
@@ -158,3 +160,7 @@ class TestStreaming(unittest.TestCase):
         from walmart_collector.opd import _stream_json_values
         with self.assertRaises(SourceError):
             list(_stream_json_values(io.BytesIO(b'[{"offerId":"A"}')))
+
+
+if __name__ == "__main__":
+    unittest.main()

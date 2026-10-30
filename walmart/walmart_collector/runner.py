@@ -256,6 +256,13 @@ class Collector:
             **({"provenance": self.source.provenance_report()}
                if hasattr(self.source, "provenance_report") else {}),
         }
+        # Before ANY artifact is written, not merely before the pointer. Gating
+        # only the pointer still left data.json, report.json and manifest.json
+        # on disk under published/, including a report reading scope=full with
+        # source_coverage_attested=false and status=validated. That orphan is
+        # exactly the artifact this gate exists to prevent, and a reviewer
+        # finding it would be right to say the gate had not worked.
+        self._publication_allowed()
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
         prefix = f"{self._published_root(store)}/runs/{release}"
         data_key, report_key, manifest_key = prefix+"/data.json", prefix+"/report.json", prefix+"/manifest.json"
