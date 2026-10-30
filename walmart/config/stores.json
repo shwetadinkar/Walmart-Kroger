@@ -1,6 +1,31 @@
 {
+  "store_logo_source": {
+    "url": "https://brandcenter.walmart.com/content/dam/brand/flower-icon.svg",
+    "asset": "Walmart Spark icon (SVG)",
+    "origin": "Walmart Brand Center, the retailer's own official brand asset site",
+    "reference_page": "https://brandcenter.walmart.com/brand/brand-identity/spark",
+    "verified_utc": "2026-10-30T03:58:59.783553Z",
+    "verified_response": "HTTP 200, content-type image/svg+xml, 4756 bytes",
+    "scope": "The Spark is the retailer mark and is not store specific, so every configured Walmart store references the same asset.",
+    "usage_note": "Referenced as published and never altered. Walmart Brand Center states the Spark must not be altered, redrawn or recoloured without approval from Walmart Creative Studio. This configuration links the asset only; it does not copy or modify it.",
+    "note": "Recorded in configuration rather than hard coded, so the asset can be replaced without a code change."
+  },
   "stores": [
-    {"store_id":"100", "zipcode":"72712", "store_name":"Walmart Supercenter #100", "store_location":"406 S Walton Blvd, Bentonville, AR 72712", "store_logo":"", "enabled":true},
-    {"store_id":"5959", "zipcode":"77007", "store_name":"Walmart Supercenter #5959", "store_location":"111 Yale St, Houston, TX 77007", "store_logo":"", "enabled":true}
+    {
+      "store_id": "100",
+      "zipcode": "72712",
+      "store_name": "Walmart Supercenter #100",
+      "store_location": "406 S Walton Blvd, Bentonville, AR 72712",
+      "store_logo": "https://brandcenter.walmart.com/content/dam/brand/flower-icon.svg",
+      "enabled": true
+    },
+    {
+      "store_id": "5959",
+      "zipcode": "77007",
+      "store_name": "Walmart Supercenter #5959",
+      "store_location": "111 Yale St, Houston, TX 77007",
+      "store_logo": "https://brandcenter.walmart.com/content/dam/brand/flower-icon.svg",
+      "enabled": true
+    }
   ]
 }
