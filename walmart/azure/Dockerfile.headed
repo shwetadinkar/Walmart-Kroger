@@ -1,0 +1,32 @@
+# Image for the headed-versus-headless display probe.
+#
+# This image exists to run ONE measurement and then be thrown away. It is not a
+# collector image and must not be used as one: it carries a virtual display and
+# a full browser, which the collector does not need.
+FROM mcr.microsoft.com/playwright/python:v1.49.0-jammy
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /probe
+
+# Xvfb provides the virtual display the headed arm needs. xauth keeps Chrome
+# from refusing the display on a bare container.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends xvfb xauth \
+ && rm -rf /var/lib/apt/lists/*
+
+# The browser build must match the pinned Playwright in the base image. A
+# version skew between the library and the installed browsers is what broke an
+# earlier Azure run in this project, so the version is pinned, not floating.
+RUN pip install --no-cache-dir "playwright==1.49.0"
+
+COPY tools/egress_region_probe.py ./egress_region_probe.py
+
+# xvfb-run starts the display, exports DISPLAY, and tears it down afterwards,
+# so the headed arm needs no separate supervision.
+ENTRYPOINT ["xvfb-run", "-a", "--server-args=-screen 0 1920x1080x24", \
+            "python", "/probe/egress_region_probe.py"]
+# --display-ab runs the headless and headed arms against the same target from
+# the same address in one run. Override --target and --region-label per run.
+CMD ["--display-ab", "--method", "browser", \
+     "--target", "https://www.walmart.com/cp/food/976759", \
+     "--region-label", "azure-eastus", "--output", "/probe/out"]

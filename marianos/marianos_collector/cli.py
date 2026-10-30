@@ -8,6 +8,9 @@ import os
 import sys
 from pathlib import Path
 
+from .catalog_v2 import CatalogV2Client,CatalogV2Source
+from .catalog_v2 import Credentials as CatalogV2Credentials
+from .composition import CompositeSource,unavailable_crawl
 from .config import categories_from_csv,stores_from_json
 from .kroger import Credentials,KrogerClient,KrogerError,location_candidates,trial
 from .runner import Collector
@@ -22,13 +25,56 @@ class Formatter(logging.Formatter):
                            'store':getattr(r,'store_id',''),'category':getattr(r,'category',''),
                            'message':r.getMessage()})
 
+# Measured 30 October 2026 from Azure Container Instances, US Virginia (egress
+# 135.237.21.80) and South India, with real Chromium, one navigation per URL,
+# no proxy and no challenge solving. A neutral control returned HTTP 200 in
+# 336ms from the same container in the same run, so this is a retailer refusal
+# and not a network fault. Reproduced from a second, independent cloud provider.
+CRAWL_BLOCKED_REASON=(
+    'Website crawl is refused from Azure datacenter egress: Marianos closed the '
+    'connection with ERR_HTTP2_PROTOCOL_ERROR before any HTTP exchange, and Walmart '
+    'returned a PerimeterX "Robot or human?" challenge. Measured 2026-10-30 from two '
+    'Azure regions and reproduced on a second cloud provider. Region is not the variable.'
+)
+
+
+def build_source(kind,a,store,p):
+    """Construct one source and its minimum-product floor.
+
+    Shared by the direct modes and by the composite spine so that the
+    authorization and demo-store guards cannot drift apart between them.
+    """
+    if kind=='catalog_v2':
+        # Partner tier. The public Products API is NOT an alternative here:
+        # Kroger's acceptable use policy for public APIs prohibits gathering
+        # response data into a database and prohibits cross-retailer price
+        # comparison, which is exactly what this collector does.
+        if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
+            p.error('Catalog V2 requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
+        if store.store_id.upper().startswith(('DEMO','REPLACE','UNRESOLVED')):
+            p.error('Catalog V2 requires a verified real store ID, not a demo placeholder')
+        client=CatalogV2Client(CatalogV2Credentials.from_environment())
+        return CatalogV2Source(client,a.location_id or store.store_id),a.minimum_products or 500
+    if kind=='provider':
+        if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
+            p.error('Provider mode requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
+        if store.store_id.upper().startswith(('DEMO','REPLACE','UNRESOLVED')):
+            p.error('Provider mode requires a verified real store ID, not a demo placeholder')
+        return AuthorizedProviderSource(os.environ.get('PROVIDER_BASE_URL',''),
+                                        os.environ.get('PROVIDER_API_TOKEN','')),a.minimum_products or 500
+    print('SYNTHETIC DEMO: does not contain real Mariano\'s data.',file=sys.stderr)
+    return FixtureSource(a.fixtures),a.minimum_products or 1
+
+
 def parser_():
     p=argparse.ArgumentParser(description='Mariano\'s validated collection and Kroger API diagnostics')
     p.add_argument('command',choices=['list','run','status','export','clear-checkpoints','kroger-locations','kroger-trial'])
     p.add_argument('--stores',type=Path,default=ROOT/'config/stores.json')
     p.add_argument('--categories',type=Path,default=ROOT/'config/categories.csv')
     p.add_argument('--store',default='DEMO-LAKESHORE-60601')
-    p.add_argument('--source',choices=['fixture','provider'],default='fixture')
+    p.add_argument('--source',choices=['fixture','provider','catalog_v2','composite'],default='fixture')
+    p.add_argument('--spine',choices=['fixture','provider','catalog_v2'],default='catalog_v2',
+                   help='Which source enumerates the assortment when --source composite')
     p.add_argument('--fixtures',type=Path,default=ROOT/'fixtures')
     p.add_argument('--backend',choices=['local','azure'],default='local')
     p.add_argument('--output',type=Path,default=ROOT/'.collector-output')
@@ -102,17 +148,16 @@ def main(argv=None):
                 for cat in categories:storage.delete(f'{checkpoint_root}/{store.store_id}/{cat.slug}.json')
             print('Partial checkpoints reset; published releases untouched');return 0
         if a.minimum_products is not None and a.minimum_products<1:p.error('minimum must be >=1')
-        if a.source=='provider':
-            if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
-                p.error('Provider mode requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
-            if store.store_id.upper().startswith(('DEMO','REPLACE','UNRESOLVED')):
-                p.error('Provider mode requires a verified real store ID, not a demo placeholder')
-            src=AuthorizedProviderSource(os.environ.get('PROVIDER_BASE_URL',''),os.environ.get('PROVIDER_API_TOKEN',''))
-            minp=a.minimum_products or 500
+        if a.source=='composite':
+            # Hybrid: one source enumerates the assortment, others contribute
+            # the fields it cannot supply. The crawl is registered for displayed
+            # PPM and digital coupon terms because no Kroger API exposes them,
+            # and it reports itself unavailable rather than being omitted, so
+            # the gap in the output is explained rather than merely present.
+            spine,minp=build_source(a.spine,a,store,p)
+            src=CompositeSource(spine,a.spine,[unavailable_crawl(CRAWL_BLOCKED_REASON)])
         else:
-            src=FixtureSource(a.fixtures)
-            minp=a.minimum_products or 1
-            print('SYNTHETIC DEMO: does not contain real Mariano\'s data.',file=sys.stderr)
+            src,minp=build_source(a.source,a,store,p)
         output=Collector(storage,src,categories,min_products=minp,trial=subset).run(store)
         print(json.dumps(output,indent=2));return 0
     except (Exception,KeyboardInterrupt) as exc:

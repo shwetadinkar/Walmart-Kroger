@@ -12,6 +12,19 @@ from .config import categories_from_csv, stores_from_json
 from .runner import Collector, _payload_hash
 from .sources import FixtureSource, AuthorizedProviderSource
 from .opd import OPDClient, WalmartOPDSnapshotSource
+from .composition import CompositeSource, unavailable_crawl
+
+# Measured 30 October 2026 from Azure Container Instances, US Virginia (egress
+# 135.237.21.80), with real Chromium, one navigation per URL, no proxy and no
+# challenge solving. A neutral control returned HTTP 200 in 336ms from the same
+# container in the same run, so this is a retailer refusal and not a network
+# fault. Reproduced from a second, independent cloud provider.
+CRAWL_BLOCKED_REASON = (
+    "Website crawl is refused from Azure datacenter egress: Walmart returned HTTP 200 "
+    "carrying a PerimeterX \"Robot or human?\" challenge page instead of the product, on "
+    "both a category page and a product page. Measured 2026-10-30 and reproduced on a "
+    "second cloud provider. Region is not the variable."
+)
 from .storage import LocalStorage, AzureBlobStorage, read_json
 
 PROJECT = Path(__file__).resolve().parent.parent
@@ -35,7 +48,9 @@ def build_parser():
     parser.add_argument("--backend", choices=["local", "azure"], default="local")
     parser.add_argument("--output", type=Path, default=PROJECT / ".collector-output")
     parser.add_argument("--container", default=os.environ.get("AZURE_BLOB_CONTAINER", "retail-collection"))
-    parser.add_argument("--source", choices=["fixture", "provider", "opd"], default="fixture")
+    parser.add_argument("--source", choices=["fixture", "provider", "opd", "composite"], default="fixture")
+    parser.add_argument("--spine", choices=["fixture", "provider", "opd"], default="opd",
+                        help="Which source enumerates the assortment when --source composite")
     parser.add_argument("--fixtures", type=Path, default=PROJECT / "fixtures")
     parser.add_argument("--opd-mapping", type=Path, default=PROJECT / "config/opd_category_mapping.json")
     parser.add_argument("--opd-cache", type=Path, default=None, help="Persistent directory; mount a persistent volume on Azure")
@@ -118,12 +133,13 @@ def main(argv=None):
             return 0
         if args.minimum_products is not None and args.minimum_products < 1:
             parser.error("Minimum products must be >= 1")
-        if args.source == "provider":
+        spine_kind = args.spine if args.source == "composite" else args.source
+        if spine_kind == "provider":
             if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
                 parser.error("Provider mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
             source = AuthorizedProviderSource(os.environ.get("PROVIDER_BASE_URL", ""),os.environ.get("PROVIDER_API_TOKEN", ""))
             min_products = args.minimum_products or 500
-        elif args.source == "opd":
+        elif spine_kind == "opd":
             if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
                 parser.error("OPD mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
             credentials = (os.environ.get("WALMART_OPD_CLIENT_ID", ""),
@@ -137,6 +153,12 @@ def main(argv=None):
             source = FixtureSource(args.fixtures)
             min_products = args.minimum_products or 1
             print("WARNING: DEMO MODE — all records are synthetic and cannot serve as contest proof.",file=sys.stderr)
+        if args.source == "composite":
+            # OPD documents no offer fields at all, so sale price, volume terms
+            # and digital terms all depend on the crawl. It is registered with
+            # its measured refusal reason rather than omitted, so the resulting
+            # blanks in the output are explained rather than merely present.
+            source = CompositeSource(source, spine_kind, [unavailable_crawl(CRAWL_BLOCKED_REASON)])
         canaries = json.loads(args.canaries.read_text(encoding="utf-8")) if args.canaries else {}
         result = Collector(storage, source, categories, min_products=min_products, canaries=canaries, trial=trial).run(store)
         print(json.dumps({"manifest": result["manifest"],"report":result["report"]}, indent=2))

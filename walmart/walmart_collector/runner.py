@@ -250,6 +250,11 @@ class Collector:
                                               for u in self.source.unresolved_offers)),
                     "sample": self.source.unresolved_offers[:25]}}
                if hasattr(self.source, "unresolved_offers") else {}),
+            # A composed run can take different fields from different sources,
+            # so the report has to say which source produced what. Sources that
+            # do not compose have nothing to add here.
+            **({"provenance": self.source.provenance_report()}
+               if hasattr(self.source, "provenance_report") else {}),
         }
         release = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")+"_"+uuid.uuid4().hex[:8]
         prefix = f"{self._published_root(store)}/runs/{release}"
