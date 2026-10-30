@@ -146,7 +146,9 @@ def write_findings(path, receipt, acc):
          f"- Actor: `{receipt['actor']}`",
          f"- Requested store: {sb['requested_store_id']}",
          f"- Item cap: {receipt['bounds']['max_items']}, requests: 1, retries: 0, "
-         f"timeout: {receipt['bounds']['timeout_seconds']}s\n",
+         f"timeout: {receipt['bounds']['timeout_seconds']}s",
+         f"- Provider plan tier: **{receipt.get('provider_plan_tier', 'unspecified')}**. A trial "
+         "result demonstrates capability, not an ongoing entitlement.\n",
          "## Store binding\n",
          f"Verdict: **{sb['verdict']}**. {sb['items_bound_to_requested_store']} of "
          f"{acc['items_returned']} items reported the requested store.\n"]
@@ -190,6 +192,10 @@ def main(argv=None) -> int:
     p.add_argument("--search", default="", help="Keyword, used only if no item ids are given")
     p.add_argument("--max-items", type=int, default=5)
     p.add_argument("--timeout", type=int, default=600)
+    p.add_argument("--plan-tier", default="unspecified",
+                   choices=["trial", "free", "paid", "unspecified"],
+                   help="Which commercial tier produced this run. Recorded in the receipt "
+                        "because a trial result may not be reproducible without payment.")
     p.add_argument("--output", type=Path, required=True,
                    help="PRIVATE output root, must be outside git")
     p.add_argument("--audit", type=Path,
@@ -262,6 +268,12 @@ def main(argv=None) -> int:
         "merged_into_any_dataset": False,
         "touches_collector_state": False,
         "secrets_in_output": False,
+        "provider_plan_tier": args.plan_tier,
+        "result_reproducible_without_payment": args.plan_tier == "free",
+        "cost_disclosure_note": (
+            "A trial result demonstrates capability, not an ongoing entitlement. Any "
+            "production use of this source needs a disclosed paid plan and a measured "
+            "running cost."),
     }
     (outdir / "RECEIPT.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
 

@@ -42,8 +42,15 @@ python tools/source_qualification_probe.py \
   --store-id 100 --zipcode 72712 \
   --item-ids 20877373221 1446707820 \
   --max-items 5 --timeout 600 \
+  --plan-tier trial \
   --output /private/qualification
 ```
+
+Set `--plan-tier` to whichever tier actually produced the run. A trial gives full
+features for a limited period, so a trial result shows what the source *can* do
+but is not an ongoing entitlement. The receipt records the tier and sets
+`result_reproducible_without_payment` accordingly, because the brief requires
+every paid API or service to be disclosed with a running cost.
 
 Use `--search` instead of `--item-ids` only if specific items are not known.
 Named item IDs make the run deterministic and repeatable.
