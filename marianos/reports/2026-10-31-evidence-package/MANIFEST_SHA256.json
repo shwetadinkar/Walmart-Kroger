@@ -1,6 +1,6 @@
 {
   "package": "marianos-evidence-2026-10-31",
-  "files": 82,
+  "files": 80,
   "self": "MANIFEST_SHA256.json lists every other file and cannot hash itself",
   "statements_recomputed_from_the_bytes": {
     "checkpoint": {
@@ -15,6 +15,8 @@
       "same_product_set": true,
       "same_product_order": false,
       "products": 50,
+      "earlier_total": 943,
+      "fresh_total": 940,
       "changed_values_by_field": {
         "/items[]/price/effectiveDate/value": 17,
         "/pagination/total": 1
@@ -31,12 +33,33 @@
       "refusal_record_products": 3,
       "refusal_record_remaining": 92,
       "sizes_recovered_from_listing_03": 7,
+      "listing_03_bytes": 111454,
       "listing_03_sha256": "7df3e2da492c0b80175aff6382577bb311583431a95796500df51c2775989e60"
     },
     "promotion": {
       "expiry_discrepancy_resolved": false
     }
   },
+  "withheld": [
+    {
+      "path": "azure_recovery/RESTORED_CONTAINER.png",
+      "bytes": 73390,
+      "sha256": "7ab0a0faa813b2eeb7cf8d3179d545d3653a64791753b83bd774c7d45ea6cf41",
+      "reason": "portal screenshot showing account-identifying details"
+    },
+    {
+      "path": "azure_recovery/RESTORED_OVERVIEW.png",
+      "bytes": 73733,
+      "sha256": "70d33c6206c021a17c2914bcfcc57d4b3d3a5888d6d5f8ef4c08ee1344155bb3",
+      "reason": "portal screenshot showing account-identifying details"
+    },
+    {
+      "path": "azure_recovery/TEMPORARY_CONFIG_PENDING_ROLLBACK.png",
+      "bytes": 56068,
+      "sha256": "679073598a0b3d45dd345a8750bd5d83135f6e43fad9c722a1a1f0dd9ed0ec0f",
+      "reason": "portal screenshot showing account-identifying details"
+    }
+  ],
   "entries": [
     {
       "path": "C0_PROMOTION_IDENTITY.md",
@@ -60,9 +83,16 @@
       "status": "current"
     },
     {
+      "path": "README.md",
+      "bytes": 321,
+      "sha256": "75b7fcc9801ee88aa40eb9f60a9d776dad21da15f100d4879570ef5dc4cc4241",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
       "path": "RESULTS.md",
-      "bytes": 5267,
-      "sha256": "0404c8d8e703bbecc40b756e23ab5af2dfac06d59785739341d159db7c66738c",
+      "bytes": 5629,
+      "sha256": "fcb5f1847804f6af6e79383a96fdf624c922451cbe3bfabf9e72329dbd0053d2",
       "origin": "written 2026-10-31",
       "status": "current"
     },
@@ -137,7 +167,7 @@
       "bytes": 2243,
       "sha256": "4c9e0b58c5bef808f3470d6aa10ad7115900b6222a9a2a1e0c20398161719a1a",
       "origin": "original, unchanged",
-      "status": "current"
+      "status": "unchanged 28 October manifest; the files it lists that are absent are the ones declared under withheld"
     },
     {
       "path": "azure_recovery/REPEAT_COMPARISON.json",
@@ -148,27 +178,11 @@
       "cid_parameters": 10
     },
     {
-      "path": "azure_recovery/RESTORED_CONTAINER.png",
-      "bytes": 73390,
-      "sha256": "7ab0a0faa813b2eeb7cf8d3179d545d3653a64791753b83bd774c7d45ea6cf41",
-      "origin": "original, unchanged",
-      "status": "current",
-      "shows_account_identity": true
-    },
-    {
       "path": "azure_recovery/RESTORED_CONTAINER_UI.txt",
       "bytes": 3010,
       "sha256": "58c99779c4fadeda3d5e9f2c57c598b48018b1619f696c32c8cc9c6b3679cdad",
       "origin": "original, unchanged",
       "status": "current"
-    },
-    {
-      "path": "azure_recovery/RESTORED_OVERVIEW.png",
-      "bytes": 73733,
-      "sha256": "70d33c6206c021a17c2914bcfcc57d4b3d3a5888d6d5f8ef4c08ee1344155bb3",
-      "origin": "original, unchanged",
-      "status": "current",
-      "shows_account_identity": true
     },
     {
       "path": "azure_recovery/RESTORED_OVERVIEW_UI.txt",
@@ -226,14 +240,6 @@
       "sha256": "3fdf19c243994868aa38ee21f447f9ce31f6c2e8af0a94a2227c4d1adb525b68",
       "origin": "original, unchanged",
       "status": "current"
-    },
-    {
-      "path": "azure_recovery/TEMPORARY_CONFIG_PENDING_ROLLBACK.png",
-      "bytes": 56068,
-      "sha256": "679073598a0b3d45dd345a8750bd5d83135f6e43fad9c722a1a1f0dd9ed0ec0f",
-      "origin": "original, unchanged",
-      "status": "current",
-      "shows_account_identity": true
     },
     {
       "path": "azure_recovery/VERIFIED_STORE_ORIGINAL.json",

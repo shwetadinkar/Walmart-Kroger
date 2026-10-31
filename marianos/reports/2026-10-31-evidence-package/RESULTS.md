@@ -42,9 +42,13 @@ SHA-256 unchanged.
 **Text copied from the portal:** `EXECUTION_HISTORY_UI.txt`,
 `RESTORED_CONTAINER_UI.txt` and `RESTORED_OVERVIEW_UI.txt`.
 
-**Screenshots, three:** `RESTORED_CONTAINER.png`, `RESTORED_OVERVIEW.png` and
-`TEMPORARY_CONFIG_PENDING_ROLLBACK.png`. No screenshot of an execution or of a
-receipt is included.
+**Portal screenshots: none.** The three portal screenshots are withheld because
+they show account-identifying details. UI transcriptions are supplied instead:
+`RESTORED_CONTAINER_UI.txt` and `RESTORED_OVERVIEW_UI.txt` transcribe the restored
+container and overview pages. They are accessibility-tree text, not images. The
+third screenshot, of the temporary configuration before rollback, has no
+transcription. `MANIFEST_SHA256.json` records the size and hash of all three, and
+the 28 October manifest in `azure_recovery/` still lists them.
 
 **Written during the trial:** `SCOPE.json`, `START_EVENT.json`, `STATUS.json`,
 `REPEAT_COMPARISON.json`, `BASELINE_PRESERVATION.json` and
