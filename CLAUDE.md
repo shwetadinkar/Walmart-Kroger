@@ -102,8 +102,9 @@ the known gap; `reports/2026-10-24-west-loop/CATEGORY_COVERAGE.csv` states it.
 
 `marianos/tools/kroger_full_sweep.py` sweeps many search terms per category to
 widen coverage, because the Kroger public Products API has no category
-enumeration. A first run was stopped after 12,826 records because the tool has
-four defects, all of which are fixed by using what already exists:
+enumeration. A first run was stopped after 18,351 records over 198 of 301 terms, with 63
+page failures, because the tool has four defects, all fixed by using what
+already exists:
 
 1. It fabricates `https://www.marianos.com/p/<upc>`, which does not resolve.
    The API returns `productPageURI`; `api_trial.normalize` validates and uses
@@ -115,6 +116,15 @@ four defects, all of which are fixed by using what already exists:
    the product-URL check are not applied.
 4. It discards the raw API product, so a later rule change forces a re-fetch
    rather than a re-filter.
+
+**Fetching and rules are now separate.** `tools/kroger_raw_fetch.py` captures
+raw API responses and applies no rule of any kind, so rules can be re-applied
+offline as often as needed without spending another request. It writes
+`pages/<term>__<start>.json` verbatim plus a manifest, resumes by skipping
+pages already on disk, and records where Kroger refuses deep paging in
+`failures_by_start_value`, which is the measurement `--max-start` should be set
+from. Treat its output as the input to the sweep, not as a dataset: nothing it
+writes is publishable as collected.
 
 Fix by porting `api_trial.normalize` onto this branch and having the sweep use
 it; merging `api_trial.CATEGORY_MAP` into `config/category_map.json`, keeping
@@ -129,6 +139,11 @@ October set at the same store, for shared UPCs, price movement and newly
 covered roots.
 
 Keep the 24 October output untouched. New runs go to their own output folder.
+`marianos/out/sweep-2026-10-31/` is read-only evidence from the defective run;
+its 18,351 records have fabricated URLs, no pickup-offer test and no raw
+responses, so they must never be resumed, filtered or published. The checkpoint
+schema is changing: a checkpoint written by older code must be refused by
+`--resume`, not silently adopted.
 
 ## Reporting
 
