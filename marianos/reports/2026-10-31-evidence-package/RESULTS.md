@@ -108,6 +108,11 @@ observations. `PRODUCTS_34_PARTIAL_V2.json` and its V2 companions are current;
 the earlier versions are kept and marked superseded. The chronology is in
 `C4_BLOCKED_SOURCE_CHRONOLOGY.md`.
 
+## Coupon source
+
+`coupon_source/` is the full 28 October folder, with its manifest. See
+`C2_COUPON_SOURCE.md`.
+
 ## What this does not establish
 
 Publication protection after a failed cloud run, twice-weekly scheduling,

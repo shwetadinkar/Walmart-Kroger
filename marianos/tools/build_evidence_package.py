@@ -22,15 +22,21 @@ from pathlib import Path
 from urllib.parse import unquote_to_bytes
 
 AZURE, BATTERIES, PROMOTION = "azure_recovery", "batteries_reference", "promotion_correction"
+COUPON = "coupon_source"
+COUPON_SAMPLE = "EXACT_UPC_TWO_PRODUCT_SAMPLE.json"
 CHECKPOINT = "RESUMED_PAGE_ORIGINAL.json"
 FRESH_PAGE = "FRESH_PAGE_ORIGINAL.json"
 SELECTED = ("EARLIER_SELECTED_5.json", "FRESH_SELECTED_5.json")
-NOTES = ("README.md", "RESULTS.md", "C0_PROMOTION_IDENTITY.md", "C4_BLOCKED_SOURCE_CHRONOLOGY.md",
+NOTES = ("README.md", "RESULTS.md", "C0_PROMOTION_IDENTITY.md", "C2_COUPON_SOURCE.md",
+         "C4_BLOCKED_SOURCE_CHRONOLOGY.md",
          "C5_RESULT_SEPARATION.md")
 WITHHOLD_REASON = "portal screenshot showing account-identifying details"
 ACCOUNT_IDENTITY = ("RESTORED_CONTAINER.png", "RESTORED_OVERVIEW.png",
                     "TEMPORARY_CONFIG_PENDING_ROLLBACK.png")
 SUPERSEDED = {
+    f"{COUPON}/EXACT_UPC_22_FIELD_SAMPLE.json": "superseded by EXACT_UPC_TWO_PRODUCT_SAMPLE.json",
+    f"{COUPON}/LOCAL_NORMALIZER_FIX.patch": "historical; the fix is in release 16a6f03",
+    f"{COUPON}/VALIDATION.json": "historical; figures of 28 October",
     f"{AZURE}/RESULTS.md": "superseded by RESULTS.md at the package root",
     f"{AZURE}/MANIFEST_SHA256.json": "unchanged 28 October manifest; the files it lists "
                                      "that are absent are the ones declared under withheld",
@@ -144,6 +150,29 @@ def check_batteries(batteries):
             "listing_03_sha256": sha256(batteries / "LISTING_03.txt")}
 
 
+def check_coupon(coupon, batteries):
+    """The sample stays West Loop, computes no price, and is compared where it
+    overlaps the Batteries set, so a disagreement is recorded, not resolved."""
+    sample = json.loads((coupon / COUPON_SAMPLE).read_text(encoding="utf-8"))
+    if not sample or any("West Loop" not in row["store_name"] for row in sample):
+        raise PackageRefused("The coupon sample must stay labelled West Loop")
+    if any(row["digital_deals_price"] for row in sample):
+        raise PackageRefused("The coupon sample states a digital price nobody displayed")
+    others = {row["upc"]: row for row in json.loads(
+        (batteries / "PRODUCTS_34_PARTIAL_V2.json").read_text(encoding="utf-8"))}
+    disagreements = []
+    for row in sample:
+        other = others.get(row["upc"])
+        for field in sorted(row) if other else ():
+            if row[field] != other[field]:
+                disagreements.append({
+                    "upc": row["upc"], "field": field,
+                    "whitespace_only": row[field].split() == other[field].split()})
+    return {"sample_records": len(sample), "sample_upcs": sorted(r["upc"] for r in sample),
+            "shared_with_batteries": sorted(set(others) & {r["upc"] for r in sample}),
+            "field_disagreements": disagreements}
+
+
 def check_fixture(path):
     fixture = json.loads(Path(path).read_text(encoding="utf-8"))
     if fixture.get("expiry_discrepancy_resolved") is not False:
@@ -177,9 +206,9 @@ def identity_hits(paths, denylist):
 def absent_references(root, withheld=()):
     """File names in any text file that no file in the package has.
 
-    The 28 October manifest is an unchanged original, so it still names what has
-    been withheld. There only, and only for files the manifest declares withheld,
-    that is a labelled gap rather than a dangling reference.
+    A nested 28 October manifest is an unchanged original, so it still names what
+    has been withheld. There only, and only for files the root manifest declares
+    withheld, that is a labelled gap rather than a dangling reference.
     """
     names = {p.name for p in root.rglob("*") if p.is_file()}
     names.add("MANIFEST_SHA256.json")
@@ -192,7 +221,7 @@ def absent_references(root, withheld=()):
                 continue
             text = _ADDRESS.sub(" ", path.read_text(encoding="utf-8", errors="replace"))
             missing = set(_REFERENCE.findall(text)) - names
-            if name == f"{AZURE}/MANIFEST_SHA256.json":
+            if name.endswith("/MANIFEST_SHA256.json"):
                 missing -= declared
             if missing:
                 absent[name] = sorted(missing)
@@ -223,6 +252,11 @@ def note_requirements(facts):
             f"{batteries['urls_pending']} pending",
             f"{batteries['products_captured'] + batteries['urls_pending']} discovered URLs"],
         "C0_PROMOTION_IDENTITY.md": ["`expiry_discrepancy_resolved` is `false`"],
+        "C2_COUPON_SOURCE.md": facts["coupon"]["sample_upcs"]
+        + [f"{facts['coupon']['sample_records']} records"]
+        + [f"`{d['upc']}` differs in `{d['field']}`"
+           + (", in whitespace only" if d["whitespace_only"] else "")
+           for d in facts["coupon"]["field_disagreements"]],
         "README.md": ["cid"],
     }
 
@@ -235,10 +269,11 @@ def check_notes(notes, facts):
             raise PackageRefused(f"{name} does not state: {missing}")
 
 
-def recompute(azure, batteries, fixture):
+def recompute(azure, batteries, coupon, fixture):
     return {"checkpoint": check_azure(azure), "page_files": compare_pages(azure),
             "selected_files": compare_selected(azure),
             "batteries": check_batteries(batteries),
+            "coupon": check_coupon(coupon, batteries),
             "promotion": {"expiry_discrepancy_resolved":
                           check_fixture(fixture)["expiry_discrepancy_resolved"]}}
 
@@ -263,38 +298,39 @@ def describe(root, statements, withheld):
             "withheld": withheld, "entries": entries}
 
 
-def build(azure, batteries, fixture, notes, output, denylist, withhold=()):
-    azure, batteries, notes, output = map(Path, (azure, batteries, notes, output))
+def build(azure, batteries, coupon, fixture, notes, output, denylist, withhold=()):
+    azure, batteries, coupon, notes, output = map(Path, (azure, batteries, coupon, notes, output))
     if output.exists() and any(output.iterdir()):
         raise PackageRefused(f"{output} is not empty")
     denied = read_denylist(denylist)
     withhold = set(withhold)
-    azure_files, battery_files = verify_folder(azure), verify_folder(batteries)
-    unknown = withhold - set(azure_files) - set(battery_files)
+    folders = {AZURE: azure, BATTERIES: batteries, COUPON: coupon}
+    files = {target: verify_folder(folder) for target, folder in folders.items()}
+    every = {name for names in files.values() for name in names}
+    unknown = withhold - every
     if unknown:
         raise PackageRefused(f"Asked to withhold files that do not exist: {sorted(unknown)}")
-    exposed = set(ACCOUNT_IDENTITY) & (set(azure_files) | set(battery_files)) - withhold
+    exposed = set(ACCOUNT_IDENTITY) & every - withhold
     if exposed:
         raise PackageRefused(f"Must be withheld, they show an account: {sorted(exposed)}")
-    plan = [(azure / n, output / AZURE / n) for n in azure_files if n not in withhold]
-    plan += [(batteries / n, output / BATTERIES / n) for n in battery_files if n not in withhold]
+    plan = [(folders[target] / n, output / target / n)
+            for target, names in files.items() for n in names if n not in withhold]
     plan.append((Path(fixture), output / PROMOTION / "IDENTITY_FIXTURE.json"))
     plan += [(notes / n, output / n) for n in NOTES]
     # Before anything is written, so a refusal leaves no copy behind.
     hits = identity_hits([source for source, _ in plan], denied)
     if hits:
         raise PackageRefused(f"Files containing identity strings: {hits}")
-    statements = recompute(azure, batteries, fixture)
+    statements = recompute(azure, batteries, coupon, fixture)
     check_notes(notes, statements)
     for source, destination in plan:
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
         if sha256(destination) != sha256(source):
             raise PackageRefused(f"{destination.name} did not copy exactly")
-    held = [{"path": f"{AZURE if name in azure_files else BATTERIES}/{name}",
-             "bytes": ((azure if name in azure_files else batteries) / name).stat().st_size,
-             "sha256": sha256((azure if name in azure_files else batteries) / name),
-             "reason": WITHHOLD_REASON} for name in sorted(withhold)]
+    held = [{"path": f"{target}/{name}", "bytes": (folders[target] / name).stat().st_size,
+             "sha256": sha256(folders[target] / name), "reason": WITHHOLD_REASON}
+            for target, names in files.items() for name in names if name in withhold]
     absent = absent_references(output, [item["path"] for item in held])
     if absent:
         shutil.rmtree(output)
@@ -328,17 +364,15 @@ def verify(output, denylist):
                          read_denylist(denylist))
     if hits:
         raise PackageRefused(f"Files containing identity strings: {hits}")
-    azure, batteries = output / AZURE, output / BATTERIES
-    original = json.loads((azure / "MANIFEST_SHA256.json").read_text(encoding="utf-8"))
-    for folder, declared in ((azure, original), (batteries, json.loads(
-            (batteries / "MANIFEST_SHA256.json").read_text(encoding="utf-8")))):
-        prefix = folder.name
+    azure, batteries, coupon = output / AZURE, output / BATTERIES, output / COUPON
+    for folder in (azure, batteries, coupon):
+        declared = json.loads((folder / "MANIFEST_SHA256.json").read_text(encoding="utf-8"))
         for name, digest in declared.items():
-            if f"{prefix}/{name}" in held:
+            if f"{folder.name}/{name}" in held:
                 continue
             if sha256(folder / name) != digest:
                 raise PackageRefused(f"{name} no longer matches its 28 October hash")
-    facts = recompute(azure, batteries, output / PROMOTION / "IDENTITY_FIXTURE.json")
+    facts = recompute(azure, batteries, coupon, output / PROMOTION / "IDENTITY_FIXTURE.json")
     if facts != manifest["statements_recomputed_from_the_bytes"]:
         raise PackageRefused("The manifest's statements do not recompute from the bytes")
     check_notes(output, facts)
@@ -353,7 +387,8 @@ def main(argv=None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--identity-denylist", required=True)
     p.add_argument("--verify", help="Check a built package and build nothing")
-    for name in ("--azure", "--batteries", "--identity-fixture", "--notes", "--output"):
+    for name in ("--azure", "--batteries", "--coupon", "--identity-fixture", "--notes",
+                 "--output"):
         p.add_argument(name)
     p.add_argument("--withhold", action="append", default=[],
                    help="File name to leave out, recorded in the manifest. Repeatable.")
@@ -362,9 +397,11 @@ def main(argv=None):
         if args.verify:
             result = verify(args.verify, args.identity_denylist)
         else:
-            sources = (args.azure, args.batteries, args.identity_fixture, args.notes, args.output)
+            sources = (args.azure, args.batteries, args.coupon, args.identity_fixture,
+                       args.notes, args.output)
             if not all(sources):
-                p.error("A build needs --azure --batteries --identity-fixture --notes --output")
+                p.error("A build needs --azure --batteries --coupon --identity-fixture "
+                        "--notes --output")
             manifest = build(*sources, args.identity_denylist, args.withhold)
             result = {"files": manifest["files"], "withheld": len(manifest["withheld"]),
                       "statements": manifest["statements_recomputed_from_the_bytes"]}

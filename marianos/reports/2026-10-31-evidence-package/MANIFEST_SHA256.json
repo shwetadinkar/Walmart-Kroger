@@ -1,6 +1,6 @@
 {
   "package": "marianos-evidence-2026-10-31",
-  "files": 80,
+  "files": 107,
   "self": "MANIFEST_SHA256.json lists every other file and cannot hash itself",
   "statements_recomputed_from_the_bytes": {
     "checkpoint": {
@@ -36,6 +36,23 @@
       "listing_03_bytes": 111454,
       "listing_03_sha256": "7df3e2da492c0b80175aff6382577bb311583431a95796500df51c2775989e60"
     },
+    "coupon": {
+      "sample_records": 2,
+      "sample_upcs": [
+        "0003980000675",
+        "0003980014532"
+      ],
+      "shared_with_batteries": [
+        "0003980014532"
+      ],
+      "field_disagreements": [
+        {
+          "upc": "0003980014532",
+          "field": "digital_deals_description",
+          "whitespace_only": false
+        }
+      ]
+    },
     "promotion": {
       "expiry_discrepancy_resolved": false
     }
@@ -69,6 +86,13 @@
       "status": "current"
     },
     {
+      "path": "C2_COUPON_SOURCE.md",
+      "bytes": 1916,
+      "sha256": "ffcb382c3d0439c626c784e4f72ada8665d98758881be1581a9433069cafb98f",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
       "path": "C4_BLOCKED_SOURCE_CHRONOLOGY.md",
       "bytes": 1488,
       "sha256": "8a6b51c94d1d56d27b2fbedabd7c37e511424d19c9849cb3abd71802ab6fd8fe",
@@ -91,8 +115,8 @@
     },
     {
       "path": "RESULTS.md",
-      "bytes": 5629,
-      "sha256": "fcb5f1847804f6af6e79383a96fdf624c922451cbe3bfabf9e72329dbd0053d2",
+      "bytes": 5742,
+      "sha256": "596ff4231cedcca30c7525c845d951f31a89057434b8903ba8dd7c86fead64d2",
       "origin": "written 2026-10-31",
       "status": "current"
     },
@@ -616,6 +640,188 @@
       "path": "batteries_reference/products/0004133384401.json",
       "bytes": 5147,
       "sha256": "a829f2118d34b75dbee7286bdb1102183d0a51a75852ca62450a96f95fb97dc1",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/CURRENT_STORE_AX.txt",
+      "bytes": 1943,
+      "sha256": "247370ce81f1bccb0eeccd57e5902422ff17559113243acfbc2ab4b0b48cd77d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/CURRENT_STORE_TIME.json",
+      "bytes": 147,
+      "sha256": "1ce6d2757a853781eeccd17931d499ebb7d525d54ede1c5160f2203f7fdff9e8",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_MATCH_RESULT.md",
+      "bytes": 1628,
+      "sha256": "4b362d2741dcf87b95150c6d70393886fd9cf97086db6c56ac0b9939eeb38057",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_22_FIELD_SAMPLE.json",
+      "bytes": 2037,
+      "sha256": "43fcaab9c7bfab605ff7d1534a569057ddfd6be8564ed1d297f15e4bdd041dda",
+      "origin": "original, unchanged",
+      "status": "superseded by EXACT_UPC_TWO_PRODUCT_SAMPLE.json"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_CASHBACK_DRAWER_AX.txt",
+      "bytes": 6794,
+      "sha256": "423a65d825cc2c658ed0b0953bf17eea68d99f83617a251690475b5ed4daaf0d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_CASHBACK_TIME.json",
+      "bytes": 250,
+      "sha256": "a07a2b8c87b7711c1aa7bf2d8637769a2f9db813be8d798d8a5ed33e3a0297b2",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_COUPON_DRAWER.png",
+      "bytes": 107997,
+      "sha256": "a5ba69fea1551ddc544a5df4b51d3ba7f6b1d0470e4bec44d85b99ee7847c1c4",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_COUPON_DRAWER_AX.txt",
+      "bytes": 6828,
+      "sha256": "15900c8742c68de635051e87fff7a94c4421737961ec75836bbc5823a4955205",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_COUPON_TIME.json",
+      "bytes": 336,
+      "sha256": "62b2f00fc936a05d1620a00788b88750e312279b576910e90bcccce422f90f95",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_PROVENANCE.json",
+      "bytes": 504,
+      "sha256": "7d5d331545c101996fb282a66385a87edba02f5672f29b41f944d6b208fd3471",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXACT_UPC_TWO_PRODUCT_SAMPLE.json",
+      "bytes": 4097,
+      "sha256": "e0c04c67f11f76e4d4b64cd6ea571b4f419a6ca91dcbebc12156c7d5f26162a6",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXPANDED_COUPON.png",
+      "bytes": 68933,
+      "sha256": "61b42a7c3a9bcb392a85daa285a7a81419f1c389be63b0c15e83de10ffb1e67f",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/EXPANDED_COUPON_DOM.txt",
+      "bytes": 13606,
+      "sha256": "d753292cf344766fb8e441879ef128f6eba480c9f5d24225a941c198c7a64b91",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/LOCAL_NORMALIZER_FIX.patch",
+      "bytes": 1238,
+      "sha256": "6910b9f45b4df4034f3245f832658ce158917576952014520f5b471a944e6351",
+      "origin": "original, unchanged",
+      "status": "historical; the fix is in release 16a6f03"
+    },
+    {
+      "path": "coupon_source/MANIFEST_SHA256.json",
+      "bytes": 2501,
+      "sha256": "54cd9eef525e44c01cee3290c88cbb690b8d493f6604f14b88f16b2ab9819e6b",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/MATCHED_PDP_DOM.txt",
+      "bytes": 29913,
+      "sha256": "fb0c9b15940074d62a129a6b1df0c301e30f87216add160abe53ceb91f4ee734",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/MATCHED_PDP_OBSERVATION.json",
+      "bytes": 566,
+      "sha256": "2b2adfbc329d4ab787e076135a226f4dc34fef7c2e67bfa76170c012de816f87",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/RESULT.md",
+      "bytes": 1967,
+      "sha256": "c65f088c6d6524a6a585476b63c0f29682ff08d4385c7517cf4dc5de96e06939",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SECOND_UPC_COUPON_DRAWER_AX.txt",
+      "bytes": 6791,
+      "sha256": "8cdad4686c671e8aecf20a673a87712b8c57e321f266fa347d39f2fd7ca04271",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SECOND_UPC_COUPON_TIME.json",
+      "bytes": 277,
+      "sha256": "42be72ee945a082616e7cfa74d9d81c4df43d43cd049814cd26311ce4d2d2d6d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SECOND_UPC_PDP_DOM.txt",
+      "bytes": 22912,
+      "sha256": "cd3a913e6431d6dd36f44ebbd871befb9705d6231c4a1ca3f46a4d45e3cc9db1",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SECOND_UPC_PDP_OBSERVATION.json",
+      "bytes": 460,
+      "sha256": "a9294282ebabdf634854c1ab4a3443a44cdf9f22f74824671ef0a8603846b764",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SECOND_UPC_PROVENANCE.json",
+      "bytes": 311,
+      "sha256": "946a44dbaf4c2332a7e510b1a75b1053897d4e1a87564638c8c831630cef3597",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/SOURCE_OBSERVATION.json",
+      "bytes": 2412,
+      "sha256": "63a4efd736d7219f9782678b7f323457f0078f3b67aaa8a8910e3fd63681b814",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "coupon_source/VALIDATION.json",
+      "bytes": 219,
+      "sha256": "a7f5d0c3a99ecc23989f8d654586d6f1eecfc63f598202bdefe79250f2873ef1",
+      "origin": "original, unchanged",
+      "status": "historical; figures of 28 October"
+    },
+    {
+      "path": "coupon_source/test_coupon_cashback_terms.py",
+      "bytes": 1442,
+      "sha256": "fdfff47afa4cb045d21b54b1fe1e0bf377817db85b9bc7d7c0b92ff1aa7e12bb",
       "origin": "original, unchanged",
       "status": "current"
     },

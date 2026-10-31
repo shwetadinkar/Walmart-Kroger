@@ -1,6 +1,7 @@
 """The package builder must refuse what it cannot establish."""
 import hashlib
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -56,15 +57,24 @@ class Base(unittest.TestCase):
         self.fixture = {"retained_output_upcs": ["1"], "coupon_source_upc": "2",
                         "expiry_discrepancy_resolved": False}
         self.notes = {name: "# note" for name in tool.NOTES}
+        self.sample = [{"upc": "0009", "store_name": "Marianos West Loop", "weight": "1 ct",
+                        "digital_deals_description": "a\n\nb", "digital_deals_price": ""},
+                       {"upc": "0008", "store_name": "Marianos West Loop", "weight": "2 ct",
+                        "digital_deals_description": "", "digital_deals_price": ""}]
+        self.batteries_v2 = [{"upc": "0009", "store_name": "Marianos West Loop", "weight": "1 ct",
+                              "digital_deals_description": "a\nb", "digital_deals_price": ""}]
+        self.coupon_files = {"COUPON.png": "drawer"}
         self.complete_notes = True
         self.withhold = ["RESTORED_OVERVIEW.png"]
         self.denied = "# synthetic\nowner@example.test\nacme utilities\n0000aaaa-1111\n"
 
     def build(self):
-        azure, batteries = self.base / "a", self.base / "b"
+        azure, batteries, coupon = self.base / "a", self.base / "b", self.base / "c"
         notes = self.base / "n"
         write_folder(azure, self.azure_files)
-        write_folder(batteries, self.battery_files)
+        write_folder(batteries, {**self.battery_files, "PRODUCTS_34_PARTIAL_V2.json":
+                                 json.dumps(self.batteries_v2)})
+        write_folder(coupon, {**self.coupon_files, tool.COUPON_SAMPLE: json.dumps(self.sample)})
         notes.mkdir()
         for name, text in self.notes.items():
             (notes / name).write_text(text, encoding="utf-8")
@@ -72,14 +82,14 @@ class Base(unittest.TestCase):
         fixture.write_text(json.dumps(self.fixture), encoding="utf-8")
         self.output = self.base / "out"
         self.sources = (azure, batteries)
-        facts = tool.recompute(azure, batteries, fixture) if self.complete_notes else None
+        facts = tool.recompute(azure, batteries, coupon, fixture) if self.complete_notes else None
         for name, text in self.notes.items():
             extra = tool.note_requirements(facts).get(name, []) if facts else []
             (notes / name).write_text(text + "\n" + "\n".join(extra), encoding="utf-8")
         self.denylist = self.base / "denylist.txt"
         self.denylist.write_text(self.denied, encoding="utf-8")
-        return tool.build(azure, batteries, fixture, notes, self.output, self.denylist,
-                          self.withhold)
+        return tool.build(azure, batteries, coupon, fixture, notes, self.output,
+                          self.denylist, self.withhold)
 
 
 class BuildTests(Base):
@@ -95,7 +105,7 @@ class BuildTests(Base):
     def test_originals_are_copied_byte_for_byte_and_their_manifests_still_hold(self):
         self.build()
         self.assertEqual(len(tool.verify_folder(self.output / "batteries_reference")),
-                         len(self.battery_files) + 1)
+                         len(self.battery_files) + 2)
         self.assertEqual((self.output / "azure_recovery" / tool.CHECKPOINT).read_text(),
                          self.azure_files[tool.CHECKPOINT])
 
@@ -133,6 +143,49 @@ class BuildTests(Base):
         self.base.joinpath("out").mkdir()
         self.base.joinpath("out", "old").write_text("x")
         with self.assertRaisesRegex(tool.PackageRefused, "not empty"):
+            self.build()
+
+
+class CouponTests(Base):
+    def test_the_folder_is_included_with_its_manifest(self):
+        self.build()
+        self.assertEqual(len(tool.verify_folder(self.output / "coupon_source")), 3)
+
+    def test_a_coupon_screenshot_with_identity_strings_is_refused_until_withheld(self):
+        self.coupon_files["COUPON.png"] = "owner@example.test"
+        with self.assertRaisesRegex(tool.PackageRefused, "COUPON.png"):
+            self.build()
+        shutil.rmtree(self.base / "a"), shutil.rmtree(self.base / "b")
+        shutil.rmtree(self.base / "c"), shutil.rmtree(self.base / "n")
+        self.withhold.append("COUPON.png")
+        manifest = self.build()
+        self.assertIn("coupon_source/COUPON.png", [w["path"] for w in manifest["withheld"]])
+        self.assertFalse((self.output / "coupon_source/COUPON.png").exists())
+
+    def test_a_disagreement_with_the_batteries_set_is_recorded_not_resolved(self):
+        facts = self.build()["statements_recomputed_from_the_bytes"]["coupon"]
+        self.assertEqual(facts["shared_with_batteries"], ["0009"])
+        self.assertEqual(facts["field_disagreements"], [
+            {"upc": "0009", "field": "digital_deals_description", "whitespace_only": True}])
+
+    def test_a_real_disagreement_is_not_called_whitespace(self):
+        self.batteries_v2[0]["digital_deals_description"] = "a c"
+        facts = self.build()["statements_recomputed_from_the_bytes"]["coupon"]
+        self.assertFalse(facts["field_disagreements"][0]["whitespace_only"])
+
+    def test_a_sample_at_another_store_is_refused(self):
+        self.sample[1]["store_name"] = "Marianos Vernon Hills"
+        with self.assertRaisesRegex(tool.PackageRefused, "West Loop"):
+            self.build()
+
+    def test_an_empty_sample_is_refused(self):
+        self.sample = []
+        with self.assertRaisesRegex(tool.PackageRefused, "West Loop"):
+            self.build()
+
+    def test_a_digital_price_in_the_sample_is_refused(self):
+        self.sample[0]["digital_deals_price"] = "4.99"
+        with self.assertRaisesRegex(tool.PackageRefused, "nobody displayed"):
             self.build()
 
 
@@ -234,6 +287,7 @@ class NoteTests(Base):
         with self.assertRaisesRegex(tool.PackageRefused, "does not state"):
             tool.check_notes(self.output, tool.recompute(
                 self.output / "azure_recovery", self.output / "batteries_reference",
+                self.output / "coupon_source",
                 self.output / "promotion_correction/IDENTITY_FIXTURE.json"))
 
     def test_the_requirements_come_from_the_bytes(self):
@@ -314,6 +368,15 @@ class VerifyTests(Base):
     def test_an_original_changed_from_its_28_october_hash_fails(self):
         self.broken(lambda: self.alter("azure_recovery/RESULTS.md", "edited"),
                     "28 October hash")
+
+    def test_a_coupon_original_changed_from_its_28_october_hash_fails(self):
+        self.broken(lambda: self.alter("coupon_source/COUPON.png", "edited"), "28 October hash")
+
+    def test_a_coupon_note_that_stops_naming_a_sample_product_fails(self):
+        def drop():
+            text = (self.output / "C2_COUPON_SOURCE.md").read_text()
+            self.alter("C2_COUPON_SOURCE.md", text.replace("0008", "gone"))
+        self.broken(drop, "does not state")
 
     def test_a_known_account_screenshot_under_another_folder_fails(self):
         self.broken(lambda: self.alter("batteries_reference/RESTORED_CONTAINER.png", "x"),
