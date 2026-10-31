@@ -2,6 +2,11 @@
 
 Logical checkpoint identity and platform execution identity are separate. This
 does not change the production entrypoint or prove website/category coverage.
+
+The store is configuration and has no default. The trial of 28 October ran at
+West Loop 53100508 and its evidence stays under recovery-review/53100508/, because
+every key carries the store it was collected from. Passing another store writes
+under that store's own prefix; it cannot touch or relabel that evidence.
 """
 import argparse
 from datetime import datetime, timezone
@@ -13,9 +18,6 @@ from .api_collection import BudgetOpener, collect
 from .kroger import Credentials, KrogerClient
 from .storage import AzureBlobStorage
 
-SID = '53100508'
-
-
 def now():
     return datetime.now(timezone.utc).isoformat()
 
@@ -24,20 +26,23 @@ def encode(value):
     return json.dumps(value, sort_keys=True, indent=2).encode()
 
 
-def run_attempt(storage, client, budget, trial_id, platform_execution, stage, crash):
+def run_attempt(storage, client, budget, trial_id, platform_execution, stage, crash,
+                *, location_id, zipcode):
+    if not re.fullmatch(r'\d{8}', location_id) or not re.fullmatch(r'\d{5}', zipcode):
+        raise ValueError('INVALID_RECOVERY_STORE')
     if not re.fullmatch(r'[A-Za-z0-9_-]{1,40}', trial_id):
         raise ValueError('INVALID_RECOVERY_TRIAL_ID')
     if not re.fullmatch(r'[A-Za-z0-9_-]{1,200}', platform_execution):
         raise ValueError('INVALID_PLATFORM_EXECUTION')
     if stage not in ('interrupt', 'resume', 'fresh') or budget.maximum > 6:
         raise ValueError('INVALID_RECOVERY_STAGE_OR_BUDGET')
-    prefix = f'recovery-review/{SID}/{trial_id}/'
+    prefix = f'recovery-review/{location_id}/{trial_id}/'
     budget_key = prefix + 'budget.json'
     ready_key = prefix + 'durable-checkpoint.json'
     attempt_key = prefix + 'attempts/' + platform_execution + '.json'
     logical_id = trial_id + ('-fresh' if stage == 'fresh' else '-resume')
-    page_key = f'checkpoints/{SID}/{logical_id}/page_00.json'
-    with storage.locked(SID):
+    page_key = f'checkpoints/{location_id}/{logical_id}/page_00.json'
+    with storage.locked(location_id):
         if storage.read(attempt_key):
             raise ValueError('RECOVERY_PLATFORM_ATTEMPT_ALREADY_RECORDED')
         ready = storage.read(ready_key)
@@ -82,7 +87,7 @@ def run_attempt(storage, client, budget, trial_id, platform_execution, stage, cr
 
         budget.on_attempt = counted
         try:
-            status = collect(client, ScopedStorage(), SID, '60661', logical_id,
+            status = collect(client, ScopedStorage(), location_id, zipcode, logical_id,
                              terms=('milk',), maximum_queries=1, target=5)
             if status['unique_records'] != 5:
                 raise ValueError('RECOVERY_REQUIRES_FIVE_SELECTED_RECORDS')
@@ -108,6 +113,8 @@ def run_attempt(storage, client, budget, trial_id, platform_execution, stage, cr
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--trial-id', required=True)
+    parser.add_argument('--location-id', required=True)
+    parser.add_argument('--zipcode', required=True)
     parser.add_argument('--stage', required=True, choices=('interrupt', 'resume', 'fresh'))
     parser.add_argument('--container', default='marianos-api-trials')
     parser.add_argument('--approved-live-test', action='store_true')
@@ -119,7 +126,7 @@ def main():
     budget = BudgetOpener(6)
     client = KrogerClient(Credentials.from_environment(), opener=budget)
     result = run_attempt(storage, client, budget, args.trial_id, execution, args.stage,
-                         lambda: os._exit(77))
+                         lambda: os._exit(77), location_id=args.location_id, zipcode=args.zipcode)
     print(json.dumps(result), flush=True)
 
 

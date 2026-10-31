@@ -31,7 +31,7 @@ product cannot be carried from run to run.
 
 A price conflict is the one case where observed values are emptied, because two
 sources disagree about one value and publishing either would resolve that
-silently. Both values stay in the audit.
+silently. Both values stay in the audit. This is open for the client to decide.
 
 ## Identity
 
@@ -50,8 +50,8 @@ per identity with first and last observation dates, current or carried-forward
 status, per-field observation dates, historical prices and the carry reason.
 
 Sold-by-weight items keep the price Kroger returned, and `sold_by` says so. The
-figure may be per pound rather than for the stated size. That is unresolved, so
-read `sold_by` before reading `regular_price`.
+figure may be per pound rather than for the stated size. This is open for the
+client to decide, so read `sold_by` before reading `regular_price`.
 
 ## Carrying products forward
 

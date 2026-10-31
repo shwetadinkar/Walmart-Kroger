@@ -54,7 +54,8 @@ Three instructions came with it:
   actually returned. `resolve_store` already refuses a response whose
   locationId or zipCode contradicts the request; extend it to assert the
   street address too, and record the pickup context per record rather than
-  only at run level.
+  only at run level. The 22 fields are fixed, so "per record" means a sidecar
+  keyed by identity (`pickup_context.json`), not a column.
 - **Do not relabel the West Loop work.** The 34-product sample and its
   observations stay labelled West Loop. They are a separate store and a
   separate date.
@@ -91,18 +92,28 @@ having no price, not for having no qualifying pickup offer, not for a missing
 source UPC. Those are facts about the observation, recorded as such. They are
 not grounds for deletion.
 
-What must change, in all four places it is currently violated:
+What must change, in every place it was violated. This list was corrected
+against the code on 31 October; the first version named the wrong locations and
+stopped at four.
 
 - `api_trial.normalize` raises `NO_QUALIFYING_LOCAL_PICKUP_OFFER` and the sweep
   quarantines the row out of the dataset. The qualifying-offer check must
   become a classifier, not a filter: the product stays in the 22-field export
   with empty strings for the values that were not observed, and the reason is
   recorded beside it.
-- `enrich()` and `import_snapshot()` exclude unavailable records. They must not.
-- `temporal_enrichment.py` quarantines `WEBSITE_PICKUP_UNAVAILABLE` and omits
-  the row. It must keep the row.
+- `api_trial.import_snapshot` on `marianos-live-api-west-loop` excludes
+  unavailable records, under the reason `WEBSITE_PICKUP_UNAVAILABLE_OR_UNVERIFIED`.
+  It must not.
+- `temporal_enrichment.py` on `marianos-fresh-runs-category-evidence` already
+  keeps the row but blanks its observed values on unavailable products. It must
+  keep the values too.
 - Walmart `_to_raw` blanks `currentPrice` and `unitPriceDisplay` on unavailable
   rows, destroying values that were observed. See B3.
+- `make_record` refuses a whole product for one bad value: unverified or
+  cashback deal text, a deal price with no description, a malformed price, a
+  blank title, a URL on another site. A refusal must cost that value, not the
+  product. `make_retained_record` decides that; `make_record` stays the judge
+  of what is valid.
 
 Also required by the same instruction:
 
@@ -111,12 +122,19 @@ Also required by the same instruction:
   A product absent from a later run does not disappear; it is carried with its
   earlier date.
 - A missing source UPC must not remove the product, so identity cannot depend
-  on UPC alone. Fall back to productId and record which identity was used.
+  on UPC alone. Identity is the retailer product id from the product URL, with
+  the UPC when no URL was observed, and `identity_basis` records which. A
+  product with neither cannot be carried, because the 22 fields have no other
+  place to hold an identity; it is held in quarantine with its reason.
 - The acceptance status that currently marks audit preservation as PASS while
   the accepted output excludes unavailable products is wrong and must be
   corrected.
 - Supply worked examples: available becoming unavailable, a missing price, and
   a product absent on the next run.
+
+Retention can only reach what was returned. The Products API requests carry
+`filter.fulfillment=ais,csp`, so a product Kroger holds for neither in-store nor
+curbside at the location never arrives, and every run report says so.
 
 The distinction that matters: the one rule in `CLAUDE.md` is never publish a
 value that was not observed. That governs *values*. It has been misapplied to
@@ -162,7 +180,10 @@ Consequence: replaying the 34 supplied records through this release rejects all
 
 Port `5b991c7` and its test. Then add a regression that pins both directions:
 a description containing "No cash back" in its terms is **kept**, and a real
-cashback benefit is still **rejected**.
+cashback benefit is still **refused as a digital deal**. Under PART 0 that
+refusal costs the field, not the product: `make_record` raises, the digital
+fields are emptied, the product stays, and the reason is recorded in
+`value_refusals`.
 
 ## A2. Retention reconciliation is not called
 
@@ -181,11 +202,31 @@ previously published identity must not validate.
 Combine, on one branch: the new sweep and composition work, `5b991c7`, the
 retention reconciliation, the current observation importer, and the recovery
 harness. Do not switch wholesale to either existing branch; both are
-incomplete, and `marianos-fresh-runs-category-evidence`'s normalizer also
-accepts in-store-only offers and blank prices, which contradicts `CLAUDE.md`.
+incomplete. `marianos-fresh-runs-category-evidence`'s runner deletes the
+unresolved-offer and provenance reporting, and its `kroger.py` deletes the
+acceptable-use comment. Its acceptance of blank prices and in-store-only offers
+is not a defect: under PART 0 those products stay, classified.
 
 Demonstrate both regressions above passing **on that exact commit**, and record
 the commit id.
+
+Done: release commit `16a6f03838a22a822a118977004086976d1a1de0` on
+`marianos-api-sweep-2026-10-31`.
+
+---
+
+# OPEN. Two value questions for the client
+
+Neither is ours to decide. Both are flagged in `marianos/RETENTION_POLICY.md`,
+and the code holds its current behaviour until the client answers.
+
+1. **Website and API disagree on a price.** The disputed fields are emptied and
+   both values stay in the audit, because publishing either would settle the
+   conflict silently. B3's rule points the other way: record uncertainty in a
+   separate field rather than emptying the value.
+2. **Sold-by-weight prices.** These rows keep the price Kroger returned, with
+   `sold_by` beside them, but it may be per pound rather than for the stated
+   size. One probe row reads `14.99` for `7.5 oz`.
 
 ---
 
