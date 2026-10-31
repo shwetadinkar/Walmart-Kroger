@@ -295,9 +295,11 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     _write(checkpoint_path, state)
                 log(f"  {category:28} {term:24} +{found:3}  "
                     f"total {len(records):5}  req {budget.requests}")
+                sys.stdout.flush()
     except Budget.Exhausted as exc:
         stopped = str(exc)
         log(f"\nSTOPPED: {exc}. Progress is checkpointed; rerun with --resume.")
+        sys.stdout.flush()
     except KrogerError as exc:
         stopped = f"api error: {exc}"
         log(f"\nSTOPPED: {exc}. Progress is checkpointed; rerun with --resume.")
@@ -424,7 +426,7 @@ def main(argv=None):
     if args.store_location:
         store["store_location"] = args.store_location
     print(f"Store {args.location_id}: {store['store_name']}, "
-          f"{store['store_location']}, {store['zipcode']}\n")
+          f"{store['store_location']}, {store['zipcode']}\n", flush=True)
 
     out = Path(args.output)
     _write(out / "store_verification.json",
@@ -458,7 +460,7 @@ def main(argv=None):
           f"{sum(len(v) for v in terms_by_category.values())} terms, "
           f"up to {args.pages_per_term} pages each, "
           f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s, "
-          f"filter.start capped at {args.max_start}\n")
+          f"filter.start capped at {args.max_start}\n", flush=True)
     state = sweep(client, args.location_id, store, terms_by_category, budget,
                   args.pages_per_term, checkpoint, state,
                   max_start=args.max_start, category_map=category_map)
