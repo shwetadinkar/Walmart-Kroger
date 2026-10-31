@@ -4,6 +4,8 @@ The first sweep, stopped on 31 October 2026, fabricated product URLs, took the
 first item whatever it was, skipped `make_record`, kept no raw response, and
 wrote 18,351 records with a blank store_name and store_location. Its 63 page
 failures were all HTTP 400 at filter.start=251. Each of those has a test here.
+Its successor sent filter.start=1 first, which skipped every term's first result,
+and stopped on a short page, which left "sugar" at 49 of a reported 1,000.
 Everything runs against a fake client; no test touches the network.
 """
 import csv
@@ -322,7 +324,7 @@ class SweepTests(unittest.TestCase):
         weighed = product("0000000000002", items=[offer(soldBy="WEIGHT")])
         unpriced = product("0000000000003", items=[offer(price=None)])
         titled = product("0000000000004", description="Beef Average Weight 2 lb")
-        state = run(FakeClient({1: [good, weighed, unpriced, titled]}))
+        state = run(FakeClient({0: [good, weighed, unpriced, titled]}))
         self.assertEqual(sorted(r["upc"] for r in state["records"].values()),
                          ["0000000000001", "0000000000002", "0000000000003"])
         self.assertEqual(state["term_counts"]["Dairy||eggs"], 3)
@@ -333,24 +335,24 @@ class SweepTests(unittest.TestCase):
     def test_products_with_no_upc_stay_distinct(self):
         first, second = product("0000000000001"), product("0000000000002")
         first["upc"] = second["upc"] = ""
-        state = run(FakeClient({1: [first, second]}))
+        state = run(FakeClient({0: [first, second]}))
         self.assertEqual(sorted(state["records"]), [
             "53100508:product:0000000000001", "53100508:product:0000000000002"])
         self.assertEqual({r["upc"] for r in state["records"].values()}, {""})
 
     def test_a_product_with_no_url_is_kept_under_its_upc(self):
-        state = run(FakeClient({1: [product(productPageURI="")]}))
+        state = run(FakeClient({0: [product(productPageURI="")]}))
         self.assertEqual(list(state["records"]), ["53100508:upc:0001111060933"])
         self.assertEqual(state["contexts"]["53100508:upc:0001111060933"]["identity_basis"], "upc")
 
     def test_a_product_the_22_fields_cannot_identify_is_held_with_its_reason(self):
-        state = run(FakeClient({1: [product(upc="", productPageURI="")]}))
+        state = run(FakeClient({0: [product(upc="", productPageURI="")]}))
         self.assertEqual(state["records"], {})
         self.assertEqual([v["reason"] for v in state["quarantine"].values()],
                          ["UNVERIFIED_STABLE_PRODUCT_IDENTITY"])
 
     def test_a_malformed_product_is_quarantined_and_the_term_continues(self):
-        state = run(FakeClient({1: ["junk", product(images=["junk"]), product("0000000000001")]}))
+        state = run(FakeClient({0: ["junk", product(images=["junk"]), product("0000000000001")]}))
         self.assertEqual(len(state["records"]), 1)
         self.assertEqual(
             sorted(v["reason"] for v in state["quarantine"].values()),
@@ -358,17 +360,17 @@ class SweepTests(unittest.TestCase):
 
     def test_every_raw_response_is_kept_per_term_including_refused_products(self):
         refused = product("0000000000002", items=[offer(soldBy="WEIGHT")])
-        pages = {1: full_page(1)[:49] + [refused], 51: [product("0000000000009")]}
+        pages = {0: full_page(0)[:49] + [refused], 50: [product("0000000000009")]}
         with tempfile.TemporaryDirectory() as tmp:
             run(FakeClient(pages), raw_dir=Path(tmp))
             folders = list(Path(tmp).iterdir())
             self.assertEqual(len(folders), 1)
             self.assertEqual(sorted(f.name for f in folders[0].iterdir()),
-                             ["start_0001.json", "start_0051.json"])
-            page = json.loads((folders[0] / "start_0001.json").read_text())
-        self.assertEqual(page["response"]["data"], pages[1])
+                             ["start_0000.json", "start_0050.json"])
+            page = json.loads((folders[0] / "start_0000.json").read_text())
+        self.assertEqual(page["response"]["data"], pages[0])
         self.assertEqual((page["locationId"], page["term"], page["term_root"], page["start"]),
-                         ("53100508", "eggs", "Dairy", 1))
+                         ("53100508", "eggs", "Dairy", 0))
         self.assertTrue(page["observed_at"])
 
     def test_the_context_describes_the_observation_the_record_came_from(self):
@@ -385,29 +387,29 @@ class SweepTests(unittest.TestCase):
 
     def test_two_terms_never_share_a_raw_folder(self):
         with tempfile.TemporaryDirectory() as tmp:
-            run(FakeClient({1: [product()]}), {"Dairy": ["a b", "a-b"]}, raw_dir=Path(tmp))
+            run(FakeClient({0: [product()]}), {"Dairy": ["a b", "a-b"]}, raw_dir=Path(tmp))
             self.assertEqual(len(list(Path(tmp).iterdir())), 2)
 
     def test_the_default_start_cap_stops_before_kroger_refuses(self):
-        client = FakeClient({s: full_page(s) for s in (1, 51, 101, 151, 201)})
+        client = FakeClient({s: full_page(s) for s in (0, 50, 100, 150, 200, 250)})
         state = run(client)
-        self.assertEqual(client.starts, [1, 51, 101, 151, 201])
+        self.assertEqual(client.starts, [0, 50, 100, 150, 200, 250])
         self.assertEqual(state["page_failures"], [])
         self.assertEqual(state["terms_hit_start_cap"], ["Dairy||eggs"])
 
     def test_the_cap_constant_and_the_command_line_default_agree(self):
-        self.assertEqual(sweep_tool.MAX_START, 201)
+        self.assertEqual(sweep_tool.MAX_START, 250)
         with tempfile.TemporaryDirectory() as tmp:
             report = _main_run(Path(tmp) / "out")["report"]
-        self.assertEqual(report["max_start"], 201)
+        self.assertEqual(report["max_start"], 250)
 
     def test_unmapped_labels_are_reported_and_the_record_stays_blank(self):
-        state = run(FakeClient({1: [product(categories=["Halloween"])]}))
+        state = run(FakeClient({0: [product(categories=["Halloween"])]}))
         self.assertEqual(state["unmapped"], {"Halloween": [IDENTITY]})
         self.assertEqual(state["records"][IDENTITY]["category"], "")
 
     def test_the_term_root_never_becomes_the_category(self):
-        state = run(FakeClient({1: [product(categories=["Produce"])]}))
+        state = run(FakeClient({0: [product(categories=["Produce"])]}))
         self.assertEqual(state["records"][IDENTITY]["category"], "Produce")
         self.assertEqual(len(state["category_disagreements"]), 1)
 
@@ -420,7 +422,7 @@ def _main_run(out, argv=(), client=None, category_map=None, street="40 S Halsted
         mapping = out.parent / "map.json"
         mapping.write_text(json.dumps({"map": category_map}))
         argv = [*argv, "--category-map", str(mapping)]
-    client = client or FakeClient({1: [
+    client = client or FakeClient({0: [
         product(), product("0000000000002", items=[offer(soldBy="WEIGHT")]),
         product("0000000000003", description="Beef Average Weight 2 lb")]})
     env = {"KROGER_CLIENT_ID": "fake", "KROGER_CLIENT_SECRET": "fake"}
@@ -497,7 +499,7 @@ class MainTests(unittest.TestCase):
         self.assertEqual(report["quarantine_reasons"], {"APPROXIMATE_WEIGHT_IN_TITLE": 1})
         quarantine = json.loads((self.out / "quarantine.json").read_text())
         self.assertEqual(list(quarantine), ["0000000000003"])
-        self.assertEqual(len(list((self.out / "raw").rglob("start_0001.json"))), 1)
+        self.assertEqual(len(list((self.out / "raw").rglob("start_0000.json"))), 1)
 
     def test_the_street_kroger_returned_must_be_the_one_asked_for(self):
         client = FakeClient()
@@ -520,7 +522,7 @@ class MainTests(unittest.TestCase):
         store_only = product("0000000000002", items=[offer(
             fulfillment={"curbside": False, "inStore": True},
             inventory={"stockLevel": "TEMPORARILY_OUT_OF_STOCK"})])
-        _main_run(self.out, client=FakeClient({1: [pickup, store_only]}))
+        _main_run(self.out, client=FakeClient({0: [pickup, store_only]}))
         context = json.loads((self.out / "pickup_context.json").read_text())
         first = context["53100508:product:0000000000001"]
         second = context["53100508:product:0000000000002"]
@@ -563,7 +565,7 @@ class MainTests(unittest.TestCase):
     def test_the_report_counts_classifications_and_keeps_rows_with_no_upc_visible(self):
         unpriced = product("0000000000002", items=[offer(price=None)])
         unpriced["upc"] = ""
-        client = FakeClient({1: [product("0000000000001"), unpriced]})
+        client = FakeClient({0: [product("0000000000001"), unpriced]})
         report = _main_run(self.out, client=client)["report"]
         self.assertEqual(report["unique_products"], 2)
         self.assertEqual(report["unique_upcs"], 1)
@@ -580,7 +582,7 @@ class MainTests(unittest.TestCase):
     def test_worked_example_a_product_absent_from_the_next_run_is_carried(self):
         _main_run(self.out)
         second = Path(self._tmp.name) / "second"
-        client = FakeClient({1: [product("0000000000002")]})
+        client = FakeClient({0: [product("0000000000002")]})
         report = _main_run(second, ["--previous-run", str(self.out)], client)["report"]
         self.assertEqual((report["current_records"], report["carried_forward_records"]), (1, 1))
         self.assertEqual(report["unique_products"], 2)
@@ -619,15 +621,15 @@ class MainTests(unittest.TestCase):
                       section["complete_category_discovery"])
 
     def test_terms_reaching_the_cap_are_listed_by_name(self):
-        client = FakeClient({s: full_page(s) for s in (1, 51, 101, 151, 201)})
+        client = FakeClient({s: full_page(s) for s in (0, 50, 100, 150, 200, 250)})
         section = _main_run(self.out, client=client)["report"]["does_not_establish"]
         results = section["complete_results_per_term"]
         self.assertEqual(results["truncated_terms"], ["Dairy||eggs"])
-        self.assertEqual(results["limit_per_term"], 250)
+        self.assertEqual(results["limit_per_term"], 300)
 
     def test_a_term_that_stopped_on_a_failed_page_is_listed_too(self):
-        client = FakeClient({s: full_page(s) for s in (1, 51, 101, 151, 201)})
-        report = _main_run(self.out, ["--max-start", "251"], client)["report"]
+        client = FakeClient({s: full_page(s) for s in (0, 50, 100, 150, 200, 250)})
+        report = _main_run(self.out, ["--max-start", "300"], client)["report"]
         self.assertEqual(report["terms_that_hit_the_start_cap"], [])
         self.assertEqual(report["does_not_establish"]["complete_results_per_term"]
                          ["truncated_terms"], ["Dairy||eggs"])
@@ -640,7 +642,7 @@ class MainTests(unittest.TestCase):
         repeated = {"Dairy": ["eggs", "milk"]}
         config = self.out.parent / "two_terms.json"
         config.write_text(json.dumps({"terms": repeated}))
-        client = FakeClient({1: [product("0000000000001"), product("0000000000002")]})
+        client = FakeClient({0: [product("0000000000001"), product("0000000000002")]})
         report = _main_run(self.out, ["--terms", str(config)], client)["report"]
         self.assertEqual(report["duplicate_upcs"], 0)
         self.assertEqual(report["unique_products"], 2)
@@ -649,11 +651,11 @@ class MainTests(unittest.TestCase):
     def test_two_products_sharing_a_upc_are_a_duplicate(self):
         # reconcile refuses this before a real report, so build_report is fed
         # directly: the count must still be right if that refusal ever moved.
-        state = run(FakeClient({1: [product("0000000000001")]}))
+        state = run(FakeClient({0: [product("0000000000001")]}))
         rows = [norm(product("0000000000001")), norm(product("0000000000001")),
                 norm(product("0000000000002"))]
         accumulated = {"products": rows, "current_records": 3, "carried_forward_records": 0}
-        args = mock.Mock(pages_per_term=20, max_start=201)
+        args = mock.Mock(pages_per_term=20, max_start=250)
         report = sweep_tool.build_report(state, {}, "53100508",
                                          sweep_tool.Budget(1, 60), args, accumulated)
         self.assertEqual(report["unique_products"], 3)
@@ -662,7 +664,7 @@ class MainTests(unittest.TestCase):
     def test_a_blank_upc_is_not_counted_as_a_duplicate(self):
         one, two = product("0000000000001"), product("0000000000002")
         one["upc"] = two["upc"] = ""
-        report = _main_run(self.out, client=FakeClient({1: [one, two]}))["report"]
+        report = _main_run(self.out, client=FakeClient({0: [one, two]}))["report"]
         self.assertEqual(report["unique_products"], 2)
         self.assertEqual(report["duplicate_upcs"], 0)
 
@@ -678,36 +680,79 @@ class MainTests(unittest.TestCase):
         self.assertGreaterEqual(report["elapsed_seconds"], 0)
         self.assertEqual(sum(report["count_by_category"].values()), report["unique_products"])
 
-    def short_section(self, reported, returned):
+    def paged(self, pages, reported):
         class Paged(FakeClient):
             def products(self, location_id, term, offset=0, limit=50):
-                return {"data": [product(f"{n:013d}") for n in range(1, returned + 1)],
+                self.starts.append(offset)
+                return {"data": pages.get(offset, []),
                         "meta": {"pagination": {"start": offset, "limit": limit,
                                                 "total": reported}}}
-        section = _main_run(self.out, client=Paged({}))["report"]["does_not_establish"]
-        return section["complete_results_per_term"]
+        return _main_run(self.out, client=Paged())
 
-    def test_a_term_ending_short_of_its_reported_total_is_named(self):
-        results = self.short_section(152, 49)
+    def test_the_first_request_skips_nothing(self):
+        client = FakeClient({0: [product("0000000000001")]})
+        _main_run(self.out, client=client)
+        self.assertEqual(client.starts, [0])
+
+    def test_a_short_page_with_more_behind_it_does_not_end_the_term(self):
+        pages = {0: full_page(0)[:49], 50: full_page(50)[:49], 100: full_page(100)[:20]}
+        run = self.paged(pages, 120)
+        self.assertEqual(run["client"].starts, [0, 50, 100])
+        self.assertEqual(run["report"]["unique_products"], 118)
+
+    def test_a_term_stops_once_its_total_is_covered(self):
+        run = self.paged({0: full_page(0), 50: full_page(50)}, 100)
+        self.assertEqual(run["client"].starts, [0, 50])
+
+    def test_an_empty_page_ends_a_term_and_names_it_short(self):
+        run = self.paged({0: full_page(0)[:49]}, 152)
+        self.assertEqual(run["client"].starts, [0, 50])
+        results = run["report"]["does_not_establish"]["complete_results_per_term"]
         self.assertEqual(results["short_of_reported_total"],
                          [{"term": "Dairy||eggs", "reported_total": 152, "received": 49}])
         self.assertEqual(results["truncated_terms"], [])
 
-    def test_a_term_one_short_is_the_skipped_first_product_not_truncation(self):
-        self.assertEqual(self.short_section(7, 6)["short_of_reported_total"], [])
+    def test_a_short_page_with_no_total_still_ends_the_term(self):
+        client = FakeClient({0: full_page(0)[:49], 50: full_page(50)})
+        _main_run(self.out, client=client)
+        self.assertEqual(client.starts, [0])
+
+    def test_a_term_exactly_filling_the_limit_is_not_truncated(self):
+        run = self.paged({s: full_page(s) for s in (0, 50, 100, 150, 200, 250)}, 300)
+        results = run["report"]["does_not_establish"]["complete_results_per_term"]
+        self.assertEqual(results["truncated_terms"], [])
 
     def test_a_term_at_the_limit_is_listed_once_not_twice(self):
-        class AtLimit(FakeClient):
-            def products(self, location_id, term, offset=0, limit=50):
-                return {"data": full_page(offset), "meta": {"pagination": {"total": 900}}}
-        section = _main_run(self.out, client=AtLimit({}))["report"]["does_not_establish"]
-        results = section["complete_results_per_term"]
+        run = self.paged({s: full_page(s) for s in (0, 50, 100, 150, 200, 250)}, 900)
+        results = run["report"]["does_not_establish"]["complete_results_per_term"]
         self.assertEqual(results["truncated_terms"], ["Dairy||eggs"])
         self.assertEqual(results["short_of_reported_total"], [])
 
+    def test_two_products_sharing_a_upc_finish_the_run_and_keep_both_rows(self):
+        one, two = product("0000000000001"), product("0000000000002")
+        two["upc"] = one["upc"]
+        run = _main_run(self.out, client=FakeClient({0: [one, two]}))
+        self.assertEqual(run["code"], 0)
+        self.assertEqual(run["report"]["unique_products"], 2)
+        self.assertEqual(run["report"]["duplicate_upcs"], 1)
+        self.assertEqual(len(self.rows()), 2)
+        self.assertEqual(run["report"]["upc_collisions"], [{
+            "upc": one["upc"], "identities": ["53100508:product:0000000000001",
+                                              "53100508:product:0000000000002"]}])
+
+    def test_the_default_reconcile_still_refuses_a_collision(self):
+        from marianos_collector.retention import observation, reconcile
+        at = "2026-10-31T12:00:00+00:00"
+        rows = [norm(product("0000000000001")), norm(product("0000000000002"))]
+        rows[1]["upc"] = rows[0]["upc"]
+        seen = {stable: observation(r, STORE.store_id, at, [], "unknown") for stable, r in (
+            (sweep_tool.stable_identity(r, STORE.store_id), r) for r in rows)}
+        with self.assertRaisesRegex(ValueError, "UPC_IDENTITY_COLLISION"):
+            reconcile(rows, seen, STORE.store_id, "2026-10-31T13:00:00+00:00")
+
     def test_empty_seafood_and_coffee_roots_are_explained_from_the_data(self):
         meat = product("0000000000005", categories=["Meat & Seafood"])
-        client = FakeClient({1: [meat]})
+        client = FakeClient({0: [meat]})
         roots = _main_run(self.out, client=client, category_map={
             "Meat & Seafood": "Meat"})["report"]["does_not_establish"]["populated_roots"]
         self.assertIn("from the 1 records", roots["Seafood"])
@@ -715,14 +760,14 @@ class MainTests(unittest.TestCase):
 
     def test_a_populated_coffee_root_is_not_reported_as_empty(self):
         coffee = product("0000000000006", categories=["Coffee"])
-        roots = _main_run(self.out, client=FakeClient({1: [coffee]}), category_map={
+        roots = _main_run(self.out, client=FakeClient({0: [coffee]}), category_map={
             "Coffee": "Coffee"})["report"]["does_not_establish"]["populated_roots"]
         self.assertNotIn("Coffee", roots)
         self.assertIn("Seafood", roots)
 
     def test_a_coffee_label_behind_another_label_is_counted(self):
         both = product("0000000000007", categories=["Dairy", "Coffee"])
-        roots = _main_run(self.out, client=FakeClient({1: [both]}), category_map={
+        roots = _main_run(self.out, client=FakeClient({0: [both]}), category_map={
             "Dairy": "Dairy", "Coffee": "Coffee"})["report"]["does_not_establish"]["populated_roots"]
         self.assertTrue(roots["Coffee"].startswith("1 products"))
 

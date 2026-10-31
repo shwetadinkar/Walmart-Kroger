@@ -41,8 +41,8 @@ FIELDS = ("zipcode", "store_name", "store_location", "store_logo", "store_brand"
           "crawl_date")
 BLANK_ON_EVERY_ROW = ("ppm", "volume_deals_description", "volume_deals_price",
                       "digital_deals_description", "digital_deals_price", "gupc", "unit_price")
-LIMIT_PER_TERM = 250
-SKIP_TOLERANCE = 1
+LAST_START = 250
+LIMIT_PER_TERM = 300
 EMPTY_ROOTS = ("Batteries", "Coffee", "Coupons", "Light Bulbs", "Seafood")
 NO_LABEL_FOR = ("Batter", "Bulb", "Coffee", "Coupon")
 SEAFOOD_LABEL = "Meat & Seafood"
@@ -66,8 +66,9 @@ SOURCES = ("tools/kroger_full_sweep.py", "marianos_collector/api_trial.py",
            "azure/deploy_jobs.sh", "Dockerfile")
 # A note's description of the code must still be true of the code shipped with it.
 CODE_CLAIMS = {
-    "tools/kroger_full_sweep.py": ('state["page_failures"].append', 'if len(data) < 50:',
-                                   'if start > max_start:', 'expected_context='),
+    "tools/kroger_full_sweep.py": ('state["page_failures"].append', 'start = page * 50',
+                                   'if start > max_start:', 'expected_context=',
+                                   'upc_collisions="record"'),
     "marianos_collector/runner.py": ("Zero eligible products", "Suspicious yield collapse",
                                      "Missing canary product", "PUBLISHED_IDENTITY_LOST",
                                      "Location context mismatch",
@@ -115,6 +116,7 @@ def terms_from(index):
     terms = {}
     for entry in sorted(index, key=lambda e: (key(e), e["start"])):
         term = terms.setdefault(key(entry), {"received": 0, "last_start": 0, "paths": [],
+                                             "first_start": entry["start"],
                                              "root": entry["term_root"], "reported_total": 0})
         term["received"] += entry["returned"]
         term["last_start"] = entry["start"]
@@ -128,17 +130,19 @@ def terms_from(index):
 def truncation(index):
     """Terms stopped by this run's limit, and terms ending short without reaching it."""
     terms = terms_from(index)
-    limited = sorted(k for k, t in terms.items() if t["last_start"] == 201 and t["last_returned"] == 50)
+    limited = sorted(k for k, t in terms.items() if t["last_start"] == LAST_START
+                     and t["last_returned"] and t["reported_total"] > LIMIT_PER_TERM)
     short = sorted(({"term": k, "reported_total": t["reported_total"], "received": t["received"]}
                     for k, t in terms.items() if k not in limited
-                    and t["reported_total"] - t["received"] > SKIP_TOLERANCE),
+                    and t["reported_total"] > t["received"]),
                    key=lambda s: s["term"])
-    if any(terms[k]["reported_total"] <= LIMIT_PER_TERM for k in limited):
-        raise PackageRefused("A term at the limit does not report more than the limit")
+    if any(t["last_start"] > LAST_START for t in terms.values()):
+        raise PackageRefused("A capture starts beyond Kroger's limit")
     below = [t for k, t in terms.items() if k not in limited and t["reported_total"] > 0]
     return {"terms": len(terms), "limited": limited, "short": short,
             "with_results_below_limit": len(below),
-            "exactly_one_short": sum(t["reported_total"] - t["received"] == 1 for t in below),
+            "received_at_least_reported_total": sum(t["received"] >= t["reported_total"] for t in below),
+            "first_requests_skip_nothing": all(t["first_start"] == 0 for t in terms.values()),
             "zero_result_terms": sorted(k for k, t in terms.items() if t["reported_total"] == 0),
             "reported_total_at_1000": sum(t["reported_total"] == 1000 for t in terms.values())}
 
@@ -199,13 +203,14 @@ def check_rows(rows):
 
 def check_sample(pages, rows, context):
     """Each sampled product must be in the data, as the page returned it."""
+    by_id = {row["url"].rsplit("/", 1)[-1]: row for row in rows}
     by_upc = {row["upc"]: row for row in rows}
     first_seen = {c["product_id"]: c["raw_file"] for c in context.values()}
     products = compared = 0
     for name, page in pages.items():
         for product in page["response"].get("data") or []:
             products += 1
-            row = by_upc.get(product.get("upc"))
+            row = by_id.get(product.get("productId")) or by_upc.get(product.get("upc"))
             if row is None:
                 raise PackageRefused(f"{name}: {product.get('upc')} is not in the data")
             if urlsplit(product.get("productPageURI", "")).path not in row["url"]:
@@ -260,7 +265,11 @@ def recompute(data, index, sample_pages, source):
         "duplicate_upcs": duplicate_upcs(rows),
         "duplicate_urls": len(rows) - len({row["url"] for row in rows}),
         "records_without_upc": len(rows) - len(upcs),
-        "placements_returned": returned, "duplicate_placements_collapsed": returned - len(rows),
+        "current_records": report["current_records"],
+        "carried_forward_records": report["carried_forward_records"],
+        "upc_collisions": report["upc_collisions"],
+        "placements_returned": returned,
+        "duplicate_placements_collapsed": returned - report["current_records"],
         "category_counts": dict(sorted(counts.items())),
         "named_roots_populated": sum(1 for name in counts if name),
         "records_with_no_root": counts.get("", 0),
@@ -284,6 +293,8 @@ def recompute(data, index, sample_pages, source):
         "requests": (report["requests_spent"], facts["captures"]),
         "limited terms": (sorted(set(report["terms_that_hit_the_start_cap"])), trunc["limited"]),
         "terms": (report["terms_completed"], trunc["terms"]),
+        "records": (report["current_records"] + report["carried_forward_records"], facts["records"]),
+        "upc collisions": (len(report["upc_collisions"]), facts["duplicate_upcs"]),
         "zero roots": (report["categories_with_zero_products"], list(EMPTY_ROOTS)),
         "category counts": (report["count_by_category"], facts["category_counts"]),
         "field completeness": (report["field_completeness"], facts["field_completeness"]),
@@ -291,6 +302,8 @@ def recompute(data, index, sample_pages, source):
     wrong = [name for name, (stated, found) in mismatches.items() if stated != found]
     if wrong:
         raise PackageRefused(f"The run report and the bytes disagree on: {wrong}")
+    if not trunc["first_requests_skip_nothing"]:
+        raise PackageRefused("A term's first request skipped products")
     if report["page_failures"] or report["stopped_reason"]:
         raise PackageRefused("The run reports a failure the notes do not describe")
     if ACCEPTABLE_USE not in report["acceptable_use_decision"]:
@@ -337,17 +350,20 @@ def note_requirements(facts):
                              for k, v in facts["category_counts"].items()],
         "DOES_NOT_ESTABLISH.md": trunc["limited"] + [s["term"] for s in trunc["short"]] + [
             f"{len(trunc['limited'])} terms", f"{len(trunc['short'])} terms",
-            f"{trunc['exactly_one_short']} of {trunc['with_results_below_limit']}",
+            f"{trunc['received_at_least_reported_total']} of {trunc['with_results_below_limit']}",
             f"{facts['empty_roots']['seafood_label_records']:,} records",
             f"{facts['empty_roots']['kroger_labels']} labels",
+            f"{facts['carried_forward_records']:,} records",
             f"{facts['unmapped_label_placements']}", f"{facts['records_with_no_root']}"] + [
                 f"{name}: {item['products_found_by_its_terms']:,} products"
                 for name, item in roots.items()],
         "R6_COMPLETENESS_AND_BLOCKING.md": ["Zero eligible products", "Suspicious yield collapse",
                                             "not applied to this dataset",
+                                            "not implemented for this route",
                                             f"{len(trunc['short'])} terms"],
         "R7_FAILED_RUN_PROTECTION.md": ["latest", "PUBLISHED_IDENTITY_LOST",
-                                        "not applied to this dataset"],
+                                        "not applied to this dataset",
+                                        "not implemented for this route"],
         "R8_ARCHITECTURE_AND_SERVICES.md": ["No paid service", "kroger_full_sweep.py",
                                             "Bright Data", "Azure"],
         "R9_OPERATING_COST.md": [f"{cost['vcpu_seconds_per_month']:,} vCPU-seconds",
@@ -418,7 +434,7 @@ def describe(root, facts, sample, index, spine_hashes):
             "statements_recomputed_from_the_bytes": facts, "left_out": left, "entries": entries}
 
 
-def build(spine, log, notes, source, output, denylist):
+def build(spine, log, notes, source, output, denylist, extras=()):
     spine, notes, source, output = map(Path, (spine, notes, source, output))
     if output.exists() and any(output.iterdir()):
         raise PackageRefused(f"{output} is not empty")
@@ -434,6 +450,7 @@ def build(spine, log, notes, source, output, denylist):
     check_notes(notes, facts)
     plan = [(spine / name, f"data/{name}") for name in DATA_FILES]
     plan.append((Path(log), f"data/{Path(log).name}"))
+    plan += [(Path(extra), f"data/{Path(extra).name}") for extra in extras]
     plan += [(notes / name, name) for name in NOTES]
     plan += [(source / name, f"source/{name}") for name in SOURCES]
     here = Path(__file__).resolve().parent
@@ -527,6 +544,7 @@ def main(argv=None):
     p.add_argument("--identity-denylist")
     for name in ("--spine", "--log", "--notes", "--source", "--output", "--facts-only"):
         p.add_argument(name)
+    p.add_argument("--extra", action="append", default=[], help="Further file for data/")
     args = p.parse_args(argv)
     try:
         if args.verify:
@@ -544,7 +562,7 @@ def main(argv=None):
                         args.identity_denylist)):
                 p.error("A build needs --spine --log --notes --source --output --identity-denylist")
             manifest = build(args.spine, args.log, args.notes, args.source, args.output,
-                             args.identity_denylist)
+                             args.identity_denylist, args.extra)
             result = {"files": manifest["files"]}
     except PackageRefused as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)

@@ -40,8 +40,13 @@ def observation(row, store_id, observed_at, source_refs=None, availability_state
             'availability_state':availability_state if availability_state in ('available','unavailable') else 'unknown'}
 
 
-def reconcile(rows, observations, store_id, collection_at, previous_rows=None, previous_retention=None, expected_context=None):
-    """Current missing values remain blank; only absent/stale identities carry old rows."""
+def reconcile(rows, observations, store_id, collection_at, previous_rows=None, previous_retention=None, expected_context=None, upc_collisions='refuse'):
+    """Current missing values remain blank; only absent/stale identities carry old rows.
+
+    Two products sharing a UPC refuse the run by default, which suits the publication
+    path. upc_collisions='record' keeps both rows and returns the collision instead:
+    a collector must not lose a finished collection, or a row, over a source's data.
+    """
     collected=stamp(collection_at);previous_rows=previous_rows or [];prior=previous_retention or {}
     previous={};current={};result=[];metadata={}
     contexts={(r['zipcode'],r['store_location']) for r in rows}
@@ -92,13 +97,15 @@ def reconcile(rows, observations, store_id, collection_at, previous_rows=None, p
             'pickup_context':deepcopy(evidence.get('pickup_context',{})),
             'carry_forward_reason':''}
         result.append(row)
-    upcs={}
+    upcs={};collisions={}
     for row in result:
         if row['upc']:
             identity=stable_identity(row,store_id)
-            if row['upc'] in upcs and upcs[row['upc']]!=identity:raise ValueError('UPC_IDENTITY_COLLISION')
-            upcs[row['upc']]=identity
-    return {'products':result,'retention':metadata,'current_records':sum(m['observation_status']=='current' for m in metadata.values()),
+            if row['upc'] in upcs and upcs[row['upc']]!=identity:
+                if upc_collisions!='record':raise ValueError('UPC_IDENTITY_COLLISION')
+                collisions.setdefault(row['upc'],{upcs[row['upc']]}).add(identity)
+            upcs.setdefault(row['upc'],identity)
+    return {'products':result,'retention':metadata,'upc_collisions':[{'upc':upc,'identities':sorted(ids)} for upc,ids in sorted(collisions.items())],'current_records':sum(m['observation_status']=='current' for m in metadata.values()),
             'carried_forward_records':sum(m['observation_status']=='carried_forward' for m in metadata.values())}
 
 

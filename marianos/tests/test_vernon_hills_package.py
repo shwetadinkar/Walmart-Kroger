@@ -43,17 +43,17 @@ class Spine:
         self.index_pages = []
         self.number = 0
         # At the limit: five full pages, Kroger reporting more.
-        for page in range(5):
-            self.page("Dairy", "milk", 1 + page * 50, 50, 900, "Dairy")
+        for page in range(6):
+            self.page("Dairy", "milk", page * 50, 50, 900, "Dairy")
         # Ended short of the reported total.
-        self.page("Produce", "apple", 1, 47, 309, "Produce")
-        # One short: what filter.start=1 appears to skip.
-        self.page("Frozen", "peas", 1, 6, 7, "Frozen")
+        self.page("Produce", "apple", 0, 47, 309, "Produce")
+        # Everything Kroger reported.
+        self.page("Frozen", "peas", 0, 6, 6, "Frozen")
         # No result.
-        self.page("Coffee", "beans", 1, 0, 0, "")
+        self.page("Coffee", "beans", 0, 0, 0, "")
         for root_name in tool.EMPTY_ROOTS:
             if root_name != "Coffee":
-                self.page(root_name, "nothing", 1, 0, 0, "")
+                self.page(root_name, "nothing", 0, 0, 0, "")
         for item in self.discovery.values():
             item["api_categories"].append(tool.SEAFOOD_LABEL)
         self.report = self.make_report()
@@ -89,7 +89,8 @@ class Spine:
                 "categories_with_zero_products": list(tool.EMPTY_ROOTS),
                 "count_by_category": dict(sorted(counts.items())),
                 "field_completeness": {f: sum(bool(r[f]) for r in self.rows) for f in tool.FIELDS},
-                "page_failures": [], "stopped_reason": None,
+                "page_failures": [], "stopped_reason": None, "upc_collisions": [],
+                "current_records": len(self.rows), "carried_forward_records": 0,
                 "offer_status": {"qualifying_pickup_offer": len(self.rows)},
                 "acceptable_use_decision": "Kroger " + tool.ACCEPTABLE_USE + " known."}
 
@@ -159,7 +160,8 @@ class Facts(Base):
         self.assertEqual(found["limited"], ["Dairy||milk"])
         self.assertEqual(found["short"], [{"term": "Produce||apple", "reported_total": 309,
                                            "received": 47}])
-        self.assertEqual(found["exactly_one_short"], 1)
+        self.assertEqual(found["received_at_least_reported_total"], 1)
+        self.assertTrue(found["first_requests_skip_nothing"])
         self.assertEqual(found["with_results_below_limit"], 2)
         self.assertEqual(len(found["zero_result_terms"]), 5)
 
@@ -171,7 +173,7 @@ class Facts(Base):
 
     def test_placements_collapsed_counts_repeats(self):
         self.assertEqual(self.s.facts()["placements_returned"], self.s.facts()["records"])
-        path = self.s.spine / "raw/Produce-apple/start_0001.json"
+        path = self.s.spine / "raw/Produce-apple/start_0000.json"
         page = json.loads(path.read_text())
         page["response"]["data"].append(page["response"]["data"][0])
         path.write_text(json.dumps(page))
@@ -190,6 +192,26 @@ class Facts(Base):
         self.assertEqual(cost["gib_seconds_per_month"], 867)
 
 
+class ShortTerms(Base):
+    def test_one_product_short_of_the_total_is_named(self):
+        path = self.s.spine / "raw/Frozen-peas/start_0000.json"
+        path.write_text(path.read_text().replace('"total": 6', '"total": 7'))
+        found = tool.truncation(tool.index_raw(self.s.spine / "raw"))
+        self.assertIn(7, [s["reported_total"] for s in found["short"]])
+
+    def test_a_shared_upc_is_compared_by_product_id(self):
+        rows = json.loads((self.s.spine / "data_22_fields.json").read_text())
+        first, second = rows[0], rows[1]
+        path = self.s.spine / "raw/Dairy-milk/start_0000.json"
+        page = json.loads(path.read_text())
+        page["response"]["data"][1]["upc"] = first["upc"]
+        path.write_text(json.dumps(page))
+        second["upc"] = first["upc"]
+        (self.s.spine / "data_22_fields.json").write_text(json.dumps(rows))
+        self.assertEqual(tool.check_sample({path.name: page}, rows,
+                                           self.s.context)["products_on_sampled_pages"], 50)
+
+
 class Sample(Base):
     def chosen(self, seed="a"):
         return tool.choose_sample(tool.index_raw(self.s.spine / "raw"), seed)
@@ -197,17 +219,17 @@ class Sample(Base):
     def test_the_rule_takes_every_kind_of_page(self):
         reasons = " ".join(x for why in self.chosen().values() for x in why)
         chosen = self.chosen()
-        self.assertEqual(sum("Dairy-milk" in path for path in chosen), 5)
-        self.assertIn("Produce-apple/start_0001.json", chosen)
-        self.assertIn("Coffee-beans/start_0001.json", chosen)
+        self.assertEqual(sum("Dairy-milk" in path for path in chosen), 6)
+        self.assertIn("Produce-apple/start_0000.json", chosen)
+        self.assertIn("Coffee-beans/start_0000.json", chosen)
         self.assertIn("first page, root Frozen", reasons)
         self.assertIn("a term with no result", reasons)
         self.assertIn("every page of a term ending short of its reported total",
-                      chosen["Produce-apple/start_0001.json"])
+                      chosen["Produce-apple/start_0000.json"])
 
     def test_seeded_audit_varies_with_the_seed_and_repeats_with_it(self):
-        index = [{"path": f"Z-t{n}/start_0001.json", "term_root": "Z", "term": f"t{n}", "start": 1,
-                  "returned": 3, "reported_total": 4, "bytes": 1} for n in range(200)]
+        index = [{"path": f"Z-t{n}/start_0000.json", "term_root": "Z", "term": f"t{n}", "start": 0,
+                  "returned": 4, "reported_total": 4, "bytes": 1} for n in range(200)]
         first = tool.choose_sample(index, "a")
         self.assertEqual(first, tool.choose_sample(index, "a"))
         self.assertNotEqual(set(first), set(tool.choose_sample(index, "b")))
@@ -216,10 +238,10 @@ class Sample(Base):
     def test_limited_terms_in_full_come_from_different_roots(self):
         index = [{"path": f"{root}-t{n}/start_{start:04d}.json", "term_root": root, "term": f"t{n}",
                   "start": start, "returned": 50, "reported_total": 900, "bytes": 1}
-                 for root in "ABCD" for n in range(2) for start in (1, 51, 101, 151, 201)]
+                 for root in "ABCD" for n in range(2) for start in (0, 50, 100, 150, 200, 250)]
         chosen = tool.choose_sample(index, "a")
         full = [p for p, why in chosen.items() if "every page of a term stopped at the limit" in why]
-        self.assertEqual(len(full), tool.TRUNCATED_TERMS_IN_FULL * 5)
+        self.assertEqual(len(full), tool.TRUNCATED_TERMS_IN_FULL * 6)
         self.assertEqual(len({p[0] for p in full}), tool.TRUNCATED_TERMS_IN_FULL)
 
 
@@ -244,7 +266,7 @@ class Build(Base):
     def test_the_whole_raw_folder_does_not_ship(self):
         index = tool.index_raw(self.s.spine / "raw")
         for start in range(1, 41):
-            self.s.page("Grocery", f"term{start}", 1, 1, 2, "Grocery")
+            self.s.page("Grocery", f"term{start}", 0, 2, 2, "Grocery")
         self.s.report = self.s.make_report()
         self.s.report["terms_completed"] = 48
         self.s.write()
@@ -259,7 +281,7 @@ class Build(Base):
 
     def test_cid_is_masked_and_the_original_hash_kept(self):
         manifest = self.s.build()
-        name = "Produce-apple/start_0001.json"
+        name = "Produce-apple/start_0000.json"
         shipped = (self.s.output / "raw_sample" / name).read_bytes()
         self.assertNotIn(b"abc123private", shipped)
         self.assertIn(b"cid=MASKED", shipped)
@@ -285,7 +307,7 @@ class Build(Base):
         self.assertFalse((pathlib.Path(self.tmp.name) / "package").exists())
 
     def test_identity_in_a_sampled_page_refuses(self):
-        path = self.s.spine / "raw/Produce-apple/start_0001.json"
+        path = self.s.spine / "raw/Produce-apple/start_0000.json"
         path.write_text(path.read_text().replace('"term":', f'"x": "{DENIED}", "term":'))
         self.s.notes()
         self.refused("identity string")
@@ -303,6 +325,15 @@ class Build(Base):
             note.write("See nowhere_at_all.json\n")
         self.refused("absent files")
         self.assertFalse((pathlib.Path(self.tmp.name) / "package").exists())
+
+
+class Extras(Base):
+    def test_an_extra_file_ships_in_data(self):
+        extra = self.s.note_dir.parent / "probe.json"
+        extra.write_text("{}")
+        output = self.s.root / "with_extra"
+        tool.build(self.s.spine, self.s.log, self.s.note_dir, ROOT, output, self.s.deny, [extra])
+        self.assertTrue((output / "data/probe.json").exists())
 
 
 class Refusals(Base):
@@ -336,7 +367,7 @@ class Refusals(Base):
         self.refused("not labelled Vernon Hills")
 
     def test_capture_from_another_store(self):
-        path = self.s.spine / "raw/Produce-apple/start_0001.json"
+        path = self.s.spine / "raw/Produce-apple/start_0000.json"
         path.write_text(path.read_text().replace(tool.STORE_ID, tool.OTHER_STORE))
         self.refused("another store")
 
@@ -371,17 +402,19 @@ class Refusals(Base):
         self.refused("query")
 
     def test_sampled_product_missing_from_the_data(self):
-        self.edit("data_22_fields.json", lambda rows: rows[0].update(upc="9"))
-        self.edit("data_22_fields.json", lambda rows: rows[50].update(upc="8"))
+        self.edit("data_22_fields.json", lambda rows: rows[0].update(
+            upc="9", url="https://www.marianos.com/p/y/9"))
+        self.edit("data_22_fields.json", lambda rows: rows[50].update(
+            upc="8", url="https://www.marianos.com/p/y/8"))
         self.refused("not in the data")
 
     def test_sampled_product_with_another_url(self):
-        self.edit("data_22_fields.json", lambda rows: rows[255].update(
+        self.edit("data_22_fields.json", lambda rows: rows[305].update(
             url="https://www.marianos.com/p/y/1"))
         self.refused("another url")
 
     def test_sampled_product_with_another_price(self):
-        self.edit("data_22_fields.json", lambda rows: rows[255].update(regular_price="9.99"))
+        self.edit("data_22_fields.json", lambda rows: rows[305].update(regular_price="9.99"))
         self.refused("another price")
 
     def test_a_kroger_label_the_notes_say_does_not_exist(self):
@@ -394,15 +427,52 @@ class Refusals(Base):
             v["api_categories"].remove(tool.SEAFOOD_LABEL) for v in d.values()])
         self.refused("Meat & Seafood")
 
-    def test_a_term_at_the_limit_reporting_no_more(self):
+    def test_a_term_filling_exactly_the_limit_is_not_called_limited(self):
         for path in (self.s.spine / "raw").glob("Dairy-milk/*.json"):
-            path.write_text(path.read_text().replace('"total": 900', '"total": 250'))
-        self.refused("does not report more")
+            path.write_text(path.read_text().replace('"total": 900', '"total": 300'))
+        found = tool.truncation(tool.index_raw(self.s.spine / "raw"))
+        self.assertEqual(found["limited"], [])
+
+    def test_a_capture_beyond_krogers_limit(self):
+        path = self.s.spine / "raw/Dairy-milk/start_0250.json"
+        path.write_text(path.read_text().replace('"start": 250', '"start": 300'))
+        self.refused("beyond Kroger's limit")
+
+    def test_a_first_request_that_skipped_products(self):
+        path = self.s.spine / "raw/Produce-apple/start_0000.json"
+        path.write_text(path.read_text().replace('"start": 0', '"start": 1'))
+        self.refused("skipped products")
+
+    def test_carried_records_must_reconcile(self):
+        self.edit("run_report.json", lambda r: r.update(carried_forward_records=3))
+        self.refused("disagree on: ['records']")
+
+    def test_collisions_must_match_the_duplicates(self):
+        self.edit("run_report.json", lambda r: r.update(upc_collisions=[{"upc": "1"}]))
+        self.refused("upc collisions")
+
+    def test_a_carried_row_needs_no_capture(self):
+        self.s.rows.append(row("9999999999999", "Frozen"))
+        self.s.report = self.s.make_report()
+        self.s.report.update(carried_forward_records=1, current_records=len(self.s.rows) - 1)
+        self.s.write()
+        facts = self.s.facts()
+        self.assertEqual(facts["carried_forward_records"], 1)
+        self.assertEqual(facts["duplicate_placements_collapsed"], 0)
 
     def test_a_note_missing_a_required_fact(self):
         note = self.s.note_dir / "DOES_NOT_ESTABLISH.md"
         note.write_text(note.read_text().replace("Dairy||milk", "other"))
         self.refused("Dairy||milk")
+
+    def test_r6_and_r7_must_say_the_gates_are_not_implemented(self):
+        for name in ("R6_COMPLETENESS_AND_BLOCKING.md", "R7_FAILED_RUN_PROTECTION.md"):
+            note = self.s.note_dir / name
+            original = note.read_text()
+            self.assertIn("not implemented for this route", original)
+            note.write_text(original.replace("not implemented for this route", "in place"))
+            self.refused("not implemented for this route")
+            note.write_text(original)
 
     def test_a_note_addressed_to_someone(self):
         with open(self.s.note_dir / "README.md", "a") as note:
@@ -460,7 +530,7 @@ class Tampering(Base):
     def test_a_changed_row_with_the_manifest_rehashed(self):
         path = self.s.output / "data/data_22_fields.json"
         rows = json.loads(path.read_text())
-        rows[300]["regular_price"] = "9.99"
+        rows[310]["regular_price"] = "9.99"
         path.write_text(json.dumps(rows))
         self.rehash()
         with self.assertRaises(PackageRefused):
@@ -473,7 +543,7 @@ class Tampering(Base):
         self.refused("do not recompute", self.verify)
 
     def test_a_substituted_sample_page(self):
-        name = "raw_sample/Produce-apple/start_0001.json"
+        name = "raw_sample/Produce-apple/start_0000.json"
         path = self.s.output / name
         page = json.loads(path.read_text())
         page["start"] = 51
@@ -482,7 +552,7 @@ class Tampering(Base):
         self.refused("not the capture the index describes", self.verify)
 
     def test_a_sample_page_removed_from_the_rule(self):
-        name = "raw_sample/Produce-apple/start_0001.json"
+        name = "raw_sample/Produce-apple/start_0000.json"
         (self.s.output / name).unlink()
         manifest = json.loads(self.manifest_path.read_text())
         manifest["entries"] = [e for e in manifest["entries"] if e["path"] != name]
@@ -497,7 +567,7 @@ class Tampering(Base):
         self.refused("another original", self.verify)
 
     def test_a_cid_restored_to_a_sample_page(self):
-        name = "raw_sample/Produce-apple/start_0001.json"
+        name = "raw_sample/Produce-apple/start_0000.json"
         path = self.s.output / name
         path.write_text(path.read_text().replace("cid=MASKED", RAW_CID))
         self.rehash()

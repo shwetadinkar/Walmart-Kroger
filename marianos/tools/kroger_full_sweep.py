@@ -88,16 +88,15 @@ from marianos_collector.schema import FIELDS
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# The first run, on 31 October 2026, got HTTP 400 at filter.start=251 on all 63
-# terms that reached it, and never failed below it. 201 is the highest start
-# that run saw succeed, so each term yields at most 250 products. Kroger's OpenAPI
-# gives filter.start a maximum of 250, so this limit is ours: starts from 202 to
-# 250 were not tried.
-MAX_START = 201
+# filter.start is a skip count. Eight live requests on 31 October 2026 showed it:
+# no parameter and 0 return the same first page, 1 drops the first product, 2 the
+# first two, 250 works and 251 is HTTP 400. So pages start at 0, 50 ... 250, and a
+# term reaches at most 300 products.
+MAX_START = 250
 
 # Bump when records change meaning. A checkpoint from another version holds
 # records built under other rules, and resuming would mix the two in one output.
-STATE_VERSION = 4
+STATE_VERSION = 5
 
 # kroger.KrogerClient.products sends this as filter.fulfillment. Kroger therefore
 # returns only products it holds for in-store or curbside at the location, so a
@@ -224,16 +223,11 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     continue
                 found = 0
                 for page in range(pages_per_term):
-                    # Kroger's OpenAPI defines filter.start as the number of
-                    # products to skip, minimum 1. In the 31 October run, 194 of
-                    # the 205 terms with a result under the limit returned exactly
-                    # one product fewer than their reported total, which fits
-                    # start=1 skipping the first. Pages do not overlap. Whether
-                    # omitting filter.start recovers that product needs a live
-                    # request, so the behaviour stands until one is approved.
-                    start = 1 + page * 50
+                    start = page * 50
                     if start > max_start:
-                        state["terms_hit_start_cap"].append(key)
+                        # Only a limit if Kroger says there is more behind it.
+                        if state.get("term_totals", {}).get(key, start + 1) > start:
+                            state["terms_hit_start_cap"].append(key)
                         break
                     budget.spend()
                     # A term that fails is one term, not the run. Only the
@@ -302,7 +296,12 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                                  "term_root": category, "assigned_root": root,
                                  "api_categories": api_cats})
                         records.setdefault(identity, rec)
-                    if len(data) < 50:
+                    # Kroger can return a short page with more behind it, so a
+                    # short page ends a term only when no total says otherwise.
+                    # That rule left "sugar" at 49 of a reported 1,000.
+                    total = pagination.get("total")
+                    if not data or (start + 50 >= total if isinstance(total, int)
+                                    else len(data) < 50):
                         break
                 state["term_counts"][key] = found
                 done.add(key)
@@ -335,14 +334,13 @@ def _write(path, obj):
 def short_of_reported_total(state):
     """Terms that ended below the limit with products Kroger said were there.
 
-    A page under 50 ends a term, and pages can run short while more remain, so
-    these are truncated without reaching the limit. One short is left out: that
-    is the single product filter.start=1 appears to skip on every term.
+    The total is Kroger's figure and pages can run short, so a small difference
+    may be nothing missing; what it establishes is only that the two disagree.
     """
     capped = set(state["terms_hit_start_cap"]) | {f["term"] for f in state["page_failures"]}
     short = [{"term": key, "reported_total": total, "received": state["term_counts"].get(key, 0)}
              for key, total in state.get("term_totals", {}).items() if key not in capped]
-    return sorted((s for s in short if s["reported_total"] - s["received"] > 1),
+    return sorted((s for s in short if s["reported_total"] > s["received"]),
                   key=lambda s: s["term"])
 
 
@@ -370,13 +368,12 @@ def _does_not_establish(state, rows, by_cat, max_start):
             "public API has no category enumeration, so a product no term matched "
             "is absent, and nothing here measures how many such products exist."),
         "complete_results_per_term": {
-            "limit_per_term": max_start + 49,
+            "limit_per_term": max_start + 50,
             "explanation": (
-                f"Requests stop at filter.start={max_start}, so a term yields at "
-                f"most {max_start + 49} products. Kroger refused filter.start=251 "
-                "with HTTP 400 on all 63 terms that reached it in the 31 October "
-                "run. The terms below reached the limit or stopped on a failed "
-                "page, so their results are truncated."),
+                f"filter.start is a skip count and Kroger refuses more than 250, so "
+                f"a term yields at most {max_start + 50} products. The terms below "
+                "reported more than that, or stopped on a failed page, so their "
+                "results are truncated."),
             "truncated_terms": truncated,
             "short_of_reported_total": short_of_reported_total(state),
         },
@@ -407,7 +404,7 @@ def build_report(state, store, location_id, budget, args, accumulated):
     return {
         "mode": "KROGER_PUBLIC_API_SWEEP",
         "acceptable_use_decision": (
-            "Run by the account holder whose Kroger credentials were used. "
+            "Run on the instruction of the account holder whose Kroger credentials were used. "
             "Kroger's Acceptable Use of Public APIs prohibits systematically "
             "gathering response data to create a database and prohibits "
             "comparing prices among other retailers. This run was made with "
@@ -424,6 +421,7 @@ def build_report(state, store, location_id, budget, args, accumulated):
         "unique_upcs": len({r["upc"] for r in rows if r["upc"]}),
         "records_without_upc": sum(1 for r in rows if not r["upc"]),
         "duplicate_upcs": sum(1 for r in rows if r["upc"]) - len({r["upc"] for r in rows if r["upc"]}),
+        "upc_collisions": accumulated.get("upc_collisions", []),
         "duplicate_placements_collapsed": sum(state["term_counts"].values()) - len(state["records"]),
         "current_records": accumulated["current_records"],
         "carried_forward_records": accumulated["carried_forward_records"],
@@ -482,9 +480,8 @@ def main(argv=None):
     p.add_argument("--only-category", action="append", default=[])
     p.add_argument("--pages-per-term", type=int, default=20)
     p.add_argument("--max-start", type=int, default=MAX_START,
-                   help="Highest filter.start to request. Kroger refused 251 on "
-                        "every term that reached it; terms that reach this "
-                        "limit are named in the report.")
+                   help="Highest filter.start to request. Kroger refuses 251. "
+                        "Terms that reach this limit are named in the report.")
     p.add_argument("--max-requests", type=int, default=8000)
     p.add_argument("--max-seconds", type=float, default=14400)
     p.add_argument("--street", default="",
@@ -599,7 +596,8 @@ def main(argv=None):
     accumulated = reconcile(
         list(state["records"].values()), state["observations"], args.location_id,
         datetime.now(timezone.utc).isoformat(), previous_rows, previous_retention,
-        expected_context=(store["zipcode"], store["store_location"]))
+        expected_context=(store["zipcode"], store["store_location"]),
+        upc_collisions="record")
     rows = accumulated["products"]
     _write(out / "data_22_fields.json", rows)
     _write(out / "retention.json", accumulated["retention"])
