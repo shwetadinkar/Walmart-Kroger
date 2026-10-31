@@ -1,0 +1,624 @@
+{
+  "package": "marianos-evidence-2026-10-31",
+  "files": 82,
+  "self": "MANIFEST_SHA256.json lists every other file and cannot hash itself",
+  "statements_recomputed_from_the_bytes": {
+    "checkpoint": {
+      "bytes": 699424,
+      "sha256": "b33c05fd8802b2ccc217df9c318e4663f4d94fafc1b35babf61259bb5f77e78a"
+    },
+    "page_files": {
+      "same_size_bytes": 699424,
+      "earlier_observed_at": "2026-10-28T09:20:49.774598+00:00",
+      "fresh_observed_at": "2026-10-28T12:07:39.195016+00:00",
+      "bytes_identical": false,
+      "same_product_set": true,
+      "same_product_order": false,
+      "products": 50,
+      "changed_values_by_field": {
+        "/items[]/price/effectiveDate/value": 17,
+        "/pagination/total": 1
+      },
+      "every_changed_value_keeps_its_width": true
+    },
+    "selected_files": {
+      "byte_identical": true,
+      "sha256": "c14cfb4a5c9d88a10391684681fa9396e8ef8353c94901e61945b209d8e6315b"
+    },
+    "batteries": {
+      "products_captured": 34,
+      "urls_pending": 61,
+      "refusal_record_products": 3,
+      "refusal_record_remaining": 92,
+      "sizes_recovered_from_listing_03": 7,
+      "listing_03_sha256": "7df3e2da492c0b80175aff6382577bb311583431a95796500df51c2775989e60"
+    },
+    "promotion": {
+      "expiry_discrepancy_resolved": false
+    }
+  },
+  "entries": [
+    {
+      "path": "C0_PROMOTION_IDENTITY.md",
+      "bytes": 1032,
+      "sha256": "724000474973203aca347a2475d94bcb0799cf09182d007e4353bf25a8695d93",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
+      "path": "C4_BLOCKED_SOURCE_CHRONOLOGY.md",
+      "bytes": 1488,
+      "sha256": "8a6b51c94d1d56d27b2fbedabd7c37e511424d19c9849cb3abd71802ab6fd8fe",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
+      "path": "C5_RESULT_SEPARATION.md",
+      "bytes": 1553,
+      "sha256": "6ce4e4ed0384a489861a5155aa7fb5fe0b2cf8acfc4f1a4a8f124b5a9ffa34b8",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
+      "path": "RESULTS.md",
+      "bytes": 5267,
+      "sha256": "0404c8d8e703bbecc40b756e23ab5af2dfac06d59785739341d159db7c66738c",
+      "origin": "written 2026-10-31",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/BASELINE_PRESERVATION.json",
+      "bytes": 106,
+      "sha256": "e017532eaf4a69cf460029929c4fbb9078c4aef5f4f67b6e936b1883eed3bb57",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/DURABLE_CHECKPOINT_UI.json",
+      "bytes": 181,
+      "sha256": "99ab6016fd2d8e1cd28d3ef85b0204ae93c932c1f0f87045e65bab21433b74eb",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/EARLIER_SELECTED_5.json",
+      "bytes": 4630,
+      "sha256": "c14cfb4a5c9d88a10391684681fa9396e8ef8353c94901e61945b209d8e6315b",
+      "origin": "original, unchanged",
+      "status": "derived; the independent evidence is the two page files",
+      "cid_parameters": 5
+    },
+    {
+      "path": "azure_recovery/EXECUTION_HISTORY_UI.txt",
+      "bytes": 1769,
+      "sha256": "2932d786e71406ebb4fcc95106e76549d99a5115cd3807a2dc4fcfd4b561d33d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/FRESH_PAGE_ORIGINAL.json",
+      "bytes": 699424,
+      "sha256": "d0bd65879a4fe0a050458f7f2173bc3b28db378600272c44cfd636839419f106",
+      "origin": "original, unchanged",
+      "status": "current",
+      "cid_parameters": 50
+    },
+    {
+      "path": "azure_recovery/FRESH_RECEIPT_ORIGINAL.json",
+      "bytes": 429,
+      "sha256": "0e58516f31848a3ee02b2c8e68a0293cbd175690588e20242d3ae7a9dd644fbf",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/FRESH_SELECTED_5.json",
+      "bytes": 4630,
+      "sha256": "c14cfb4a5c9d88a10391684681fa9396e8ef8353c94901e61945b209d8e6315b",
+      "origin": "original, unchanged",
+      "status": "derived; the independent evidence is the two page files",
+      "cid_parameters": 5
+    },
+    {
+      "path": "azure_recovery/FRESH_STORE_ORIGINAL.json",
+      "bytes": 3919,
+      "sha256": "1e54835853e60118cff263fa143d18e014004fc8e9fe4f52bacef8d7581f3585",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/INTERRUPT_RECEIPT_UI.json",
+      "bytes": 365,
+      "sha256": "aa56dacbde12f84d32c93d46fff0acc14b10467db5662819a620549cc72e1297",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/MANIFEST_SHA256.json",
+      "bytes": 2243,
+      "sha256": "4c9e0b58c5bef808f3470d6aa10ad7115900b6222a9a2a1e0c20398161719a1a",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/REPEAT_COMPARISON.json",
+      "bytes": 11080,
+      "sha256": "971d5546bd65afde3fc95b1998fbfb2eadc8a91245840b09e5c9c8bae600a057",
+      "origin": "original, unchanged",
+      "status": "current",
+      "cid_parameters": 10
+    },
+    {
+      "path": "azure_recovery/RESTORED_CONTAINER.png",
+      "bytes": 73390,
+      "sha256": "7ab0a0faa813b2eeb7cf8d3179d545d3653a64791753b83bd774c7d45ea6cf41",
+      "origin": "original, unchanged",
+      "status": "current",
+      "shows_account_identity": true
+    },
+    {
+      "path": "azure_recovery/RESTORED_CONTAINER_UI.txt",
+      "bytes": 3010,
+      "sha256": "58c99779c4fadeda3d5e9f2c57c598b48018b1619f696c32c8cc9c6b3679cdad",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/RESTORED_OVERVIEW.png",
+      "bytes": 73733,
+      "sha256": "70d33c6206c021a17c2914bcfcc57d4b3d3a5888d6d5f8ef4c08ee1344155bb3",
+      "origin": "original, unchanged",
+      "status": "current",
+      "shows_account_identity": true
+    },
+    {
+      "path": "azure_recovery/RESTORED_OVERVIEW_UI.txt",
+      "bytes": 1302,
+      "sha256": "72aed7a09f7bcbc13e349aec21c97d164d9d02d7a41f21ec21ba869a89422a02",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/RESULTS.md",
+      "bytes": 3755,
+      "sha256": "f7b8c7428e2cf60c0be0a5ea7fc304d68c95b60deb965ff7232576f99c678bff",
+      "origin": "original, unchanged",
+      "status": "superseded by RESULTS.md at the package root"
+    },
+    {
+      "path": "azure_recovery/RESUMED_PAGE_ORIGINAL.json",
+      "bytes": 699424,
+      "sha256": "b33c05fd8802b2ccc217df9c318e4663f4d94fafc1b35babf61259bb5f77e78a",
+      "origin": "original, unchanged",
+      "status": "current",
+      "cid_parameters": 50
+    },
+    {
+      "path": "azure_recovery/RESUME_RECEIPT_UI.json",
+      "bytes": 463,
+      "sha256": "634f638c0e8f3d065124c7021a59a4364deb65c1ba2ec297c6efb0b6a2c67196",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/ROLLBACK_REQUIRED.md",
+      "bytes": 331,
+      "sha256": "63629b05defa69ff4d4f0a16de40f314cc36cfb2ff10ddd35473a3f0fbd7aa7f",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/SCOPE.json",
+      "bytes": 2468,
+      "sha256": "ad4b427237c2528eca3e95641434df457e7c9e00922154cc77684c621089b181",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/START_EVENT.json",
+      "bytes": 427,
+      "sha256": "cba42ceb2f7f1e990e9a61bab1b2723960a2eb4d29f722d266602f4dbbd65f42",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/STATUS.json",
+      "bytes": 1540,
+      "sha256": "3fdf19c243994868aa38ee21f447f9ce31f6c2e8af0a94a2227c4d1adb525b68",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "azure_recovery/TEMPORARY_CONFIG_PENDING_ROLLBACK.png",
+      "bytes": 56068,
+      "sha256": "679073598a0b3d45dd345a8750bd5d83135f6e43fad9c722a1a1f0dd9ed0ec0f",
+      "origin": "original, unchanged",
+      "status": "current",
+      "shows_account_identity": true
+    },
+    {
+      "path": "azure_recovery/VERIFIED_STORE_ORIGINAL.json",
+      "bytes": 3919,
+      "sha256": "3c2514543c297b30453f05af944bd52173a5a948eb4d03e682ba5d0a60704666",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/ACCESS_DENIED.png",
+      "bytes": 25657,
+      "sha256": "3971d262dc037da2dead29923ccfa64d478016054c92204f5b14a17cc1d17b95",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/BLOCKED_SOURCE.json",
+      "bytes": 662,
+      "sha256": "b5ae6e1389f9ea33f8c511402e84830060406e67e5a9dbede43f8c598ca42e9e",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/DISCOVERED_URLS.json",
+      "bytes": 9004,
+      "sha256": "3874222ddef125d77ddc8b324b682e662d3da836d814777e2ac96d51e17b42ca",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/LISTING_00.txt",
+      "bytes": 27300,
+      "sha256": "049682607bf5ab78f083d2d4b595a73182327fe9ca04d6abe909b3dd0b3ced00",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/LISTING_01.txt",
+      "bytes": 64381,
+      "sha256": "a011283c33cc41f1fa868e05aa37f4c86613d589b8dbb865f3ce61081c60c3a6",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/LISTING_02.txt",
+      "bytes": 88038,
+      "sha256": "0495e5c580afe290a0f7f734947e845a4d59cbba2843ec02dba1136f4bd79ca9",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/LISTING_03.txt",
+      "bytes": 111454,
+      "sha256": "7df3e2da492c0b80175aff6382577bb311583431a95796500df51c2775989e60",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/MANIFEST_SHA256.json",
+      "bytes": 5138,
+      "sha256": "076bef1a363330a63fa8a01c41903b59166cd21dbf4874833802e465cf7416dd",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/PARSING_ISSUES.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/PENDING_61_URLS.json",
+      "bytes": 5496,
+      "sha256": "ca2629f752ea3c6452889b76d255abd8648a728a2b779671e1947647d7cc28fb",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/PRODUCTS_34_PARTIAL.json",
+      "bytes": 47648,
+      "sha256": "658acebd9732c3608bc9ffb5e28305202bec2acbbd9c4ea6e5ceb0faae2f1f92",
+      "origin": "original, unchanged",
+      "status": "superseded by PRODUCTS_34_PARTIAL_V2.json"
+    },
+    {
+      "path": "batteries_reference/PRODUCTS_34_PARTIAL_V2.json",
+      "bytes": 47480,
+      "sha256": "3d43c58a5dad0063d63d374cbdbb376ed31f5004e85fbcf78bcb58ae3f72b5f9",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/PROGRESS.json",
+      "bytes": 3162,
+      "sha256": "38f8d80c6c4bd8d0cea4b07ed5097272cc423f3602d918e4c747ce173980abba",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/PROVENANCE_34.json",
+      "bytes": 37584,
+      "sha256": "087c5b02e46a03c6c1901f7036c66ec6452f25ea59334bee046954f00acdcd8d",
+      "origin": "original, unchanged",
+      "status": "superseded by PROVENANCE_34_V2.json"
+    },
+    {
+      "path": "batteries_reference/PROVENANCE_34_V2.json",
+      "bytes": 21240,
+      "sha256": "9cfe0f3a56f62c3669690e8150ddc0f7d3c7861979a7f036638dd455b8f9c2cb",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/RESULT.md",
+      "bytes": 2781,
+      "sha256": "085048ec5a38e41326908798a058b1b6e7ca1c981e3a45cd25d1a206773f0d42",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/V2_CORRECTION_NOTE.md",
+      "bytes": 961,
+      "sha256": "9775e2a4dc3e2c6dcb67004d25cde3e3c3580d261468f491ab4172231c9d8133",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/V2_VALIDATION.json",
+      "bytes": 337,
+      "sha256": "19943a981ebab44f78611110e1abd4c8e58e25e48e7bdb598e651ac09098055b",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/VALIDATION.json",
+      "bytes": 385,
+      "sha256": "5f4546b3ab26668bc0a9f7de937f6ada51cdc3b22cad4b94b5ae1a2e3379fcdb",
+      "origin": "original, unchanged",
+      "status": "superseded by V2_VALIDATION.json"
+    },
+    {
+      "path": "batteries_reference/products/0003980001636.json",
+      "bytes": 17758,
+      "sha256": "b2ac4419b09fbba355d3ad251af29671fd6046e67750f0bca2afaeed2ebb78b1",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980002297.json",
+      "bytes": 20013,
+      "sha256": "8327bde59c84daa304ddf202545b77de384a584d74518e1d5f12b1fc65fec369",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980011009.json",
+      "bytes": 20310,
+      "sha256": "fa4b192995f1219fdd19312c18595c1cd47e233b997a7335811add7e31fc8fbd",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980011099.json",
+      "bytes": 20387,
+      "sha256": "17761cdc9a047950020d4ad1753087c27549d3dd1558af3beff2e5df07f0a79c",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980013744.json",
+      "bytes": 20484,
+      "sha256": "47baf425871bede1448ff9797634a66dcc056ddc1f59f9b5a183272971269b94",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014514.json",
+      "bytes": 5452,
+      "sha256": "7d579255ae7114d36f720f966afe775655d25b0e458db6e0f5b1f483efbd3d3f",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014515.json",
+      "bytes": 3367,
+      "sha256": "80431dd3d43bf6ce19071ec1c6e2bccdc111c370f818492bdbb0803f6cd88996",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014516.json",
+      "bytes": 17612,
+      "sha256": "d1673865d04121c31bf5c3c954900c470939ea3efa7a031a72d23d85a2153794",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014518.json",
+      "bytes": 5438,
+      "sha256": "797e29472413dc2fe7f485ee92da342f41da7dc2a63e3303d3a0d8c44f38c6c8",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014519.json",
+      "bytes": 3276,
+      "sha256": "b03d4336efb5e0660258eb799c5c8c2ed66e6a51216c8780ed093eb6162f716d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014520.json",
+      "bytes": 20318,
+      "sha256": "768c76874be9fa4a88c9a3878e610d219d5e4ef9abf78fc929f3b44b754ce0a2",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014521.json",
+      "bytes": 5432,
+      "sha256": "7df52177977deff6322a6bea738dcd1700c6b60373704b582536d875fe55e2ef",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014522.json",
+      "bytes": 5277,
+      "sha256": "c7ab3f0c6ba7bb4d577215a01cf3113c0ec588b8562dbe7bbf20ae32c5581f49",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014523.json",
+      "bytes": 3277,
+      "sha256": "48ab3ec37f56439216d554b4811ed9210af0b807da2daa83b836e06f557105ab",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014524.json",
+      "bytes": 5304,
+      "sha256": "5905c035aae6c0def14f90bf9e0dd2d806203003cedc0f70e80f3ba674d1d5fc",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014526.json",
+      "bytes": 3265,
+      "sha256": "078895b98317573038acf82b52421cb651333a473a2c376993e122d18b4a2875",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014529.json",
+      "bytes": 18163,
+      "sha256": "72a05c87820b22a8d7954643811e7db69942e387c39878772fa562287ee7a6f6",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014531.json",
+      "bytes": 20574,
+      "sha256": "fe5712c1d6a3b2400e9c77d446677379b91862e364aee6df1586fe6abc9b0658",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014532.json",
+      "bytes": 20658,
+      "sha256": "c55e2d3305ab79e27fc8a31360b86ad073afc4f6df1d9d7b3d7bacf4b7cb6067",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014533.json",
+      "bytes": 20660,
+      "sha256": "e5eb8f524d2926c16015644351860a457836145b7cf047e6b198426fb0f1403b",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014534.json",
+      "bytes": 20647,
+      "sha256": "44d5ed1396672565919e2640b6a55700843c86ca59adb74807b32312bee51ba4",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014535.json",
+      "bytes": 5479,
+      "sha256": "9144251afb7e5ebbf7aa0459cc30e4edd53d862208ef4cf3d60e178d1b1a0391",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014979.json",
+      "bytes": 21124,
+      "sha256": "2eb71811abeed88cf597ef90f6414e794ed5c082135ed846791db3a8949478c4",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014981.json",
+      "bytes": 21210,
+      "sha256": "97235ddbcd351e6fb9e97ec094424fdc10d8c719481b885ad1e320304dd5ed03",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014982.json",
+      "bytes": 21122,
+      "sha256": "e630cadace72e07c6f0d56e47090e727d3a31c4f58236d100bd85d47a13b975d",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014983.json",
+      "bytes": 21210,
+      "sha256": "80f7a5e10a5cf2e37fde56a410b79303a07e62778366179d28abb9ac1e1e1ed0",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0003980014984.json",
+      "bytes": 21210,
+      "sha256": "4315f4465b27ffae539d3063a717762ea04d7b134750b72b81daadda5c10eb64",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004122600009.json",
+      "bytes": 3275,
+      "sha256": "8f49190c0e6c849ce27e42337601be62dc79f198c59d51abed102b42aea13d0a",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004122600016.json",
+      "bytes": 3662,
+      "sha256": "be4a2a036bbfc45bb2ec2520060197f96254d58e9524c004a0977edf6f6adc44",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004133327035.json",
+      "bytes": 5122,
+      "sha256": "ee1473a83d1a9f472c3f3be56bc7262f59018a0d25a7e8fa142891dc7b395a19",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004133343001.json",
+      "bytes": 5133,
+      "sha256": "bf0e46ec2c15cfd0021b7735eb4129d109e9c42f47a2720e02e013d39e83879b",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004133370464.json",
+      "bytes": 5162,
+      "sha256": "dd2b81ea78e9645c38685ff30a44b585d291df5301ef74277f8e572178936327",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004133382501.json",
+      "bytes": 5131,
+      "sha256": "c40c146a799d215b7ed38977a256c131678f5aa25443424b5750431bc13b5937",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "batteries_reference/products/0004133384401.json",
+      "bytes": 5147,
+      "sha256": "a829f2118d34b75dbee7286bdb1102183d0a51a75852ca62450a96f95fb97dc1",
+      "origin": "original, unchanged",
+      "status": "current"
+    },
+    {
+      "path": "promotion_correction/IDENTITY_FIXTURE.json",
+      "bytes": 507,
+      "sha256": "6d60d3d9278f9929841037348945e316eb0ac5b8464ff148da0c576dcd54b330",
+      "origin": "original, unchanged",
+      "status": "current"
+    }
+  ]
+}
