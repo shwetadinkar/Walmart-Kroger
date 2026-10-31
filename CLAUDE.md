@@ -4,8 +4,12 @@ Two retail collectors, `walmart/` and `marianos/`, built for a client who
 reviews the work closely and has found real defects in it. Everything below
 exists because something went wrong once.
 
-Authoritative branch: `walmart-client-corrections-2026-10-31`. See
-`walmart/RELEASE.md` for the ancestry table and the eight feature checks.
+Working branch: `marianos-api-sweep-2026-10-31`. The authoritative Mariano's
+release is commit `16a6f03838a22a822a118977004086976d1a1de0` on it, on which the
+cashback and retention regressions were run from a clean export.
+`walmart-client-corrections-2026-10-31` is frozen at the state the client
+reviewed and is never committed to. See `walmart/RELEASE.md` for the Walmart
+ancestry table and the eight feature checks.
 
 ## The one rule everything else follows from
 
