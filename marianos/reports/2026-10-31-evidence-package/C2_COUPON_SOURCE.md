@@ -29,7 +29,17 @@ inconsistency, not resolved here.
 
 ## Overlap with the Batteries set
 
-`0003980014532` is in both sets. `0003980014532` differs in `digital_deals_description`, in whitespace only: the two captures broke the same words across lines differently. Both are preserved as captured.
+`0003980014532` is in both sets. `0003980014532` differs in
+`digital_deals_description`, beyond whitespace. The terms read the same, but the
+coupon sample's copy has encoding faults (`EnergizerÃ‚Â®` for `Energizer®`, and the
+same on `¢` and `’`) and ends with the page's `Show Less` control label, which is
+not coupon wording. The Batteries copy has neither. Both are preserved as
+captured, and nothing here resolves them. For this product, read the Batteries
+copy.
+
+`0003980000675` has no Batteries copy to compare against, and its description in
+the sample has the same faults and the same label. Its drawer capture is in
+`EXACT_UPC_COUPON_DRAWER_AX.txt`.
 
 ## Not current
 

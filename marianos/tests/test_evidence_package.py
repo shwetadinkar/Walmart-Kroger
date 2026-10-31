@@ -173,6 +173,19 @@ class CouponTests(Base):
         facts = self.build()["statements_recomputed_from_the_bytes"]["coupon"]
         self.assertFalse(facts["field_disagreements"][0]["whitespace_only"])
 
+    def test_a_note_calling_a_real_disagreement_whitespace_is_refused(self):
+        """It happened: the sentence required only the words before the claim, so
+        a false "in whitespace only" passed on the real data."""
+        self.batteries_v2[0]["digital_deals_description"] = "a c"
+        self.build()
+        path = self.output / "C2_COUPON_SOURCE.md"
+        path.write_text(path.read_text().replace("beyond whitespace", "in whitespace only"))
+        with self.assertRaisesRegex(tool.PackageRefused, "beyond whitespace"):
+            tool.check_notes(self.output, tool.recompute(
+                self.output / "azure_recovery", self.output / "batteries_reference",
+                self.output / "coupon_source",
+                self.output / "promotion_correction/IDENTITY_FIXTURE.json"))
+
     def test_a_sample_at_another_store_is_refused(self):
         self.sample[1]["store_name"] = "Marianos Vernon Hills"
         with self.assertRaisesRegex(tool.PackageRefused, "West Loop"):

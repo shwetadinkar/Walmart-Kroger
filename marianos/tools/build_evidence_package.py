@@ -254,8 +254,8 @@ def note_requirements(facts):
         "C0_PROMOTION_IDENTITY.md": ["`expiry_discrepancy_resolved` is `false`"],
         "C2_COUPON_SOURCE.md": facts["coupon"]["sample_upcs"]
         + [f"{facts['coupon']['sample_records']} records"]
-        + [f"`{d['upc']}` differs in `{d['field']}`"
-           + (", in whitespace only" if d["whitespace_only"] else "")
+        + [f"`{d['upc']}` differs in `{d['field']}`, "
+           + ("in whitespace only" if d["whitespace_only"] else "beyond whitespace")
            for d in facts["coupon"]["field_disagreements"]],
         "README.md": ["cid"],
     }
