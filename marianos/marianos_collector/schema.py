@@ -114,7 +114,10 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
         raise RecordRejected("DIGITAL_PRICE_WITHOUT_DESCRIPTION")
     if dig_desc and not re.search(r"\b(?:clip|clipp(?:ed|ing)|activat(?:e|ion)|add (?:to |the )?(?:account|offer)|save (?:the |this )?(?:offer|coupon)|digital coupon)\b", dig_desc, re.I):
         raise RecordRejected("UNVERIFIED_DIGITAL_DEAL")
-    if re.search(r"\b(?:cashback|cash back)\b", dig_desc, re.I):
+    # A prohibition in coupon terms is not an advertised cash-back benefit.
+    # Inspect a copy only; preserve the complete source description in output.
+    cash_benefit_text = re.sub(r"\bno[ \t]+cash[ \t]+back\b", "", dig_desc, flags=re.I)
+    if re.search(r"\b(?:cashback|cash back)\b", cash_benefit_text, re.I):
         raise RecordRejected("CASHBACK_MISCLASSIFIED_AS_DIGITAL")
     if result["volume_deals_price"] and not result["volume_deals_description"]:
         raise RecordRejected("VOLUME_PRICE_WITHOUT_DESCRIPTION")

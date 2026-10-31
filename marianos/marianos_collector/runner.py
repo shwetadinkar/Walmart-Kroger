@@ -11,7 +11,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from .config import check_retailer_url, is_excluded_subcategory
-from .schema import FIELDS, RecordRejected, fingerprint, make_record, utc_day
+from .retention import observation, reconcile, stable_identity, stamp
+from .schema import FIELDS, RecordRejected, make_retained_record
 from .storage import read_json, write_json
 
 LOG = logging.getLogger("collector")
@@ -81,7 +82,7 @@ class Collector:
                     raise ValidationFailure("Product-level store context mismatch or unknown")
             page_id = len(cp["pages"])
             stage_key = f"staging/{store.store_id}/{cp['run_id']}/{category.slug}/{page_id:07d}.json"
-            stage = {"task":task,"page":page.__dict__}
+            stage = {"task":task,"page":page.__dict__,"observed_at":datetime.now(timezone.utc).isoformat()}
             # Stage first, then advance checkpoint; on crash an orphan staged page is harmless.
             write_json(self.storage, stage_key, stage)
             cp["pages"].append({"key":stage_key, "sha256":_payload_hash(stage)})
@@ -135,6 +136,8 @@ class Collector:
         for cat in self.categories:
             all_stages[cat.name] = self._collect_category(store, cat)
         records = []
+        observations = {}
+        value_refusals = Counter()
         seen = set()
         category_counts = {}
         rejected = Counter()
@@ -147,15 +150,22 @@ class Collector:
             for stage in all_stages[cat.name]:
                 sub_category = stage["task"]["sub_category"]
                 for raw in stage["page"]["products"]:
+                    observed_at = raw.get("observed_at") or stage.get("observed_at")
+                    if not observed_at:
+                        raise ValidationFailure("MISSING_STAGE_OBSERVATION_TIMESTAMP")
                     try:
-                        rec = make_record(raw, store, cat.name, sub_category or str(raw.get("sub_category") or ""), utc_day())
+                        rec, refused = make_retained_record(raw, store, cat.name, sub_category or str(raw.get("sub_category") or ""), stamp(observed_at).date().isoformat())
+                        identity = stable_identity(rec, store.store_id)
                     except RecordRejected as ex:
                         reason = str(ex)
                         if reason in {"STORE_MISMATCH", "UNVERIFIED_PRODUCT_LOCATION"}:
                             raise ValidationFailure(reason) from ex
                         rejected[reason] += 1
                         continue
-                    identity = fingerprint(rec, raw)
+                    except ValueError as ex:
+                        rejected[str(ex)] += 1
+                        continue
+                    value_refusals.update(r["reason"] for r in refused)
                     per_cat.add(identity)
                     observed_ids.add(str(raw.get("product_id") or rec["upc"] or ""))
                     if identity in seen:
@@ -163,6 +173,11 @@ class Collector:
                         continue
                     seen.add(identity)
                     records.append(rec)
+                    available = raw.get("pickup_available")
+                    observations[identity] = observation(
+                        rec, store.store_id, observed_at,
+                        [{"url":stage["page"]["source_url"], "sha256":_payload_hash(stage)}],
+                        "available" if available is True else "unavailable" if available is False else "unknown")
                     count += 1
             category_counts[cat.name] = len(per_cat)
             seen_products_by_category[cat.name] = count
@@ -177,8 +192,25 @@ class Collector:
                 raise ValidationFailure(f"Missing canary product in {cat.name}")
         if len(records) < self.min_products:
             raise ValidationFailure(f"Only {len(records)} valid unique products, minimum {self.min_products}")
-        if len([x for x in category_counts.values() if x > 0]) < 2:
-            raise ValidationFailure("Contest demo must cover multiple categories")
+        if not self.categories:
+            raise ValidationFailure("No configured categories")
+        collection_at = datetime.now(timezone.utc).isoformat()
+        prior_rows, prior_retention = [], {}
+        if previous_manifest:
+            prior_rows = read_json(self.storage, previous_manifest["data_key"])
+            if any(r["zipcode"] != store.zipcode or r["store_location"] != store.store_location for r in prior_rows):
+                raise ValidationFailure("PRIOR_STORE_CONTEXT_MISMATCH")
+            if not previous_manifest.get("retention_key"):
+                raise ValidationFailure("PREVIOUS_RETENTION_METADATA_REQUIRED")
+            prior_retention = read_json(self.storage, previous_manifest["retention_key"])
+        accumulated = reconcile(records, observations, store.store_id, collection_at, prior_rows, prior_retention)
+        records = accumulated["products"]
+        # A release that loses a published identity must not validate, whatever
+        # produced the loss.
+        kept = {stable_identity(r, store.store_id) for r in records}
+        lost = sorted({stable_identity(r, store.store_id) for r in prior_rows} - kept)
+        if lost:
+            raise ValidationFailure(f"PUBLISHED_IDENTITY_LOST: {lost[:5]}")
         if not all(list(rec.keys()) == list(FIELDS) and all(isinstance(v, str) for v in rec.values()) for rec in records):
             raise ValidationFailure("Exact output schema validation failed")
         field_counts = {f:sum(bool(x[f]) for x in records) for f in FIELDS}
@@ -189,6 +221,8 @@ class Collector:
             "status":"validated", "timestamp_utc":datetime.now(timezone.utc).isoformat(),
             "runtime_seconds":round(time.monotonic()-start,3),
             "unique_records":len(records),"duplicate_placements":duplicates,
+            "current_records":accumulated["current_records"],"carried_forward_records":accumulated["carried_forward_records"],
+            "submission_ready":False,"values_refused_by_reason":dict(value_refusals),
             "category_counts":category_counts, "new_output_records_by_category":seen_products_by_category,
             "excluded_records_by_reason":dict(rejected),"field_completeness":field_completeness,
             "example_ppm":[{"title":r["product_title"],"ppm":r["ppm"]} for r in records if r["ppm"]][:5],
@@ -224,8 +258,10 @@ class Collector:
         # Versioned artifacts first. latest pointer is committed LAST.
         write_json(self.storage, data_key, records)
         write_json(self.storage, report_key, report)
+        retention_key = prefix+"/retention.json"
+        write_json(self.storage, retention_key, accumulated["retention"])
         manifest = {"store_id":store.store_id, "zipcode":store.zipcode, "release":release, "data_key":data_key,
-                    "report_key":report_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
+                    "report_key":report_key, "retention_key":retention_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
                     "coverage_scope": "subset_trial" if self.trial else "all_configured_roots"}
         write_json(self.storage, manifest_key, manifest)
         if hasattr(self.storage, "assert_lock_held"):

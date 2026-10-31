@@ -68,17 +68,35 @@ class LocalStorage:
 
 class AzureBlobStorage:
     """Checkpoints are remote: Azure Container Apps ephemeral disks are NOT used."""
-    def __init__(self, connection_string: str, container_name: str):
+    @classmethod
+    def from_environment(cls, container_name: str):
+        return cls(os.environ.get('AZURE_STORAGE_CONNECTION_STRING', ''), container_name,
+                   account_url=os.environ.get('AZURE_STORAGE_ACCOUNT_URL', ''),
+                   managed_identity_client_id=os.environ.get('AZURE_MANAGED_IDENTITY_CLIENT_ID', ''))
+
+    def __init__(self, connection_string: str, container_name: str, *, account_url: str = '',
+                 managed_identity_client_id: str = ''):
+        if bool(connection_string) == bool(account_url):
+            raise StorageError('Provide exactly one storage authentication configuration')
+        if account_url and not re.fullmatch(r'https://[a-z0-9]{3,24}\.blob\.core\.windows\.net/?', account_url):
+            raise StorageError('Managed identity requires an Azure Blob account HTTPS URL')
         try:
             from azure.storage.blob import BlobServiceClient
             from azure.core.exceptions import ResourceExistsError
+            if account_url:
+                from azure.identity import ManagedIdentityCredential
         except ImportError as ex:
             raise StorageError("Install package with pip install '.[azure]'") from ex
-        self.container = BlobServiceClient.from_connection_string(connection_string).get_container_client(container_name)
-        try:
-            self.container.create_container()
-        except ResourceExistsError:
-            pass
+        if account_url:
+            identity_options = {'client_id': managed_identity_client_id} if managed_identity_client_id else {}
+            credential = ManagedIdentityCredential(**identity_options)
+            self.container = BlobServiceClient(account_url=account_url, credential=credential).get_container_client(container_name)
+        else:
+            self.container = BlobServiceClient.from_connection_string(connection_string).get_container_client(container_name)
+            try:
+                self.container.create_container()
+            except ResourceExistsError:
+                pass
     def write(self, key: str, contents: bytes) -> None:
         self.container.get_blob_client(_key(key)).upload_blob(contents, overwrite=True)
     def read(self, key: str) -> bytes | None:

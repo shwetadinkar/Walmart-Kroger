@@ -141,9 +141,11 @@ class Tests(unittest.TestCase):
                     x=deepcopy(sample)
                     x.products=x.products*2
                     return x
-            # category URL mismatch on second category would cause fail, so use one category and expect validation failure
-            with self.assertRaises(ValidationFailure):
-                Collector(LocalStorage(Path(root)),Repeater(),CATS[:1],min_products=1).run(STORES[0])
+            # One configured category is valid: the client's next milestone is
+            # one representative category. Duplicate placements stay one identity.
+            result=Collector(LocalStorage(Path(root)),Repeater(),CATS[:1],min_products=1,trial=True).run(STORES[0])
+            self.assertEqual(result['manifest']['records'],1)
+            self.assertEqual(result['report']['duplicate_placements'],1)
 
 if __name__=='__main__':unittest.main()
 
