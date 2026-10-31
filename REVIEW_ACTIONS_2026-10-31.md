@@ -1,0 +1,273 @@
+# Client review of 31 October: what to fix, and how to know it is fixed
+
+Written for whoever picks this up next. Read `CLAUDE.md` first; every rule there
+applies. Nothing here needs a retailer, a credential, or a decision from the
+client, with one exception noted under BLOCKED.
+
+The review was an offline acceptance pass, not a skim. The reviewer replayed
+the test suites, rebuilt the Walmart ledger from the supplied snapshots,
+replayed the 34 Mariano's records through this repository's own `make_record`,
+and wrote his own fixtures to probe edge cases. Treat every finding as
+reproducible, because each one was reproduced before it was reported.
+
+## Confirmed working. Do not redo these.
+
+Walmart: all 160 tests pass offline. A two-category fixture retained all four
+products including an unavailable one and an available-but-unpriced one. The
+unattested OPD source is refused full publication. Both malformed-manifest
+cases exit 2. Approximate-weight examples are excluded and a fixed-size family
+pack is retained. All seven branches listed as ancestors in `RELEASE.md` are
+ancestors under full history. The reissued evidence archive verifies: 57
+declared, 57 verified, and a rebuild reproduces 654 identities and all 615
+submitted identities including 144 pickup-unavailable. Verified local-price and
+direct-PPM counts remain zero, as stated.
+
+Mariano's: all 63 root manifest entries match. The export has 34 distinct UPCs,
+the 22 ordered string fields, and empty `gupc` and `unit_price`. All 34 titles,
+UPCs, regular prices and literal PPM strings, and all 7 populated sale prices,
+occur in their saved product observations. Every non-empty line of all 17
+coupon descriptions appears in the matching expanded coupon observation,
+including quantity, household, expiry and clipping terms. Each observation
+shows Pickup at the West Loop store.
+
+## BLOCKED: the assigned store
+
+The review refers to Vernon Hills. Every artefact in this repository targets
+West Loop, `53100508`, ZIP 60661. Vernon Hills is ZIP 60061. The contest brief,
+the shared technical requirements and the category CSV all say "an assigned
+location" and none names a store; the public clarification board shows four
+entrants asking for the assignment and no public answer. The assignment was
+made privately and has been queried.
+
+**Do not run a collection sweep until the store is confirmed.** Resolve its
+locationId with the locator mode, which fetches no products:
+
+```bash
+python3 tools/kroger_full_sweep.py --zipcode <zip> --address-contains <name>
+```
+
+Everything else below is independent of the store.
+
+---
+
+# PART A. Mariano's release reconciliation
+
+**This is the most serious item.** The release named to the client excludes
+`marianos-fresh-runs-category-evidence`, which carries accepted fixes. Two
+regressions follow, both reproduced by the reviewer.
+
+## A1. The cashback fix is missing
+
+On the named release, `schema.py` searches the whole digital description:
+
+```python
+if re.search(r"\b(?:cashback|cash back)\b", dig_desc, re.I):
+    raise RecordRejected("CASHBACK_MISCLASSIFIED_AS_DIGITAL")
+```
+
+Commit `5b991c7` on `marianos-fresh-runs-category-evidence` narrowed this to a
+dedicated benefit field (`cash_benefit_text`) precisely so that a coupon whose
+genuine terms say "No cash back" is kept, while an actual cashback offer is
+still rejected. The rule exists because the shared requirements say Walmart
+Cash, cashback and manufacturer offers must not be treated as immediate digital
+price reductions. "No cash back" is a restriction, not an offer.
+
+Consequence: replaying the 34 supplied records through this release rejects all
+17 coupon-bearing records.
+
+Port `5b991c7` and its test. Then add a regression that pins both directions:
+a description containing "No cash back" in its terms is **kept**, and a real
+cashback benefit is still **rejected**.
+
+## A2. Retention reconciliation is not called
+
+In a two-category synthetic repeat through the real `Collector`, the first run
+published four identities and the second published three, dropping a product
+absent from the second observation, and the second report was still marked
+validated. The earlier retention reconciliation is not invoked on this release.
+
+Restore it. Eligible products previously observed must be preserved
+indefinitely with their original observation dates, and must remain
+distinguishable from fresh observations. A run that silently loses a
+previously published identity must not validate.
+
+## A3. Produce one authoritative Mariano's release
+
+Combine, on one branch: the new sweep and composition work, `5b991c7`, the
+retention reconciliation, the current observation importer, and the recovery
+harness. Do not switch wholesale to either existing branch; both are
+incomplete, and `marianos-fresh-runs-category-evidence`'s normalizer also
+accepts in-store-only offers and blank prices, which contradicts `CLAUDE.md`.
+
+Demonstrate both regressions above passing **on that exact commit**, and record
+the commit id.
+
+---
+
+# PART B. Walmart
+
+## B1. The bounded probe is not bounded
+
+`tools/opd_bounded_probe.py` advertises a cumulative deadline and byte budget
+and enforces neither through completion.
+
+- A six-request run finished at 601 seconds against a 600-second ceiling and
+  returned exit 0 with `stopped_on_failure=false`. The clock is only consulted
+  when dispatching another request.
+- `opener.open` uses a fixed 60-second timeout unrelated to the run deadline.
+- Bytes are not counted as received. An 11-byte response refused against a
+  10-byte limit recorded zero bytes. A mocked HTTP 503 body of 100 bytes also
+  recorded zero.
+- `gzip.decompress` expands the whole body before row limits apply, so the
+  decompressed size is unbounded.
+
+Enforce a whole-run deadline across reads, decompression, parsing, evidence
+writing and cleanup, with bounded finalization rather than an abrupt exit.
+Count bytes as they arrive, including on refusal and on error responses, and
+keep the failure receipt accurate. Bound decompressed bytes, not only
+compressed ones.
+
+## B2. Transport success is being reported as a result
+
+With a matching pickup-store locator response but every returned price row
+belonging to store 999, the probe returned exit 0, zero matched store-price
+records, and `every_price_row_matches_requested_store=true`.
+
+That flag is vacuously true over an empty set. This is the same defect class as
+the earlier `all([]) == true`; fixing it in one place did not fix the pattern.
+Any "all rows satisfy X" flag must be false, or absent, when no rows were
+examined.
+
+Require the intended matched sample before reporting success, or mark the
+result explicitly incomplete. Do not treat the first five catalog rows and
+first 100 price rows as evidence that a missing match is absent from the whole
+feed. Preserve sanitized original locator, catalog and price evidence including
+snapshot identity and capture times; the current receipt holds mostly selected
+values and field counts. Store availability in the locator does not establish
+the fulfillment or the regular/sale meaning of every price row.
+
+## B3. Observed values are being destroyed on unavailable products
+
+`_to_raw` blanks `currentPrice` and `unitPriceDisplay` whenever availability is
+not AVAILABLE. In the reviewer's fixture an unavailable source row carrying
+9.99 and a literal `83.25 c/oz` produced two empty fields.
+
+This was a judgement call made when the retention fix landed, and it was wrong.
+The rule is never publish a value that was not observed; it is not suppress a
+value that was observed. Unavailability does not establish that a present
+source value is fabricated or stale.
+
+Preserve observed values with their observation context. Where the meaning is
+uncertain, record that uncertainty in a separate field rather than by emptying
+the value. Historical values must stay distinguishable from fresh observations.
+Still never calculate PPM.
+
+## B4. Approximate-weight exclusion is too broad
+
+The title pattern on both retailers rejects `Rice 16 oz, approximately 8
+servings`. An approximate serving count is not an approximate product weight,
+and the shared requirements scope the exclusion to weight wording.
+
+Narrow the pattern so it recognises approximate *weight* rather than
+approximation in general. Add a regression holding fixed-size products with
+approximate serving counts alongside the existing positive exclusions, real
+family packs and multipacks.
+
+## B5. The composed source is not deployable
+
+- The default CLI constructs an unavailable crawl placeholder. There is no
+  working offer enrichment implementation behind it.
+- `CompositeSource` does not forward `coverage_attested`, so wrapping an
+  otherwise attested source causes the full-publication gate to reject it.
+
+Fix the delegation without weakening the gate. This is the third attribute
+missed on the same class after `unresolved_offers` and `reset_unresolved`;
+audit the whole delegation surface rather than patching one more attribute, and
+add a test that fails if a new attribute is added to the spine interface and
+not forwarded.
+
+Then show the executable source implementations, and the product, store,
+fulfillment and time binding for every contributed field. An entitlement would
+not by itself supply the missing offer collector or validate production
+coverage.
+
+---
+
+# PART C. Mariano's evidence package
+
+## C1. Missing listing observation
+
+Seven recovered sizes cite `LISTING_03.txt`, which is not in the package.
+Supply that original observation with its timestamp and hash, or state plainly
+that it cannot be produced. The recovery note alone does not verify the bytes.
+Preserve the observed pack and count identities.
+
+## C2. Nested manifests reference absent material
+
+The root manifest describes the reduced package accurately, but nested
+manifests still refer to 8 missing Batteries files, 14 missing Azure files and
+18 missing coupon files. Label historical or superseded items as such rather
+than resending every obsolete file.
+
+Specifically absent and requested: `FRESH_PAGE_ORIGINAL.json`,
+`FRESH_RECEIPT_ORIGINAL.json`, `FRESH_STORE_ORIGINAL.json`,
+`RESUMED_PAGE_ORIGINAL.json`, `VERIFIED_STORE_ORIGINAL.json`,
+`EARLIER_SELECTED_5.json`, `FRESH_SELECTED_5.json`, and the actual
+699,424-byte checkpoint. A stated matching hash is not the checkpoint bytes.
+Include it or give the exact securely accessible location.
+
+## C3. Azure claims are not independently verifiable
+
+The receipts in the package are reserialized summaries while `RESULTS.md` says
+original files and screenshots are included. Either supply the originals or
+correct `RESULTS.md`. Map the trial's source commit `7c49e25` and image to the
+reconciled release. Keep the five-product API trial, the 34-product
+browser-assisted sample, and full deployment acceptance clearly separate.
+
+## C4. `BLOCKED_SOURCE.json` contradicts the final collection
+
+It records three successful products and 92 remaining; the final set is 34 plus
+61 pending. Preserve the original refusal record unchanged and add the
+chronology explaining the later observations and how collection stopped. The
+saved refusal contains an Access Denied page with no independently captured
+HTTP status; keep that distinction explicit.
+
+---
+
+# PART D. Smaller corrections
+
+- The system and sources document cites 189 tests. Current counts are 160
+  Walmart and 133 Mariano's. Any client-facing count must be measured at the
+  commit being described, not carried forward.
+- `image_url` and `store_logo` are empty across all 34 Mariano's records.
+  Permitted by the schema, but populate them where the source supplies them.
+- Published product URLs must carry no query string. The Kroger
+  `productPageURI` includes a `cid` tracking parameter containing our API
+  client id. Raw captures keep it by design and must not ship.
+- Brand classification still unresolved from a partial sample: `Bakery Fresh`,
+  `Bakery`, `Smart Way`, and the apostrophe-less `Roundys`. Settle these from a
+  full run rather than by guessing.
+
+---
+
+# How anything here is considered done
+
+Per `CLAUDE.md`, and without exception:
+
+1. Every change has a test, and every test is mutation-checked by reverting the
+   change and confirming the suite goes red.
+2. Direct and pytest counts agree for both collectors.
+3. Tests assert on something that changes. A test that passes with and without
+   the fix proves nothing.
+4. Client-facing counts and claims are measured at the commit they describe.
+5. Where a finding was a judgement call rather than a bug, say so in the commit
+   message and say what changed the judgement.
+
+# What must not be done
+
+Do not weaken the publication gate to make the composite pass. Do not calculate
+PPM from price and size. Do not fill a field because it looks empty. Do not
+widen a pattern to make a test pass. Do not report a flag as true over an empty
+set. Do not run a collection sweep before the store is confirmed. Do not
+request entitlement or registration; the client's instruction not to register
+remains in force.
