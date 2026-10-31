@@ -30,17 +30,29 @@ coupon descriptions appears in the matching expanded coupon observation,
 including quantity, household, expiry and clipping terms. Each observation
 shows Pickup at the West Loop store.
 
-## BLOCKED: the assigned store
+## The store: a clarification, not a blocker
 
-The review refers to Vernon Hills. Every artefact in this repository targets
-West Loop, `53100508`, ZIP 60661. Vernon Hills is ZIP 60061. The contest brief,
-the shared technical requirements and the category CSV all say "an assigned
-location" and none names a store; the public clarification board shows four
-entrants asking for the assignment and no public answer. The assignment was
-made privately and has been queried.
+The 31 October review mentions Vernon Hills. Everything in this repository
+targets West Loop, `53100508`, ZIP 60661.
 
-**Do not run a collection sweep until the store is confirmed.** Resolve its
-locationId with the locator mode, which fetches no products:
+On balance this is unlikely to be a correction. West Loop has been named to the
+client repeatedly for a week, including its address and location ID, and his
+27 October review restated it as fact without objection while objecting to five
+other things in detail. The 31 October wording, that the final target-store
+evidence must be explicit and that this sample does not establish Vernon Hills
+pricing, reads as a point about the final deliverable rather than the demo. The
+brief also requires multiple locations by configuration rather than by code, so
+the demo store was never the point.
+
+A clarification has been requested. Until it arrives, **continue with West Loop
+`53100508`**. A new sweep there is directly comparable to the 24 October run at
+the same store, which is the repeat-collection evidence the client has asked
+for twice. If the answer turns out to be a different store, the cost is one
+re-run with one argument changed, because the collector selects a store by
+configuration.
+
+Resolve any other store's locationId with the locator mode, which fetches no
+products:
 
 ```bash
 python3 tools/kroger_full_sweep.py --zipcode <zip> --address-contains <name>
