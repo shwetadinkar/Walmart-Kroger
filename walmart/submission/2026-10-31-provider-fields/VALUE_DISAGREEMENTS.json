@@ -1,0 +1,38 @@
+[
+ {
+  "identity": "14571266656",
+  "field": "final_price",
+  "kept": "9.18",
+  "observed_across_snapshots": [
+   "8.76",
+   "9.18"
+  ]
+ },
+ {
+  "identity": "14571266656",
+  "field": "unit_price",
+  "kept": "0.219",
+  "observed_across_snapshots": [
+   "0.209",
+   "0.219"
+  ]
+ },
+ {
+  "identity": "285037596",
+  "field": "final_price",
+  "kept": "28.12",
+  "observed_across_snapshots": [
+   "26.74",
+   "28.12"
+  ]
+ },
+ {
+  "identity": "285037596",
+  "field": "unit_price",
+  "kept": "0.213",
+  "observed_across_snapshots": [
+   "0.203",
+   "0.213"
+  ]
+ }
+]

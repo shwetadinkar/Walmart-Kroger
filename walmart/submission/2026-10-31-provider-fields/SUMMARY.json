@@ -1,0 +1,20 @@
+{
+ "records": 615,
+ "ppm_populated": 540,
+ "ppm_blank": 75,
+ "regular_price_populated": 614,
+ "regular_price_blank": 1,
+ "populated_where_pickup_not_available": 143,
+ "ppm_units": {
+  "oz": 222,
+  "fl oz": 184,
+  "count": 51,
+  "lb": 50,
+  "ea": 29,
+  "qt": 2,
+  "pt": 1,
+  "yd": 1
+ },
+ "products_with_differing_values_across_snapshots": 2,
+ "input_sha256": "e2e9c8e0fb20f4a23e4c9b1ee42afae0f33bdc72604636e3e4d60cc62b49d537"
+}
