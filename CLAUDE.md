@@ -30,6 +30,16 @@ Concretely, and these are not negotiable:
   The search term that found a product is *not* evidence of its category.
 - Empty strings, never nulls. 22 fields, fixed order, every value a string.
 
+**That rule governs values, not rows.** A product is never removed from the
+delivered dataset because a field is missing or a status is unfavourable: not
+for being unavailable, not for having no price, not for having no qualifying
+pickup offer, not for a missing source UPC. Those are facts about the
+observation, recorded beside the product, with empty strings for what was not
+observed. Previously observed products are retained indefinitely with their
+original dates and stay distinguishable from fresh observations. This rule has
+been violated four separate times by treating an absent value as grounds for
+deleting the row; see PART 0 of REVIEW_ACTIONS_2026-10-31.md.
+
 ## What is never built here
 
 No identity rotation, no residential proxy routing, no CAPTCHA or bot-challenge

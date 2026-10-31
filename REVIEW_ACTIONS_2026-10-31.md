@@ -48,6 +48,63 @@ python3 tools/kroger_full_sweep.py --zipcode <zip> --address-contains <name>
 
 Everything else below is independent of the store.
 
+
+---
+
+# PART 0. The retention principle. Read this before touching anything else.
+
+Stated by the client on 27 October for Mariano's and again on 31 October for
+Walmart. It overrides any instruction elsewhere in this document that conflicts
+with it, including the pickup-offer test described under PART A.
+
+**A product is never removed from the delivered dataset because a field is
+missing or a status is unfavourable.** Not for being unavailable, not for
+having no price, not for having no qualifying pickup offer, not for a missing
+source UPC. Those are facts about the observation, recorded as such. They are
+not grounds for deletion.
+
+What must change, in all four places it is currently violated:
+
+- `api_trial.normalize` raises `NO_QUALIFYING_LOCAL_PICKUP_OFFER` and the sweep
+  quarantines the row out of the dataset. The qualifying-offer check must
+  become a classifier, not a filter: the product stays in the 22-field export
+  with empty strings for the values that were not observed, and the reason is
+  recorded beside it.
+- `enrich()` and `import_snapshot()` exclude unavailable records. They must not.
+- `temporal_enrichment.py` quarantines `WEBSITE_PICKUP_UNAVAILABLE` and omits
+  the row. It must keep the row.
+- Walmart `_to_raw` blanks `currentPrice` and `unitPriceDisplay` on unavailable
+  rows, destroying values that were observed. See B3.
+
+Also required by the same instruction:
+
+- Previously observed products are retained indefinitely, with their original
+  observation dates, and must remain distinguishable from fresh observations.
+  A product absent from a later run does not disappear; it is carried with its
+  earlier date.
+- A missing source UPC must not remove the product, so identity cannot depend
+  on UPC alone. Fall back to productId and record which identity was used.
+- The acceptance status that currently marks audit preservation as PASS while
+  the accepted output excludes unavailable products is wrong and must be
+  corrected.
+- Supply worked examples: available becoming unavailable, a missing price, and
+  a product absent on the next run.
+
+The distinction that matters: the one rule in `CLAUDE.md` is never publish a
+value that was not observed. That governs *values*. It has been misapplied to
+*rows*. An unobserved value is an empty string; it is not a reason to delete
+the product it belongs to.
+
+## The next milestone, in the client's own words
+
+He named it on 27 October, and it is smaller and more achievable than 500
+records across 28 roots: **one representative category collected unattended
+through every applicable subcategory, page and variant, with coverage
+reconciliation and correctly retained unavailable products.** Then extend
+across the remaining roots. A bounded keyword API run and manual category
+observations do not establish uncapped production, and the ledger correctly
+reports zero roots accepted for unattended full extraction.
+
 ---
 
 # PART A. Mariano's release reconciliation
@@ -223,6 +280,22 @@ original files and screenshots are included. Either supply the originals or
 correct `RESULTS.md`. Map the trial's source commit `7c49e25` and image to the
 reconciled release. Keep the five-product API trial, the 34-product
 browser-assisted sample, and full deployment acceptance clearly separate.
+
+## C0. The promotion README contradicts its own output
+
+The README says chocolate ice cream `0007457001400` was retained and bars were
+withheld, while `enriched-review/products.json` and the terms index retain bars
+`0007457001310`. Correct the index and documentation against the raw evidence
+rather than against the README. Preserve the observed November 3 / November 4
+expiry discrepancy as a discrepancy; do not pick a date without evidence for it.
+
+## C5. Keep the later implementation distinct from the deployed baseline
+
+Commit `738eb03ae0caf2217008b811b60f16f182e67876` is a later implementation and
+must not be presented as the deployed baseline. Offline test results, the two
+fresh five-product cloud runs, an actual forced interruption and resume,
+failed-run publication protection, and twice-weekly scheduled execution are
+five separate results and must be reported separately.
 
 ## C4. `BLOCKED_SOURCE.json` contradicts the final collection
 
