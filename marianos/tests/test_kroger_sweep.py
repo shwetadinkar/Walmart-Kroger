@@ -27,7 +27,7 @@ from marianos_collector.kroger import Credentials, KrogerClient, KrogerError
 from marianos_collector.schema import FIELDS, RecordRejected, make_retained_record
 
 STORE = Store("53100508", "60661", "Marianos - Marianos West Loop",
-              "40 S Halsted St, Chicago, IL 60661", sweep_tool.LOGO)
+              "40 S Halsted St, Chicago, IL 60661", "")
 CATEGORY_MAP = {"Dairy": "Dairy", "Produce": "Produce"}
 LOCATION = {"locationId": "53100508", "chain": "MARIANOS",
             "name": "Marianos - Marianos West Loop",
@@ -458,7 +458,23 @@ class MainTests(unittest.TestCase):
         self.assertEqual(
             (row["zipcode"], row["store_name"], row["store_location"], row["store_logo"]),
             ("60661", "Marianos - Marianos West Loop",
-             "40 S Halsted St, Chicago, IL 60661", sweep_tool.LOGO))
+             "40 S Halsted St, Chicago, IL 60661", ""))
+
+    def test_a_logo_nobody_observed_is_not_published(self):
+        """A URL written into the tool is the fabricated /p/<upc> link again."""
+        self.assertFalse(hasattr(sweep_tool, "LOGO"))
+        _main_run(self.out)
+        self.assertEqual({row["store_logo"] for row in self.rows()}, {""})
+
+    def test_a_logo_supplied_by_its_owner_is_carried(self):
+        logo = "https://www.marianos.com/logo.svg"
+        self.assertEqual(_main_run(self.out, ["--store-logo", logo])["code"], 0)
+        self.assertEqual({row["store_logo"] for row in self.rows()}, {logo})
+
+    def test_a_logo_on_another_site_is_refused(self):
+        for logo in ("https://example.com/logo.svg", "http://www.marianos.com/logo.svg"):
+            with self.assertRaises(SystemExit):
+                _main_run(self.out, ["--store-logo", logo])
 
     def test_a_store_of_another_banner_stops_the_run(self):
         class OtherBanner(FakeClient):

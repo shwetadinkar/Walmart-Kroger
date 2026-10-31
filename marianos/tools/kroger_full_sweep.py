@@ -74,6 +74,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 import sys as _sys, pathlib as _pathlib
 _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
@@ -86,7 +87,6 @@ from marianos_collector.retention import observation, reconcile, stable_identity
 from marianos_collector.schema import FIELDS
 
 ROOT = Path(__file__).resolve().parent.parent
-LOGO = "https://www.marianos.com/content/v2/binary/image/marianos-logo--colored.svg"
 
 # The first run, on 31 October 2026, got HTTP 400 at filter.start=251 on all 63
 # terms that reached it, and never failed below it. 201 is the highest start
@@ -466,12 +466,19 @@ def main(argv=None):
     p.add_argument("--street", default="",
                    help="Street address the location must report, e.g. "
                         "'1720 N Milwaukee Ave'. Required with --location-id.")
+    p.add_argument("--store-logo", default="",
+                   help="The retailer's logo URL, if one has been observed. Neither "
+                        "Kroger API supplies one, so the field is blank without it.")
     p.add_argument("--previous-run", default="",
                    help="Output folder of an earlier run at this same store, whose "
                         "products carry forward if absent from this one.")
     p.add_argument("--output", default="out/kroger_sweep")
     p.add_argument("--resume", action="store_true")
     args = p.parse_args(argv)
+    logo = urlparse(args.store_logo)
+    if args.store_logo and (logo.scheme != "https" or not (
+            logo.hostname == "marianos.com" or str(logo.hostname).endswith(".marianos.com"))):
+        p.error("--store-logo must be an https URL on marianos.com")
 
     try:
         creds = Credentials.from_environment()
@@ -554,7 +561,7 @@ def main(argv=None):
           f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s, "
           f"filter.start capped at {args.max_start}\n", flush=True)
     record_store = Store(args.location_id, store["zipcode"], store["store_name"],
-                         store["store_location"], LOGO)
+                         store["store_location"], args.store_logo)
     state = sweep(client, args.location_id, record_store, terms_by_category, budget,
                   args.pages_per_term, checkpoint, state,
                   max_start=args.max_start, category_map=category_map,
