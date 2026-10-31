@@ -24,6 +24,13 @@ WHAT STAYS BLANK, AND WHY
 Those last three groups are filled by enrichment from observed page reads, not
 here. This file is the spine.
 
+WHAT IS REFUSED, AND WHAT IS KEPT
+
+Every product passes through api_trial.normalize and schema.make_record. One
+that fails is quarantined with its reason in quarantine.json, never dropped.
+Each raw response is kept under raw/, so a later rule change is a re-filter of
+what was already fetched, not a re-fetch.
+
 ACCEPTABLE USE
 
 Kroger's "Acceptable Use of Public APIs" prohibits systematically gathering
@@ -44,7 +51,10 @@ The first form lists candidate locations and stops, so a human picks the store.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
+import hashlib
 import json
+import re
 import sys
 import time
 from datetime import date, datetime, timezone
@@ -53,21 +63,24 @@ from pathlib import Path
 import sys as _sys, pathlib as _pathlib
 _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
 
+from marianos_collector.api_trial import api_categories, normalize, verify_store
+from marianos_collector.config import Store
 from marianos_collector.kroger import (
-    KrogerClient, Credentials, KrogerError, location_candidates, _price_string)
+    KrogerClient, Credentials, KrogerError, location_candidates)
+from marianos_collector.schema import FIELDS
 
 ROOT = Path(__file__).resolve().parent.parent
-FIELDS = ("zipcode store_name store_location store_logo store_brand category "
-          "sub_category product_title weight regular_price sale_price "
-          "volume_deals_description volume_deals_price digital_deals_description "
-          "digital_deals_price image_url url upc gupc ppm unit_price "
-          "crawl_date").split()
-
-STORE_BRANDS = ("kroger", "simple truth", "private selection", "heritage farm",
-                "psst", "home chef", "murray's", "comforts", "luvsome",
-                "abound", "field & vine", "mariano's", "marianos")
-
 LOGO = "https://www.marianos.com/content/v2/binary/image/marianos-logo--colored.svg"
+
+# The first run, on 31 October 2026, got HTTP 400 at filter.start=251 on all 63
+# terms that reached it, and never failed below it. 201 is the highest start
+# that run saw succeed, so each term yields at most 250 products. Starts from
+# 202 to 250 were not tried.
+MAX_START = 201
+
+# Bump when records change meaning. A checkpoint from another version holds
+# records built under other rules, and resuming would mix the two in one output.
+STATE_VERSION = 2
 
 
 class Budget:
@@ -141,88 +154,33 @@ def resolve_store(store_response, location_id, expected_zipcode=""):
     }
 
 
-def _image(product):
-    for im in product.get("images") or []:
-        if not isinstance(im, dict):
-            continue
-        for size in im.get("sizes") or []:
-            if isinstance(size, dict) and size.get("url"):
-                return str(size["url"])
-    return ""
+def _raw_path(raw_dir, key, start):
+    slug = re.sub(r"[^a-z0-9]+", "-", key.lower()).strip("-")
+    digest = hashlib.sha256(key.encode()).hexdigest()[:8]
+    return Path(raw_dir) / f"{slug}-{digest}" / f"start_{start:04d}.json"
 
 
-def _api_categories(product):
-    cats = product.get("categories")
-    return [str(c) for c in cats if isinstance(c, str)] if isinstance(cats, list) else []
-
-
-def _store_brand(brand):
-    b = (brand or "").strip().lower()
-    return "yes" if any(b.startswith(k) or k in b for k in STORE_BRANDS) else "no"
-
-
-def to_record(product, store, category, sub_category, crawl_date):
-    """One 22-field record. Raises on anything that would need inventing."""
-    items = product.get("items") or []
-    first = next((i for i in items if isinstance(i, dict)), {})
-    price = first.get("price") if isinstance(first.get("price"), dict) else {}
-    upc = str(product.get("upc") or "").strip()
-    if not upc:
-        raise KrogerError("product carries no upc")
-    title = str(product.get("description") or "").strip()
-    if not title:
-        raise KrogerError(f"product {upc} carries no description")
-    return {
-        "zipcode": store["zipcode"],
-        "store_name": store["store_name"],
-        "store_location": store["store_location"],
-        "store_logo": LOGO,
-        "store_brand": _store_brand(product.get("brand")),
-        "category": category,
-        "sub_category": sub_category,
-        "product_title": title,
-        "weight": str(first.get("size") or "").strip(),
-        "regular_price": _price_string(price.get("regular")),
-        "sale_price": _price_string(price.get("promo")),
-        "volume_deals_description": "",
-        "volume_deals_price": "",
-        "digital_deals_description": "",
-        "digital_deals_price": "",
-        "image_url": _image(product),
-        "url": f"https://www.marianos.com/p/{upc}",
-        "upc": upc,
-        "gupc": "",
-        "ppm": "",
-        "unit_price": "",
-        "crawl_date": crawl_date,
-    }
-
-
-def map_category(api_categories, category_map):
-    """(client_root, kroger_label) from the product's own categories.
-
-    Returns ("", label) when no label maps. An unmapped label is reported, not
-    guessed into a root: a wrong category is worse than an absent one, because
-    it survives review as though it were evidence.
-    """
-    for label in api_categories:
-        root = category_map.get(label)
-        if root:
-            return root, label
-    return "", (api_categories[0] if api_categories else "")
+def _quarantine(state, product, key, start, index, exc):
+    """Keep a refused product's identity and reason; the body stays under raw/."""
+    reason = str(exc) if isinstance(exc, ValueError) else f"MALFORMED_PRODUCT:{type(exc).__name__}"
+    p = product if isinstance(product, dict) else {}
+    ident = str(p.get("upc") or p.get("productId") or f"{key}@{start}#{index}")
+    entry = state["quarantine"].setdefault(ident, {
+        "upc": str(p.get("upc") or ""), "productId": str(p.get("productId") or ""),
+        "description": str(p.get("description") or ""), "reason": reason,
+        "found_by": []})
+    entry["found_by"].append(key)
 
 
 def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
-          checkpoint_path=None, state=None, log=print, max_start=1000,
-          category_map=None):
+          checkpoint_path=None, state=None, log=print, max_start=MAX_START,
+          category_map=None, raw_dir=None):
     category_map = category_map or {}
-    state = state or {"records": {}, "done_terms": [], "term_counts": {},
+    state = state or {"state_version": STATE_VERSION,
+                      "records": {}, "done_terms": [], "term_counts": {},
                       "category_disagreements": [], "errors": [],
                       "page_failures": [], "terms_hit_start_cap": [],
-                      "unmapped": {}, "discovery": {}}
-    for k, v in (("page_failures", []), ("terms_hit_start_cap", []),
-                 ("unmapped", {}), ("discovery", {})):
-        state.setdefault(k, v)
+                      "unmapped": {}, "discovery": {}, "quarantine": {}}
     records = state["records"]
     done = set(state["done_terms"])
     crawl_date = date.today().isoformat()
@@ -255,22 +213,28 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                         state["page_failures"].append(
                             {"term": key, "start": start, "error": str(exc)})
                         break
+                    # Written before anything reads it, so a rule that refuses
+                    # a product can never cost the response that showed it.
+                    if raw_dir:
+                        _write(_raw_path(raw_dir, key, start),
+                               {"locationId": location_id, "term": term,
+                                "term_root": category, "start": start,
+                                "observed_at": datetime.now(timezone.utc).isoformat(),
+                                "response": result})
                     data = result.get("data") or []
-                    for raw in data:
-                        if not isinstance(raw, dict):
-                            continue
-                        api_cats = _api_categories(raw)
+                    for index, raw in enumerate(data):
                         # The search term is how a product was FOUND, not what
                         # it is. A probe of 17 Produce terms returned 2400
                         # products of which 2112 carried a different Kroger
                         # category. So the product's own label decides, via an
                         # explicit map, and an unmapped label is never guessed.
-                        root, label = map_category(api_cats, category_map)
                         try:
-                            rec = to_record(raw, store, root, label, crawl_date)
-                        except KrogerError as exc:
-                            state["errors"].append(str(exc))
+                            rec = normalize(raw, store, crawl_date, category_map)
+                        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+                            _quarantine(state, raw, key, start, index, exc)
                             continue
+                        root, label = rec["category"], rec["sub_category"]
+                        api_cats = api_categories(raw)
                         found += 1
                         state["discovery"][rec["upc"]] = {
                             "found_by_term": term, "term_root": category,
@@ -314,6 +278,51 @@ def _write(path, obj):
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(obj, indent=1))
     tmp.replace(path)
+
+
+def _does_not_establish(state, rows, by_cat, max_start):
+    """What this run cannot show, from what it actually returned."""
+    truncated = sorted(set(state["terms_hit_start_cap"])
+                       | {f["term"] for f in state["page_failures"]})
+    empty_roots = {}
+    if not by_cat.get("Seafood"):
+        merged = sum(1 for r in rows if r["sub_category"] == "Meat & Seafood")
+        empty_roots["Seafood"] = (
+            "Kroger files seafood under the single label 'Meat & Seafood', which "
+            f"maps to Meat. Seafood cannot be separated from the {merged} records "
+            "carrying that label, so this count does not measure seafood.")
+    if not by_cat.get("Coffee"):
+        labelled = sum(1 for d in state["discovery"].values()
+                       if "Coffee" in d["api_categories"])
+        empty_roots["Coffee"] = (
+            f"{labelled} products carried a Kroger 'Coffee' label, and only that "
+            "label reaches this root. Coffee products may be present under other "
+            "labels, so this count does not measure coffee.")
+    return {
+        "complete_category_discovery": (
+            "Term-filtered search cannot attest complete category discovery. The "
+            "public API has no category enumeration, so a product no term matched "
+            "is absent, and nothing here measures how many such products exist."),
+        "complete_results_per_term": {
+            "limit_per_term": max_start + 49,
+            "explanation": (
+                f"Requests stop at filter.start={max_start}, so a term yields at "
+                f"most {max_start + 49} products. Kroger refused filter.start=251 "
+                "with HTTP 400 on all 63 terms that reached it in the 31 October "
+                "run. The terms below reached the limit or stopped on a failed "
+                "page, so their results are truncated."),
+            "truncated_terms": truncated,
+        },
+        "populated_roots": empty_roots,
+        "displayed_prices_and_deals": {
+            "ppm": ("Blank. The public tier carries only regularPerUnitEstimate, "
+                    "an estimate and not the displayed price per measure."),
+            "volume_deals_description": "Blank. Not carried by the public tier.",
+            "volume_deals_price": "Blank. Not carried by the public tier.",
+            "digital_deals_description": "Blank. Not carried by the public tier.",
+            "digital_deals_price": "Blank. Not carried by the public tier.",
+        },
+    }
 
 
 def build_report(state, store, location_id, budget, args):
@@ -371,6 +380,10 @@ def build_report(state, store, location_id, budget, args):
         "terms_that_hit_the_start_cap": sorted(set(state.get("terms_hit_start_cap", []))),
         "max_start": args.max_start,
         "record_errors": len(state["errors"]),
+        "does_not_establish": _does_not_establish(state, rows, by_cat, args.max_start),
+        "quarantined_products": len(state["quarantine"]),
+        "quarantine_reasons": dict(sorted(Counter(
+            q["reason"] for q in state["quarantine"].values()).items())),
     }
 
 
@@ -386,9 +399,10 @@ def main(argv=None):
     p.add_argument("--category-map", default=str(ROOT / "config/category_map.json"))
     p.add_argument("--only-category", action="append", default=[])
     p.add_argument("--pages-per-term", type=int, default=20)
-    p.add_argument("--max-start", type=int, default=1000,
-                   help="Highest filter.start to request. Kroger caps deep paging; "
-                        "terms that reach it are named in the report.")
+    p.add_argument("--max-start", type=int, default=MAX_START,
+                   help="Highest filter.start to request. Kroger refused 251 on "
+                        "every term that reached it; terms that reach this "
+                        "limit are named in the report.")
     p.add_argument("--max-requests", type=int, default=8000)
     p.add_argument("--max-seconds", type=float, default=14400)
     p.add_argument("--output", default="out/kroger_sweep")
@@ -415,12 +429,29 @@ def main(argv=None):
               file=sys.stderr)
         return 0
 
+    # Before any network call or write, so a mistaken rerun leaves the earlier
+    # run's folder exactly as it was.
+    out = Path(args.output)
+    checkpoint = out / "checkpoint.json"
+    state = None
+    if checkpoint.exists():
+        if not args.resume:
+            print(f"{checkpoint} already exists. Use --resume to continue that "
+                  "run, or a new --output.", file=sys.stderr)
+            return 2
+        state = json.loads(checkpoint.read_text())
+        if state.get("state_version") != STATE_VERSION:
+            print(f"{checkpoint} was written under different record rules and "
+                  "cannot be resumed. Use a new --output.", file=sys.stderr)
+            return 2
+
     # Resolve the store from Kroger rather than from flags, so a repeat run
     # against the same location produces byte-identical store columns and the
     # two runs are actually comparable. Also the brief's "evidence that the
     # correct store was selected".
     store_response = client.get("/locations/" + args.location_id)
     store = resolve_store(store_response, args.location_id, args.zipcode)
+    verify_store(store_response["data"], args.location_id, store["zipcode"])
     if args.store_name:
         store["store_name"] = args.store_name
     if args.store_location:
@@ -428,16 +459,12 @@ def main(argv=None):
     print(f"Store {args.location_id}: {store['store_name']}, "
           f"{store['store_location']}, {store['zipcode']}\n", flush=True)
 
-    out = Path(args.output)
     _write(out / "store_verification.json",
            {"locationId": args.location_id,
             "resolved": store,
             "verified_utc": datetime.now(timezone.utc).isoformat(),
             "response": store_response})
-    checkpoint = out / "checkpoint.json"
-    state = None
-    if args.resume and checkpoint.exists():
-        state = json.loads(checkpoint.read_text())
+    if state:
         print(f"Resuming: {len(state['records'])} records, "
               f"{len(state['done_terms'])} terms already done.")
 
@@ -451,19 +478,18 @@ def main(argv=None):
             print(f"No such category in {args.terms}", file=sys.stderr)
             return 2
 
-    store = {"zipcode": args.zipcode or "",
-             "store_name": args.store_name,
-             "store_location": args.store_location}
-
     budget = Budget(args.max_requests, args.max_seconds)
     print(f"Sweeping location {args.location_id}: "
           f"{sum(len(v) for v in terms_by_category.values())} terms, "
           f"up to {args.pages_per_term} pages each, "
           f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s, "
           f"filter.start capped at {args.max_start}\n", flush=True)
-    state = sweep(client, args.location_id, store, terms_by_category, budget,
+    record_store = Store(args.location_id, store["zipcode"], store["store_name"],
+                         store["store_location"], LOGO)
+    state = sweep(client, args.location_id, record_store, terms_by_category, budget,
                   args.pages_per_term, checkpoint, state,
-                  max_start=args.max_start, category_map=category_map)
+                  max_start=args.max_start, category_map=category_map,
+                  raw_dir=out / "raw")
 
     rows = list(state["records"].values())
     _write(out / "data_22_fields.json", rows)
@@ -472,6 +498,7 @@ def main(argv=None):
     _write(out / "category_disagreements.json", state["category_disagreements"])
     _write(out / "unmapped_categories.json", state["unmapped"])
     _write(out / "discovery_provenance.json", state["discovery"])
+    _write(out / "quarantine.json", state["quarantine"])
     print(f"\n{len(rows)} unique products across "
           f"{len({r['category'] for r in rows})} categories "
           f"in {budget.requests} requests, {budget.elapsed}s")

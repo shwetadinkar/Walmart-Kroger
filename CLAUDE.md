@@ -70,7 +70,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 160, Mariano's 92.
+  counts: Walmart 160, Mariano's 133.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -102,8 +102,9 @@ the known gap; `reports/2026-10-24-west-loop/CATEGORY_COVERAGE.csv` states it.
 
 `marianos/tools/kroger_full_sweep.py` sweeps many search terms per category to
 widen coverage, because the Kroger public Products API has no category
-enumeration. A first run was stopped after 12,826 records because the tool has
-four defects, all of which are fixed by using what already exists:
+enumeration. A first run was stopped after 18,351 records over 198 of 301 terms
+because the tool has four defects, all of which are fixed by using what already
+exists:
 
 1. It fabricates `https://www.marianos.com/p/<upc>`, which does not resolve.
    The API returns `productPageURI`; `api_trial.normalize` validates and uses
@@ -121,6 +122,11 @@ it; merging `api_trial.CATEGORY_MAP` into `config/category_map.json`, keeping
 the no-guessing behaviour both already have; persisting the raw response per
 term under the output directory; and quarantining rejects with reasons and
 counts rather than dropping them, as the 24 October run did with its 46.
+
+That port is done, along with a fifth defect found on the way: `main` replaced
+the resolved store with blank flag values, so every record in the first run has
+an empty `store_name` and `store_location`. Its output in
+`marianos/out/sweep-2026-10-31/` must not be published. The rerun is next.
 
 Then: enrich a subset spread across all 28 roots with page-read PPM and
 retailer deal wording, merged through `composition.py` so provenance records

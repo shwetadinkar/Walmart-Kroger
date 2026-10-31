@@ -35,6 +35,9 @@
     "International": "Grocery",
     "Snacks": "Grocery",
     "Garden & Patio": "Hardware Home Improvement",
-    "Electronics": "Hardware Home Improvement"
+    "Electronics": "Hardware Home Improvement",
+    "Grocery": "Grocery",
+    "Coffee": "Coffee",
+    "Hardware": "Hardware Home Improvement"
   }
 }

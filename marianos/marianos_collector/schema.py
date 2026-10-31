@@ -13,7 +13,7 @@ FIELDS = (
     "digital_deals_price", "image_url", "url", "upc", "gupc", "ppm", "unit_price", "crawl_date"
 )
 PRICE_FIELDS = ("regular_price", "sale_price", "volume_deals_price", "digital_deals_price")
-_PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth", "simple truth organic", "kroger", "home chef", "hemisfares", "p$$t", "murray's", "comforts", "abound"}
+_PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth", "simple truth organic", "kroger", "home chef", "hemisfares", "p$$t", "psst", "murray's", "comforts", "abound", "heritage farm", "luvsome", "field & vine"}
 # Wording that means the printed figure is not what the customer receives.
 #
 # Two patterns, because the two fields are not equally ambiguous. In the WEIGHT

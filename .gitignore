@@ -24,3 +24,4 @@ submission_evidence/
 .test-rejected/
 *.log
 marianos/.env.kroger
+marianos/out/
