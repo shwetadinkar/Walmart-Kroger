@@ -90,8 +90,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # The first run, on 31 October 2026, got HTTP 400 at filter.start=251 on all 63
 # terms that reached it, and never failed below it. 201 is the highest start
-# that run saw succeed, so each term yields at most 250 products. Starts from
-# 202 to 250 were not tried.
+# that run saw succeed, so each term yields at most 250 products. Kroger's OpenAPI
+# gives filter.start a maximum of 250, so this limit is ours: starts from 202 to
+# 250 were not tried.
 MAX_START = 201
 
 # Bump when records change meaning. A checkpoint from another version holds
@@ -223,10 +224,13 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     continue
                 found = 0
                 for page in range(pages_per_term):
-                    # filter.start is 1-based: the first record is 1, not 0.
-                    # api_collection.py passes offset=1 for its single page.
-                    # Using 0 here would have shifted every page by one and
-                    # made page boundaries overlap.
+                    # Kroger's OpenAPI defines filter.start as the number of
+                    # products to skip, minimum 1. In the 31 October run, 194 of
+                    # the 205 terms with a result under the limit returned exactly
+                    # one product fewer than their reported total, which fits
+                    # start=1 skipping the first. Pages do not overlap. Whether
+                    # omitting filter.start recovers that product needs a live
+                    # request, so the behaviour stands until one is approved.
                     start = 1 + page * 50
                     if start > max_start:
                         state["terms_hit_start_cap"].append(key)
@@ -255,6 +259,9 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     response_sha256 = hashlib.sha256(
                         json.dumps(result, sort_keys=True).encode()).hexdigest()
                     data = result.get("data") or []
+                    pagination = (result.get("meta") or {}).get("pagination") or {}
+                    if isinstance(pagination.get("total"), int):
+                        state.setdefault("term_totals", {})[key] = pagination["total"]
                     for index, raw in enumerate(data):
                         # The search term is how a product was FOUND, not what
                         # it is. A probe of 17 Produce terms returned 2400
@@ -325,6 +332,20 @@ def _write(path, obj):
     tmp.replace(path)
 
 
+def short_of_reported_total(state):
+    """Terms that ended below the limit with products Kroger said were there.
+
+    A page under 50 ends a term, and pages can run short while more remain, so
+    these are truncated without reaching the limit. One short is left out: that
+    is the single product filter.start=1 appears to skip on every term.
+    """
+    capped = set(state["terms_hit_start_cap"]) | {f["term"] for f in state["page_failures"]}
+    short = [{"term": key, "reported_total": total, "received": state["term_counts"].get(key, 0)}
+             for key, total in state.get("term_totals", {}).items() if key not in capped]
+    return sorted((s for s in short if s["reported_total"] - s["received"] > 1),
+                  key=lambda s: s["term"])
+
+
 def _does_not_establish(state, rows, by_cat, max_start):
     """What this run cannot show, from what it actually returned."""
     truncated = sorted(set(state["terms_hit_start_cap"])
@@ -357,6 +378,7 @@ def _does_not_establish(state, rows, by_cat, max_start):
                 "run. The terms below reached the limit or stopped on a failed "
                 "page, so their results are truncated."),
             "truncated_terms": truncated,
+            "short_of_reported_total": short_of_reported_total(state),
         },
         "populated_roots": empty_roots,
         "products_kroger_did_not_return": (
@@ -401,6 +423,8 @@ def build_report(state, store, location_id, budget, args, accumulated):
         "unique_products": len(rows),
         "unique_upcs": len({r["upc"] for r in rows if r["upc"]}),
         "records_without_upc": sum(1 for r in rows if not r["upc"]),
+        "duplicate_upcs": sum(1 for r in rows if r["upc"]) - len({r["upc"] for r in rows if r["upc"]}),
+        "duplicate_placements_collapsed": sum(state["term_counts"].values()) - len(state["records"]),
         "current_records": accumulated["current_records"],
         "carried_forward_records": accumulated["carried_forward_records"],
         "offer_status": dict(sorted(Counter(c["offer_status"] for c in contexts).items())),

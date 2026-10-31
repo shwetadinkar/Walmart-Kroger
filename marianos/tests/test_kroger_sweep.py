@@ -636,6 +636,75 @@ class MainTests(unittest.TestCase):
         section = _main_run(self.out)["report"]["does_not_establish"]
         self.assertEqual(section["complete_results_per_term"]["truncated_terms"], [])
 
+    def test_duplicates_are_counted_and_emitted(self):
+        repeated = {"Dairy": ["eggs", "milk"]}
+        config = self.out.parent / "two_terms.json"
+        config.write_text(json.dumps({"terms": repeated}))
+        client = FakeClient({1: [product("0000000000001"), product("0000000000002")]})
+        report = _main_run(self.out, ["--terms", str(config)], client)["report"]
+        self.assertEqual(report["duplicate_upcs"], 0)
+        self.assertEqual(report["unique_products"], 2)
+        self.assertEqual(report["duplicate_placements_collapsed"], 2)
+
+    def test_two_products_sharing_a_upc_are_a_duplicate(self):
+        # reconcile refuses this before a real report, so build_report is fed
+        # directly: the count must still be right if that refusal ever moved.
+        state = run(FakeClient({1: [product("0000000000001")]}))
+        rows = [norm(product("0000000000001")), norm(product("0000000000001")),
+                norm(product("0000000000002"))]
+        accumulated = {"products": rows, "current_records": 3, "carried_forward_records": 0}
+        args = mock.Mock(pages_per_term=20, max_start=201)
+        report = sweep_tool.build_report(state, {}, "53100508",
+                                         sweep_tool.Budget(1, 60), args, accumulated)
+        self.assertEqual(report["unique_products"], 3)
+        self.assertEqual(report["duplicate_upcs"], 1)
+
+    def test_a_blank_upc_is_not_counted_as_a_duplicate(self):
+        one, two = product("0000000000001"), product("0000000000002")
+        one["upc"] = two["upc"] = ""
+        report = _main_run(self.out, client=FakeClient({1: [one, two]}))["report"]
+        self.assertEqual(report["unique_products"], 2)
+        self.assertEqual(report["duplicate_upcs"], 0)
+
+    def test_field_completeness_covers_all_22_fields_in_order(self):
+        completeness = _main_run(self.out)["report"]["field_completeness"]
+        self.assertEqual(list(completeness), list(FIELDS))
+        self.assertEqual(len(completeness), 22)
+        self.assertEqual(completeness["gupc"], 0)
+        self.assertEqual(completeness["upc"], 2)
+
+    def test_runtime_and_category_counts_are_reported(self):
+        report = _main_run(self.out)["report"]
+        self.assertGreaterEqual(report["elapsed_seconds"], 0)
+        self.assertEqual(sum(report["count_by_category"].values()), report["unique_products"])
+
+    def short_section(self, reported, returned):
+        class Paged(FakeClient):
+            def products(self, location_id, term, offset=0, limit=50):
+                return {"data": [product(f"{n:013d}") for n in range(1, returned + 1)],
+                        "meta": {"pagination": {"start": offset, "limit": limit,
+                                                "total": reported}}}
+        section = _main_run(self.out, client=Paged({}))["report"]["does_not_establish"]
+        return section["complete_results_per_term"]
+
+    def test_a_term_ending_short_of_its_reported_total_is_named(self):
+        results = self.short_section(152, 49)
+        self.assertEqual(results["short_of_reported_total"],
+                         [{"term": "Dairy||eggs", "reported_total": 152, "received": 49}])
+        self.assertEqual(results["truncated_terms"], [])
+
+    def test_a_term_one_short_is_the_skipped_first_product_not_truncation(self):
+        self.assertEqual(self.short_section(7, 6)["short_of_reported_total"], [])
+
+    def test_a_term_at_the_limit_is_listed_once_not_twice(self):
+        class AtLimit(FakeClient):
+            def products(self, location_id, term, offset=0, limit=50):
+                return {"data": full_page(offset), "meta": {"pagination": {"total": 900}}}
+        section = _main_run(self.out, client=AtLimit({}))["report"]["does_not_establish"]
+        results = section["complete_results_per_term"]
+        self.assertEqual(results["truncated_terms"], ["Dairy||eggs"])
+        self.assertEqual(results["short_of_reported_total"], [])
+
     def test_empty_seafood_and_coffee_roots_are_explained_from_the_data(self):
         meat = product("0000000000005", categories=["Meat & Seafood"])
         client = FakeClient({1: [meat]})
