@@ -30,32 +30,48 @@ coupon descriptions appears in the matching expanded coupon observation,
 including quantity, household, expiry and clipping terms. Each observation
 shows Pickup at the West Loop store.
 
-## The store: a clarification, not a blocker
+## The assigned store: Vernon Hills 53100502
 
-The 31 October review mentions Vernon Hills. Everything in this repository
-targets West Loop, `53100508`, ZIP 60661.
+Confirmed by the client on 31 October.
 
-On balance this is unlikely to be a correction. West Loop has been named to the
-client repeatedly for a week, including its address and location ID, and his
-27 October review restated it as fact without objection while objecting to five
-other things in detail. The 31 October wording, that the final target-store
-evidence must be explicit and that this sample does not establish Vernon Hills
-pricing, reads as a point about the final deliverable rather than the demo. The
-brief also requires multiple locations by configuration rather than by code, so
-the demo store was never the point.
+| | |
+|---|---|
+| Store | Mariano's Vernon Hills |
+| Address | 1720 N Milwaukee Ave, Vernon Hills, IL 60061 |
+| Division / store | 531 / 00502, combined `53100502` |
+| Fulfillment | PICKUP |
 
-A clarification has been requested. Until it arrives, **continue with West Loop
-`53100508`**. A new sweep there is directly comparable to the 24 October run at
-the same store, which is the repeat-collection evidence the client has asked
-for twice. If the answer turns out to be a different store, the cost is one
-re-run with one argument changed, because the collector selects a store by
-configuration.
+It is **not** West Loop. Every artefact in this repository so far targets West
+Loop `53100508`, two characters away from the assigned id. Check the id on
+every command.
 
-Resolve any other store's locationId with the locator mode, which fetches no
-products:
+Three instructions came with it:
+
+- **Verification must come from the returned source responses**, not from
+  configuration. His words: a configured ID or output label alone is not
+  verification. The store, the address and the fulfillment context governing
+  the collected prices and offers must all be evidenced in what the API
+  actually returned. `resolve_store` already refuses a response whose
+  locationId or zipCode contradicts the request; extend it to assert the
+  street address too, and record the pickup context per record rather than
+  only at run level.
+- **Do not relabel the West Loop work.** The 34-product sample and its
+  observations stay labelled West Loop. They are a separate store and a
+  separate date.
+- **The demonstration minimum is 500 genuine distinct products in total**,
+  drawn from the required scope. It is not 500 per category. Full production
+  must still cover every required category, applicable subcategory and
+  pagination with no demonstration cap.
+
+He also set the order of work explicitly: reconcile the authoritative Mariano's
+release with the accepted coupon and unavailable-retention fixes first, then
+identify the corrected version and the next dated milestone. That is PART 0 and
+PART A below, before any collection.
+
+Resolve and confirm the store before the first sweep. This fetches no products:
 
 ```bash
-python3 tools/kroger_full_sweep.py --zipcode <zip> --address-contains <name>
+python3 tools/kroger_full_sweep.py --zipcode 60061 --address-contains Milwaukee
 ```
 
 Everything else below is independent of the store.

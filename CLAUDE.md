@@ -98,7 +98,11 @@ unavailable and unpriced offers, a coverage-attestation gate, approximate-weight
 exclusion in titles as well as the weight field, manifest entries that fail the
 verifier instead of being filtered out, and a bounded first-test probe.
 
-**Mariano's.** 604 published records from a 24 October live Kroger API run at
+**Mariano's.** The assigned store for the demonstration is **Vernon Hills,
+`53100502`, 1720 N Milwaukee Ave, IL 60061, PICKUP**, confirmed by the client
+on 31 October. Everything collected so far is West Loop `53100508` and must
+stay labelled as West Loop; it is a different store and must never be
+relabelled. 604 published records from a 24 October live Kroger API run at
 West Loop, store `53100508`, ZIP 60661, from 650 collected with 46 quarantined,
 plus 158 page-read PPM values and 29 volume-offer descriptions from 204 page
 captures. Collection stopped when the site began returning Access Denied; the
