@@ -80,7 +80,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 160, Mariano's 133.
+  counts: Walmart 160, Mariano's 139.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A

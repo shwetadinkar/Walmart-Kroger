@@ -85,12 +85,27 @@ def full_page(start):
 class NormalizeTests(unittest.TestCase):
     def test_url_comes_from_the_api_not_from_the_upc(self):
         r = norm(product())
-        self.assertEqual(
-            r["url"], "https://www.marianos.com/p/kroger-eggs/0001111060933?cid=source")
+        self.assertEqual(r["url"], "https://www.marianos.com/p/kroger-eggs/0001111060933")
+
+    def test_query_and_fragment_are_stripped_from_the_url(self):
+        clean = "https://www.marianos.com/p/kroger-eggs/0001111060933"
+        for suffix in ("?cid=dmF-our-client-id", "#reviews", "?cid=x&y=z#reviews"):
+            with self.subTest(suffix=suffix):
+                uri = "/p/kroger-eggs/0001111060933" + suffix
+                self.assertEqual(norm(product(productPageURI=uri))["url"], clean)
+
+    def test_a_uri_with_no_query_is_unchanged(self):
+        uri = "/p/kroger-eggs/0001111060933"
+        self.assertEqual(norm(product(productPageURI=uri))["url"],
+                         "https://www.marianos.com" + uri)
+
+    def test_the_product_id_is_still_checked_behind_a_query(self):
+        with self.assertRaisesRegex(ValueError, "INVALID_PRODUCT_URI"):
+            norm(product(productPageURI="/p/x/999999999?cid=x"))
 
     def test_a_bad_product_uri_is_refused(self):
         for uri in ("", None, "https://evil.example/p/x/0001111060933",
-                    "/p/x/0001111060933#frag", "/q/x/0001111060933", "/p/x/999999999"):
+                    "//evil.example/p/x/0001111060933", "/q/x/0001111060933", "/p/x/999999999"):
             with self.subTest(uri=uri), self.assertRaisesRegex(ValueError, "INVALID_PRODUCT_URI"):
                 norm(product(productPageURI=uri))
 
@@ -161,12 +176,20 @@ class NormalizeTests(unittest.TestCase):
 
     def test_private_brands_read_yes_in_any_case(self):
         for brand in ("Heritage Farm", "Luvsome", "Field & Vine", "Psst", "PSST",
-                      "p$$t", "Kroger"):
+                      "p$$t", "Kroger", "Roundy's", "ROUNDY'S"):
+            with self.subTest(brand=brand):
+                self.assertEqual(norm(product(brand=brand))["store_brand"], "yes")
+
+    def test_a_house_brand_prefix_reads_yes(self):
+        # Both observed in the probe, as brand values, not guessed.
+        for brand in ("Kroger Carbmaster", "Roundy's Select", "Simply Roundy's"):
             with self.subTest(brand=brand):
                 self.assertEqual(norm(product(brand=brand))["store_brand"], "yes")
 
     def test_other_brands_read_no(self):
-        for brand in ("Tyson", "Field Day", ""):
+        # The last three share a first word with a house brand, or its letters.
+        for brand in ("Tyson", "Field Day", "", "Simple Mills", "Field Roast",
+                      "Krogerville"):
             with self.subTest(brand=brand):
                 self.assertEqual(norm(product(brand=brand))["store_brand"], "no")
 
@@ -332,6 +355,12 @@ class MainTests(unittest.TestCase):
             _main_run(self.out, client=client)
         self.assertEqual(client.starts, [])
 
+    def test_no_published_record_carries_the_query(self):
+        _main_run(self.out)
+        self.assertEqual(self.rows()[0]["url"],
+                         "https://www.marianos.com/p/kroger-eggs/0001111060933")
+        self.assertNotIn("cid=", (self.out / "data_22_fields.json").read_text())
+
     def test_quarantine_and_raw_are_written_and_reported(self):
         report = _main_run(self.out)["report"]
         self.assertEqual(report["quarantined_products"], 1)
@@ -415,6 +444,17 @@ class MainTests(unittest.TestCase):
         self.assertEqual(_main_run(self.out, ["--resume"], client)["code"], 2)
         self.assertEqual(checkpoint.read_text(), body)
         self.assertEqual(sorted(p.name for p in self.out.iterdir()), ["checkpoint.json"])
+        self.assertEqual(client.starts, [])
+
+    def test_a_checkpoint_from_before_the_url_fix_cannot_be_resumed(self):
+        # Version 2 records carry ?cid= in their URLs and an older store_brand.
+        self.out.mkdir()
+        checkpoint = self.out / "checkpoint.json"
+        body = json.dumps({"state_version": 2, "records": {}, "done_terms": []})
+        checkpoint.write_text(body)
+        client = FakeClient()
+        self.assertEqual(_main_run(self.out, ["--resume"], client)["code"], 2)
+        self.assertEqual(checkpoint.read_text(), body)
         self.assertEqual(client.starts, [])
 
     def test_a_current_checkpoint_resumes_without_refetching(self):

@@ -80,7 +80,7 @@ MAX_START = 201
 
 # Bump when records change meaning. A checkpoint from another version holds
 # records built under other rules, and resuming would mix the two in one output.
-STATE_VERSION = 2
+STATE_VERSION = 3
 
 
 class Budget:

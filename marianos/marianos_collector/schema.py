@@ -13,7 +13,7 @@ FIELDS = (
     "digital_deals_price", "image_url", "url", "upc", "gupc", "ppm", "unit_price", "crawl_date"
 )
 PRICE_FIELDS = ("regular_price", "sale_price", "volume_deals_price", "digital_deals_price")
-_PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth", "simple truth organic", "kroger", "home chef", "hemisfares", "p$$t", "psst", "murray's", "comforts", "abound", "heritage farm", "luvsome", "field & vine"}
+_PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth", "simple truth organic", "kroger", "home chef", "hemisfares", "p$$t", "psst", "murray's", "comforts", "abound", "heritage farm", "luvsome", "field & vine", "roundy's", "simply roundy's"}
 # Wording that means the printed figure is not what the customer receives.
 #
 # Two patterns, because the two fields are not equally ambiguous. In the WEIGHT
@@ -43,6 +43,11 @@ _PRICE = re.compile(r"^\$?\d+(?:\.\d{1,2})?$")
 
 class RecordRejected(ValueError):
     pass
+
+def _is_private_brand(brand: str) -> bool:
+    # Whole words, so "Kroger Carbmaster" and "Roundy's Select" match their
+    # house brand and "Simple Mills" or "Field Roast" do not.
+    return any(brand == name or brand.startswith(name + " ") for name in _PRIVATE_BRANDS)
 
 def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: str) -> dict:
     if not isinstance(raw, dict):
@@ -96,7 +101,7 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     result["gupc"] = ""
     result["unit_price"] = ""
     brand = str(raw.get("brand") or "").strip().lower()
-    result["store_brand"] = "yes" if brand in _PRIVATE_BRANDS else "no"
+    result["store_brand"] = "yes" if _is_private_brand(brand) else "no"
 
     for field in PRICE_FIELDS:
         value = result[field].strip()

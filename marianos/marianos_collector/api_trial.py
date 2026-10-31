@@ -2,13 +2,16 @@
 
 Ported from `marianos-live-api-west-loop`, the stricter of the two branches
 that carry this file: `marianos-fresh-runs-category-evidence` also accepts
-in-store-only offers and blank prices. Two deliberate differences from the
+in-store-only offers and blank prices. Three deliberate differences from the
 source:
 
   - An unmapped Kroger label leaves `category` empty. The source wrote the raw
     label into `category`, which is a value the client's CSV does not contain.
   - The label map is passed in from config/category_map.json, so there is one
     map. `api_trial.CATEGORY_MAP` was merged into it.
+  - The published URL is scheme, host and path only. Kroger appends `?cid=`
+    carrying the API client id, which must not ship in a deliverable. The source
+    kept the query and refused fragments; both are now dropped.
 
 Keyword searches never exhaust a retailer category, so nothing here claims to.
 """
@@ -103,7 +106,7 @@ def normalize(product, store, crawl_date, category_map):
         raise ValueError("INVALID_UPC")
     uri = product.get("productPageURI") or ""
     parsed = urlsplit(uri)
-    if (parsed.scheme or parsed.netloc or parsed.fragment
+    if (parsed.scheme or parsed.netloc
             or not parsed.path.startswith("/p/")
             or parsed.path.split("/")[-1] != str(product.get("productId", ""))):
         raise ValueError("INVALID_PRODUCT_URI")
@@ -119,5 +122,5 @@ def normalize(product, store, crawl_date, category_map):
            "product_title": product.get("description", ""),
            "weight": item["size"], "regular_price": money(price["regular"]),
            "sale_price": money(promo) if isinstance(promo, (int, float)) and promo > 0 else "",
-           "image_url": _front_image(product), "url": SITE + uri, "upc": upc}
+           "image_url": _front_image(product), "url": SITE + parsed.path, "upc": upc}
     return make_record(raw, store, category, label, crawl_date)
