@@ -52,6 +52,20 @@ def raw(**overrides):
     return base
 
 
+_Unbound = CallableEnrichment
+OBSERVED = "2026-10-31T15:00:00Z"
+
+
+def CallableEnrichment(name, fields, lookup, **kw):
+    """Every source here stands for a well-behaved one, so it states its binding.
+    What happens without one is tested in BindingTests."""
+    def bound(store, identity, product):
+        return {**(lookup(store, identity, product) or {}),
+                "_binding": {"identity": identity, "store_id": store.store_id,
+                             "fulfillment": "pickup", "observed_at": OBSERVED}}
+    return _Unbound(name, fields, bound, **kw)
+
+
 class Spine:
     source_mode = "spine"
 
@@ -309,6 +323,72 @@ class RunnerResetTests(unittest.TestCase):
         self.assertGreater(totals[0], 0, "the counter must actually be counting")
         self.assertEqual(len(set(totals)), 1,
                          f"a reused source must not accumulate: {totals}")
+
+
+class BindingTests(unittest.TestCase):
+    """A value is evidence only if it is tied to the product, store and time."""
+
+    def compose(self, binding):
+        def lookup(store, identity, product):
+            result = {"ppm": "$0.50/oz"}
+            if binding is not None:
+                result["_binding"] = {"identity": identity, "store_id": store.store_id,
+                                      "fulfillment": "pickup", "observed_at": OBSERVED, **binding}
+            return result
+        return CompositeSource(Spine([raw()]), "spine",
+                               [_Unbound("crawl", ["ppm"], lookup)])
+
+    def fetched(self, composite):
+        return composite.fetch(STORE, CATEGORY, "u", "").products[0]
+
+    def test_bound_value_merges_with_its_observation(self):
+        composite = self.compose({})
+        self.assertEqual(self.fetched(composite)["ppm"], "$0.50/oz")
+        identity = composite._identity(raw())
+        detail = composite.evidence_for(identity)["fields"]["ppm"]
+        self.assertEqual(detail["source"], "crawl")
+        self.assertEqual(detail["binding"]["observed_at"], OBSERVED)
+        self.assertEqual(detail["binding"]["store_id"], STORE.store_id)
+
+    def test_spine_value_has_a_source_and_no_page_binding(self):
+        composite = self.compose({})
+        self.fetched(composite)
+        detail = composite.evidence_for(composite._identity(raw()))["fields"]["product_title"]
+        self.assertEqual(detail, {"source": "spine", "binding": None})
+
+    def test_unbound_values_do_not_merge_and_are_counted(self):
+        cases = [(None, "UNBOUND_NO_BINDING"), ({"identity": "other"}, "UNBOUND_PRODUCT"),
+                 ({"store_id": "53100508"}, "UNBOUND_STORE"),
+                 ({"fulfillment": "delivery"}, "UNBOUND_FULFILLMENT"),
+                 ({"observed_at": " "}, "UNBOUND_TIME")]
+        for binding, reason in cases:
+            with self.subTest(reason=reason):
+                composite = self.compose(binding)
+                self.assertEqual(self.fetched(composite)["ppm"], "")
+                self.assertEqual(composite.provenance_report()["contributions_refused_as_unbound"],
+                                 {f"crawl:{reason}": 1})
+                self.assertEqual(composite.provenance_for(composite._identity(raw())).get("ppm"),
+                                 None)
+
+    def test_conflict_carries_the_observation_of_the_discarded_value(self):
+        composite = CompositeSource(
+            Spine([raw(regular_price="2.00")]), "spine",
+            [CallableEnrichment("crawl", ["regular_price"],
+                                lambda s, i, p: {"regular_price": "2.50"})],
+            policy={"regular_price": ("spine", "crawl")})
+        self.assertEqual(self.fetched(composite)["regular_price"], "2.00")
+        conflicts = composite.evidence_for(composite._identity(raw()))["conflicts"]
+        self.assertEqual(len(conflicts), 1)
+        self.assertEqual(conflicts[0]["kept"]["source"], "spine")
+        self.assertEqual(conflicts[0]["discarded"]["value"], "2.50")
+        self.assertEqual(conflicts[0]["discarded"]["binding"]["observed_at"], OBSERVED)
+
+    def test_detail_is_not_capped_and_is_per_run(self):
+        composite = self.compose({})
+        self.assertEqual(composite.evidence_for("nobody"), {"fields": {}, "conflicts": []})
+        self.fetched(composite)
+        composite.reset_unresolved()
+        self.assertEqual(composite.evidence_for(composite._identity(raw()))["fields"], {})
 
 
 if __name__ == "__main__":

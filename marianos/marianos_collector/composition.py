@@ -119,11 +119,38 @@ class Availability:
         return cls(False, reason)
 
 
+# A contributed value is evidence only if it is tied to this product, at this
+# store, on a fulfilment the brief admits, at a stated time. A lookup returns
+# these beside its fields, and a value without them is not merged: an offer read
+# for another store or from an undated page must not pass as this product's.
+# The same rule as Walmart's composition; it is also what stops a West Loop page
+# read reaching a Vernon Hills row.
+BINDING_KEY = "_binding"
+FULFILMENTS = ("pickup", "in_store")
+
+
+def binding_refusal(binding, store, identity: str) -> str:
+    """Why a contribution cannot be tied to this observation, or ""."""
+    if not isinstance(binding, dict):
+        return "UNBOUND_NO_BINDING"
+    if str(binding.get("identity") or "") != identity or not identity:
+        return "UNBOUND_PRODUCT"
+    if str(binding.get("store_id") or "") != store.store_id:
+        return "UNBOUND_STORE"
+    if binding.get("fulfillment") not in FULFILMENTS:
+        return "UNBOUND_FULFILLMENT"
+    if not str(binding.get("observed_at") or "").strip():
+        return "UNBOUND_TIME"
+    return ""
+
+
 class Enrichment:
     """Base class for a source that contributes fields to products it did not enumerate.
 
     Subclasses set `name` and `fields`, and implement `lookup`. They are called
-    once per product, keyed by that product's identity.
+    once per product, keyed by that product's identity. A lookup that returns
+    any field must also return `BINDING_KEY` with identity, store_id,
+    fulfillment and observed_at.
     """
 
     name = "enrichment"
@@ -140,12 +167,16 @@ class Enrichment:
         start supplying another's fields and bypass the precedence policy."""
         if not isinstance(result, dict):
             raise CompositionError(f"{self.name} returned a non-object enrichment")
-        undeclared = set(result) - set(self.fields)
+        undeclared = set(result) - set(self.fields) - {BINDING_KEY}
         if undeclared:
             raise CompositionError(
                 f"{self.name} returned undeclared fields: {sorted(undeclared)}"
             )
-        return {k: v for k, v in result.items() if isinstance(v, str) and v}
+        kept = {k: v for k, v in result.items()
+                if k != BINDING_KEY and isinstance(v, str) and v}
+        if BINDING_KEY in result:
+            kept[BINDING_KEY] = result[BINDING_KEY]
+        return kept
 
 
 class CallableEnrichment(Enrichment):
@@ -195,6 +226,7 @@ def unavailable_crawl(reason: str, fields=("ppm", "digital_deals_description", "
 class _Trace:
     sources_by_field: dict = field(default_factory=dict)
     conflicts: list = field(default_factory=list)
+    bindings_by_field: dict = field(default_factory=dict)
 
 
 class CompositeSource:
@@ -223,6 +255,8 @@ class CompositeSource:
         self._field_sources = Counter()
         self._conflicts: list = []
         self._skipped: dict[str, str] = {}
+        self._unbound = Counter()
+        self._bindings: dict = {}
 
     # --- delegation ----------------------------------------------------
     #
@@ -246,6 +280,8 @@ class CompositeSource:
         self._field_sources = Counter()
         self._conflicts = []
         self._skipped = {}
+        self._unbound = Counter()
+        self._bindings = {}
 
     @property
     def source_mode(self) -> str:
@@ -270,6 +306,19 @@ class CompositeSource:
         except ValueError:
             return len(order)
 
+    def _bound(self, enrichment, store, identity: str, product: dict) -> dict:
+        """A lookup's fields, or nothing if they cannot be tied to this product."""
+        result = dict(enrichment.lookup(store, identity, product) or {})
+        binding = result.pop(BINDING_KEY, None)
+        if not result:
+            return {}
+        refusal = binding_refusal(binding, store, identity)
+        if refusal:
+            self._unbound[(enrichment.name, refusal)] += len(result)
+            return {}
+        self._bindings[(identity, enrichment.name)] = dict(binding)
+        return result
+
     def _merge(self, product: dict, contributions: list) -> dict:
         """Apply per-field precedence across the spine and every enrichment.
 
@@ -291,6 +340,8 @@ class CompositeSource:
             _, _, winner, value = offers[0]
             merged[field_name] = value
             trace.sources_by_field[field_name] = winner
+            if (identity, winner) in self._bindings:
+                trace.bindings_by_field[field_name] = self._bindings[(identity, winner)]
             self._field_sources[(field_name, winner)] += 1
 
             # Record disagreement rather than resolving it quietly. Two sources
@@ -301,8 +352,10 @@ class CompositeSource:
                     conflict = {
                         "identity": identity,
                         "field": field_name,
-                        "kept": {"source": winner, "value": value},
-                        "discarded": {"source": other_name, "value": other_value},
+                        "kept": {"source": winner, "value": value,
+                                 "binding": self._bindings.get((identity, winner))},
+                        "discarded": {"source": other_name, "value": other_value,
+                                      "binding": self._bindings.get((identity, other_name))},
                     }
                     trace.conflicts.append(conflict)
                     self._conflicts.append(conflict)
@@ -341,7 +394,7 @@ class CompositeSource:
             for enrichment in live:
                 try:
                     contributions.append(
-                        (enrichment.name, enrichment.lookup(store, identity, product))
+                        (enrichment.name, self._bound(enrichment, store, identity, product))
                     )
                 except CompositionError:
                     # A source breaking its own declaration is a defect here,
@@ -374,8 +427,22 @@ class CompositeSource:
             "conflicts": self._conflicts[:200],
             "conflict_count": len(self._conflicts),
             "products_traced": len(self._traces),
+            "contributions_refused_as_unbound": {
+                f"{name}:{reason}": count for (name, reason), count in self._unbound.items()},
         }
 
     def provenance_for(self, identity: str) -> dict:
         trace = self._traces.get(identity)
         return dict(trace.sources_by_field) if trace else {}
+
+    def evidence_for(self, identity: str) -> dict:
+        """Per field: which source won and the observation it was bound to,
+        with every conflict on this product. `conflicts` in provenance_report
+        is capped for reading; this is not."""
+        trace = self._traces.get(identity)
+        if not trace:
+            return {"fields": {}, "conflicts": []}
+        return {"fields": {name: {"source": source,
+                                  "binding": trace.bindings_by_field.get(name)}
+                           for name, source in sorted(trace.sources_by_field.items())},
+                "conflicts": list(trace.conflicts)}
