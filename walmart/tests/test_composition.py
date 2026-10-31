@@ -52,6 +52,19 @@ def raw(**overrides):
     return base
 
 
+_Unbound = CallableEnrichment
+
+
+def CallableEnrichment(name, fields, lookup, **kw):
+    """Every source here stands for a well-behaved one, so it states its binding.
+    What happens without one is tested in test_part_b_2026_10_31.py."""
+    def bound(store, identity, product):
+        return {**(lookup(store, identity, product) or {}),
+                "_binding": {"identity": identity, "store_id": store.store_id,
+                             "fulfillment": "pickup", "observed_at": "2026-11-06T12:00:00Z"}}
+    return _Unbound(name, fields, bound, **kw)
+
+
 class Spine:
     source_mode = "spine"
 

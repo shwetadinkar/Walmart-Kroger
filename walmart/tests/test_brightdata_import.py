@@ -55,6 +55,12 @@ class BrightDataImporterTests(unittest.TestCase):
         obj=raw();obj['product_id']='9999'
         self.assertEqual(_validate(obj,'100','72712'),'BAD_OR_MISMATCHED_PRODUCT_ID_URL')
 
+    def test_approximate_net_weight_rejected_without_a_unit(self):
+        # The net-weight field is read as a weight field, so a bare number counts.
+        obj=raw();obj['product_name']='Chicken'
+        obj['specifications']=[{"name":"Net content statement","value":"approximately 2"}]
+        self.assertEqual(_validate(obj,'100','72712'),'APPROXIMATE_WEIGHT')
+
     def test_approximate_size_rejected(self):
         obj=raw();obj['product_name']='Chicken approximately 1.5 lb'
         self.assertEqual(_validate(obj,'100','72712'),'APPROXIMATE_WEIGHT')

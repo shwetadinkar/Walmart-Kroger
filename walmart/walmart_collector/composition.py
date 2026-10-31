@@ -124,15 +124,43 @@ class Availability:
         return cls(False, reason)
 
 
+# A contributed value is evidence only if it is tied to this product, at this
+# store, on a fulfilment the brief admits, at a stated time. A lookup returns
+# these beside its fields, and a value without them is not merged: an offer read
+# for another store or from an undated page must not pass as this product's.
+BINDING_KEY = "_binding"
+FULFILMENTS = ("pickup", "in_store")
+
+
+def binding_refusal(binding, store, identity: str) -> str:
+    """Why a contribution cannot be tied to this observation, or ""."""
+    if not isinstance(binding, dict):
+        return "UNBOUND_NO_BINDING"
+    if str(binding.get("identity") or "") != identity or not identity:
+        return "UNBOUND_PRODUCT"
+    if str(binding.get("store_id") or "") != store.store_id:
+        return "UNBOUND_STORE"
+    if binding.get("fulfillment") not in FULFILMENTS:
+        return "UNBOUND_FULFILLMENT"
+    if not str(binding.get("observed_at") or "").strip():
+        return "UNBOUND_TIME"
+    return ""
+
+
 class Enrichment:
     """Base class for a source that contributes fields to products it did not enumerate.
 
     Subclasses set `name` and `fields`, and implement `lookup`. They are called
-    once per product, keyed by that product's identity.
+    once per product, keyed by that product's identity. A lookup that returns
+    any field must also return `BINDING_KEY` with identity, store_id,
+    fulfillment and observed_at.
     """
 
     name = "enrichment"
     fields: frozenset = frozenset()
+    # True only for a source with a working lookup behind it. The report states
+    # this rather than letting a registered name read as a working collector.
+    executable = True
 
     def availability(self) -> Availability:
         return Availability.ok()
@@ -145,12 +173,16 @@ class Enrichment:
         start supplying another's fields and bypass the precedence policy."""
         if not isinstance(result, dict):
             raise CompositionError(f"{self.name} returned a non-object enrichment")
-        undeclared = set(result) - set(self.fields)
+        undeclared = set(result) - set(self.fields) - {BINDING_KEY}
         if undeclared:
             raise CompositionError(
                 f"{self.name} returned undeclared fields: {sorted(undeclared)}"
             )
-        return {k: v for k, v in result.items() if isinstance(v, str) and v}
+        kept = {k: v for k, v in result.items()
+                if k != BINDING_KEY and isinstance(v, str) and v}
+        if BINDING_KEY in result:
+            kept[BINDING_KEY] = result[BINDING_KEY]
+        return kept
 
 
 class CallableEnrichment(Enrichment):
@@ -162,7 +194,7 @@ class CallableEnrichment(Enrichment):
     itself unavailable without being called once per product.
     """
 
-    def __init__(self, name: str, fields, lookup, availability=None):
+    def __init__(self, name: str, fields, lookup, availability=None, executable=True):
         if not name:
             raise CompositionError("An enrichment source needs a name")
         unknown = set(fields) - COMPOSABLE_FIELDS
@@ -172,6 +204,7 @@ class CallableEnrichment(Enrichment):
         self.fields = frozenset(fields)
         self._lookup = lookup
         self._availability = availability or (lambda: Availability.ok())
+        self.executable = executable
 
     def availability(self) -> Availability:
         return self._availability()
@@ -202,6 +235,7 @@ def unavailable_crawl(reason: str, fields=CRAWL_FIELDS):
         fields=fields,
         lookup=lambda store, identity, product: {},
         availability=lambda: Availability.blocked(reason),
+        executable=False,
     )
 
 
@@ -237,19 +271,33 @@ class CompositeSource:
         self._field_sources = Counter()
         self._conflicts: list = []
         self._skipped: dict[str, str] = {}
+        self._unbound = Counter()
 
     # --- delegation ----------------------------------------------------
     #
     # A composite wraps a spine, and anything the runner asks of a source must
-    # reach it. Without these, `--source composite --spine opd` silently lost
-    # the spine's record of offers it could not publish: the run report carried
-    # no `unresolved_offers`, and because `reset_unresolved` never arrived the
-    # spine accumulated across stores and repeat runs. That is the same defect
-    # that was fixed inside the spine, reintroduced one layer up by wrapping it.
+    # reach it. `unresolved_offers`, `reset_unresolved` and `coverage_attested`
+    # were each lost in turn by forwarding names one at a time, so forwarding is
+    # now the default: every public attribute the composite does not define
+    # itself comes from the spine, read live, and one the spine lacks stays
+    # absent. The gate therefore judges the spine's own statement. Nothing here
+    # claims coverage on its behalf, and the unresolved section no longer reads
+    # as a count of zero for a spine that keeps no such record.
+    #
+    # Defined here rather than forwarded: fetch, source_mode and
+    # reset_unresolved, which do the spine's work plus the composite's.
+
+    def __getattr__(self, name):
+        if name.startswith("_") or "spine" not in self.__dict__:
+            raise AttributeError(name)
+        return getattr(self.__dict__["spine"], name)
 
     @property
-    def unresolved_offers(self):
-        return getattr(self.spine, "unresolved_offers", [])
+    def spine_source_mode(self) -> str:
+        """What actually enumerated the data. The runner's mode-dependent
+        checks read this, because `composite(...)` hid a synthetic spine from
+        source_is_synthetic and a provider spine from its evidence check."""
+        return getattr(self.spine, "spine_source_mode", self.spine.source_mode)
 
     def reset_unresolved(self):
         if hasattr(self.spine, "reset_unresolved"):
@@ -260,6 +308,7 @@ class CompositeSource:
         self._field_sources = Counter()
         self._conflicts = []
         self._skipped = {}
+        self._unbound = Counter()
 
     @property
     def source_mode(self) -> str:
@@ -272,6 +321,18 @@ class CompositeSource:
 
     def _identity(self, product: dict) -> str:
         return str(product.get("product_id") or product.get("upc") or product.get("url") or "")
+
+    def _bound(self, enrichment, store, identity: str, product: dict) -> dict:
+        """A lookup's fields, or nothing if they cannot be tied to this product."""
+        result = dict(enrichment.lookup(store, identity, product) or {})
+        binding = result.pop(BINDING_KEY, None)
+        if not result:
+            return {}
+        refusal = binding_refusal(binding, store, identity)
+        if refusal:
+            self._unbound[(enrichment.name, refusal)] += len(result)
+            return {}
+        return result
 
     def _rank(self, field_name: str, source_name: str) -> int:
         """Lower is better. A source absent from a field's policy ranks last,
@@ -355,7 +416,7 @@ class CompositeSource:
             for enrichment in live:
                 try:
                     contributions.append(
-                        (enrichment.name, enrichment.lookup(store, identity, product))
+                        (enrichment.name, self._bound(enrichment, store, identity, product))
                     )
                 except CompositionError:
                     # A source breaking its own declaration is a defect here,
@@ -388,7 +449,35 @@ class CompositeSource:
             "conflicts": self._conflicts[:200],
             "conflict_count": len(self._conflicts),
             "products_traced": len(self._traces),
+            "sources": self._sources_statement(),
+            "fields_without_executable_source": self._unservable_fields(),
+            "contributions_refused_as_unbound": {
+                f"{name}:{reason}": count for (name, reason), count in self._unbound.items()},
         }
+
+    def _sources_statement(self) -> list:
+        spine = {
+            "name": self.spine_name, "role": "spine", "executable": True,
+            "implementation": type(self.spine).__name__,
+            "binding": {
+                "product": "the spine's own record", "store": "Page and product store_id "
+                "and store_context_verified, checked by the runner",
+                "fulfillment": "make_record admits pickup and in_store only",
+                "time": "the run's crawl_date; no per-value observation time"},
+        }
+        return [spine] + [{
+            "name": e.name, "role": "enrichment", "fields": sorted(e.fields),
+            "executable": bool(e.executable), "implementation": type(e).__name__,
+            "available": e.availability().available,
+            "binding": "per value, required: " + ", ".join(
+                ("identity", "store_id", "fulfillment", "observed_at")),
+        } for e in self.enrichments]
+
+    def _unservable_fields(self) -> list:
+        """Policy fields only a registered-but-not-working source could supply."""
+        declared_by_working = {f for e in self.enrichments if e.executable for f in e.fields}
+        registered = {f for e in self.enrichments if not e.executable for f in e.fields}
+        return sorted(registered - declared_by_working)
 
     def provenance_for(self, identity: str) -> dict:
         trace = self._traces.get(identity)

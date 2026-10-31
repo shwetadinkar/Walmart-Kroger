@@ -25,20 +25,38 @@ _PRIVATE_BRANDS = {"mariano's", "marianos", "private selection", "simple truth",
 # The trailing \d also has to be \d+: "about 12 oz" and "about 100 lb" would
 # not match a single-digit pattern, so the loose form missed most real
 # approximate weights while firing on small counts.
+#
+# "Approximately" alone says nothing about weight. "Rice 16 oz, approximately 8
+# servings" is a fixed-size product, so approximate wording only counts when it
+# is attached to a weight: "approx. 2 lb", "approximate weight", "2 lb approx".
+_APPROX_WORD = r"(?:approximately|approximate|approx)\b\.?"
+_NUMBER = (
+    r"(?:\d+\s+\d+/\d+|\d+/\d+|\d*\.?\d+)"
+    r"(?:\s*(?:-|to)\s*(?:\d+/\d+|\d*\.?\d+))?"
+)
+_WEIGHT_UNIT = r"(?:lbs?\b\.?|pounds?\b|ozs?\b\.?|ounces?\b|kgs?\b|kilograms?\b|gs?\b|grams?\b)"
+_APPROX_ATTACHED = (
+    rf"{_APPROX_WORD}\s*:?\s*~?\s*{_NUMBER}\s*{_WEIGHT_UNIT}"
+    rf"|{_APPROX_WORD}\s+(?:net\s+)?(?:weight|wt\b)"
+    rf"|(?:weight|wt\b\.?)\s*(?:is\s*)?:?\s*{_APPROX_WORD}"
+    rf"|\b{_NUMBER}\s*{_WEIGHT_UNIT}[\s,(]*{_APPROX_WORD}(?![.\s]*\d)"
+)
 _APPROX_COMMON = (
-    r"approx\.?|approximately|approximate"
-    r"|(?:variable|average|avg\.?|estimated|random)[-\s]?weight"
+    rf"{_APPROX_ATTACHED}"
+    r"|(?:(?:variable|average|avg\.?|estimated|random)[-\s]?weight"
     r"|weights?\s+(?:may\s+)?var(?:y|ies)"
-    r"|(?:sold|priced)\s+by\s+weight"
+    r"|(?:sold|priced)\s+by\s+weight)\b"
 )
-_ABOUT_UNIT = (
-    r"about\s+\d+(?:\.\d+)?\s*"
-    r"(?:lbs?\.?|pounds?|ozs?\.?|ounces?|kgs?|kilograms?|gs?|grams?)"
-)
+_ABOUT_UNIT = rf"about\s+\d+(?:\.\d+)?\s*{_WEIGHT_UNIT}"
 # Titles: approximate wording, or "about N <weight unit>".
-_APPROX = re.compile(rf"\b(?:{_APPROX_COMMON}|{_ABOUT_UNIT})\b", re.I)
-# Weight field: the same, plus a bare "about N", which is unambiguous there.
-_APPROX_WEIGHT = re.compile(rf"\b(?:{_APPROX_COMMON}|about\s+\d+)\b", re.I)
+_APPROX = re.compile(rf"\b(?:{_APPROX_COMMON}|{_ABOUT_UNIT})", re.I)
+# Weight field: the same, plus a bare "about N" or "approx" with no count noun
+# after it, which is unambiguous there. "about 4 servings" is still a count.
+_APPROX_WEIGHT = re.compile(
+    rf"\b(?:{_APPROX_COMMON}|{_ABOUT_UNIT}"
+    rf"|(?:{_APPROX_WORD}|about)\s*~?\s*{_NUMBER}(?![\d./]|\s*[a-z])"
+    rf"|{_APPROX_WORD}(?![.\s~]*\d))",
+    re.I)
 _PRICE = re.compile(r"^\$?\d+(?:\.\d{1,2})?$")
 
 class RecordRejected(ValueError):

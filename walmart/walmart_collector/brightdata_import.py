@@ -15,7 +15,7 @@ import re
 from urllib.parse import urlsplit
 from uuid import uuid4
 
-from .schema import FIELDS, _APPROX, _PRIVATE_BRANDS
+from .schema import FIELDS, _APPROX, _APPROX_WEIGHT, _PRIVATE_BRANDS
 
 ROOT_IDS = {
     "976759": "Food", "1115193": "Household Essentials",
@@ -145,7 +145,7 @@ def _validate(raw, store_id, zipcode):
     if not title:
         return "MISSING_PRODUCT_TITLE"
     net = _spec(raw, ("Net content statement", "Product net content parent", "Size", "Weight"))
-    if _APPROX.search(title) or _APPROX.search(net):
+    if _APPROX.search(title) or _APPROX_WEIGHT.search(net):
         return "APPROXIMATE_WEIGHT"
     return ""
 

@@ -22,20 +22,34 @@ token call, any token refresh, the store locator, catalog metadata, every
 signed-file download, and every redirect hop. A redirect is a request and is
 counted as one. There is no retry anywhere; the first failure stops the run.
 
-    requests   10 maximum, cumulative
-    time       10 minutes maximum, wall clock, from the first request
-    traffic    64 MiB maximum, cumulative across all responses
-    response   16 MiB maximum for any single response
+    requests      10 maximum, cumulative
+    time          10 minutes maximum, wall clock, across the whole run
+    traffic       64 MiB maximum, cumulative across all responses
+    response      16 MiB maximum for any single response
+    decompressed  256 MiB maximum, cumulative, counted as it expands
 
-Exceeding any of them raises and the probe stops. The budget is reported in
-the receipt whether the run succeeded or not, so the cost of the test is
-visible rather than asserted.
+Exceeding any of them stops the probe. Bytes are counted as they arrive, so a
+refused response and an error body are in the total. The clock covers reads,
+decompression, parsing and evidence writing, not only the dispatch of requests:
+work runs on a worker thread that the supervisor abandons at the deadline, and
+the last 15 seconds (or a tenth of a shorter limit) are reserved for
+finalization, which writes what it can and always writes the receipt.
+
+WHAT SUCCESS MEANS
+------------------
+Exit 0 only when the requested number of catalog offers was matched to a price
+row for this store. Exit 3 is an incomplete result, with the reasons stated.
+Exit 1 is a failure. A completed transport is not a result. A flag over rows
+that were never examined is false, and a miss is reported against the files
+actually read, because only one file of each feed is downloaded.
 
 WHAT IT WRITES
 --------------
-An isolated directory containing the five normalized records, the price fields
-observed, and a receipt. It imports nothing from the collector's storage layer,
-writes nothing the collector reads, and merges into no existing dataset.
+An isolated directory containing the normalized records, the price fields
+observed, a receipt, and sanitized evidence: the locator and feed listings, a
+sample of the raw rows, and per-response snapshot identity and capture time.
+It imports nothing from the collector's storage layer, writes nothing the
+collector reads, and merges into no existing dataset.
 
 NOT RUN BY DEFAULT. Requires an entitlement that this project does not hold and
 explicit approval. `--dry-run` prints the exact plan and makes no request.
@@ -45,12 +59,15 @@ from __future__ import annotations
 import argparse
 import base64
 import csv
-import gzip
+import hashlib
 import io
 import json
 import os
+import re
 import sys
+import threading
 import time
+import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -67,6 +84,17 @@ MAX_REQUESTS = 10
 MAX_SECONDS = 600
 MAX_TOTAL_BYTES = 64 * 1024 * 1024
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
+MAX_DECOMPRESSED_BYTES = 256 * 1024 * 1024
+MAX_ERROR_BODY_BYTES = 64 * 1024
+FINALIZE_SECONDS = 15
+READ_CHUNK = 64 * 1024
+EVIDENCE_ROWS = 200
+REQUEST_TIMEOUT = 60
+EXIT_OK, EXIT_FAILURE, EXIT_INCOMPLETE = 0, 1, 3
+SNAPSHOT_HEADERS = ("ETag", "Last-Modified", "Date", "Content-Length",
+                    "x-goog-generation", "x-goog-stored-content-length")
+_SECRET_KEY = re.compile(r"token|secret|signature|authorization|credential|password", re.I)
+_OFFER_TERMS_KEY = re.compile(r"promo|deal|coupon|rollback|clearance|saving|discount", re.I)
 SIGNED_HOSTS = ("storage.googleapis.com",)
 API_HOST = "developer.api.walmart.com"
 ALLOWED_HOSTS = (API_HOST,) + SIGNED_HOSTS
@@ -86,47 +114,97 @@ class ProbeFailure(RuntimeError):
 
 
 class Budget:
-    """One cumulative ceiling over every outbound request in the run."""
+    """One cumulative ceiling over everything the run spends."""
 
     def __init__(self, max_requests=MAX_REQUESTS, max_seconds=MAX_SECONDS,
-                 max_total_bytes=MAX_TOTAL_BYTES, max_response_bytes=MAX_RESPONSE_BYTES):
+                 max_total_bytes=MAX_TOTAL_BYTES, max_response_bytes=MAX_RESPONSE_BYTES,
+                 max_decompressed_bytes=MAX_DECOMPRESSED_BYTES, finalize_seconds=0):
         self.max_requests = max_requests
         self.max_seconds = max_seconds
         self.max_total_bytes = max_total_bytes
         self.max_response_bytes = max_response_bytes
+        self.max_decompressed_bytes = max_decompressed_bytes
+        self.finalize_seconds = min(finalize_seconds, max_seconds / 10)
         self.requests = 0
         self.bytes = 0
+        self.decompressed_bytes = 0
         self.started = None
+        self.stopped = False
         self.log = []
+        self.captures = []
 
-    def charge(self, label, url):
+    def start(self):
         if self.started is None:
             self.started = time.monotonic()
-        elapsed = time.monotonic() - self.started
+
+    def stop(self):
+        """Refuse everything from now on. An abandoned worker that wakes after
+        the deadline must not spend more or change what the receipt reports."""
+        self.stopped = True
+
+    @property
+    def work_seconds(self):
+        return self.max_seconds - self.finalize_seconds
+
+    def remaining(self):
+        self.start()
+        return self.work_seconds - (time.monotonic() - self.started)
+
+    def hard_remaining(self):
+        self.start()
+        return self.max_seconds - (time.monotonic() - self.started)
+
+    def check(self, label):
+        if self.stopped:
+            raise BudgetExceeded(f"run already stopped, refusing '{label}'")
+        if self.remaining() < 0:
+            raise BudgetExceeded(
+                f"time ceiling reached: {self.elapsed:.0f}s of {self.work_seconds:.0f}s "
+                f"working time used, refusing '{label}'")
+
+    def charge(self, label, url):
+        self.start()
         if self.requests + 1 > self.max_requests:
             raise BudgetExceeded(
                 f"request ceiling reached: {self.max_requests} requests already spent, "
                 f"refusing '{label}'")
-        if elapsed > self.max_seconds:
-            raise BudgetExceeded(
-                f"time ceiling reached: {elapsed:.0f}s of {self.max_seconds}s used, "
-                f"refusing '{label}'")
+        self.check(label)
         self.requests += 1
         # Host only. A signed URL's query string carries credentials.
         self.log.append({"n": self.requests, "label": label,
                          "host": urlparse(url).hostname or "",
-                         "at_seconds": round(elapsed, 2)})
+                         "at_seconds": self.elapsed})
 
-    def record_body(self, size):
-        if size > self.max_response_bytes:
+    def record_chunk(self, response_size, chunk_size):
+        """Count first, judge second, so a refused body is still in the total."""
+        self.bytes += chunk_size
+        if response_size > self.max_response_bytes:
             raise BudgetExceeded(
-                f"single response of {size} bytes exceeds the "
+                f"single response of {response_size} bytes exceeds the "
                 f"{self.max_response_bytes} byte ceiling")
-        self.bytes += size
         if self.bytes > self.max_total_bytes:
             raise BudgetExceeded(
                 f"traffic ceiling reached: {self.bytes} bytes of "
                 f"{self.max_total_bytes} used")
+
+    def record_body(self, size):
+        self.record_chunk(size, size)
+
+    def record_decompressed(self, size):
+        self.decompressed_bytes += size
+        if self.decompressed_bytes > self.max_decompressed_bytes:
+            raise BudgetExceeded(
+                f"decompression ceiling reached: {self.decompressed_bytes} bytes of "
+                f"{self.max_decompressed_bytes} used")
+
+    def capture(self, label, url, status, size, digest="", headers=None):
+        parsed = urlparse(url)
+        self.captures.append({
+            "label": label, "host": parsed.hostname or "", "path": parsed.path,
+            "status": status, "captured_utc": datetime.now(timezone.utc).isoformat(),
+            "bytes": size, "sha256": digest,
+            "response_headers": {k: headers.get(k) for k in SNAPSHOT_HEADERS
+                                 if headers is not None and headers.get(k)}})
 
     @property
     def elapsed(self):
@@ -136,12 +214,31 @@ class Budget:
         return {
             "requests_made": self.requests, "request_ceiling": self.max_requests,
             "elapsed_seconds": self.elapsed, "time_ceiling_seconds": self.max_seconds,
+            "finalization_reserve_seconds": self.finalize_seconds,
             "bytes_received": self.bytes, "traffic_ceiling_bytes": self.max_total_bytes,
             "single_response_ceiling_bytes": self.max_response_bytes,
+            "bytes_decompressed": self.decompressed_bytes,
+            "decompression_ceiling_bytes": self.max_decompressed_bytes,
             "retries_performed": 0,
             "redirects_counted_as_requests": True,
-            "requests": self.log,
+            "requests": list(self.log),
+            "captures": list(self.captures),
         }
+
+
+def read_counted(budget, label, stream, limit=None):
+    """Read in chunks, counting and checking the clock as bytes arrive."""
+    chunks, size = [], 0
+    while True:
+        budget.check(label)
+        chunk = stream.read(READ_CHUNK)
+        if not chunk:
+            return b"".join(chunks), size
+        size += len(chunk)
+        budget.record_chunk(size, len(chunk))
+        chunks.append(chunk)
+        if limit is not None and size >= limit:
+            return b"".join(chunks), size
 
 
 class _CountingRedirects(HTTPRedirectHandler):
@@ -171,6 +268,15 @@ class _CountingRedirects(HTTPRedirectHandler):
         self.budget.charge(f"redirect {code}", newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
+    def http_error_302(self, req, fp, code, msg, headers):
+        # urllib reads a redirect's body in full, unbounded and uncounted,
+        # before following it. Spend it through the budget first.
+        read_counted(self.budget, f"redirect {code} body", fp, MAX_ERROR_BODY_BYTES)
+        return super().http_error_302(req, fp, code, msg, headers)
+
+    http_error_301 = http_error_303 = http_error_307 = http_error_302
+    http_error_308 = http_error_302
+
 
 def fetch(budget, label, url, *, headers=None, data=None, method="GET",
           allowed_hosts=None):
@@ -182,16 +288,20 @@ def fetch(budget, label, url, *, headers=None, data=None, method="GET",
     budget.charge(label, url)
     opener = build_opener(_CountingRedirects(budget, allowed))
     request = Request(url, data=data, headers=headers or {}, method=method)
+    timeout = max(0.01, min(REQUEST_TIMEOUT, budget.remaining()))
     try:
-        with opener.open(request, timeout=60) as response:
-            body = response.read(budget.max_response_bytes + 1)
-            budget.record_body(len(body))
+        with opener.open(request, timeout=timeout) as response:
+            body, size = read_counted(budget, label, response)
+            budget.capture(label, url, response.status, size,
+                           hashlib.sha256(body).hexdigest(),
+                           getattr(response, "headers", None))
             return response.status, body
     except HTTPError as exc:
         # Deliberately NOT echoing the body. A signed-URL 403 from the object
         # store returns XML that can contain StringToSign and signature
         # material, and this message is written into the receipt.
-        exc.read(4096)
+        _, size = read_counted(budget, label, exc, MAX_ERROR_BODY_BYTES)
+        budget.capture(label, url, exc.code, size)
         raise ProbeFailure(
             f"{label} returned HTTP {exc.code}. Stopping; this probe does not retry. "
             "Response body withheld: it can carry signature material.") from exc
@@ -254,34 +364,24 @@ def api_post(budget, label, token, client_id, path, body):
         raise ProbeFailure(f"{label} did not return JSON") from exc
 
 
-def parse_feed_body(body, kind, limit=None):
-    """Parse a feed body the way walmart_collector/opd.py does.
+def _scan(rows, limit, keep, stats, check):
+    kept = []
+    for row in rows:
+        stats["rows_read"] = stats.get("rows_read", 0) + 1
+        if len(stats.setdefault("head", [])) < 5:
+            stats["head"].append(row)
+        if check and stats["rows_read"] % 2048 == 0:
+            check()
+        if keep is None or keep(row):
+            kept.append(row)
+        if limit is not None and len(kept) >= limit:
+            stats["stopped_at_limit"] = True
+            break
+    return kept
 
-    The two feeds are NOT the same format, which an earlier version of this
-    probe assumed. opd.py:215 reads the PRICE feed with
-    csv.DictReader(delimiter="^") and the CATALOG feed as newline-delimited
-    JSON *or* a JSON array. Assuming NDJSON for both meant a live run would
-    have failed on its last request, and the test that claimed conformance
-    served NDJSON from its own mock rather than the documented shape.
-    """
-    text = body.decode("utf-8-sig", "replace")
-    if kind == "price":
-        rows = []
-        # Stop at the limit rather than materialising the whole feed. A 16 MiB
-        # compressed price feed is a few hundred MB of dicts, which defeats the
-        # bounded-memory property this module advertises.
-        for row in csv.DictReader(io.StringIO(text), delimiter="^"):
-            rows.append(dict(row))
-            if limit is not None and len(rows) >= limit:
-                break
-        return rows
-    stripped = text.lstrip()
-    if stripped.startswith("["):
-        parsed = json.loads(stripped)
-        kept = [r for r in parsed if isinstance(r, dict)]
-        return kept[:limit] if limit is not None else kept
-    rows = []
-    for line in stripped.splitlines():
+
+def _json_lines(text):
+    for line in text.splitlines():
         line = line.strip()
         if not line:
             continue
@@ -290,13 +390,58 @@ def parse_feed_body(body, kind, limit=None):
         except ValueError:
             continue
         if isinstance(row, dict):
-            rows.append(row)
-        if limit is not None and len(rows) >= limit:
-            break
-    return rows
+            yield row
 
 
-def signed_rows(budget, label, url, limit, kind):
+def parse_feed_body(body, kind, limit=None, *, keep=None, stats=None, check=None):
+    """Parse a feed body the way walmart_collector/opd.py does.
+
+    The two feeds are NOT the same format, which an earlier version of this
+    probe assumed. opd.py:215 reads the PRICE feed with
+    csv.DictReader(delimiter="^") and the CATALOG feed as newline-delimited
+    JSON *or* a JSON array. Assuming NDJSON for both meant a live run would
+    have failed on its last request, and the test that claimed conformance
+    served NDJSON from its own mock rather than the documented shape.
+
+    `keep` retains only the rows wanted, so a 256 MiB national feed is scanned
+    in full without being materialised. `limit` counts kept rows. `stats` gets
+    rows_read, the first rows seen, and whether the limit stopped the scan.
+    """
+    stats = {} if stats is None else stats
+    text = body.decode("utf-8-sig", "replace")
+    if kind == "price":
+        rows = (dict(r) for r in csv.DictReader(io.StringIO(text), delimiter="^"))
+    else:
+        stripped = text.lstrip()
+        if stripped.startswith("["):
+            rows = (r for r in json.loads(stripped) if isinstance(r, dict))
+        else:
+            rows = _json_lines(stripped)
+    return _scan(rows, limit, keep, stats, check)
+
+
+def gunzip_bounded(budget, label, body):
+    """Expand under the decompression ceiling, as the bytes appear."""
+    out, data = [], body
+    while data:
+        expander = zlib.decompressobj(16 + zlib.MAX_WBITS)
+        try:
+            while not expander.eof:
+                budget.check(label)
+                chunk = expander.decompress(data, READ_CHUNK)
+                data = expander.unconsumed_tail
+                if chunk:
+                    budget.record_decompressed(len(chunk))
+                    out.append(chunk)
+                elif not data:
+                    raise ProbeFailure(f"{label} is a truncated gzip stream")
+        except zlib.error as exc:
+            raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
+        data = expander.unused_data.lstrip(b"\0")
+    return b"".join(out)
+
+
+def signed_rows(budget, label, url, limit, kind, *, keep=None, stats=None):
     if urlparse(url).hostname not in SIGNED_HOSTS:
         raise ProbeFailure(f"Refusing a signed URL on an unexpected host: "
                            f"{urlparse(url).hostname}")
@@ -306,12 +451,12 @@ def signed_rows(budget, label, url, limit, kind):
     # was never decompressed, every json.loads failed, the except below ate the
     # error, and the probe returned zero rows while reporting a vacuous pass.
     if urlparse(url).path.endswith(".gz") or body[:2] == b"\x1f\x8b":
-        try:
-            body = gzip.decompress(body)
-        except OSError as exc:
-            raise ProbeFailure(f"{label} is not readable as gzip: {exc}") from exc
-    rows = parse_feed_body(body, kind, limit)
-    if not rows:
+        body = gunzip_bounded(budget, label, body)
+    stats = {} if stats is None else stats
+    rows = parse_feed_body(body, kind, limit, keep=keep, stats=stats,
+                           check=lambda: budget.check(label))
+    budget.check(label)
+    if not stats.get("rows_read"):
         raise ProbeFailure(
             f"{label} yielded no parseable {kind} rows from {len(body)} bytes. "
             "Reporting zero rows as a result would be a vacuous pass.")
@@ -329,6 +474,18 @@ def observe_price_fields(rows):
     return summary
 
 
+def sanitize(value):
+    """Keep the shape and the snapshot identity of a response, without what
+    would let a reader fetch it: no query strings, no token-like fields."""
+    if isinstance(value, dict):
+        return {k: sanitize(v) for k, v in value.items() if not _SECRET_KEY.search(str(k))}
+    if isinstance(value, list):
+        return [sanitize(v) for v in value]
+    if isinstance(value, str) and "://" in value:
+        return re.sub(r"[?#]\S*", "", value)
+    return value
+
+
 def plan(args):
     return {
         "mode": "dry-run, no request made",
@@ -339,12 +496,14 @@ def plan(args):
             "1 store locator, to confirm the store is a pickup store",
             "1 catalog feed listing",
             "1 price feed listing",
-            "1 signed catalog file download",
-            "1 signed price file download",
+            "1 signed price file download, scanned in full for this store",
+            "1 signed catalog file download, scanned for the offers found",
         ],
         "cumulative_bounds": {
             "requests": args.max_requests, "seconds": args.max_seconds,
-            "total_bytes": MAX_TOTAL_BYTES, "single_response_bytes": MAX_RESPONSE_BYTES},
+            "total_bytes": MAX_TOTAL_BYTES, "single_response_bytes": MAX_RESPONSE_BYTES,
+            "decompressed_bytes": MAX_DECOMPRESSED_BYTES,
+            "finalization_reserve_seconds": min(FINALIZE_SECONDS, args.max_seconds / 10)},
         # Every outbound request is charged, so anything added later is covered
         # automatically. Listed here is what this probe actually issues; a token
         # refresh would be charged if one occurred, but the probe takes a token
@@ -355,12 +514,16 @@ def plan(args):
                          "does not refresh, so the path is not exercised",
         "retries": 0,
         "on_failure": "stop immediately and write the receipt",
+        "exit_codes": {"0": "the requested matched sample was obtained",
+                       "1": "failed or stopped by a ceiling",
+                       "3": "ran, but the matched sample is incomplete"},
         "writes": "an isolated directory only; merges into no dataset",
         "azure": "no deployment, no scheduling, no blob write",
     }
 
 
-def run(args, budget):
+def run(args, budget, evidence=None):
+    evidence = {} if evidence is None else evidence
     client_id = os.environ.get("WALMART_OPD_CLIENT_ID", "")
     client_secret = os.environ.get("WALMART_OPD_CLIENT_SECRET", "")
     if not client_id or not client_secret:
@@ -376,6 +539,7 @@ def run(args, budget):
     locator = api_post(budget, "store locator", token, client_id, LOCATOR,
                        {"payload": {"postalCode": args.zipcode,
                                     "filter": ["INSTORE_PICKUP"]}})
+    evidence["locator_response"] = sanitize(locator)
     access_points = (locator.get("payload") or {}).get("accessPointList") or []
     pickup = [a for a in access_points if isinstance(a, dict)
               and str(a.get("fulfillmentStoreId")) == args.store
@@ -387,8 +551,10 @@ def run(args, budget):
 
     catalog = api_get(budget, "catalog feed listing", token, client_id,
                       CATALOG_FEEDS, {"categoryId": args.category_id})
+    evidence["catalog_listing"] = sanitize(catalog)
     prices = api_get(budget, "price feed listing", token, client_id,
                      PRICE_FEEDS, {"categoryId": args.category_id})
+    evidence["price_listing"] = sanitize(prices)
 
     # The two feeds use DIFFERENT keys, and the entries are URL strings rather
     # than objects. Both facts are asserted in walmart_collector/opd.py, which
@@ -397,54 +563,154 @@ def run(args, budget):
     catalog_urls = feed_urls(catalog, "product_snapshot_data", "catalog")
     price_urls = feed_urls(prices, "price_avail_snapshot_data", "price")
 
-    catalog_rows = signed_rows(budget, "signed catalog file", catalog_urls[0],
-                               args.products, "catalog")
-    price_rows = signed_rows(budget, "signed price file", price_urls[0],
-                             args.products * 20, "price")
+    # Price first, scanned whole, then the catalog for exactly those offers.
+    # Reading the first five catalog rows and the first hundred price rows
+    # treated "not in this prefix" as "not in the feed".
+    price_stats, catalog_stats = {}, {}
+    for_store = signed_rows(
+        budget, "signed price file", price_urls[0], None, "price",
+        keep=lambda r: str(r.get("storeCode")) == args.store, stats=price_stats)
+    evidence["price_rows"] = sanitize(
+        {"first_rows_of_file": price_stats["head"],
+         "rows_for_this_store": for_store[:EVIDENCE_ROWS]})
+    by_offer = {str(r.get("offerId")): r for r in for_store if r.get("offerId")}
 
-    for_store = [r for r in price_rows if str(r.get("storeCode")) == args.store]
-    by_offer = {str(r.get("offerId")): r for r in for_store}
+    matched = signed_rows(
+        budget, "signed catalog file", catalog_urls[0], args.products, "catalog",
+        keep=lambda r: str(r.get("offerId") or "") in by_offer, stats=catalog_stats)
+    evidence["catalog_rows"] = sanitize(
+        {"first_rows_of_file": catalog_stats["head"], "rows_matched": matched})
 
     records = []
-    for row in catalog_rows[:args.products]:
+    for row in matched:
         offer = str(row.get("offerId") or "")
-        price = by_offer.get(offer, {})
+        price = by_offer[offer]
         records.append({
             "offerId": offer,
             "itemId": str(row.get("itemId") or ""),
             "name": row.get("name"),
             "size": row.get("size"),
             "upc": str(row.get("upc") or ""),
-            "price_row_found_for_this_store": bool(price),
+            "price_row_found_for_this_store": True,
             "storeCode": price.get("storeCode"),
             "availability": price.get("availability"),
             "currentPrice": price.get("currentPrice"),
             "unitPriceDisplay": price.get("unitPriceDisplay"),
         })
 
+    files_read = {"catalog": f"1 of {len(catalog_urls)}", "price": f"1 of {len(price_urls)}"}
+    incomplete = []
+    if not for_store:
+        incomplete.append(
+            f"no price row for store {args.store} among {price_stats['rows_read']} rows read")
+    if len(records) < args.products:
+        incomplete.append(
+            f"{len(records)} of {args.products} requested offers matched a price row "
+            f"for this store; files read: catalog {files_read['catalog']}, "
+            f"price {files_read['price']}")
+    examined_keys = {k for r in price_stats["head"] + catalog_stats["head"] + for_store[:EVIDENCE_ROWS]
+                     for k in r}
     return {
+        "status": "INCOMPLETE" if incomplete else "COMPLETE",
+        "complete": not incomplete,
+        "incomplete_reasons": incomplete,
+        "products_requested": args.products,
+        "matched_records": len(records),
         "records": records,
         "price_field_observations": observe_price_fields(for_store[:args.products * 5]),
         "store_rows_seen": len(for_store),
+        "feed_coverage": {
+            "files_read": files_read,
+            "price_rows_read": price_stats["rows_read"],
+            "catalog_rows_read": catalog_stats["rows_read"],
+        },
         # The locator confirmed this store serves INSTORE_PICKUP before any
         # price was read, so a matching storeCode is not the only evidence of
         # the fulfilment context.
         "store_confirmed_as_pickup_store": True,
+        # Each flag says what was examined. Over no rows it is false, because
+        # "every row" over nothing is not an observation.
         "checks": {
-            "every_price_row_matches_requested_store": all(
-                str(r.get("storeCode")) == args.store for r in for_store),
+            "every_price_row_matches_requested_store":
+                len(for_store) == price_stats["rows_read"] > 0,
             "unit_price_display_present_on_any_row": any(
                 str(r.get("unitPriceDisplay") or "").strip() for r in for_store),
-            "upc_leading_zeros_preserved": all(
-                isinstance(r["upc"], str) for r in records),
-            "any_offer_terms_field_observed": False,
+            "upc_leading_zeros_preserved": bool(matched) and all(
+                isinstance(r.get("upc"), str) and r["upc"] for r in matched),
+            "any_offer_terms_field_observed": any(
+                _OFFER_TERMS_KEY.search(k) for k in examined_keys),
         },
         "not_established": [
-            "that these five are representative of the category",
+            "that these products are representative of the category",
             "that unitPriceDisplay is populated at useful coverage",
             "that any volume or digital offer terms exist in this feed",
+            "that an offer missing here is missing from the feed: only the files "
+            "counted in feed_coverage were read",
+            "the fulfilment of every price row: the locator shows the store offers "
+            "pickup, not that this row's offer is a pickup offer",
+            "whether currentPrice on a given row is a regular or a sale price",
         ],
     }
+
+
+def supervise(args, budget, evidence):
+    """Run the work on a thread the deadline can abandon.
+
+    A cooperative check cannot interrupt a json.loads or a stalled socket read,
+    so the deadline is held here. The worker is a daemon and writes nothing to
+    disk, so abandoning it can neither block exit nor corrupt the output.
+    Returns (outcome, failure).
+    """
+    box = {}
+
+    def work():
+        try:
+            box["outcome"] = run(args, budget, evidence)
+            budget.check("completion")
+        except (ProbeFailure, BudgetExceeded) as exc:
+            box["failure"] = f"{type(exc).__name__}: {exc}"
+        except Exception as exc:  # noqa: BLE001
+            # The docstring promises a receipt whether the run succeeded or
+            # not, and a narrow except broke that promise for two ordinary
+            # cases: an HTML gateway page on the token call raising
+            # JSONDecodeError, and a truncated download. Both produced a
+            # traceback and no receipt at all.
+            box["failure"] = f"unexpected {type(exc).__name__}: {exc}"
+
+    budget.start()
+    worker = threading.Thread(target=work, name="opd-probe", daemon=True)
+    worker.start()
+    worker.join(max(0.0, budget.remaining()))
+    if worker.is_alive():
+        budget.stop()
+        return None, (f"BudgetExceeded: time ceiling reached: a stage was still running "
+                      f"after {budget.elapsed:.0f}s and was abandoned")
+    return box.get("outcome"), box.get("failure")
+
+
+def write_atomic(path, payload):
+    temporary = path.with_name(path.name + ".partial")
+    temporary.write_bytes(payload)
+    os.replace(temporary, path)
+
+
+def finalize(output, receipt, evidence, budget):
+    """Write evidence while time remains, then always the receipt."""
+    output.mkdir(parents=True, exist_ok=True)
+    written, skipped = {}, []
+    for name, content in sorted(dict(evidence).items()):
+        if budget.hard_remaining() <= 0:
+            skipped.append(name)
+            continue
+        payload = (json.dumps(content, indent=2) + "\n").encode("utf-8")
+        (output / "evidence").mkdir(exist_ok=True)
+        write_atomic(output / "evidence" / f"{name}.json", payload)
+        written[name] = {"bytes": len(payload),
+                         "sha256": hashlib.sha256(payload).hexdigest()}
+    receipt["evidence"] = {"written": written, "skipped_at_deadline": skipped}
+    receipt["budget"] = budget.report()
+    write_atomic(output / "RECEIPT.json",
+                 (json.dumps(receipt, indent=2) + "\n").encode("utf-8"))
 
 
 def main(argv=None) -> int:
@@ -482,27 +748,24 @@ def main(argv=None) -> int:
     if not args.i_have_entitlement:
         p.error("A live run requires --i-have-entitlement. Run --dry-run first.")
 
-    budget = Budget(max_requests=args.max_requests, max_seconds=args.max_seconds)
+    budget = Budget(max_requests=args.max_requests, max_seconds=args.max_seconds,
+                    finalize_seconds=FINALIZE_SECONDS)
     started = datetime.now(timezone.utc).isoformat()
-    outcome, failure = None, None
-    try:
-        outcome = run(args, budget)
-    except (ProbeFailure, BudgetExceeded) as exc:
-        failure = f"{type(exc).__name__}: {exc}"
-    except Exception as exc:  # noqa: BLE001
-        # The docstring promises a receipt whether the run succeeded or not, and
-        # a narrow except broke that promise for two ordinary cases: an HTML
-        # gateway page on the token call raising JSONDecodeError, and a
-        # truncated download raising BadGzipFile. Both produced a traceback and
-        # no receipt at all.
-        failure = f"unexpected {type(exc).__name__}: {exc}"
+    evidence = {}
+    outcome, failure = supervise(args, budget, evidence)
+    if failure and outcome:
+        # Finished, but past a ceiling. What it found stays visible, and it
+        # does not read as a success.
+        outcome.update(status="INCOMPLETE", complete=False,
+                       incomplete_reasons=outcome["incomplete_reasons"] + [failure])
+    complete = bool(outcome and outcome.get("complete")) and not failure
 
     receipt = {
         "probe": "opd_bounded_probe",
         "started_utc": started, "ended_utc": datetime.now(timezone.utc).isoformat(),
         "store_id": args.store, "zipcode": args.zipcode,
         "products_requested": args.products,
-        "budget": budget.report(),
+        "result_status": "COMPLETE" if complete else "INCOMPLETE",
         "stopped_on_failure": failure is not None,
         "failure": failure,
         "result": outcome,
@@ -510,11 +773,11 @@ def main(argv=None) -> int:
         "merged_into_any_dataset": False,
         "azure_touched": False,
     }
-    args.output.mkdir(parents=True, exist_ok=True)
-    (args.output / "RECEIPT.json").write_text(
-        json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    finalize(args.output, receipt, evidence, budget)
     print(json.dumps(receipt, indent=2))
-    return 1 if failure else 0
+    if failure:
+        return EXIT_FAILURE
+    return EXIT_OK if complete else EXIT_INCOMPLETE
 
 
 if __name__ == "__main__":

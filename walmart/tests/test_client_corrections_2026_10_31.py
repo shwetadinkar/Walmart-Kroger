@@ -535,8 +535,8 @@ class ProbeEndToEndTests(unittest.TestCase):
             raise AssertionError("unexpected url " + url)
 
         class Response:
-            def __init__(self, b): self.body, self.status = b, 200
-            def read(self, n=None): return self.body
+            def __init__(self, b): self.body, self.status = io.BytesIO(b), 200
+            def read(self, n=None): return self.body.read(n)
             def __enter__(self): return self
             def __exit__(self, *a): pass
 
@@ -588,7 +588,8 @@ class ProbeEndToEndTests(unittest.TestCase):
             def open(self, request, timeout=None):
                 class R:
                     status = 200
-                    def read(self, n=None): return b"   \n  \n"
+                    stream = io.BytesIO(b"   \n  \n")
+                    def read(self, n=None): return self.stream.read(n)
                     def __enter__(self): return self
                     def __exit__(self, *a): pass
                 return R()
