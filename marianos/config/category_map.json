@@ -1,0 +1,40 @@
+{
+  "_note": "Kroger's own category label on a product, mapped to the client's 28 roots in config/categories.csv. The search term that found a product is only a discovery mechanism and is NOT evidence of its category: in a probe of 17 Produce terms, 2112 of 2400 products carried a Kroger category other than Produce. A label that is not in this map is NOT guessed. Those products go to unmapped.json with their label, and the report counts them, so the map can be extended from evidence rather than from assumption.",
+  "_not_separable": {
+    "Meat & Seafood": "Kroger files meat and seafood under one label. The client's CSV splits them into two roots. A product cannot be assigned to one or the other from the label alone, so it is mapped to Meat and sub_category preserves the Kroger label, which makes the merge visible rather than silent. Seafood coverage must therefore be read from this bucket, not from a Seafood count."
+  },
+  "map": {
+    "Produce": "Produce",
+    "Meat & Seafood": "Meat",
+    "Deli": "Deli",
+    "Bakery": "Bakery",
+    "Floral": "Floral",
+    "Dairy": "Dairy",
+    "Frozen": "Frozen",
+    "Natural & Organic": "Natural Organic",
+    "Beverages": "Beverages",
+    "Adult Beverage": "Beer Wine Liquor",
+    "Breakfast": "Breakfast",
+    "Candy": "Candy",
+    "Health": "Health",
+    "Personal Care": "Personal Care",
+    "Beauty": "Beauty",
+    "Baby": "Baby",
+    "Cleaning Products": "Household",
+    "Paper Products": "Household",
+    "Home Essentials": "Household",
+    "Pet Care": "Pet Supplies",
+    "Kitchen": "Kitchen Dining",
+    "Home Decor": "Candles Home Fragrances",
+    "Office, School, & Crafts": "School Office",
+    "Hardware & Automotive": "Hardware Home Improvement",
+    "Canned & Packaged": "Grocery",
+    "Pasta, Sauces, Grain": "Grocery",
+    "Condiment & Sauces": "Grocery",
+    "Baking Goods": "Grocery",
+    "International": "Grocery",
+    "Snacks": "Grocery",
+    "Garden & Patio": "Hardware Home Improvement",
+    "Electronics": "Hardware Home Improvement"
+  }
+}

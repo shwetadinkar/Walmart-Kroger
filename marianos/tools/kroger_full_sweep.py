@@ -198,13 +198,31 @@ def to_record(product, store, category, sub_category, crawl_date):
     }
 
 
+def map_category(api_categories, category_map):
+    """(client_root, kroger_label) from the product's own categories.
+
+    Returns ("", label) when no label maps. An unmapped label is reported, not
+    guessed into a root: a wrong category is worse than an absent one, because
+    it survives review as though it were evidence.
+    """
+    for label in api_categories:
+        root = category_map.get(label)
+        if root:
+            return root, label
+    return "", (api_categories[0] if api_categories else "")
+
+
 def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
-          checkpoint_path=None, state=None, log=print, max_start=1000):
+          checkpoint_path=None, state=None, log=print, max_start=1000,
+          category_map=None):
+    category_map = category_map or {}
     state = state or {"records": {}, "done_terms": [], "term_counts": {},
                       "category_disagreements": [], "errors": [],
-                      "page_failures": [], "terms_hit_start_cap": []}
-    state.setdefault("page_failures", [])
-    state.setdefault("terms_hit_start_cap", [])
+                      "page_failures": [], "terms_hit_start_cap": [],
+                      "unmapped": {}, "discovery": {}}
+    for k, v in (("page_failures", []), ("terms_hit_start_cap", []),
+                 ("unmapped", {}), ("discovery", {})):
+        state.setdefault(k, v)
     records = state["records"]
     done = set(state["done_terms"])
     crawl_date = date.today().isoformat()
@@ -241,17 +259,31 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     for raw in data:
                         if not isinstance(raw, dict):
                             continue
+                        api_cats = _api_categories(raw)
+                        # The search term is how a product was FOUND, not what
+                        # it is. A probe of 17 Produce terms returned 2400
+                        # products of which 2112 carried a different Kroger
+                        # category. So the product's own label decides, via an
+                        # explicit map, and an unmapped label is never guessed.
+                        root, label = map_category(api_cats, category_map)
                         try:
-                            api_cats = _api_categories(raw)
-                            sub = api_cats[0] if api_cats else ""
-                            rec = to_record(raw, store, category, sub, crawl_date)
+                            rec = to_record(raw, store, root, label, crawl_date)
                         except KrogerError as exc:
                             state["errors"].append(str(exc))
                             continue
                         found += 1
-                        if api_cats and category not in api_cats:
+                        state["discovery"][rec["upc"]] = {
+                            "found_by_term": term, "term_root": category,
+                            "api_categories": api_cats, "assigned_root": root}
+                        if not root:
+                            state["unmapped"].setdefault(label or "(none)", []) \
+                                .append(rec["upc"])
+                            records.setdefault(rec["upc"], rec)
+                            continue
+                        if category and root != category:
                             state["category_disagreements"].append(
-                                {"upc": rec["upc"], "term_category": category,
+                                {"upc": rec["upc"], "found_by_term": term,
+                                 "term_root": category, "assigned_root": root,
                                  "api_categories": api_cats})
                         records.setdefault(rec["upc"], rec)
                     if len(data) < 50:
@@ -322,10 +354,16 @@ def build_report(state, store, location_id, budget, args):
             "digital_deals_description": "not carried by the public tier",
         },
         "category_attribution": (
-            "`category` is the client root whose search term found the product. "
-            "`sub_category` is the product's own first Kroger category. Where "
-            "the product's own categories do not contain the client root, the "
-            "disagreement is listed below rather than hidden."),
+            "`category` is the client root that the product's OWN Kroger "
+            "category maps to, via config/category_map.json. `sub_category` is "
+            "that raw Kroger label. The search term is how a product was found, "
+            "not what it is, and is recorded per product in "
+            "discovery_provenance.json instead. A Kroger label with no mapping "
+            "leaves `category` empty and is listed in unmapped_categories.json "
+            "rather than being guessed into a root."),
+        "records_with_unmapped_category": sum(
+            len(v) for v in state.get("unmapped", {}).values()),
+        "unmapped_labels": sorted(state.get("unmapped", {})),
         "category_disagreements": len(state["category_disagreements"]),
         "page_failures": state.get("page_failures", []),
         "terms_that_hit_the_start_cap": sorted(set(state.get("terms_hit_start_cap", []))),
@@ -343,6 +381,7 @@ def main(argv=None):
     p.add_argument("--store-name", default="")
     p.add_argument("--store-location", default="")
     p.add_argument("--terms", default=str(ROOT / "config/sweep_terms.json"))
+    p.add_argument("--category-map", default=str(ROOT / "config/category_map.json"))
     p.add_argument("--only-category", action="append", default=[])
     p.add_argument("--pages-per-term", type=int, default=20)
     p.add_argument("--max-start", type=int, default=1000,
@@ -402,6 +441,7 @@ def main(argv=None):
 
     config = json.loads(Path(args.terms).read_text())
     terms_by_category = config["terms"]
+    category_map = json.loads(Path(args.category_map).read_text())["map"]
     if args.only_category:
         wanted = set(args.only_category)
         terms_by_category = {k: v for k, v in terms_by_category.items() if k in wanted}
@@ -420,13 +460,16 @@ def main(argv=None):
           f"ceiling {args.max_requests} requests / {args.max_seconds:.0f}s, "
           f"filter.start capped at {args.max_start}\n")
     state = sweep(client, args.location_id, store, terms_by_category, budget,
-                  args.pages_per_term, checkpoint, state, max_start=args.max_start)
+                  args.pages_per_term, checkpoint, state,
+                  max_start=args.max_start, category_map=category_map)
 
     rows = list(state["records"].values())
     _write(out / "data_22_fields.json", rows)
     _write(out / "run_report.json", build_report(state, store, args.location_id,
                                                  budget, args))
     _write(out / "category_disagreements.json", state["category_disagreements"])
+    _write(out / "unmapped_categories.json", state["unmapped"])
+    _write(out / "discovery_provenance.json", state["discovery"])
     print(f"\n{len(rows)} unique products across "
           f"{len({r['category'] for r in rows})} categories "
           f"in {budget.requests} requests, {budget.elapsed}s")
