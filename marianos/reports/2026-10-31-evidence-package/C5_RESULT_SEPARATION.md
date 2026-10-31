@@ -8,7 +8,7 @@
        | 8 commits
     7c49e25  28 Oct  source of the Azure trial
 
-    16a6f03  31 Oct  reconciled release, on a separate line from 58ff5fb
+    74a55c5  31 Oct  reconciled release, on a separate line from 58ff5fb
 
 Each commit in the chain is an ancestor of the next: `738eb03` is an ancestor of
 `7c49e25`. So `738eb03` is later than the deployed baseline and earlier than the
@@ -20,7 +20,7 @@ is an ancestor of the release.
 
 | Result | Status | Evidence |
 |---|---|---|
-| Offline tests | Passed | Measured 31 October: 190 passed and 5 skipped under pytest at `7c49e25`; 284 passed at `76416ea` |
+| Offline tests | Passed | Measured 31 October: 190 passed and 5 skipped under pytest at `7c49e25`; 345 passed at `74a55c5` |
 | Two fresh five-product cloud runs | Passed, West Loop | `RESUMED_PAGE_ORIGINAL.json` and `FRESH_PAGE_ORIGINAL.json` |
 | Forced interruption and resume | Passed | Execution `muij8ay` then `9vca720`; the checkpoint hash is unchanged |
 | Failed-run publication protection | **Not established in the cloud** | The trial lists it as unproven; this evidence holds no such test |

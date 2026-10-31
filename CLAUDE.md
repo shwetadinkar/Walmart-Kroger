@@ -5,8 +5,9 @@ reviews the work closely and has found real defects in it. Everything below
 exists because something went wrong once.
 
 Working branch: `marianos-api-sweep-2026-10-31`. The authoritative Mariano's
-release is commit `16a6f03838a22a822a118977004086976d1a1de0` on it, on which the
-cashback and retention regressions were run from a clean export.
+release is commit `74a55c5e6fb2d938df1d06ff6717561420130cd9` on it, on which the cashback and retention regressions
+were run from a clean export, including the 34 supplied records. It supersedes
+`16a6f03`, the first reconciled release.
 `walmart-client-corrections-2026-10-31` is frozen at the state the client
 reviewed and is never committed to. See `walmart/RELEASE.md` for the Walmart
 ancestry table and the eight feature checks.

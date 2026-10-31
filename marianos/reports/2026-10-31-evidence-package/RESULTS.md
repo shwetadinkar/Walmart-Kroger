@@ -91,7 +91,7 @@ time.
 | Trial source | `7c49e25dc5d315dcb3ff5cd9e0a46ae8595e432c` |
 | Built image digest | `sha256:3fd2d63f77de79daeb879b69514b6ba9b322609f6b6591a663cf16538d6088ed`, from build evidence; the digest at runtime was not read |
 | Image restored afterwards | `8a375326b9334b38d01e5159d553377099442937` |
-| Reconciled release | `16a6f03838a22a822a118977004086976d1a1de0` |
+| Reconciled release | `74a55c5e6fb2d938df1d06ff6717561420130cd9` |
 
 `7c49e25` is not an ancestor of the release. They diverge at `58ff5fb`, and
 `cloud_recovery.py` was carried over and has changed since. The release has not

@@ -96,7 +96,10 @@ commit is an ancestor, and the five corrections sit on top of it:
 5. `tools/opd_bounded_probe.py` is the bounded first test, with one cumulative
    budget and no retries.
 
-Tests: 160 on Walmart, 92 on Mariano's.
+Tests: 160 on Walmart and 92 on Mariano's at `86245e1`, the tip of
+`walmart-client-corrections-2026-10-31`. At `74a55c5` on
+`marianos-api-sweep-2026-10-31`: 223 on Walmart and 345 on Mariano's. Those are
+different commits, and each figure holds only for its own.
 
 Every test file runs directly as well as under pytest, and the two agree:
 `python3 tests/<file>.py` and `python3 -m pytest tests` execute the same
@@ -104,6 +107,47 @@ counts. That is worth stating because it was not true a few commits ago. Four
 files failed to import at all when invoked by hand, and three had a stray
 `unittest.main()` sitting above a class, so running them directly executed a
 subset and reported OK.
+
+## Walmart changes on `marianos-api-sweep-2026-10-31`
+
+These are not on `walmart-client-corrections-2026-10-31`, which is frozen. The
+probe in item 5 above is the earlier version; the corrections below replace it.
+
+**Bounded probe, B1.** The ceilings previously held only when a request was
+dispatched: a six-request run finished at 601 seconds and exited 0, a refused
+response recorded zero bytes, and decompression had no limit. Now:
+
+- Bytes are counted as they arrive, including refused, error and redirect bodies.
+- Decompression is streamed under a cumulative 256 MiB ceiling.
+- The clock covers reads, decompression and parsing, and a run that ends past
+  the ceiling fails.
+- A stage that blocks past the deadline is abandoned, and 15 seconds of the 10
+  minutes are reserved so the receipt is always written.
+
+**Transport is not a result, B2.** Previously, every price row belonging to
+another store still gave exit 0, zero records and
+`every_price_row_matches_requested_store=true`. Now:
+
+- Exit 0 requires the requested matched sample. Exit 3 means incomplete, with
+  reasons, and exit 1 means failed.
+- A flag over no rows is false.
+- The price file is scanned whole and the catalog searched for those offers, so
+  a miss is reported against the files read rather than a prefix of them.
+- Sanitized locator, listing and row evidence is written with snapshot identity
+  and capture times.
+- The receipt states that the locator does not establish the fulfilment or the
+  regular or sale meaning of every price row.
+
+This probe has been exercised only against fakes shaped like `opd.py`. It has
+never run against the live API.
+
+**Other corrections.** Approximate wording now excludes a product only when
+attached to a weight, on both retailers, so `Rice 16 oz, approximately 8 servings`
+is kept (B4). `CompositeSource` forwards the spine's attributes by default, so
+`coverage_attested` reaches the gate, and the gate is not weakened (B5). A
+composite no longer hides a synthetic spine from `source_is_synthetic` or skips a
+provider's location-evidence check. There is still no working offer enrichment;
+`COMPOSITION_SOURCES.md` shows what can run and how each field is bound.
 
 ## Regenerating the ledger
 

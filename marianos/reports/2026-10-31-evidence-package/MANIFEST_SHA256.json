@@ -102,7 +102,7 @@
     {
       "path": "C5_RESULT_SEPARATION.md",
       "bytes": 1553,
-      "sha256": "6ce4e4ed0384a489861a5155aa7fb5fe0b2cf8acfc4f1a4a8f124b5a9ffa34b8",
+      "sha256": "0f7e90e1eb8d796e8462fce513c1a8e3e15b874c359c21bc9a8b1b76ba42fc4d",
       "origin": "written 2026-10-31",
       "status": "current"
     },
@@ -116,7 +116,7 @@
     {
       "path": "RESULTS.md",
       "bytes": 5742,
-      "sha256": "596ff4231cedcca30c7525c845d951f31a89057434b8903ba8dd7c86fead64d2",
+      "sha256": "747e249e242e0e6c5b340fdcde59e9878d0ad0428dfd4164bd677c1359deb62f",
       "origin": "written 2026-10-31",
       "status": "current"
     },
