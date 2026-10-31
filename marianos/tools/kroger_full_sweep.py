@@ -24,12 +24,26 @@ WHAT STAYS BLANK, AND WHY
 Those last three groups are filled by enrichment from observed page reads, not
 here. This file is the spine.
 
-WHAT IS REFUSED, AND WHAT IS KEPT
+WHAT IS KEPT, AND WHAT IS EXCLUDED
 
-Every product passes through api_trial.normalize and schema.make_record. One
-that fails is quarantined with its reason in quarantine.json, never dropped.
+A product is never removed because a field is missing or a status is
+unfavourable. One with no pickup offer, no price or no UPC stays in the export
+with empty strings, and pickup_context.json says why, record by record, along
+with the fulfillment flags, sold-by and stock level Kroger returned beside the
+price. Only what the brief itself excludes, such as approximate-weight wording,
+goes to quarantine.json with its reason. Products absent from a later run carry
+forward with their original dates through --previous-run; retention.json keeps
+them distinguishable from fresh observations.
+
 Each raw response is kept under raw/, so a later rule change is a re-filter of
-what was already fetched, not a re-fetch.
+what was already fetched, not a re-fetch. Raw responses carry Kroger's `cid`
+and must not ship.
+
+STORE VERIFICATION
+
+A configured id is not verification. --location-id, --zipcode and --street are
+all required, and the run refuses a /locations response that contradicts any
+of them or names another banner, before any product is requested.
 
 ACCEPTABLE USE
 
@@ -44,7 +58,8 @@ USAGE
   export KROGER_CLIENT_ID=...        # never pass credentials on the command line
   export KROGER_CLIENT_SECRET=...
   python3 tools/kroger_full_sweep.py --zipcode 60601 --address-contains "Benton"
-  python3 tools/kroger_full_sweep.py --location-id 53100531 --output out/sweep
+  python3 tools/kroger_full_sweep.py --location-id 53100502 --zipcode 60061 \\
+      --street "1720 N Milwaukee Ave" --output out/sweep
 
 The first form lists candidate locations and stops, so a human picks the store.
 """
@@ -57,16 +72,17 @@ import json
 import re
 import sys
 import time
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 import sys as _sys, pathlib as _pathlib
 _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
 
-from marianos_collector.api_trial import api_categories, normalize, verify_store
+from marianos_collector.api_trial import api_categories, observe, verify_store
 from marianos_collector.config import Store
 from marianos_collector.kroger import (
     KrogerClient, Credentials, KrogerError, location_candidates)
+from marianos_collector.retention import observation, reconcile, stable_identity
 from marianos_collector.schema import FIELDS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -80,7 +96,12 @@ MAX_START = 201
 
 # Bump when records change meaning. A checkpoint from another version holds
 # records built under other rules, and resuming would mix the two in one output.
-STATE_VERSION = 3
+STATE_VERSION = 4
+
+# kroger.KrogerClient.products sends this as filter.fulfillment. Kroger therefore
+# returns only products it holds for in-store or curbside at the location, so a
+# product offered neither way never reaches the retention rules at all.
+REQUESTED_FULFILLMENT = "ais,csp"
 
 
 class Budget:
@@ -107,12 +128,17 @@ class Budget:
         pass
 
 
-def resolve_store(store_response, location_id, expected_zipcode=""):
+def _street_key(street):
+    return " ".join(str(street).replace(".", " ").casefold().split())
+
+
+def resolve_store(store_response, location_id, expected_zipcode="", expected_street=""):
     """Build the store columns from Kroger's own /locations response.
 
     Refuses rather than guesses: a missing location, a different locationId,
-    or a zipcode that contradicts the one asked for all stop the run, because
-    every record would carry the wrong store context.
+    or a zipcode or street that contradicts the one asked for all stop the run,
+    because every record would carry the wrong store context. The assigned id
+    differs from West Loop's by two characters, so the address is asserted too.
     """
     data = store_response.get("data") if isinstance(store_response, dict) else None
     if not isinstance(data, dict):
@@ -147,6 +173,9 @@ def resolve_store(store_response, location_id, expected_zipcode=""):
     state = str(address.get("state") or "").strip()
     if not line or not city:
         raise KrogerError(f"Location {location_id!r} has an incomplete address")
+    if expected_street and _street_key(line) != _street_key(expected_street):
+        raise KrogerError(
+            f"Location {location_id!r} is at {line!r}, not {expected_street!r}")
     return {
         "zipcode": zipcode,
         "store_name": " - ".join(parts) if parts else f"Store {location_id}",
@@ -164,7 +193,7 @@ def _quarantine(state, product, key, start, index, exc):
     """Keep a refused product's identity and reason; the body stays under raw/."""
     reason = str(exc) if isinstance(exc, ValueError) else f"MALFORMED_PRODUCT:{type(exc).__name__}"
     p = product if isinstance(product, dict) else {}
-    ident = str(p.get("upc") or p.get("productId") or f"{key}@{start}#{index}")
+    ident = str(p.get("productId") or p.get("upc") or f"{key}@{start}#{index}")
     entry = state["quarantine"].setdefault(ident, {
         "upc": str(p.get("upc") or ""), "productId": str(p.get("productId") or ""),
         "description": str(p.get("description") or ""), "reason": reason,
@@ -180,10 +209,10 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                       "records": {}, "done_terms": [], "term_counts": {},
                       "category_disagreements": [], "errors": [],
                       "page_failures": [], "terms_hit_start_cap": [],
-                      "unmapped": {}, "discovery": {}, "quarantine": {}}
+                      "unmapped": {}, "discovery": {}, "quarantine": {},
+                      "contexts": {}, "observations": {}}
     records = state["records"]
     done = set(state["done_terms"])
-    crawl_date = date.today().isoformat()
     stopped = None
 
     try:
@@ -215,12 +244,16 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                         break
                     # Written before anything reads it, so a rule that refuses
                     # a product can never cost the response that showed it.
+                    observed_at = datetime.now(timezone.utc).isoformat()
+                    raw_file = ""
                     if raw_dir:
-                        _write(_raw_path(raw_dir, key, start),
-                               {"locationId": location_id, "term": term,
-                                "term_root": category, "start": start,
-                                "observed_at": datetime.now(timezone.utc).isoformat(),
-                                "response": result})
+                        path = _raw_path(raw_dir, key, start)
+                        _write(path, {"locationId": location_id, "term": term,
+                                      "term_root": category, "start": start,
+                                      "observed_at": observed_at, "response": result})
+                        raw_file = str(path.relative_to(raw_dir))
+                    response_sha256 = hashlib.sha256(
+                        json.dumps(result, sort_keys=True).encode()).hexdigest()
                     data = result.get("data") or []
                     for index, raw in enumerate(data):
                         # The search term is how a product was FOUND, not what
@@ -229,27 +262,39 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                         # category. So the product's own label decides, via an
                         # explicit map, and an unmapped label is never guessed.
                         try:
-                            rec = normalize(raw, store, crawl_date, category_map)
+                            rec, context = observe(raw, store, observed_at[:10], category_map)
+                            identity = stable_identity(rec, location_id)
                         except (ValueError, TypeError, KeyError, AttributeError) as exc:
                             _quarantine(state, raw, key, start, index, exc)
                             continue
                         root, label = rec["category"], rec["sub_category"]
                         api_cats = api_categories(raw)
                         found += 1
-                        state["discovery"][rec["upc"]] = {
+                        state["discovery"][identity] = {
                             "found_by_term": term, "term_root": category,
                             "api_categories": api_cats, "assigned_root": root}
+                        if identity not in records:
+                            context.update(observed_at=observed_at, raw_file=raw_file,
+                                           response_sha256=response_sha256,
+                                           requested_fulfillment=REQUESTED_FULFILLMENT)
+                            state["contexts"][identity] = context
+                            state["observations"][identity] = dict(
+                                observation(rec, location_id, observed_at,
+                                            [{"kind": "api_response", "file": raw_file,
+                                              "sha256": response_sha256, "url": rec["url"]}],
+                                            context["availability_state"]),
+                                pickup_context=context)
                         if not root:
                             state["unmapped"].setdefault(label or "(none)", []) \
-                                .append(rec["upc"])
-                            records.setdefault(rec["upc"], rec)
+                                .append(identity)
+                            records.setdefault(identity, rec)
                             continue
                         if category and root != category:
                             state["category_disagreements"].append(
-                                {"upc": rec["upc"], "found_by_term": term,
+                                {"identity": identity, "upc": rec["upc"], "found_by_term": term,
                                  "term_root": category, "assigned_root": root,
                                  "api_categories": api_cats})
-                        records.setdefault(rec["upc"], rec)
+                        records.setdefault(identity, rec)
                     if len(data) < 50:
                         break
                 state["term_counts"][key] = found
@@ -314,6 +359,10 @@ def _does_not_establish(state, rows, by_cat, max_start):
             "truncated_terms": truncated,
         },
         "populated_roots": empty_roots,
+        "products_kroger_did_not_return": (
+            f"Requests carry filter.fulfillment={REQUESTED_FULFILLMENT}, so a product "
+            "Kroger holds for neither in-store nor curbside at this location is "
+            "not returned, and no rule here can retain what was never seen."),
         "displayed_prices_and_deals": {
             "ppm": ("Blank. The public tier carries only regularPerUnitEstimate, "
                     "an estimate and not the displayed price per measure."),
@@ -325,8 +374,9 @@ def _does_not_establish(state, rows, by_cat, max_start):
     }
 
 
-def build_report(state, store, location_id, budget, args):
-    rows = list(state["records"].values())
+def build_report(state, store, location_id, budget, args, accumulated):
+    rows = accumulated["products"]
+    contexts = list(state["contexts"].values())
     by_cat = {}
     for r in rows:
         by_cat[r["category"]] = by_cat.get(r["category"], 0) + 1
@@ -349,8 +399,16 @@ def build_report(state, store, location_id, budget, args):
         "stopped_reason": state.get("stopped_reason"),
         "terms_completed": len(state["done_terms"]),
         "unique_products": len(rows),
-        "unique_upcs": len({r["upc"] for r in rows}),
-        "duplicate_upcs": len(rows) - len({r["upc"] for r in rows}),
+        "unique_upcs": len({r["upc"] for r in rows if r["upc"]}),
+        "records_without_upc": sum(1 for r in rows if not r["upc"]),
+        "current_records": accumulated["current_records"],
+        "carried_forward_records": accumulated["carried_forward_records"],
+        "offer_status": dict(sorted(Counter(c["offer_status"] for c in contexts).items())),
+        "offer_gaps": dict(sorted(Counter(g for c in contexts for g in c["offer_gaps"]).items())),
+        "identity_basis": dict(sorted(Counter(c["identity_basis"] for c in contexts).items())),
+        "availability_state": dict(sorted(Counter(c["availability_state"] for c in contexts).items())),
+        "values_refused": dict(sorted(Counter(
+            v["reason"] for c in contexts for v in c["value_refusals"]).items())),
         "count_by_category": dict(sorted(by_cat.items())),
         "categories_swept": len(swept),
         "categories_with_zero_products": sorted(swept - set(by_cat)),
@@ -405,6 +463,12 @@ def main(argv=None):
                         "limit are named in the report.")
     p.add_argument("--max-requests", type=int, default=8000)
     p.add_argument("--max-seconds", type=float, default=14400)
+    p.add_argument("--street", default="",
+                   help="Street address the location must report, e.g. "
+                        "'1720 N Milwaukee Ave'. Required with --location-id.")
+    p.add_argument("--previous-run", default="",
+                   help="Output folder of an earlier run at this same store, whose "
+                        "products carry forward if absent from this one.")
     p.add_argument("--output", default="out/kroger_sweep")
     p.add_argument("--resume", action="store_true")
     args = p.parse_args(argv)
@@ -429,6 +493,11 @@ def main(argv=None):
               file=sys.stderr)
         return 0
 
+    if not args.zipcode or not args.street:
+        print("--location-id needs --zipcode and --street: a configured id alone "
+              "is not verification.", file=sys.stderr)
+        return 2
+
     # Before any network call or write, so a mistaken rerun leaves the earlier
     # run's folder exactly as it was.
     out = Path(args.output)
@@ -450,7 +519,7 @@ def main(argv=None):
     # two runs are actually comparable. Also the brief's "evidence that the
     # correct store was selected".
     store_response = client.get("/locations/" + args.location_id)
-    store = resolve_store(store_response, args.location_id, args.zipcode)
+    store = resolve_store(store_response, args.location_id, args.zipcode, args.street)
     verify_store(store_response["data"], args.location_id, store["zipcode"])
     if args.store_name:
         store["store_name"] = args.store_name
@@ -491,10 +560,21 @@ def main(argv=None):
                   max_start=args.max_start, category_map=category_map,
                   raw_dir=out / "raw")
 
-    rows = list(state["records"].values())
+    previous_rows, previous_retention = [], {}
+    if args.previous_run:
+        previous = Path(args.previous_run)
+        previous_rows = json.loads((previous / "data_22_fields.json").read_text())
+        previous_retention = json.loads((previous / "retention.json").read_text())
+    accumulated = reconcile(
+        list(state["records"].values()), state["observations"], args.location_id,
+        datetime.now(timezone.utc).isoformat(), previous_rows, previous_retention,
+        expected_context=(store["zipcode"], store["store_location"]))
+    rows = accumulated["products"]
     _write(out / "data_22_fields.json", rows)
+    _write(out / "retention.json", accumulated["retention"])
+    _write(out / "pickup_context.json", state["contexts"])
     _write(out / "run_report.json", build_report(state, store, args.location_id,
-                                                 budget, args))
+                                                 budget, args, accumulated))
     _write(out / "category_disagreements.json", state["category_disagreements"])
     _write(out / "unmapped_categories.json", state["unmapped"])
     _write(out / "discovery_provenance.json", state["discovery"])

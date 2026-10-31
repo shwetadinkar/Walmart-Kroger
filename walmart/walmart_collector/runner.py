@@ -180,6 +180,7 @@ class Collector:
         category_counts = {}
         rejected = Counter()
         duplicates = 0
+        offer_context = {}
         seen_products_by_category = {}
         for cat in self.categories:
             observed_ids = set()
@@ -204,6 +205,12 @@ class Collector:
                         continue
                     seen.add(identity)
                     records.append(rec)
+                    # The 22 fields are fixed, so the context a value was observed
+                    # in sits beside the record, keyed by the same identity.
+                    if raw.get("offer_availability"):
+                        offer_context[identity] = {
+                            "offer_availability": raw["offer_availability"],
+                            "value_certainty": raw.get("value_certainty", "")}
                     count += 1
             category_counts[cat.name] = len(per_cat)
             seen_products_by_category[cat.name] = count
@@ -230,6 +237,7 @@ class Collector:
             "scope": "trial" if self.trial else "full", "source_coverage_attested": bool(
                 getattr(self.source, "coverage_attested", False)),
             "status":"validated", "timestamp_utc":datetime.now(timezone.utc).isoformat(),
+            "offer_availability_by_value":dict(Counter(c["offer_availability"] for c in offer_context.values())),
             "runtime_seconds":round(time.monotonic()-start,3),
             "unique_records":len(records),"duplicate_placements":duplicates,
             "category_counts":category_counts, "new_output_records_by_category":seen_products_by_category,
@@ -269,8 +277,10 @@ class Collector:
         # Versioned artifacts first. latest pointer is committed LAST.
         write_json(self.storage, data_key, records)
         write_json(self.storage, report_key, report)
+        offer_context_key = prefix+"/offer_context.json"
+        write_json(self.storage, offer_context_key, offer_context)
         manifest = {"store_id":store.store_id, "zipcode":store.zipcode, "release":release, "data_key":data_key,
-                    "report_key":report_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
+                    "report_key":report_key, "offer_context_key":offer_context_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
                     "scope": "trial" if self.trial else "full"}
         write_json(self.storage, manifest_key, manifest)
         if hasattr(self.storage, "assert_lock_held"):

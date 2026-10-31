@@ -80,7 +80,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 160, Mariano's 139.
+  counts: Walmart 162, Mariano's 218.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -123,9 +123,11 @@ exists:
 1. It fabricates `https://www.marianos.com/p/<upc>`, which does not resolve.
    The API returns `productPageURI`; `api_trial.normalize` validates and uses
    it.
-2. It accepts the first item in `items[]`. `api_trial.normalize` requires a
-   qualifying local pickup offer: `soldBy == "UNIT"`, `fulfillment.curbside`
-   true, a size, and a finite positive `regular` price.
+2. It accepts the first item in `items[]`. `api_trial.observe` now selects the
+   qualifying local pickup offer (`soldBy == "UNIT"`, `fulfillment.curbside`
+   true, a size, a finite positive `regular` price) and classifies a product
+   without one. That is a status recorded beside the row, not a filter. See
+   `marianos/RETENTION_POLICY.md`.
 3. It never calls `schema.make_record`, so the approximate-weight exclusion and
    the product-URL check are not applied.
 4. It discards the raw API product, so a later rule change forces a re-fetch
@@ -134,8 +136,8 @@ exists:
 Fix by porting `api_trial.normalize` onto this branch and having the sweep use
 it; merging `api_trial.CATEGORY_MAP` into `config/category_map.json`, keeping
 the no-guessing behaviour both already have; persisting the raw response per
-term under the output directory; and quarantining rejects with reasons and
-counts rather than dropping them, as the 24 October run did with its 46.
+term under the output directory; and quarantining only what the brief itself
+excludes, with reasons and counts.
 
 That port is done, along with a fifth defect found on the way: `main` replaced
 the resolved store with blank flag values, so every record in the first run has

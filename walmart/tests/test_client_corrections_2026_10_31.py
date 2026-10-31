@@ -68,6 +68,11 @@ def four_product_feed(url, kind, store_id):
     ]
 
 
+def result_fields():
+    from walmart_collector.schema import FIELDS
+    return FIELDS
+
+
 class RetentionTests(unittest.TestCase):
     """1. Unavailable and unpriced products must stay in the dataset."""
 
@@ -112,15 +117,58 @@ class RetentionTests(unittest.TestCase):
         self.assertEqual(ok["regular_price"], "2.99")
         self.assertEqual(ok["ppm"], "(25.0 c/oz)")
 
-    def test_a_price_on_an_unavailable_row_is_not_reported_as_current(self):
-        # A price carried on a non-AVAILABLE row is not one a shopper can pay.
+    def test_a_price_observed_on_an_unavailable_row_is_kept_with_its_context(self):
+        # Client finding B3: the rule is never publish a value that was not
+        # observed, not suppress one that was. Whether a shopper could pay it
+        # is uncertain, and that uncertainty is a field, not an erasure.
         record = _to_raw(
             catalog_offer("Stale", "s", 7, "Food"),
             dict(availability="OUT_OF_STOCK", currentPrice="9.99",
-                 unitPriceDisplay="(1 c/oz)", storeCode="100"), STORE)
-        self.assertEqual(record["regular_price"], "")
-        self.assertEqual(record["ppm"], "")
-        self.assertEqual(record["product_title"], "Stale")
+                 unitPriceDisplay="83.25 c/oz", storeCode="100"), STORE)
+        self.assertEqual(record["regular_price"], "9.99")
+        self.assertEqual(record["ppm"], "83.25 c/oz")
+        self.assertEqual(record["offer_availability"], "OUT_OF_STOCK")
+        self.assertEqual(record["value_certainty"],
+                         "observed_on_unavailable_offer_payability_unestablished")
+
+    def test_an_available_row_is_marked_as_one(self):
+        record = _to_raw(
+            catalog_offer("Fresh", "f", 7, "Food"),
+            dict(availability="AVAILABLE", currentPrice="1.00", storeCode="100"), STORE)
+        self.assertEqual(record["value_certainty"], "observed_on_available_offer")
+
+    def test_the_context_of_a_value_reaches_the_release_beside_the_record(self):
+        import tempfile
+        from pathlib import Path
+        from walmart_collector.runner import Collector
+        from walmart_collector.sources import Page
+        from walmart_collector.storage import LocalStorage, read_json
+        def row(title, number, availability, price):
+            return dict(_to_raw(catalog_offer(title, title, number, "Food"),
+                                dict(availability=availability, currentPrice=price,
+                                     storeCode="100"), STORE),
+                        upc=f"{number:012d}")
+        class Source:
+            source_mode = "synthetic_fixture_offer_context"
+            coverage_attested = True
+            def fetch(self, store, category, url, cursor):
+                # Both categories carry the same two products, so they stay one
+                # identity each and the counts below are of offers, not placements.
+                return Page(store.store_id, store.zipcode, True, url,
+                            [row("In", 1, "AVAILABLE", "1.00"),
+                             row("Out", 2, "OUT_OF_STOCK", "9.99")], [], "", True)
+        with tempfile.TemporaryDirectory() as tmp:
+            storage = LocalStorage(Path(tmp))
+            result = Collector(storage, Source(), CATEGORIES, min_products=1,
+                               trial=True).run(STORE)
+            rows = read_json(storage, result["manifest"]["data_key"])
+            context = read_json(storage, result["manifest"]["offer_context_key"])
+        self.assertEqual(next(r for r in rows if r["product_title"] == "Out")["regular_price"], "9.99")
+        self.assertEqual(sorted(c["offer_availability"] for c in context.values()),
+                         ["AVAILABLE", "OUT_OF_STOCK"])
+        self.assertEqual(result["report"]["offer_availability_by_value"],
+                         {"AVAILABLE": 1, "OUT_OF_STOCK": 1})
+        self.assertEqual(sorted(rows[0]), sorted(result_fields()))
 
     def test_a_catalog_offer_with_no_store_price_row_is_unresolved_not_invented(self):
         """Store membership is evidenced by the store-scoped price feed. A

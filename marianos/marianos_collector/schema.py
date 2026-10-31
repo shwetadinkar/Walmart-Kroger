@@ -65,8 +65,6 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
         raise RecordRejected("APPROXIMATE_WEIGHT")
     title = str(raw.get("product_title") or "").strip()
     url = str(raw.get("url") or "").strip()
-    if not title:
-        raise RecordRejected("MISSING_TITLE")
     # The weight field is not the only place this wording appears. A product
     # titled "Chicken Breast, Average Weight 1 lb" with size "1 lb" passed every
     # check, because only the weight field was ever searched. The title carries
@@ -75,8 +73,10 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     # matches "Family Pack", a count, or a plain weight.
     if _APPROX.search(title):
         raise RecordRejected("APPROXIMATE_WEIGHT_IN_TITLE")
+    # An absent URL is an unobserved value. One that names another site is not
+    # evidence of this product, and make_retained_record blanks it.
     p = urlparse(url)
-    if p.scheme != "https" or not p.hostname or not (p.hostname == "marianos.com" or p.hostname.endswith(".marianos.com")):
+    if url and (p.scheme != "https" or not p.hostname or not (p.hostname == "marianos.com" or p.hostname.endswith(".marianos.com"))):
         raise RecordRejected("INVALID_PRODUCT_URL")
 
     result = OrderedDict((f, "") for f in FIELDS)
@@ -119,6 +119,42 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     if result["volume_deals_price"] and not result["volume_deals_description"]:
         raise RecordRejected("VOLUME_PRICE_WITHOUT_DESCRIPTION")
     return result
+
+
+# Refusals that condemn one observed value, not the product carrying it. Blanking
+# the named fields answers each; anything else stays a refusal of the record.
+_VALUE_REFUSALS = {
+    "CASHBACK_MISCLASSIFIED_AS_DIGITAL": ("digital_deals_description", "digital_deals_price"),
+    "UNVERIFIED_DIGITAL_DEAL": ("digital_deals_description", "digital_deals_price"),
+    "DIGITAL_PRICE_WITHOUT_DESCRIPTION": ("digital_deals_price",),
+    "VOLUME_PRICE_WITHOUT_DESCRIPTION": ("volume_deals_price",),
+    "INVALID_PRODUCT_URL": ("url",),
+}
+
+
+def make_retained_record(raw: dict, store, category: str, sub_category: str, crawl_date: str):
+    """(record, refused values). A bad field empties that field and keeps the row.
+
+    make_record stays the judge of every value. This only decides what a refusal
+    costs: under the client's retention principle it costs the value. The brief's
+    own exclusions (approximate weight, store mismatch, seller) still raise.
+    """
+    raw = dict(raw)
+    refused = []
+    for _ in range(len(FIELDS)):
+        try:
+            return make_record(raw, store, category, sub_category, crawl_date), refused
+        except RecordRejected as exc:
+            reason = str(exc)
+            name, _, field = reason.partition(":")
+            fields = _VALUE_REFUSALS.get(reason) or (
+                (field,) if name in ("INVALID_PRICE", "UNEXPECTED_FIELD_TYPE") else None)
+            if not fields:
+                raise
+            for key in fields:
+                raw[key] = ""
+            refused.append({"reason": reason, "fields": list(fields)})
+    raise RecordRejected("UNRESOLVED_VALUE_REFUSALS")
 
 
 def fingerprint(record: dict, raw: dict) -> str:

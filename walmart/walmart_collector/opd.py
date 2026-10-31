@@ -245,9 +245,10 @@ def _to_raw(product, price, store):
     """Map one catalog offer plus its store price row into a raw record.
 
     RETENTION. A product the store carries but cannot currently sell stays in
-    the output with its unsupported values empty. Availability is recorded, not
-    used as a filter. Dropping those identities removed them from the dataset
-    entirely, which is the opposite of the retention the brief requires.
+    the output with the values the feed gave. Availability is recorded beside
+    them, not used as a filter and not used to erase them. Blanking was a
+    judgement that an unavailable row's price cannot be current; the rule is
+    never publish a value that was not observed, and this one was observed.
 
     ELIGIBILITY. Store membership is established by the PRICE feed, which is
     store scoped, not by the catalog feed, which is per category. So a catalog
@@ -260,12 +261,8 @@ def _to_raw(product, price, store):
     if str(price.get("storeCode")) != store.store_id:
         raise SourceError("Snapshot price store mismatch")
 
-    # `availability` decides whether a price is reportable, so an absent or null
-    # value is a feed contract violation and not a quiet "no". Treating it as
-    # falsey would blank the price on every row if the field were ever renamed,
-    # turning the whole dataset into unpriced records with nothing raised. The
-    # old code could not reach this because it filtered such rows out earlier;
-    # retaining them makes this line the first to touch them.
+    # `availability` is the context every value on this row is read in, so an
+    # absent or null value is a feed contract violation and not a quiet "no".
     raw_availability = price.get("availability")
     if raw_availability is None:
         raise SourceError(
@@ -273,10 +270,6 @@ def _to_raw(product, price, store):
             "refusing to infer one")
     available = str(raw_availability).upper() == "AVAILABLE"
     price_str = str(price.get("currentPrice") or "").strip()
-    # An unavailable offer has no current price to report, and a price carried
-    # on an unavailable row is not one a shopper could pay today.
-    if not available:
-        price_str = ""
     url = str(product.get("productUrlText") or "")
     if url.startswith("/ip/"):
         url = "https://www.walmart.com" + url
@@ -295,10 +288,12 @@ def _to_raw(product, price, store):
         "digital_deals_description":"", "digital_deals_price":"",
         "url":url, "image_url":product.get("productImage") or "",
         "upc":str(product.get("upc") or ""),
-        # unitPriceDisplay belongs to a live offer. On an unavailable row it is
-        # not a figure the shelf is showing, so it is left empty rather than
-        # carried forward as if it were current.
-        "ppm":(price.get("unitPriceDisplay") or "") if available else "",
+        "ppm":price.get("unitPriceDisplay") or "",
+        # Outside the 22 fields. On an unavailable row the price is what the
+        # feed said, and whether a shopper could pay it is unestablished.
+        "offer_availability":str(raw_availability).upper(),
+        "value_certainty":"observed_on_available_offer" if available
+                          else "observed_on_unavailable_offer_payability_unestablished",
         "brand":str(product.get("brandName") or ""),
         "sub_category":parts[-1] if parts else ""
     }
