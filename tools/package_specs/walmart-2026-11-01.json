@@ -1,0 +1,41 @@
+{
+ "title": "Walmart store 100 - update of 1 November 2026",
+ "files": [
+  [
+   "docs/client-package-readmes/walmart_README.md",
+   "README.md"
+  ],
+  [
+   "walmart/submission/2026-10-31-provider-fields/Walmart_Store100_615_Trial_22Field.json",
+   "submission/Walmart_Store100_615_Trial_22Field.json"
+  ],
+  [
+   "walmart/submission/2026-10-31-provider-fields/FIELD_PROVENANCE.json",
+   "submission/FIELD_PROVENANCE.json"
+  ],
+  [
+   "walmart/submission/2026-10-31-provider-fields/NOTE.md",
+   "submission/NOTE.md"
+  ],
+  [
+   "walmart/submission/2026-10-31-provider-fields/SUMMARY.json",
+   "submission/SUMMARY.json"
+  ],
+  [
+   "walmart/submission/2026-10-31-provider-fields/VALUE_DISAGREEMENTS.json",
+   "submission/VALUE_DISAGREEMENTS.json"
+  ],
+  [
+   "walmart/submission/2026-10-24/Walmart_Store100_615_Trial_22Field.json",
+   "submission/2026-10-24_as_reviewed/Walmart_Store100_615_Trial_22Field.json"
+  ],
+  [
+   "walmart/evidence/2026-10-31-provider-ticket-754118.md",
+   "evidence/2026-10-31-provider-ticket-754118.md"
+  ],
+  [
+   "walmart/reports/2026-11-01-store100-notation-probe/REPORT.md",
+   "reports/2026-11-01-store100-notation-probe.md"
+  ]
+ ]
+}
