@@ -27,6 +27,24 @@ Concretely, and these are not negotiable:
   Kroger's public Products API carries `regularPerUnitEstimate`; that is an
   estimate and must never be written into `ppm`. Walmart's `unitPriceDisplay`
   is a displayed string and may be. If nothing was displayed, `ppm` is `""`.
+
+  **A displayed rate captured as two fields may be joined; a missing rate may
+  never be derived.** The brief forbids calculating, estimating or
+  reconstructing a *missing* PPM. Where the retailer displayed a rate and the
+  capture holds it split across an observed value and an observed unit, for
+  example Bright Data's `unit_price` `0.057` with `unit` `fl oz`, joining them
+  is formatting, not reconstruction: nothing is inferred and neither component
+  is invented. Deriving a rate from price divided by size is reconstruction and
+  stays forbidden. A joined value must be labelled as composed rather than
+  captured, must name both source fields in its provenance, must never be
+  rounded, and must be blank when either field is absent. The rendered notation
+  is not preserved by this: Walmart renders cents, the join produces dollars,
+  and that difference is disclosed rather than smoothed over. See
+  `walmart/evidence/2026-10-31-provider-ticket-754118.md`, whose third
+  condition requires the client to accept a labelled composed value. **That
+  acceptance has not been given**, so the composed submission at
+  `walmart/submission/2026-10-31-provider-fields/` is a proposal to put to him,
+  not a delivery.
 - Volume and digital deal text must be the retailer's own wording. Never
   compose a deal description, and never compute a promotional price the
   retailer did not display.
