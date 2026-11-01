@@ -40,11 +40,16 @@ Concretely, and these are not negotiable:
   rounded, and must be blank when either field is absent. The rendered notation
   is not preserved by this: Walmart renders cents, the join produces dollars,
   and that difference is disclosed rather than smoothed over. See
-  `walmart/evidence/2026-10-31-provider-ticket-754118.md`, whose third
-  condition requires the client to accept a labelled composed value. **That
-  acceptance has not been given**, so the composed submission at
-  `walmart/submission/2026-10-31-provider-fields/` is a proposal to put to him,
-  not a delivery.
+  `walmart/evidence/2026-10-31-provider-ticket-754118.md` for the provenance.
+
+  The client's condition was provenance, not approval. His words on 31 October
+  were that keeping an unverified rate out of `ppm` is appropriate *pending
+  direct provenance*. The provider's written statement supplies it, so filling
+  the column is doing what he asked rather than something awaiting his consent.
+  He set no condition on notation, and nothing evidences the dollar form, so
+  that is disclosed to him rather than asked of him. The populated export at
+  `walmart/submission/2026-10-31-provider-fields/` therefore ships, with the
+  24 October file he reviewed left untouched beside it.
 - Volume and digital deal text must be the retailer's own wording. Never
   compose a deal description, and never compute a promotional price the
   retailer did not display.
