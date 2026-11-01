@@ -169,6 +169,12 @@ def diagnostic_product(product):
       # through the public tier is publishable here no matter what it contains.
       # The production route is the partner tier; see catalog_v2.py.
       #
+      # That position is unchanged, but it is now in tension with a delivered
+      # dataset: the 26,166 records of 31 October came entirely through this
+      # tier. The tension, what engages which prohibition, and the fact that
+      # the policy text itself could not be re-read on 1 November are recorded
+      # in ACCEPTABLE_USE_POSITION.md. The flag below is not flipped.
+      #
       # Note also that the field is an *estimate* supplied by Kroger, which is
       # not the same thing as the shelf-displayed price per measure the brief
       # asks for. That is a client decision, not ours.
