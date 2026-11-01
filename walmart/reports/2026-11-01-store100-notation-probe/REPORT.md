@@ -21,6 +21,7 @@ This probe set out to observe the notation in store 100's own context.
 | Displayed price on it | `$5.78` |
 | Store context of that observation | **Sacramento, 95829. Not store 100.** |
 | Setting ZIP 72712 in the product page location panel | Refused: "We're currently experiencing technical issues. Please try again in a few minutes." |
+| The same change attempted by hand by the operator, in his own browser | Refused the same way. Not an automation effect. |
 | `/store/100-bentonville-ar` | Served. Confirmed Store 100, 406 S Walton Blvd, Bentonville AR 72712 |
 | "Make this my store" on that page | Accepted, no error shown |
 | Reloading the product page immediately after | Redirected to `walmart.com/blocked`, page titled **"Robot or human?"** |
@@ -50,10 +51,31 @@ being a national online price rather than a store-specific one. That is exactly
 the caveat the export already carries, and this strengthens it. One product is
 not a demonstration, so it is recorded as a data point, not a conclusion.
 
-**The store picker failure is now reproducible across browsers.** Walmart's own
-"technical issues" message has now refused the product-page location panel three
-times, on separate days, in at least two different browsers. It is Walmart's
-error, not a configuration fault at this end, and not something to route around.
+**The store picker failure is Walmart's, and it is not caused by automation.**
+Walmart's own "technical issues" message has refused the product-page location
+panel on separate days and in more than one browser, and — the decisive point —
+**the operator reached the same refusal by hand, in his own browser, driving it
+himself as an ordinary signed-out user.** A manual refusal rules out the
+explanation that the site was degrading a write endpoint for a client it
+distrusted. Whatever is wrong is on Walmart's side of the request.
+
+**The leading explanation is that store selection is unavailable to this
+traffic, and it is a hypothesis, not a finding.** Everything observed fits it:
+the browser is never asked which store, it is assigned Sacramento 95829 on its
+own; the only call that fails is the one that would change that assignment; and
+the data provider, which collects from United States infrastructure, does return
+output in a store 100 / ZIP 72712 context. The work here is done from India. A
+retailer limiting store selection to traffic it places in the United States
+would produce exactly this pattern.
+
+It is a hypothesis because it has not been tested, and it will not be tested
+here. The test would mean presenting the request as coming from somewhere it is
+not, which is the identity-and-proxy routing this repository does not do, under
+any name and for any purpose. The consequence is recorded instead: a store 100
+page observation is not obtainable from this location by any means this project
+is willing to use, and the remaining legitimate route is the provider, whose
+own collection already carries the 72712 context. That question is open on
+ticket #754118.
 
 ## What this does not establish
 
