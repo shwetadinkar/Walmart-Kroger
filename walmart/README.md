@@ -8,7 +8,9 @@
 
 # Walmart Azure Collector — v0.5.0 integrity update
 
-**Run the Walmart offline checks directly on GitHub:** [Walmart offline verification](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/walmart-offline.yml) (select **Run workflow**). [Successful initial workflow run](https://github.com/shwetadinkar/Walmart-Kroger/actions/runs/39544351675). The workflow uses synthetic fixtures only; it does not make authenticated Walmart requests.\n\n**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
+**Run the Walmart offline checks directly on GitHub:** [Walmart offline verification](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/walmart-offline.yml) (select **Run workflow**). [Successful initial workflow run](https://github.com/shwetadinkar/Walmart-Kroger/actions/runs/39544351675). The workflow uses synthetic fixtures only; it does not make authenticated Walmart requests.
+
+**Current stage:** offline-tested software; live 500-record acceptance and deployment have **not** been completed. Read [WALMART_ACCEPTANCE_STATUS.md](WALMART_ACCEPTANCE_STATUS.md) before submitting anything.
 
 From the GitHub folder `Walmart-Kroger/walmart` run:
 
@@ -45,7 +47,7 @@ A fail-closed Python collection and validation system based on the attached **Sh
 - Publisher writes new versioned data and report first, and updates `latest.json` **only after** all category and store validation passes.
 - Azure Blob durable pages/checkpoints and renewable 60-second Blob lease for same-store exclusion; local filesystem implementation for tests.
 - 2 weekly Azure scheduled-job examples; structured logs; no hardcoded production credentials.
-- 27 automated tests including interrupted run recovery and retaining the previous good output.
+- 243 automated tests including interrupted run recovery and retaining the previous good output.
 
 **NEW: See [CLIENT_TESTING.md](CLIENT_TESTING.md) for three independently labeled acceptance test modes (offline, official OPD connectivity, authorized provider collection). A Walmart I/O API key is NOT automatically compatible with the collector’s normalized feed interface.**
 

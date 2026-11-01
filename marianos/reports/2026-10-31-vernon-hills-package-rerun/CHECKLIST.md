@@ -12,8 +12,8 @@ show it, not that the item is accepted.
 | Total and category counts | Met: below |
 | Duplicate count | Met: 0 duplicate UPCs, 0 duplicate URLs. 17,089 repeat placements across terms were collapsed from 43,255 returned |
 | Field-completeness results | Met: all 22 fields, below |
-| PPM examples | **Not met.** No row has a `ppm`. The API carries only an estimate, which the brief forbids, and the page probe at this store read no page |
-| Deal examples | **Not met.** No volume or digital wording exists in this data. 7,469 rows carry a `sale_price`, which is the API's promo price and not a deal description |
+| PPM examples | **Met as of 1 November**, outside this package. No row here has a `ppm`, because the API carries only an estimate which the brief forbids. On 1 November the retailer's own pages served and 592 records now carry a displayed rate; see `../2026-11-01-vernon-hills-merge/REPORT.md`. This package predates that |
+| Deal examples | **Met as of 1 November**, outside this package. No wording exists in this data, and the 7,469 `sale_price` rows are the API's promo price, not a deal description. On 1 November 181 records gained volume deal wording and 51 digital coupon wording, in the retailer's own words; see `../2026-11-01-vernon-hills-merge/REPORT.md` |
 | Location proof | Met for the API: `data/store_verification.json` is Kroger's response for this store, and every row's store columns match it |
 | Architecture | `R8_ARCHITECTURE_AND_SERVICES.md` |
 | Operating costs | `R9_OPERATING_COST.md`; an estimate, with unpriced items stated |

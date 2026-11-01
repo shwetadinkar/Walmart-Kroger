@@ -80,8 +80,11 @@ documented Catalog V2 paths, and has never been run against the live service.
 administrative step in front of data that could otherwise be taken, but is what
 grants the rights.
 
-The partner request is drafted and ready, at `PARTNER_APPLICATIONS_2026-11-06.md`.
-It has not been sent. Two reasons, both standing:
+The partner request is already drafted. It is held outside this repository,
+because it is a message to be sent under the operator's own name and makes
+statements about his business that are his to make, not this repository's to
+publish. It is available on request. It has not been sent, for two standing
+reasons:
 
 - The instruction not to register for anything or request entitlement is in force.
 - Only the client has standing to request a commercial agreement. We do not.

@@ -16,7 +16,7 @@ This probe set out to observe the notation in store 100's own context.
 
 | Step | Result |
 |---|---|
-| Product page for UPC `1026071385` | Served |
+| Product page for Walmart item `1026071385`, UPC `094514020098` | Served |
 | Displayed rate on it | `5.7 ¢/fl oz` |
 | Displayed price on it | `$5.78` |
 | Store context of that observation | **Sacramento, 95829. Not store 100.** |

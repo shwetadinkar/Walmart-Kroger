@@ -98,9 +98,12 @@ beside the full set rather than replaced.
 visible, so this run says nothing about `digital_deals_description` coverage for
 a signed-in shopper. No account was used and none will be without instruction.
 
-**Nothing is joined yet.** The 426 UPCs have not been matched against the 26,166
-API records, which are on the operator's machine. Overlap, and therefore how many
-API rows this would actually enrich, is unknown.
+**The join is done, and it is reported elsewhere.** An earlier version of this
+section said nothing was joined yet and gave a UPC count of 426, which appears
+nowhere else in this report and contradicts its own table of 656 cards over 649
+distinct UPCs. Both were wrong. The 649 were matched against the 26,166-record
+collection the same day: 635 matched, 14 did not. See
+`../2026-11-01-vernon-hills-merge/REPORT.md`.
 
 **Prices are as the site reported them for this store context.** They were not
 checked against the shelf, and no page was observed in-store.
@@ -140,7 +143,7 @@ been read.
 All 656 cards parse with no unrecognised shapes and no cross-term
 disagreements.
 
-Parser verification: 14 tests direct and 471 under pytest, which agree with the
-suite total. Two mutations were run and both were caught: writing the
+Parser verification: `tests/test_parse_page_harvest.py` runs 14 tests directly
+and contributes the same 14 to the Mariano's suite, which stands at 485. Two mutations were run and both were caught: writing the
 approximate each-price into `regular_price` failed two tests, and deriving a rate
 from price and size when none was displayed failed one.

@@ -138,7 +138,10 @@ remaining fields were not invented. Separately, 34 Batteries products with
 page-read PPM on all 34 and digital coupon terms on 17. A three-execution Azure
 stop-and-resume trial on 28 October verified a durable checkpoint by SHA-256
 across a deliberate failure. Coverage across the client's 28 category roots is
-the known gap; `reports/2026-10-24-west-loop/CATEGORY_COVERAGE.csv` states it.
+the known gap. It is stated in
+`reports/2026-10-31-vernon-hills-package-rerun/DOES_NOT_ESTABLISH.md`. The file
+this line used to cite, `reports/2026-10-24-west-loop/CATEGORY_COVERAGE.csv`,
+lives only on `marianos-live-api-west-loop` and is not on this branch.
 
 ## The task in progress
 

@@ -138,7 +138,7 @@ Record absent fields as absent. Derive nothing.
 
 ## What is already proved without credentials
 
-27 tests cover this adapter specifically, inside a Mariano's suite of 60. They
+32 tests cover this adapter specifically, inside a Mariano's suite of 485 (figures rechecked 1 November 2026). They
 exercise the contract's two money spellings, `nFor` composition, store binding
 against a multi-location response, refusal of a foreign-banner product URL,
 pagination and the empty-page loop guard, the demo-store and page-size guards,

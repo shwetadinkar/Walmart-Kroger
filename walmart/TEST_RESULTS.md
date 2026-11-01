@@ -4,7 +4,7 @@
 
 | Check | Result |
 |---|---|
-| Python unit/integration tests | **27 passed** (`python -m unittest discover -v tests`) |
+| Python unit/integration tests | **243 passed** (rechecked 1 November 2026) (`python -m unittest discover -v tests`) |
 | Category roots from supplied CSV | **11** |
 | Bentonville ZIP / store ID | **72712 / #100** |
 | Houston ZIP / store ID | **77007 / #5959** |

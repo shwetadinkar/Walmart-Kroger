@@ -128,7 +128,8 @@ python3 marianos/tools/merge_page_enrichment.py \
 is the whole of what this step changed. The full 26,166-record output is 21MB
 and is not committed; it regenerates exactly from the two named inputs.
 
-Verification: 14 tests direct and 485 under pytest, which agree. Two mutations
+Verification: `tests/test_merge_page_enrichment.py` runs 14 tests directly and
+contributes the same 14 to the Mariano's suite, which stands at 485. Two mutations
 were run and both were caught: removing the foreign-store guard failed the store
 test, and matching a page record by position instead of by UPC failed two of the
 identity tests.

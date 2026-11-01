@@ -1,5 +1,25 @@
 > **24 OCT 2026 — NEW TEST / IMAGE WORKFLOW:** [Manual Mariano's offline verification and GHCR Docker build](https://github.com/shwetadinkar/Walmart-Kroger/actions/workflows/marianos-ghcr.yml). Trigger only via GitHub Actions **Run workflow**. It runs unit tests and the 28-root synthetic preflight, then publishes a separate `marianos58-collector` image to GHCR. **No real Mariano's products are collected, no Azure job is started, and no paid API call is made.** The resulting image is not a 500-product contest demonstration. The complete data-source feasibility gate remains [here](MARIANOS_LIVE_DATA_SOURCE_PLAN.md).
 
+> **SUPERSEDED IN PART — rechecked 1 November 2026.** This document was written
+> during the prototype stage, before any real data existed, and its "not yet
+> done" statements were never revisited. The corrections below are authoritative
+> where they conflict with the text that follows.
+>
+> **Now true:** 615 real provider records for Walmart store 100, ZIP 72712
+> (`walmart/submission/`). 26,166 real Kroger API records for Mariano's Vernon
+> Hills, store `53100502`, with the store resolved through Kroger's Locations
+> API and the response committed. 592 of those carry a price per measure read
+> from the retailer's own pages, 181 carry volume deal wording and 51 carry
+> digital coupon wording. Kroger location IDs `53100502` and `53100508` are
+> real, not illustrative. An Azure stop-and-resume trial ran three executions on
+> 28 October and verified a durable checkpoint by SHA-256.
+>
+> **Still not done:** observed twice-weekly deployment in the client's own Azure
+> environment; a fresh run observed by the client; any page observation in
+> Walmart store 100's own context; complete category enumeration, which
+> term-filtered search cannot attest; and the Kroger acceptable-use decision
+> recorded in `marianos/ACCEPTABLE_USE_POSITION.md`.
+
 # Mariano's Azure Collector v0.2.1 — live-access testing handoff
 
 **Current status: software-complete for offline integration, not buyer-accepted and NOT a genuine 500-product contest entry.** We have no authorized full-coverage Mariano's data feed, verified production Kroger location IDs, actual product collection, or observed Azure deployment. Never present offline generated records as if they came from Mariano's.

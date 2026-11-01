@@ -1,3 +1,11 @@
+> **SUPERSEDED — added 1 November 2026.** This package describes the run made
+> **before** the paging correction in commit `78f57dc`, and it is missing the
+> 1,483 records that correction recovered. Its figure of 24,683 records is
+> superseded by the 26,166 in `../2026-10-31-vernon-hills-package-rerun/`, which
+> is the authoritative collection for this store and date. Nothing in this
+> folder should be quoted. It is kept because the earlier run is part of the
+> record, not because it is current.
+
 # Requirement 7: keeping a failed run from replacing good data
 
 As with requirement 6, the protection below belongs to the publication path. It was
