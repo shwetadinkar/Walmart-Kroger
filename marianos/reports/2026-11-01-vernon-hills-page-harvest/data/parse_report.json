@@ -1,0 +1,47 @@
+{
+ "source": "marianos/out/vernon-hills-page-harvest-2026-11-01/harvest_checkpoint_1.tsv",
+ "cards": 432,
+ "distinct_upcs": 426,
+ "parse_outcomes": {
+  "ok": 432
+ },
+ "ppm_present": 389,
+ "deal_text_present": 142,
+ "sale_price_present": 136,
+ "sold_by_weight": 32,
+ "price_basis": {
+  "fixed": 399,
+  "about each, sold by weight": 26,
+  "prices may vary": 1,
+  "about each on sale, sold by weight": 6
+ },
+ "size_present": 405,
+ "terms": [
+  "banana",
+  "beer",
+  "bread",
+  "cereal",
+  "chicken breast",
+  "chocolate",
+  "coffee",
+  "deli turkey",
+  "flowers",
+  "frozen pizza",
+  "milk",
+  "organic milk",
+  "pasta",
+  "salmon",
+  "shampoo",
+  "soda",
+  "vitamins"
+ ],
+ "cross_term_conflicts": [],
+ "ppm_units": {
+  "oz": 188,
+  "fl oz": 111,
+  "lb": 50,
+  "each": 40
+ },
+ "ppm_notation": "as rendered by the retailer; not reformatted or rounded",
+ "deal_wording": "verbatim card lines; not composed"
+}
