@@ -39,14 +39,14 @@ key back to the API records.
 | Terms requested | 27 |
 | Terms that returned cards | 26 |
 | Page loads to the retailer | 28, including the homepage |
-| Cards captured | 432 recovered, 656 harvested |
-| Distinct UPCs in the recovered set | 426 |
-| Cards with a displayed `ppm` | 389 of 432 |
-| Cards with retailer deal wording | 142 of 432 |
-| Cards with a sale price | 136 of 432 |
-| Cards sold by weight | 32 of 432 |
+| Cards captured | 656, all recovered |
+| Distinct UPCs | 649 |
+| Cards with a displayed `ppm` | 608 of 656 |
+| Cards with retailer deal wording | 217 of 656 |
+| Cards with a sale price | 181 of 656 |
+| Cards sold by weight | 32 of 656 |
 | Cross-term value disagreements | 0 |
-| Displayed rate units | `oz` 188, `fl oz` 111, `lb` 50, `each` 40 |
+| Displayed rate units | `oz` 206, `each` 170, `fl oz` 115, `lb` 74, `sq ft` 43 |
 
 Every rate above is the string the retailer rendered. None was composed from
 parts, none was rounded, and none was derived from price divided by size. A card
@@ -76,13 +76,23 @@ pattern, 34 pages at West Loop on 28 October followed by Access Denied, is
 consistent with a retailer refusal, but consistency is not proof and 28 page
 loads is not a measured threshold.
 
-**224 harvested records were not recovered.** Nine further terms, `makeup`,
-`diapers`, `paper towels`, `aluminum foil`, `dog food`, `candle`,
-`aa batteries`, `light bulb` and `notebook`, were harvested successfully and
-counted, taking the run to 656 records. They were held in the page's own storage
-pending the next checkpoint and the computer became unreachable first. They are
-not lost: that storage persists in the browser profile and can be read back if a
-page on that origin loads again. Until it does, only the 432 are in hand.
+Later the same day the computer reconnected and `www.marianos.com` served
+immediately, with no challenge and no refusal. That is evidence against a
+standing retailer block and toward the dropped desktop link, but it is not
+proof either: hours had passed, and a refusal that expires on its own would
+look exactly the same. The honest statement remains that this run did not
+separate the two causes. For contrast, Walmart on the same day did issue an
+explicit bot challenge, titled "Robot or human?", and that is what a retailer
+refusal looks like when it is unambiguous; see
+`walmart/reports/2026-11-01-store100-notation-probe/REPORT.md`. Nothing of that
+kind was ever shown by this retailer during this run.
+
+**The 224 records held over from the interrupted session were recovered.** The
+run was checkpointed at 432 when the operator's computer became unreachable, and
+the remaining nine terms stayed in the browser profile's own storage. On 1
+November the origin was reloaded and all 656 read back intact across all 26
+terms, so nothing from this run was lost. The 432-record checkpoint is kept
+beside the full set rather than replaced.
 
 **It is signed out.** Digital coupon prices that require an account were not
 visible, so this run says nothing about `digital_deals_description` coverage for
@@ -103,15 +113,32 @@ does not reach it. That is a change of question, not an answer to it: the websit
 carries its own terms, which have not been read here, and no claim is made that
 this route is unencumbered. It is recorded so the two questions are not confused.
 
+One part of it is checkable and was checked. `www.marianos.com/robots.txt` was
+read on 1 November and is kept verbatim at
+`../../evidence/2026-11-01-marianos-robots.txt`, SHA-256
+`ede59005502216460d9eab5d79cbd36a033c8dca5f52426b183ad2c187eecdd3`. It carries a
+single `User-agent: *` group disallowing accounts, checkout, scheduling,
+clickstream, the order-ahead kiosk, the recipes API, PDFs, `/in-stores/` and
+`/locations*`, and it publishes a sitemap. The paths this run read, `/search`
+and `/p/`, are not disallowed, and no crawl-delay is set. That covers robots.txt
+and nothing else: the site's terms of use are a separate document and have not
+been read.
+
 ## Files
 
 | Path | What it is |
 |---|---|
-| `data/harvest_checkpoint_1.tsv` | The 432 cards as captured, one row per card, lines in rendered order |
+| `data/harvest_full.tsv` | All 656 cards as captured, one row per card, lines in rendered order |
+| `data/parsed_full.json` | All 656 parsed into fields |
+| `data/parse_report_full.json` | Counts, units, and the cross-term conflict check for all 656 |
+| `data/harvest_checkpoint_1.tsv` | The first 432, kept as the interrupted run's checkpoint |
 | `data/parsed.json` | The same cards parsed into fields |
 | `data/parse_report.json` | Counts, units, and the cross-term conflict check |
 | `../../tools/parse_page_harvest.py` | The parser. Reads shapes; reports what it does not recognise |
 | `../../tests/test_parse_page_harvest.py` | 14 tests, including two that fail if a value is invented |
+
+All 656 cards parse with no unrecognised shapes and no cross-term
+disagreements.
 
 Parser verification: 14 tests direct and 471 under pytest, which agree with the
 suite total. Two mutations were run and both were caught: writing the

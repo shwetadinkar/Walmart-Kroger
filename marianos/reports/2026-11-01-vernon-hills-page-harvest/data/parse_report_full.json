@@ -1,0 +1,57 @@
+{
+ "source": "marianos/reports/2026-11-01-vernon-hills-page-harvest/data/harvest_full.tsv",
+ "cards": 656,
+ "distinct_upcs": 649,
+ "parse_outcomes": {
+  "ok": 656
+ },
+ "ppm_present": 608,
+ "deal_text_present": 217,
+ "sale_price_present": 181,
+ "sold_by_weight": 32,
+ "price_basis": {
+  "fixed": 621,
+  "about each, sold by weight": 26,
+  "prices may vary": 3,
+  "about each on sale, sold by weight": 6
+ },
+ "size_present": 629,
+ "terms": [
+  "aa batteries",
+  "aluminum foil",
+  "banana",
+  "beer",
+  "bread",
+  "candle",
+  "cereal",
+  "chicken breast",
+  "chocolate",
+  "coffee",
+  "deli turkey",
+  "diapers",
+  "dog food",
+  "flowers",
+  "frozen pizza",
+  "light bulb",
+  "makeup",
+  "milk",
+  "notebook",
+  "organic milk",
+  "paper towels",
+  "pasta",
+  "salmon",
+  "shampoo",
+  "soda",
+  "vitamins"
+ ],
+ "cross_term_conflicts": [],
+ "ppm_units": {
+  "oz": 206,
+  "each": 170,
+  "fl oz": 115,
+  "lb": 74,
+  "sq ft": 43
+ },
+ "ppm_notation": "as rendered by the retailer; not reformatted or rounded",
+ "deal_wording": "verbatim card lines; not composed"
+}
