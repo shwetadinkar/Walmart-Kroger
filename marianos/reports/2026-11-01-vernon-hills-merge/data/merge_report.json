@@ -1,69 +1,63 @@
 {
- "api_records": 24683,
+ "api_records": 26166,
  "page_records": 656,
  "page_distinct_upcs": 649,
- "page_upcs_matched_in_api": 611,
- "page_upcs_not_in_api": 38,
+ "page_upcs_matched_in_api": 635,
+ "page_upcs_not_in_api": 14,
  "page_upcs_not_in_api_sample": [
-  "0000000004011",
   "0000000004409",
-  "0001090000018",
   "0001090000330",
-  "0001111003115",
-  "0001111085033",
-  "0001780047568",
-  "0001820086031",
-  "0002240039365",
-  "0003160404345",
-  "0003338320027",
   "0003338321000",
   "0003338324000",
-  "0003980014515",
-  "0003980014519",
-  "0003980014523",
-  "0003980014525",
-  "0004126000493",
-  "0004126002094",
-  "0004900002890"
+  "0007089618511",
+  "0007089618992",
+  "0007116970003",
+  "0007116970004",
+  "0007116970005",
+  "0009811177763",
+  "0071575610046",
+  "0077513971582",
+  "0081007666272",
+  "0081007666303"
  ],
  "fields_populated_after_merge": {
-  "ppm": 572,
-  "volume_deals_description": 170,
-  "digital_deals_description": 43
+  "ppm": 592,
+  "volume_deals_description": 181,
+  "digital_deals_description": 51
  },
  "values_by_field_and_source": {
-  "ppm": {
-   "crawl": 572
-  },
-  "image_url": {
-   "kroger_public": 24678
-  },
-  "store_brand": {
-   "kroger_public": 24683
-  },
-  "url": {
-   "kroger_public": 24683
-  },
-  "regular_price": {
-   "kroger_public": 24542
-  },
   "weight": {
-   "kroger_public": 24683
+   "kroger_public": 26166
+  },
+  "ppm": {
+   "crawl": 592
   },
   "product_title": {
-   "kroger_public": 24683
+   "kroger_public": 26166
+  },
+  "image_url": {
+   "kroger_public": 26160
+  },
+  "regular_price": {
+   "kroger_public": 26020
   },
   "upc": {
-   "kroger_public": 24683
+   "kroger_public": 26166
+  },
+  "url": {
+   "kroger_public": 26166
+  },
+  "store_brand": {
+   "kroger_public": 26166
   },
   "sale_price": {
-   "kroger_public": 6981
+   "kroger_public": 7469
   },
   "volume_deals_description": {
-   "crawl": 170
+   "crawl": 181
   },
   "digital_deals_description": {
-   "crawl": 43
+   "crawl": 51
   }
  },
  "conflicts": 0,

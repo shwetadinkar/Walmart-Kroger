@@ -1,0 +1,226 @@
+{
+ "locationId": "53100502",
+ "resolved": {
+  "zipcode": "60061",
+  "store_name": "Marianos - Marianos Vernon Hills",
+  "store_location": "1720 N Milwaukee Ave, Vernon Hills, IL 60061"
+ },
+ "verified_utc": "2026-10-31T20:56:15.296366+00:00",
+ "response": {
+  "data": {
+   "locationId": "53100502",
+   "storeNumber": "00502",
+   "divisionNumber": "531",
+   "chain": "MARIANOS",
+   "address": {
+    "addressLine1": "1720 N Milwaukee Ave",
+    "city": "Vernon Hills",
+    "state": "IL",
+    "zipCode": "60061",
+    "county": "Lake County"
+   },
+   "geolocation": {
+    "latitude": 42.2568706,
+    "longitude": -87.9508553,
+    "latLng": "42.2568706,-87.9508553"
+   },
+   "name": "Marianos - Marianos Vernon Hills",
+   "hours": {
+    "timezone": "America/Chicago",
+    "gmtOffset": "(UTC-06:00) Central Time (US Canada)",
+    "open24": false,
+    "monday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "tuesday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "wednesday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "thursday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "friday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "saturday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    },
+    "sunday": {
+     "open": "06:00",
+     "close": "22:00",
+     "open24": false
+    }
+   },
+   "phone": "8478160994",
+   "departments": [
+    {
+     "departmentId": "76",
+     "name": "Rotisserie Chicken"
+    },
+    {
+     "departmentId": "78",
+     "name": "Hot Pizza"
+    },
+    {
+     "departmentId": "AF",
+     "name": "Account Funding"
+    },
+    {
+     "departmentId": "TL",
+     "name": "Tobacco"
+    },
+    {
+     "departmentId": "04",
+     "name": "Meat Department"
+    },
+    {
+     "departmentId": "05",
+     "name": "Seafood Department"
+    },
+    {
+     "departmentId": "06",
+     "name": "Liquor"
+    },
+    {
+     "departmentId": "08",
+     "name": "Floral"
+    },
+    {
+     "departmentId": "0J",
+     "name": "Home Chef"
+    },
+    {
+     "departmentId": "45",
+     "name": "Wine"
+    },
+    {
+     "departmentId": "66",
+     "name": "Murray's Cheese"
+    },
+    {
+     "departmentId": "77",
+     "name": "Fried Chicken"
+    },
+    {
+     "departmentId": "01",
+     "name": "Deli"
+    },
+    {
+     "departmentId": "02",
+     "name": "Bakery"
+    },
+    {
+     "departmentId": "09",
+     "name": "Pharmacy",
+     "phone": "8478163247",
+     "hours": {
+      "open24": false,
+      "monday": {
+       "open": "09:00",
+       "close": "20:00",
+       "open24": false
+      },
+      "tuesday": {
+       "open": "09:00",
+       "close": "20:00",
+       "open24": false
+      },
+      "wednesday": {
+       "open": "09:00",
+       "close": "20:00",
+       "open24": false
+      },
+      "thursday": {
+       "open": "09:00",
+       "close": "20:00",
+       "open24": false
+      },
+      "friday": {
+       "open": "09:00",
+       "close": "20:00",
+       "open24": false
+      },
+      "saturday": {
+       "open": "09:00",
+       "close": "18:00",
+       "open24": false
+      },
+      "sunday": {
+       "open": "10:00",
+       "close": "17:00",
+       "open24": false
+      }
+     },
+     "address": {
+      "addressLine1": "1720 N. Milwaukee Ave.",
+      "city": "VERNON HILLS",
+      "state": "IL",
+      "zipCode": "60061"
+     },
+     "geolocation": {
+      "latitude": 42.2568706,
+      "longitude": -87.9508553,
+      "latLng": "42.2568706,-87.9508553"
+     },
+     "offsite": true
+    },
+    {
+     "departmentId": "32",
+     "name": "Natural And Organics"
+    },
+    {
+     "departmentId": "40",
+     "name": "Coffee Bar"
+    },
+    {
+     "departmentId": "44",
+     "name": "Beer"
+    },
+    {
+     "departmentId": "74",
+     "name": "Wine Tasting Bar"
+    },
+    {
+     "departmentId": "LY",
+     "name": "Lottery Tickets"
+    },
+    {
+     "departmentId": "94",
+     "name": "Pickup",
+     "phone": "8478163073"
+    },
+    {
+     "departmentId": "BC",
+     "name": "Balloon Center"
+    },
+    {
+     "departmentId": "03",
+     "name": "Cheese Counter"
+    },
+    {
+     "departmentId": "46",
+     "name": "Sushi"
+    },
+    {
+     "departmentId": "69",
+     "name": "Online Deli/Bakery Ordering"
+    }
+   ]
+  },
+  "meta": {}
+ }
+}

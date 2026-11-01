@@ -1,65 +1,83 @@
 # Merging the page read into the API set, 1 November 2026
 
 Store: Mariano's Vernon Hills, `53100502`, 1720 N Milwaukee Ave, IL 60061,
-PICKUP.
+PICKUP. The store is confirmed in `data/store_verification.json`, which resolves
+`locationId` `53100502` to that address at 2026-10-31T20:56:15Z.
 
 The API sweep enumerates the assortment and supplies category, price, size, UPC
 and the product URL. It supplies no displayed price per measure and no deal
 wording, because the Kroger public Products API carries neither. The page read
 of 1 November supplies exactly those three. This merges them.
 
-It is done through `marianos_collector/composition.py`, not by hand. The API set
+It is done through `../../marianos_collector/composition.py`, not by hand. The API set
 is the spine, the page read is an enrichment declaring only three fields, every
 contribution is bound to the product, store, fulfilment and time it was observed
 at, and the per-field precedence policy and provenance are the module's.
 
-## Read this first: the spine is not the file the rerun package describes
+## Which spine, and why it had to be corrected
 
-| | Records |
+`marianos/out/` on the operator's machine holds several runs at this store:
+
+| Folder | Records |
 |---|---:|
-| `reports/2026-10-31-vernon-hills-package-rerun/README.md` states | 26,166 |
-| The file this merge actually used | **24,683** |
+| `vernon-hills-2026-10-31-rerun/` | **26,166** |
+| `vernon-hills-enrichment-2026-10-31/` | 24,683 |
+| `vernon-hills-2026-10-31/` | 24,683 |
+| `probe-vh/` | 1,603 |
+| `probe-v2/` | 1,571 |
 
-The file used is `marianos/out/vernon-hills-enrichment-2026-10-31/data_22_fields.json`
-from the operator's machine, SHA-256
-`7f94979cd9bb0e2463264fd67a3805471fb684ce90a7526e96b239f23b94e8b6`,
-20,020,742 bytes. It carries `Marianos - Marianos Vernon Hills` on all 24,683
-rows and 24,505 of them have a category.
+The first version of this merge used the 24,683-record file, which is the run
+from **before** the paging correction in commit `78f57dc`. That was wrong: those
+1,483 records are the ones the paging fix recovered, and they were never offered
+to the merge. This report describes the corrected merge against the 26,166-record
+rerun, SHA-256
+`842c2dbee1b7d897568abec90adcdb80131a606b9e71212b923f7b5025eb0b6a`,
+21,257,021 bytes, 26,166 distinct UPCs with no duplicates and 25,979 carrying a
+category.
 
-**The 1,483-record difference is not explained.** The folder name says
-enrichment, not sweep, so this is most likely a later stage of the same run
-rather than the rerun's own output, but that has not been established. Until it
-is, the rerun package's figure of 26,166 and this merge's 24,683 are two
-different numbers for what should be the same collection, and neither should be
-quoted as the other. The rerun package's own data has not been located.
+**A separate defect is visible in that table and is not fixed here.**
+`vernon-hills-enrichment-2026-10-31/` holds 24,683, the same count as the
+pre-correction run, so whatever enrichment was produced on 31 October was also
+built on the superseded set. Nothing from that folder should be quoted until it
+is rebuilt.
 
 ## Result
 
 | Measure | Value |
 |---|---:|
-| Spine records in | 24,683 |
-| Spine records out | 24,683 |
+| Spine records in | 26,166 |
+| Spine records out | 26,166 |
 | Page cards offered | 656, over 649 distinct UPCs |
-| Page UPCs matched in the spine | 611 |
-| Page UPCs not present in the spine | 38 |
-| `ppm` populated after the merge | 572 |
-| `volume_deals_description` populated | 170 |
-| `digital_deals_description` populated | 43 |
-| Records carrying at least one page value | 572 |
-| Client category roots those 572 span | 21 |
+| Page UPCs matched in the spine | 635 |
+| Page UPCs not present in the spine | 14 |
+| `ppm` populated after the merge | 592 |
+| `volume_deals_description` populated | 181 |
+| `digital_deals_description` populated | 51 |
+| Records carrying at least one page value | 592 |
+| Client category roots those 592 span | 22 |
 | Field conflicts between the two sources | 0 |
 | Contributions refused as unbound | 0 |
 
-Every one of those `ppm` values is attributed to `crawl` in `data/provenance.json`,
-and every other field to `kroger_public`. No field was taken from both.
+Every `ppm`, `volume_deals_description` and `digital_deals_description` value is
+attributed to `crawl` in `data/provenance.json`. Every other field is attributed
+to `kroger_public`. No field was taken from both.
 
-The 38 page UPCs with no spine record contributed nothing to any product. They
-are not errors on the page's side; they are products the term-filtered sweep did
-not reach. They are counted, named in `data/merge_report.json`, and left out.
+Spread of the 592 across the client's roots: Household 90, Meat 53, Beverages
+50, Beauty 40, Dairy 33, Frozen 32, Grocery 28, Candy 26, Bakery 25, Baby 25,
+Health 24, Pet Supplies 24, Breakfast 24, Beer Wine Liquor 24, Candles and Home
+Fragrances 23, Natural Organic 19, School Office 15, Deli 13, Personal Care 11,
+Produce 6, Hardware and Home Improvement 3, Kitchen and Dining 1. Three of the
+592 carry no category, because their Kroger label is not in the map, and they
+are kept with the field empty rather than guessed.
+
+The 14 page UPCs with no spine record contributed nothing to any product. They
+are counted and named in `data/merge_report.json` and left out. Against the
+superseded spine this number was 38, so the paging correction accounted for 24
+of them.
 
 ## Rules this merge keeps
 
-**No row is dropped.** 24,683 in, 24,683 out. A product the page read never
+**No row is dropped.** 26,166 in, 26,166 out. A product the page read never
 reached keeps empty strings in those three fields and stays in the set, which is
 the retention rule in PART 0.
 
@@ -78,29 +96,32 @@ fails if that guard is removed.
 
 ## What this does not establish
 
-- **Coverage.** 572 of 24,683 records carry a displayed rate. The other 24,111
-  do not, and the page route stopped before it could reach them.
+- **Coverage.** 592 of 26,166 records carry a displayed rate. The other 25,574
+  do not, and the page route stopped before it could reach them. 22 roots
+  appearing here means the 592 fall into 22 of the client's roots, not that
+  those roots are covered.
 - **Category completeness.** The spine is a term-filtered sweep. It cannot
   attest complete category discovery and this merge does not change that.
 - **Price agreement between the sources.** Price is not taken from the page at
-  all, so the two were never compared. A disagreement would have been recorded
-  rather than resolved; none was looked for.
-- **That 21 roots is 21 roots of coverage.** It means the 572 enriched products
-  fall into 21 of the client's roots, not that those roots are covered.
+  all, so the two were never systematically compared. A disagreement would have
+  been recorded rather than resolved; none was looked for.
+- **Anything about the acceptable-use question.** The spine is Kroger public
+  API data and sits under `../../ACCEPTABLE_USE_POSITION.md` exactly as before.
+  Merging page-read fields onto it does not change that, and
+  `publication_eligible` is untouched.
 
 ## Reproducing it
 
 ```bash
 python3 marianos/tools/merge_page_enrichment.py \
-  --api <the 24,683-record data_22_fields.json> \
+  --api <vernon-hills-2026-10-31-rerun/data_22_fields.json> \
   --page marianos/reports/2026-11-01-vernon-hills-page-harvest/data/parsed_full.json \
   --out <output directory>
 ```
 
-`data/enriched_subset.json` here holds the 572 records the page read touched,
-which is the whole of what this step changed. The full 24,683-record output is
-20MB and is not committed; it is regenerated exactly by the command above from
-the two named inputs.
+`data/enriched_subset.json` holds the 592 records the page read touched, which
+is the whole of what this step changed. The full 26,166-record output is 21MB
+and is not committed; it regenerates exactly from the two named inputs.
 
 Verification: 14 tests direct and 485 under pytest, which agree. Two mutations
 were run and both were caught: removing the foreign-store guard failed the store
