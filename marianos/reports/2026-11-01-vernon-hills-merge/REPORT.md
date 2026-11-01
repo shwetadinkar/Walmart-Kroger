@@ -35,11 +35,16 @@ rerun, SHA-256
 21,257,021 bytes, 26,166 distinct UPCs with no duplicates and 25,979 carrying a
 category.
 
-**A separate defect is visible in that table and is not fixed here.**
-`vernon-hills-enrichment-2026-10-31/` holds 24,683, the same count as the
-pre-correction run, so whatever enrichment was produced on 31 October was also
-built on the superseded set. Nothing from that folder should be quoted until it
-is rebuilt.
+**On the enrichment folder in that table.** An earlier version of this report
+said `vernon-hills-enrichment-2026-10-31/` held enrichment built on the
+superseded set, and that it needed rebuilding. That overstated it. Checked: its
+24,683 records carry **no page-read values at all** — `ppm`,
+`volume_deals_description`, `digital_deals_description`,
+`volume_deals_price` and `digital_deals_price` are empty on every row. That
+matches the 31 October page probe, which read zero pages before the site refused
+(`reports/2026-10-31-vernon-hills-page-probe/REPORT.md`). So the folder is the
+pre-correction run with nothing added, not stale enrichment. There is nothing in
+it to rebuild, and this merge supersedes it entirely.
 
 ## Result
 
