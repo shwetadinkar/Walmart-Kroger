@@ -50,6 +50,24 @@ Concretely, and these are not negotiable:
   that is disclosed to him rather than asked of him. The populated export at
   `walmart/submission/2026-10-31-provider-fields/` therefore ships, with the
   24 October file he reviewed left untouched beside it.
+
+  On 1 November the provider refused in writing to supply the rendered string,
+  saying the split fields are the designed output and that combining them is
+  ours to do. A store 100 page observation is also unreachable. So the composed
+  value, labelled and disclosed, is now the only available form of this column,
+  not an interim one. See
+  `walmart/evidence/2026-11-01-provider-ticket-754118-followup.md`.
+
+  **Open question on store context.** The same reply describes the provider's
+  mechanism as opening the page, *attempting* to switch to the requested store,
+  then reading the price, and reports a current technical error with Walmart's
+  store chooser. Whether that switch applied to our 22 and 23 October snapshots
+  is unknown and has been asked. Price is probably unaffected, because the
+  provider states the price is the online price either way. Assortment and the
+  pickup fields are not: the claim that 143 populated prices sit on products not
+  available for pickup rests on the provider's pickup field, which depends on
+  the switch. Until answered, the 615 are the provider's output for a
+  *requested* store 100 context, not a verified store 100 assortment.
 - Volume and digital deal text must be the retailer's own wording. Never
   compose a deal description, and never compute a promotional price the
   retailer did not display.
