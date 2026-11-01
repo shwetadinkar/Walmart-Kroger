@@ -1,0 +1,81 @@
+{
+ "api_records": 24683,
+ "page_records": 656,
+ "page_distinct_upcs": 649,
+ "page_upcs_matched_in_api": 611,
+ "page_upcs_not_in_api": 38,
+ "page_upcs_not_in_api_sample": [
+  "0000000004011",
+  "0000000004409",
+  "0001090000018",
+  "0001090000330",
+  "0001111003115",
+  "0001111085033",
+  "0001780047568",
+  "0001820086031",
+  "0002240039365",
+  "0003160404345",
+  "0003338320027",
+  "0003338321000",
+  "0003338324000",
+  "0003980014515",
+  "0003980014519",
+  "0003980014523",
+  "0003980014525",
+  "0004126000493",
+  "0004126002094",
+  "0004900002890"
+ ],
+ "fields_populated_after_merge": {
+  "ppm": 572,
+  "volume_deals_description": 170,
+  "digital_deals_description": 43
+ },
+ "values_by_field_and_source": {
+  "ppm": {
+   "crawl": 572
+  },
+  "image_url": {
+   "kroger_public": 24678
+  },
+  "store_brand": {
+   "kroger_public": 24683
+  },
+  "url": {
+   "kroger_public": 24683
+  },
+  "regular_price": {
+   "kroger_public": 24542
+  },
+  "weight": {
+   "kroger_public": 24683
+  },
+  "product_title": {
+   "kroger_public": 24683
+  },
+  "upc": {
+   "kroger_public": 24683
+  },
+  "sale_price": {
+   "kroger_public": 6981
+  },
+  "volume_deals_description": {
+   "crawl": 170
+  },
+  "digital_deals_description": {
+   "crawl": 43
+  }
+ },
+ "conflicts": 0,
+ "refused_as_unbound": {},
+ "store": {
+  "store_id": "53100502",
+  "zipcode": "60061",
+  "store_name": "Marianos - Marianos Vernon Hills"
+ },
+ "does_not_establish": [
+  "Coverage. Only products the page read reached carry these fields; the rest keep empty strings and are not removed.",
+  "Category completeness. The spine is a term-filtered sweep and cannot attest complete category discovery.",
+  "That the page and API prices agree. Price is not taken from the page; any disagreement would be recorded, not resolved."
+ ]
+}
