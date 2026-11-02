@@ -23,6 +23,29 @@ class ValidationFailure(RuntimeError):
 def _payload_hash(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
+
+def storage_namespaces(categories, trial: bool) -> tuple[str, str]:
+    """The one place the published and trial storage layout is derived.
+
+    Returns (namespace, checkpoint_root).
+
+    This exists because it was derived in two places and the two disagreed.
+    `runner` hashed the category tuples with `sort_keys=True` and compact
+    separators; `cli` hashed the same tuples with `json.dumps` defaults, whose
+    separators are ", " and ": ". The digests differ, so a trial run wrote to
+    `trials/<a>` while `status`, `export` and `clear-checkpoints` read and
+    cleared `trials/<b>`. A trial appeared to produce nothing and its
+    checkpoints were never actually reset.
+
+    Every caller must use this function. Computing the signature again
+    anywhere else reintroduces the same defect, which is why the hashing is
+    not exposed separately.
+    """
+    if not trial:
+        return "published", "checkpoints"
+    signature = _payload_hash([(c.name, c.url) for c in categories])[:12]
+    return f"trials/{signature}", f"checkpoints-trials/{signature}"
+
 class Collector:
     def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False):
         self.storage = storage
@@ -34,9 +57,7 @@ class Collector:
         self.canaries = canaries or {}
         self.trial = trial
         # Prevent two-category experiments from replacing the complete 28-root dataset.
-        category_signature = _payload_hash([(c.name, c.url) for c in categories])[:12]
-        self.namespace = f"trials/{category_signature}" if trial else "published"
-        self.checkpoint_root = f"checkpoints-trials/{category_signature}" if trial else "checkpoints"
+        self.namespace, self.checkpoint_root = storage_namespaces(categories, trial)
 
     def _checkpoint_key(self, store, category):
         return f"{self.checkpoint_root}/{store.store_id}/{category.slug}.json"

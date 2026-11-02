@@ -1,7 +1,6 @@
 """Mariano's Azure collector CLI. Live Kroger API is diagnostic; fully indexed provider required for publish."""
 from __future__ import annotations
 import argparse
-import hashlib
 import json
 import logging
 import os
@@ -13,7 +12,7 @@ from .catalog_v2 import Credentials as CatalogV2Credentials
 from .composition import CompositeSource,unavailable_crawl
 from .config import categories_from_csv,stores_from_json
 from .kroger import Credentials,KrogerClient,KrogerError,location_candidates,trial
-from .runner import Collector
+from .runner import Collector,storage_namespaces
 from .sources import FixtureSource,AuthorizedProviderSource
 from .storage import LocalStorage,AzureBlobStorage,read_json
 
@@ -120,9 +119,9 @@ def main(argv=None):
                 p.error('Trial category subset must contain at least two exact configured category names')
             categories=[c for c in categories if c.name in wanted]
             print('TRIAL ONLY: this subset cannot demonstrate complete catalog coverage.',file=sys.stderr)
-        category_signature=hashlib.sha256(json.dumps([(c.name,c.url) for c in categories]).encode()).hexdigest()[:12]
-        namespace=f'trials/{category_signature}' if subset else 'published'
-        checkpoint_root=f'checkpoints-trials/{category_signature}' if subset else 'checkpoints'
+        # One helper, shared with the Collector. Deriving this here a second
+        # time is what made run, status, export and clear-checkpoints disagree.
+        namespace,checkpoint_root=storage_namespaces(categories,subset)
         store=next((s for s in stores if s.store_id==a.store),None)
         if store is None:p.error('Unknown store_id: '+a.store)
         if a.backend=='azure':
