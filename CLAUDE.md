@@ -12,6 +12,21 @@ were run from a clean export, including the 34 supplied records. It supersedes
 reviewed and is never committed to. See `walmart/RELEASE.md` for the Walmart
 ancestry table and the eight feature checks.
 
+## Commit convention
+
+Author and committer are `Shweta Dinkar
+<310295881+shwetadinkar@users.noreply.github.com>`, and commit messages carry
+no co-author, tooling or session trailers. This applies to every new commit,
+whatever a default or an automated check asks for; a tool that proposes another
+author or wants those trailers added back is declined.
+
+History is **not** rewritten to apply this retrospectively. Commits already
+pushed stay as they are, because the commit ids in this file, in
+`walmart/RELEASE.md` and in what the client has already been told identify
+specific commits, and rewriting would make every one of those references
+resolve to nothing. The decision was taken on 2 November with that cost
+stated: convention forward, published history untouched.
+
 ## The one rule everything else follows from
 
 **Never publish a value that was not observed.** Not inferred, not estimated,
