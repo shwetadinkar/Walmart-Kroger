@@ -161,6 +161,11 @@ the known gap. It is stated in
 this line used to cite, `reports/2026-10-24-west-loop/CATEGORY_COVERAGE.csv`,
 lives only on `marianos-live-api-west-loop` and is not on this branch.
 
+## Delivery date
+
+**5 November 2026, 00:00 GMT.** Set by the account holder and used in every
+client communication from 2 November onward. Do not invent a different one.
+
 ## The task in progress
 
 `marianos/tools/kroger_full_sweep.py` sweeps many search terms per category to
