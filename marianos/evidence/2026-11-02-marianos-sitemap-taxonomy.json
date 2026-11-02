@@ -1,0 +1,7274 @@
+{
+ "_what": "The Mariano's published site taxonomy and SEO product list, read from the retailer's own sitemap. Observed values only: every slug and id below is copied from a sitemap URL. Nothing here is inferred, and nothing here is store-specific - a sitemap is site-wide, so it says what categories and pages exist, not what the Vernon Hills store carries or what anything costs.",
+ "captured_utc": "2026-11-02",
+ "captured_how": "Read in a browser on an ordinary residential connection, one GET per sitemap file, five files in total. A curl of the same URL from a datacenter egress was refused with an HTTP/2 INTERNAL_ERROR before any HTTP exchange, which is the same refusal shape measured from two Azure regions on 30 October. No bot challenge was answered and none was bypassed.",
+ "robots_txt": {
+  "captured": "evidence/2026-11-01-marianos-robots.txt",
+  "disallows_relevant_to_this": [
+   "/locations*",
+   "/recipes/api/v1/*",
+   "/checkout*",
+   "/clickstream*",
+   "*.pdf",
+   "/in-stores/",
+   "/forgot-password"
+  ],
+  "note": "robots.txt does not disallow /pl/ listing pages, /p/ product pages or /search, and it advertises the sitemap that was read here. Store location lookups are disallowed, which is why the store is resolved through Kroger's documented Locations API instead."
+ },
+ "sitemap_index": "https://www.marianos.com/sitemap.xml",
+ "sitemap_files_read": [
+  "https://www.marianos.com/sitemap.xml",
+  "https://www.marianos.com/product-listing-sitemap.xml",
+  "https://www.marianos.com/product-details-sitemap.xml",
+  "https://www.marianos.com/pdp-sitemap/marianos-product-details-sitemap-1.xml",
+  "https://www.marianos.com/pdp-sitemap/marianos-product-details-sitemap-2.xml"
+ ],
+ "sitemap_index_entries": [
+  "account-sitemap.xml",
+  "coupons-sitemap.xml",
+  "homepage-sitemap.xml",
+  "recipe-sitemap.xml",
+  "storelocator-sitemap.xml",
+  "weeklyad-sitemap.xml",
+  "product-details-sitemap.xml",
+  "department-brand-sitemap.xml",
+  "product-listing-sitemap.xml",
+  "product-brand-sitemap.xml",
+  "regional-delivery-sitemap.xml",
+  "top-query-sitemap.xml",
+  "seo-store-files/link-hub-sitemaps/linkhub-index.xml"
+ ],
+ "_id_structure": "A listing id encodes its own depth: 2 digits is a department, 5 digits is that department plus a 3-digit subcategory, 10 digits is that plus a 5-digit leaf. So 60 is asian-food, 60004 is asian-appetizers inside it, 6000400001 is a leaf inside that.",
+ "listing_pages": {
+  "total": 461,
+  "departments": 39,
+  "subcategories": 184,
+  "leaves": 238,
+  "entries": [
+   {
+    "id": "01",
+    "slug": "pantry",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/pantry/01"
+   },
+   {
+    "id": "02",
+    "slug": "dairy-eggs",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/dairy-eggs/02"
+   },
+   {
+    "id": "03",
+    "slug": "breakfast",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/breakfast/03"
+   },
+   {
+    "id": "04",
+    "slug": "beverages",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/beverages/04"
+   },
+   {
+    "id": "05",
+    "slug": "meat-seafood",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/meat-seafood/05"
+   },
+   {
+    "id": "06",
+    "slug": "fresh-fruits-vegetables",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/fresh-fruits-vegetables/06"
+   },
+   {
+    "id": "10",
+    "slug": "baby",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/baby/10"
+   },
+   {
+    "id": "13",
+    "slug": "deli",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/deli/13"
+   },
+   {
+    "id": "18",
+    "slug": "natural-organic",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/natural-organic/18"
+   },
+   {
+    "id": "19",
+    "slug": "frozen-foods",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/frozen-foods/19"
+   },
+   {
+    "id": "20",
+    "slug": "beauty",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/beauty/20"
+   },
+   {
+    "id": "21",
+    "slug": "personal-care",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/personal-care/21"
+   },
+   {
+    "id": "22",
+    "slug": "health-wellness",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/health-wellness/22"
+   },
+   {
+    "id": "23",
+    "slug": "candy",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/candy/23"
+   },
+   {
+    "id": "24",
+    "slug": "garden-patio-grills",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/garden-patio-grills/24"
+   },
+   {
+    "id": "25",
+    "slug": "toys-games",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/toys-games/25"
+   },
+   {
+    "id": "26",
+    "slug": "cleaning-and-household",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/cleaning-and-household/26"
+   },
+   {
+    "id": "27",
+    "slug": "pet",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/pet/27"
+   },
+   {
+    "id": "28",
+    "slug": "kitchen",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/kitchen/28"
+   },
+   {
+    "id": "29",
+    "slug": "electronics",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/electronics/29"
+   },
+   {
+    "id": "30",
+    "slug": "checkout-grab-go",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/checkout-grab-go/30"
+   },
+   {
+    "id": "32",
+    "slug": "home-decor",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/home-decor/32"
+   },
+   {
+    "id": "33",
+    "slug": "hardware-home-improvement",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/hardware-home-improvement/33"
+   },
+   {
+    "id": "34",
+    "slug": "craft-hobby",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/craft-hobby/34"
+   },
+   {
+    "id": "35",
+    "slug": "school-office",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/school-office/35"
+   },
+   {
+    "id": "38",
+    "slug": "bedding",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/bedding/38"
+   },
+   {
+    "id": "39",
+    "slug": "storage-organization",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/storage-organization/39"
+   },
+   {
+    "id": "40",
+    "slug": "dining",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/dining/40"
+   },
+   {
+    "id": "42",
+    "slug": "car-seats-stroller-travel",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/car-seats-stroller-travel/42"
+   },
+   {
+    "id": "43",
+    "slug": "nursery",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/nursery/43"
+   },
+   {
+    "id": "44",
+    "slug": "nursing-feeding",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/nursing-feeding/44"
+   },
+   {
+    "id": "45",
+    "slug": "health-safety",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/health-safety/45"
+   },
+   {
+    "id": "46",
+    "slug": "bath-and-diapering",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/bath-and-diapering/46"
+   },
+   {
+    "id": "47",
+    "slug": "toys-learnings",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/toys-learnings/47"
+   },
+   {
+    "id": "48",
+    "slug": "children-s-clothing-accessories",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/children-s-clothing-accessories/48"
+   },
+   {
+    "id": "55",
+    "slug": "shoes",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/shoes/55"
+   },
+   {
+    "id": "58",
+    "slug": "latin-american-mexican",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/latin-american-mexican/58"
+   },
+   {
+    "id": "59",
+    "slug": "kosher",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/kosher/59"
+   },
+   {
+    "id": "60",
+    "slug": "asian-food",
+    "depth": "department",
+    "url": "https://www.marianos.com/pl/asian-food/60"
+   },
+   {
+    "id": "01006",
+    "slug": "canned-foods",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/canned-foods/01006"
+   },
+   {
+    "id": "01007",
+    "slug": "grains-beans-rice",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/grains-beans-rice/01007"
+   },
+   {
+    "id": "01008",
+    "slug": "condiments-salad-dressings",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/condiments-salad-dressings/01008"
+   },
+   {
+    "id": "01015",
+    "slug": "spices-seasonings",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/spices-seasonings/01015"
+   },
+   {
+    "id": "01020",
+    "slug": "snacks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/snacks/01020"
+   },
+   {
+    "id": "01022",
+    "slug": "nuts-trail-mix-seeds",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/nuts-trail-mix-seeds/01022"
+   },
+   {
+    "id": "02002",
+    "slug": "cheese",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cheese/02002"
+   },
+   {
+    "id": "02003",
+    "slug": "eggs",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/eggs/02003"
+   },
+   {
+    "id": "02004",
+    "slug": "butter-margarine",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/butter-margarine/02004"
+   },
+   {
+    "id": "02005",
+    "slug": "cream-creamer",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cream-creamer/02005"
+   },
+   {
+    "id": "02006",
+    "slug": "sour-cream-dips",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/sour-cream-dips/02006"
+   },
+   {
+    "id": "02007",
+    "slug": "refrigerated-dough-biscuits-rolls",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/refrigerated-dough-biscuits-rolls/02007"
+   },
+   {
+    "id": "02008",
+    "slug": "pudding-gelatin-desserts",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pudding-gelatin-desserts/02008"
+   },
+   {
+    "id": "02009",
+    "slug": "yogurt",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/yogurt/02009"
+   },
+   {
+    "id": "03001",
+    "slug": "cereal-granola",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cereal-granola/03001"
+   },
+   {
+    "id": "03002",
+    "slug": "bars-toaster-pastries",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bars-toaster-pastries/03002"
+   },
+   {
+    "id": "03003",
+    "slug": "pancake-waffle-baking-mixes",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pancake-waffle-baking-mixes/03003"
+   },
+   {
+    "id": "03004",
+    "slug": "swirl-bread-bagels-muffins",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/swirl-bread-bagels-muffins/03004"
+   },
+   {
+    "id": "03007",
+    "slug": "juice-breakfast-drinks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/juice-breakfast-drinks/03007"
+   },
+   {
+    "id": "03008",
+    "slug": "oatmeal-grits",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/oatmeal-grits/03008"
+   },
+   {
+    "id": "04001",
+    "slug": "soda-pop",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/soda-pop/04001"
+   },
+   {
+    "id": "04002",
+    "slug": "sparkling-water-seltzer-water",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/sparkling-water-seltzer-water/04002"
+   },
+   {
+    "id": "04003",
+    "slug": "coffee",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/coffee/04003"
+   },
+   {
+    "id": "04004",
+    "slug": "juice",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/juice/04004"
+   },
+   {
+    "id": "04006",
+    "slug": "water",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/water/04006"
+   },
+   {
+    "id": "04007",
+    "slug": "tea",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/tea/04007"
+   },
+   {
+    "id": "05001",
+    "slug": "beef",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/beef/05001"
+   },
+   {
+    "id": "05002",
+    "slug": "chicken",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/chicken/05002"
+   },
+   {
+    "id": "05003",
+    "slug": "dinner-sausage",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dinner-sausage/05003"
+   },
+   {
+    "id": "05004",
+    "slug": "fish",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/fish/05004"
+   },
+   {
+    "id": "05005",
+    "slug": "hot-dogs-franks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/hot-dogs-franks/05005"
+   },
+   {
+    "id": "05006",
+    "slug": "pork-ham",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pork-ham/05006"
+   },
+   {
+    "id": "05007",
+    "slug": "prepared-salads-spreads",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/prepared-salads-spreads/05007"
+   },
+   {
+    "id": "05008",
+    "slug": "refrigerated-pickles-sauerkraut",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/refrigerated-pickles-sauerkraut/05008"
+   },
+   {
+    "id": "06112",
+    "slug": "fresh-vegetables",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/fresh-vegetables/06112"
+   },
+   {
+    "id": "10003",
+    "slug": "diapers-training-pants",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/diapers-training-pants/10003"
+   },
+   {
+    "id": "10005",
+    "slug": "baby-bath-skincare",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/baby-bath-skincare/10005"
+   },
+   {
+    "id": "10006",
+    "slug": "baby-essentials",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/baby-essentials/10006"
+   },
+   {
+    "id": "13001",
+    "slug": "fresh-deli-meats",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/fresh-deli-meats/13001"
+   },
+   {
+    "id": "13003",
+    "slug": "packaged-deli-meat-lunchmeat",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/packaged-deli-meat-lunchmeat/13003"
+   },
+   {
+    "id": "13004",
+    "slug": "packaged-deli-sliced-cheese-and-cubes",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/packaged-deli-sliced-cheese-and-cubes/13004"
+   },
+   {
+    "id": "13005",
+    "slug": "specialty-cheeses",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/specialty-cheeses/13005"
+   },
+   {
+    "id": "13006",
+    "slug": "ready-to-heat-meals-soups",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/ready-to-heat-meals-soups/13006"
+   },
+   {
+    "id": "13007",
+    "slug": "chicken-and-hot-meals",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/chicken-and-hot-meals/13007"
+   },
+   {
+    "id": "13008",
+    "slug": "grab-go-meals",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/grab-go-meals/13008"
+   },
+   {
+    "id": "13009",
+    "slug": "cold-side-dishes",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cold-side-dishes/13009"
+   },
+   {
+    "id": "18001",
+    "slug": "beauty-personal-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/beauty-personal-care/18001"
+   },
+   {
+    "id": "18003",
+    "slug": "organic-produce",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/organic-produce/18003"
+   },
+   {
+    "id": "18004",
+    "slug": "meat-seafood",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/meat-seafood/18004"
+   },
+   {
+    "id": "18005",
+    "slug": "beverages",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/beverages/18005"
+   },
+   {
+    "id": "18006",
+    "slug": "spices-baking",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/spices-baking/18006"
+   },
+   {
+    "id": "18007",
+    "slug": "dairy-eggs",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dairy-eggs/18007"
+   },
+   {
+    "id": "18008",
+    "slug": "deli",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/deli/18008"
+   },
+   {
+    "id": "18011",
+    "slug": "cleaning-household",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cleaning-household/18011"
+   },
+   {
+    "id": "18012",
+    "slug": "grocery",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/grocery/18012"
+   },
+   {
+    "id": "19001",
+    "slug": "frozen-desserts-pies",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-desserts-pies/19001"
+   },
+   {
+    "id": "19002",
+    "slug": "ice-cream",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/ice-cream/19002"
+   },
+   {
+    "id": "19003",
+    "slug": "frozen-pizza",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-pizza/19003"
+   },
+   {
+    "id": "19005",
+    "slug": "frozen-vegetables",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-vegetables/19005"
+   },
+   {
+    "id": "19006",
+    "slug": "frozen-appetizers-snacks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-appetizers-snacks/19006"
+   },
+   {
+    "id": "19007",
+    "slug": "frozen-breakfast",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-breakfast/19007"
+   },
+   {
+    "id": "19008",
+    "slug": "frozen-meat-seafood",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/frozen-meat-seafood/19008"
+   },
+   {
+    "id": "20001",
+    "slug": "makeup",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/makeup/20001"
+   },
+   {
+    "id": "20002",
+    "slug": "face-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/face-care/20002"
+   },
+   {
+    "id": "20003",
+    "slug": "fragrance",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/fragrance/20003"
+   },
+   {
+    "id": "20004",
+    "slug": "hair-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/hair-care/20004"
+   },
+   {
+    "id": "20005",
+    "slug": "bath-body",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bath-body/20005"
+   },
+   {
+    "id": "20006",
+    "slug": "sun-tanning",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/sun-tanning/20006"
+   },
+   {
+    "id": "21003",
+    "slug": "oral-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/oral-care/21003"
+   },
+   {
+    "id": "21004",
+    "slug": "shaving-hair-removal",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/shaving-hair-removal/21004"
+   },
+   {
+    "id": "21005",
+    "slug": "face-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/face-care/21005"
+   },
+   {
+    "id": "21006",
+    "slug": "body-moisturizers",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/body-moisturizers/21006"
+   },
+   {
+    "id": "21007",
+    "slug": "hand-soap-sanitizer",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/hand-soap-sanitizer/21007"
+   },
+   {
+    "id": "21008",
+    "slug": "incontinence",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/incontinence/21008"
+   },
+   {
+    "id": "21009",
+    "slug": "feminine-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/feminine-care/21009"
+   },
+   {
+    "id": "21013",
+    "slug": "bath-body",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bath-body/21013"
+   },
+   {
+    "id": "22001",
+    "slug": "digestive-health-nausea",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/digestive-health-nausea/22001"
+   },
+   {
+    "id": "22002",
+    "slug": "eye-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/eye-care/22002"
+   },
+   {
+    "id": "22003",
+    "slug": "ear-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/ear-care/22003"
+   },
+   {
+    "id": "22004",
+    "slug": "first-aid",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/first-aid/22004"
+   },
+   {
+    "id": "22005",
+    "slug": "pain-fever",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pain-fever/22005"
+   },
+   {
+    "id": "22006",
+    "slug": "sleep-aids",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/sleep-aids/22006"
+   },
+   {
+    "id": "22007",
+    "slug": "foot-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/foot-care/22007"
+   },
+   {
+    "id": "22008",
+    "slug": "energy-stimulants",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/energy-stimulants/22008"
+   },
+   {
+    "id": "22010",
+    "slug": "sports-adult-nutrition",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/sports-adult-nutrition/22010"
+   },
+   {
+    "id": "22011",
+    "slug": "cold-cough-flu",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cold-cough-flu/22011"
+   },
+   {
+    "id": "22013",
+    "slug": "vitamins-supplements",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/vitamins-supplements/22013"
+   },
+   {
+    "id": "23001",
+    "slug": "chocolate",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/chocolate/23001"
+   },
+   {
+    "id": "23002",
+    "slug": "gum-mints",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/gum-mints/23002"
+   },
+   {
+    "id": "23003",
+    "slug": "gummy-chewy",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/gummy-chewy/23003"
+   },
+   {
+    "id": "23004",
+    "slug": "hard-candy-lollipops",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/hard-candy-lollipops/23004"
+   },
+   {
+    "id": "23005",
+    "slug": "international",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/international/23005"
+   },
+   {
+    "id": "23007",
+    "slug": "seasonal",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/seasonal/23007"
+   },
+   {
+    "id": "23008",
+    "slug": "premium-chocolate",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/premium-chocolate/23008"
+   },
+   {
+    "id": "23009",
+    "slug": "healthier-options",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/healthier-options/23009"
+   },
+   {
+    "id": "24001",
+    "slug": "grills-outdoor-cooking",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/grills-outdoor-cooking/24001"
+   },
+   {
+    "id": "25001",
+    "slug": "games-puzzles",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/games-puzzles/25001"
+   },
+   {
+    "id": "25002",
+    "slug": "action-figures-playsets",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/action-figures-playsets/25002"
+   },
+   {
+    "id": "25003",
+    "slug": "outdoor-play",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/outdoor-play/25003"
+   },
+   {
+    "id": "25004",
+    "slug": "dolls-plushies",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dolls-plushies/25004"
+   },
+   {
+    "id": "25005",
+    "slug": "learning-educational",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/learning-educational/25005"
+   },
+   {
+    "id": "25008",
+    "slug": "cars-rc-vehicles",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cars-rc-vehicles/25008"
+   },
+   {
+    "id": "26001",
+    "slug": "air-fresheners",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/air-fresheners/26001"
+   },
+   {
+    "id": "26002",
+    "slug": "light-bulbs",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/light-bulbs/26002"
+   },
+   {
+    "id": "26003",
+    "slug": "batteries",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/batteries/26003"
+   },
+   {
+    "id": "26005",
+    "slug": "dishwashing-needs",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dishwashing-needs/26005"
+   },
+   {
+    "id": "26006",
+    "slug": "food-storage",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/food-storage/26006"
+   },
+   {
+    "id": "26018",
+    "slug": "disposable-tableware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/disposable-tableware/26018"
+   },
+   {
+    "id": "26024",
+    "slug": "paper-products",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/paper-products/26024"
+   },
+   {
+    "id": "27012",
+    "slug": "dog-treats",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dog-treats/27012"
+   },
+   {
+    "id": "27017",
+    "slug": "dog-food",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dog-food/27017"
+   },
+   {
+    "id": "27018",
+    "slug": "dog-treats",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dog-treats/27018"
+   },
+   {
+    "id": "28001",
+    "slug": "kitchen-tools-gadgets",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-tools-gadgets/28001"
+   },
+   {
+    "id": "28002",
+    "slug": "kitchen-storage-organization",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-storage-organization/28002"
+   },
+   {
+    "id": "28003",
+    "slug": "pots-pans",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pots-pans/28003"
+   },
+   {
+    "id": "28004",
+    "slug": "coffee-tea-accessories",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/coffee-tea-accessories/28004"
+   },
+   {
+    "id": "28005",
+    "slug": "kitchen-appliances",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-appliances/28005"
+   },
+   {
+    "id": "28006",
+    "slug": "kitchen-table-linens",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-table-linens/28006"
+   },
+   {
+    "id": "28007",
+    "slug": "kitchen-appliances",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-appliances/28007"
+   },
+   {
+    "id": "28008",
+    "slug": "cookware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cookware/28008"
+   },
+   {
+    "id": "28009",
+    "slug": "bakeware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bakeware/28009"
+   },
+   {
+    "id": "28012",
+    "slug": "coffee-tea",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/coffee-tea/28012"
+   },
+   {
+    "id": "28019",
+    "slug": "water-and-filters",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/water-and-filters/28019"
+   },
+   {
+    "id": "29003",
+    "slug": "audio-mp3-players",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/audio-mp3-players/29003"
+   },
+   {
+    "id": "30001",
+    "slug": "single-serve-beverages",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/single-serve-beverages/30001"
+   },
+   {
+    "id": "30003",
+    "slug": "single-serve-snacks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/single-serve-snacks/30003"
+   },
+   {
+    "id": "32001",
+    "slug": "candles-home-fragrances",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/candles-home-fragrances/32001"
+   },
+   {
+    "id": "33001",
+    "slug": "building-materials",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/building-materials/33001"
+   },
+   {
+    "id": "33004",
+    "slug": "hand-tools",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/hand-tools/33004"
+   },
+   {
+    "id": "34001",
+    "slug": "painting-drawing",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/painting-drawing/34001"
+   },
+   {
+    "id": "35001",
+    "slug": "stationery-paper",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/stationery-paper/35001"
+   },
+   {
+    "id": "35002",
+    "slug": "notebooks-journals-calendars",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/notebooks-journals-calendars/35002"
+   },
+   {
+    "id": "35003",
+    "slug": "writing-supplies-accessories",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/writing-supplies-accessories/35003"
+   },
+   {
+    "id": "35004",
+    "slug": "binders-filing",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/binders-filing/35004"
+   },
+   {
+    "id": "35006",
+    "slug": "packing-and-mailing-supplies",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/packing-and-mailing-supplies/35006"
+   },
+   {
+    "id": "35008",
+    "slug": "crayons-and-markers",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/crayons-and-markers/35008"
+   },
+   {
+    "id": "38007",
+    "slug": "pillows",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pillows/38007"
+   },
+   {
+    "id": "39001",
+    "slug": "closet-organization",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/closet-organization/39001"
+   },
+   {
+    "id": "39002",
+    "slug": "kitchen-storage-pantry-organization",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kitchen-storage-pantry-organization/39002"
+   },
+   {
+    "id": "39003",
+    "slug": "laundry-room-organization",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/laundry-room-organization/39003"
+   },
+   {
+    "id": "39007",
+    "slug": "vacuums",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/vacuums/39007"
+   },
+   {
+    "id": "40001",
+    "slug": "dinnerware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dinnerware/40001"
+   },
+   {
+    "id": "40002",
+    "slug": "cutlery-knife-accessories",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cutlery-knife-accessories/40002"
+   },
+   {
+    "id": "40003",
+    "slug": "glassware-drinkware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/glassware-drinkware/40003"
+   },
+   {
+    "id": "40004",
+    "slug": "thermal-water-bottles",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/thermal-water-bottles/40004"
+   },
+   {
+    "id": "40006",
+    "slug": "serveware",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/serveware/40006"
+   },
+   {
+    "id": "42001",
+    "slug": "car-seats",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/car-seats/42001"
+   },
+   {
+    "id": "42002",
+    "slug": "stroller",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/stroller/42002"
+   },
+   {
+    "id": "42003",
+    "slug": "travel",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/travel/42003"
+   },
+   {
+    "id": "43002",
+    "slug": "baby-bedding-accessories",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/baby-bedding-accessories/43002"
+   },
+   {
+    "id": "43003",
+    "slug": "swaddle",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/swaddle/43003"
+   },
+   {
+    "id": "43007",
+    "slug": "storage-organization",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/storage-organization/43007"
+   },
+   {
+    "id": "44001",
+    "slug": "nursing",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/nursing/44001"
+   },
+   {
+    "id": "44002",
+    "slug": "bottle-feeding-pacifiers-and-teethers",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bottle-feeding-pacifiers-and-teethers/44002"
+   },
+   {
+    "id": "44003",
+    "slug": "burp-cloths-bibs",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/burp-cloths-bibs/44003"
+   },
+   {
+    "id": "44006",
+    "slug": "dishes-utensils-cups",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/dishes-utensils-cups/44006"
+   },
+   {
+    "id": "45006",
+    "slug": "health",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/health/45006"
+   },
+   {
+    "id": "46001",
+    "slug": "diaper-essentials",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/diaper-essentials/46001"
+   },
+   {
+    "id": "46003",
+    "slug": "bath-tubs-accessories",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/bath-tubs-accessories/46003"
+   },
+   {
+    "id": "47003",
+    "slug": "toddler-toys",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/toddler-toys/47003"
+   },
+   {
+    "id": "47004",
+    "slug": "books",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/books/47004"
+   },
+   {
+    "id": "48002",
+    "slug": "girl-clothing",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/girl-clothing/48002"
+   },
+   {
+    "id": "48006",
+    "slug": "swaddle-wearable-blankets",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/swaddle-wearable-blankets/48006"
+   },
+   {
+    "id": "55007",
+    "slug": "shoe-accessories-care",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/shoe-accessories-care/55007"
+   },
+   {
+    "id": "58001",
+    "slug": "tortillas-taco-shells-tostadas",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/tortillas-taco-shells-tostadas/58001"
+   },
+   {
+    "id": "58002",
+    "slug": "pantry",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/pantry/58002"
+   },
+   {
+    "id": "58003",
+    "slug": "salsas-sauces-dips",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/salsas-sauces-dips/58003"
+   },
+   {
+    "id": "58004",
+    "slug": "beverages",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/beverages/58004"
+   },
+   {
+    "id": "58005",
+    "slug": "cookies-candy-snacks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/cookies-candy-snacks/58005"
+   },
+   {
+    "id": "59001",
+    "slug": "kosher-meat-poultry-fish",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-meat-poultry-fish/59001"
+   },
+   {
+    "id": "59002",
+    "slug": "kosher-beverages",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-beverages/59002"
+   },
+   {
+    "id": "59003",
+    "slug": "kosher-frozen",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-frozen/59003"
+   },
+   {
+    "id": "59005",
+    "slug": "kosher-pantry-essentials",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-pantry-essentials/59005"
+   },
+   {
+    "id": "59006",
+    "slug": "kosher-cooking-ingredients",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-cooking-ingredients/59006"
+   },
+   {
+    "id": "59007",
+    "slug": "kosher-deli",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-deli/59007"
+   },
+   {
+    "id": "59008",
+    "slug": "kosher-candy",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/kosher-candy/59008"
+   },
+   {
+    "id": "60001",
+    "slug": "asian-sauces-marinades",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-sauces-marinades/60001"
+   },
+   {
+    "id": "60002",
+    "slug": "asian-beverages",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-beverages/60002"
+   },
+   {
+    "id": "60003",
+    "slug": "asian-meals-desserts",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-meals-desserts/60003"
+   },
+   {
+    "id": "60004",
+    "slug": "asian-appetizers",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-appetizers/60004"
+   },
+   {
+    "id": "60005",
+    "slug": "asian-candy-snacks",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-candy-snacks/60005"
+   },
+   {
+    "id": "60006",
+    "slug": "asian-noodles-rice",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-noodles-rice/60006"
+   },
+   {
+    "id": "60007",
+    "slug": "asian-cooking-ingredients",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-cooking-ingredients/60007"
+   },
+   {
+    "id": "60008",
+    "slug": "asian-fruits-vegetables",
+    "depth": "subcategory",
+    "url": "https://www.marianos.com/pl/asian-fruits-vegetables/60008"
+   },
+   {
+    "id": "0100600001",
+    "slug": "canned-pasta",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/canned-pasta/0100600001"
+   },
+   {
+    "id": "0100600010",
+    "slug": "canned-beans",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/canned-beans/0100600010"
+   },
+   {
+    "id": "0100700001",
+    "slug": "rice",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/rice/0100700001"
+   },
+   {
+    "id": "0100800001",
+    "slug": "salad-dressings",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/salad-dressings/0100800001"
+   },
+   {
+    "id": "0101500004",
+    "slug": "pepper-pepper-blends",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pepper-pepper-blends/0101500004"
+   },
+   {
+    "id": "0101500005",
+    "slug": "bread-crumbs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bread-crumbs/0101500005"
+   },
+   {
+    "id": "0102000027",
+    "slug": "granola-bars",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/granola-bars/0102000027"
+   },
+   {
+    "id": "0102200016",
+    "slug": "pumpkin-seeds-pepitas",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pumpkin-seeds-pepitas/0102200016"
+   },
+   {
+    "id": "0200200001",
+    "slug": "sliced-cheese",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/sliced-cheese/0200200001"
+   },
+   {
+    "id": "0200300001",
+    "slug": "traditional-eggs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/traditional-eggs/0200300001"
+   },
+   {
+    "id": "0200400001",
+    "slug": "salted-butter-sticks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/salted-butter-sticks/0200400001"
+   },
+   {
+    "id": "0200500001",
+    "slug": "half-half",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/half-half/0200500001"
+   },
+   {
+    "id": "0200600001",
+    "slug": "sour-cream",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/sour-cream/0200600001"
+   },
+   {
+    "id": "0200700001",
+    "slug": "cookie-dough",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cookie-dough/0200700001"
+   },
+   {
+    "id": "0200800001",
+    "slug": "pudding",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pudding/0200800001"
+   },
+   {
+    "id": "0200900001",
+    "slug": "traditional-yogurt",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/traditional-yogurt/0200900001"
+   },
+   {
+    "id": "0300100001",
+    "slug": "cold-cereal",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cold-cereal/0300100001"
+   },
+   {
+    "id": "0300200001",
+    "slug": "breakfast-cereal-bars",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/breakfast-cereal-bars/0300200001"
+   },
+   {
+    "id": "0300300001",
+    "slug": "pancake-waffle-mix",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pancake-waffle-mix/0300300001"
+   },
+   {
+    "id": "0300400001",
+    "slug": "muffins",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/muffins/0300400001"
+   },
+   {
+    "id": "0300700001",
+    "slug": "fruit-juice",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/fruit-juice/0300700001"
+   },
+   {
+    "id": "0300800001",
+    "slug": "instant-oatmeal-packets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/instant-oatmeal-packets/0300800001"
+   },
+   {
+    "id": "0300800002",
+    "slug": "instant-oatmeal-cups",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/instant-oatmeal-cups/0300800002"
+   },
+   {
+    "id": "0400100001",
+    "slug": "cola-sodas",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cola-sodas/0400100001"
+   },
+   {
+    "id": "0400200001",
+    "slug": "flavored-sparkling-water-seltzer",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/flavored-sparkling-water-seltzer/0400200001"
+   },
+   {
+    "id": "0400300001",
+    "slug": "k-cups-coffee-pods",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/k-cups-coffee-pods/0400300001"
+   },
+   {
+    "id": "0400400001",
+    "slug": "apple",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/apple/0400400001"
+   },
+   {
+    "id": "0400600001",
+    "slug": "distilled-water",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/distilled-water/0400600001"
+   },
+   {
+    "id": "0400700001",
+    "slug": "iced-tea",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/iced-tea/0400700001"
+   },
+   {
+    "id": "0400700003",
+    "slug": "herbal-fruit-tea",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/herbal-fruit-tea/0400700003"
+   },
+   {
+    "id": "0500100001",
+    "slug": "beef-ribs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/beef-ribs/0500100001"
+   },
+   {
+    "id": "0500200001",
+    "slug": "chicken-legs-thighs-wings",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/chicken-legs-thighs-wings/0500200001"
+   },
+   {
+    "id": "0500300001",
+    "slug": "andouille",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/andouille/0500300001"
+   },
+   {
+    "id": "0500400001",
+    "slug": "catfish",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/catfish/0500400001"
+   },
+   {
+    "id": "0500500001",
+    "slug": "beef-hot-dogs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/beef-hot-dogs/0500500001"
+   },
+   {
+    "id": "0500600001",
+    "slug": "ground-pork",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/ground-pork/0500600001"
+   },
+   {
+    "id": "0500700001",
+    "slug": "prepared-salads-spreads",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/prepared-salads-spreads/0500700001"
+   },
+   {
+    "id": "0500800001",
+    "slug": "refrigerated-pickles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/refrigerated-pickles/0500800001"
+   },
+   {
+    "id": "0611200692",
+    "slug": "onions-garlic",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/onions-garlic/0611200692"
+   },
+   {
+    "id": "1000300001",
+    "slug": "disposable-diapers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/disposable-diapers/1000300001"
+   },
+   {
+    "id": "1000300003",
+    "slug": "training-pants",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/training-pants/1000300003"
+   },
+   {
+    "id": "1000500001",
+    "slug": "diaper-rash-cream",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/diaper-rash-cream/1000500001"
+   },
+   {
+    "id": "1000600001",
+    "slug": "baby-sunscreen",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/baby-sunscreen/1000600001"
+   },
+   {
+    "id": "1000600006",
+    "slug": "breastfeeding",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/breastfeeding/1000600006"
+   },
+   {
+    "id": "1300100001",
+    "slug": "fresh-deli-salami-meat",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/fresh-deli-salami-meat/1300100001"
+   },
+   {
+    "id": "1300300001",
+    "slug": "packaged-salami-pepperoni",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/packaged-salami-pepperoni/1300300001"
+   },
+   {
+    "id": "1300400001",
+    "slug": "packaged-colby-jack-cheese",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/packaged-colby-jack-cheese/1300400001"
+   },
+   {
+    "id": "1300500001",
+    "slug": "american-cheese",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/american-cheese/1300500001"
+   },
+   {
+    "id": "1300600001",
+    "slug": "meal-kit-entrees",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/meal-kit-entrees/1300600001"
+   },
+   {
+    "id": "1300700001",
+    "slug": "roasted-chicken",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/roasted-chicken/1300700001"
+   },
+   {
+    "id": "1300800001",
+    "slug": "salads",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/salads/1300800001"
+   },
+   {
+    "id": "1300900001",
+    "slug": "meal-kit-sides",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/meal-kit-sides/1300900001"
+   },
+   {
+    "id": "1800100001",
+    "slug": "bath-body",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bath-body/1800100001"
+   },
+   {
+    "id": "1800100003",
+    "slug": "vitamins-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/vitamins-supplements/1800100003"
+   },
+   {
+    "id": "1800100007",
+    "slug": "protein-powders-shakes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/protein-powders-shakes/1800100007"
+   },
+   {
+    "id": "1800300001",
+    "slug": "organic-apples-pears",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/organic-apples-pears/1800300001"
+   },
+   {
+    "id": "1800400001",
+    "slug": "bacon-breakfast-sausage",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bacon-breakfast-sausage/1800400001"
+   },
+   {
+    "id": "1800500001",
+    "slug": "tea",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tea/1800500001"
+   },
+   {
+    "id": "1800600001",
+    "slug": "flours-meals",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/flours-meals/1800600001"
+   },
+   {
+    "id": "1800600006",
+    "slug": "baking-mixes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/baking-mixes/1800600006"
+   },
+   {
+    "id": "1800700001",
+    "slug": "refrigerated-doughs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/refrigerated-doughs/1800700001"
+   },
+   {
+    "id": "1800800001",
+    "slug": "hummus-salsa-dips",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/hummus-salsa-dips/1800800001"
+   },
+   {
+    "id": "1801100002",
+    "slug": "dish-washing",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dish-washing/1801100002"
+   },
+   {
+    "id": "1801100003",
+    "slug": "air-fresheners-aromatherapy-candles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/air-fresheners-aromatherapy-candles/1801100003"
+   },
+   {
+    "id": "1801200001",
+    "slug": "snacks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/snacks/1801200001"
+   },
+   {
+    "id": "1801200009",
+    "slug": "cookies-candy",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cookies-candy/1801200009"
+   },
+   {
+    "id": "1900100001",
+    "slug": "frozen-cakes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-cakes/1900100001"
+   },
+   {
+    "id": "1900200001",
+    "slug": "toppings",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toppings/1900200001"
+   },
+   {
+    "id": "1900300001",
+    "slug": "frozen-meat-pizza",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-meat-pizza/1900300001"
+   },
+   {
+    "id": "1900500001",
+    "slug": "frozen-beans",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-beans/1900500001"
+   },
+   {
+    "id": "1900600001",
+    "slug": "frozen-burrito-wraps",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-burrito-wraps/1900600001"
+   },
+   {
+    "id": "1900700001",
+    "slug": "frozen-breakfast-bowls-meals",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-breakfast-bowls-meals/1900700001"
+   },
+   {
+    "id": "1900800001",
+    "slug": "frozen-beef",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/frozen-beef/1900800001"
+   },
+   {
+    "id": "2000100001",
+    "slug": "beauty-tools-accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/beauty-tools-accessories/2000100001"
+   },
+   {
+    "id": "2000200001",
+    "slug": "facial-moisturizers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/facial-moisturizers/2000200001"
+   },
+   {
+    "id": "2000300001",
+    "slug": "men-s-fragrance",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/men-s-fragrance/2000300001"
+   },
+   {
+    "id": "2000400001",
+    "slug": "shampoo",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/shampoo/2000400001"
+   },
+   {
+    "id": "2000400003",
+    "slug": "dry-shampoo",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dry-shampoo/2000400003"
+   },
+   {
+    "id": "2000400015",
+    "slug": "hair-styling-products",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/hair-styling-products/2000400015"
+   },
+   {
+    "id": "2000500001",
+    "slug": "bar-soap",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bar-soap/2000500001"
+   },
+   {
+    "id": "2000500004",
+    "slug": "body-wash",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/body-wash/2000500004"
+   },
+   {
+    "id": "2000600001",
+    "slug": "sunscreen",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/sunscreen/2000600001"
+   },
+   {
+    "id": "2100300001",
+    "slug": "toothbrushes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toothbrushes/2100300001"
+   },
+   {
+    "id": "2100400001",
+    "slug": "men-s-razor-s-refills",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/men-s-razor-s-refills/2100400001"
+   },
+   {
+    "id": "2100500001",
+    "slug": "facial-moisturizers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/facial-moisturizers/2100500001"
+   },
+   {
+    "id": "2100600001",
+    "slug": "body-lotions-creams",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/body-lotions-creams/2100600001"
+   },
+   {
+    "id": "2100700001",
+    "slug": "hand-soap",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/hand-soap/2100700001"
+   },
+   {
+    "id": "2100700003",
+    "slug": "hand-soap-refills",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/hand-soap-refills/2100700003"
+   },
+   {
+    "id": "2100800001",
+    "slug": "pads-liners",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pads-liners/2100800001"
+   },
+   {
+    "id": "2100900004",
+    "slug": "tampons",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tampons/2100900004"
+   },
+   {
+    "id": "2100900006",
+    "slug": "intimate-treatments-hygiene",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/intimate-treatments-hygiene/2100900006"
+   },
+   {
+    "id": "2101300004",
+    "slug": "body-washes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/body-washes/2101300004"
+   },
+   {
+    "id": "2200100001",
+    "slug": "antacids-heartburn-relief",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/antacids-heartburn-relief/2200100001"
+   },
+   {
+    "id": "2200200001",
+    "slug": "accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/accessories/2200200001"
+   },
+   {
+    "id": "2200300001",
+    "slug": "accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/accessories/2200300001"
+   },
+   {
+    "id": "2200400001",
+    "slug": "bandages",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bandages/2200400001"
+   },
+   {
+    "id": "2200500001",
+    "slug": "adult-pain-fever-relief",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/adult-pain-fever-relief/2200500001"
+   },
+   {
+    "id": "2200600001",
+    "slug": "sleep-support-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/sleep-support-supplements/2200600001"
+   },
+   {
+    "id": "2200700001",
+    "slug": "foot-creams-powders",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/foot-creams-powders/2200700001"
+   },
+   {
+    "id": "2200800001",
+    "slug": "alertness-aids",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/alertness-aids/2200800001"
+   },
+   {
+    "id": "2200800003",
+    "slug": "personal-care-health",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/personal-care-health/2200800003"
+   },
+   {
+    "id": "2201000001",
+    "slug": "protein-powders",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/protein-powders/2201000001"
+   },
+   {
+    "id": "2201000004",
+    "slug": "weight-loss-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/weight-loss-supplements/2201000004"
+   },
+   {
+    "id": "2201000005",
+    "slug": "protein-nutrition-bars",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/protein-nutrition-bars/2201000005"
+   },
+   {
+    "id": "2201100003",
+    "slug": "immune-system-supports",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/immune-system-supports/2201100003"
+   },
+   {
+    "id": "2201300001",
+    "slug": "letter-vitamins",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/letter-vitamins/2201300001"
+   },
+   {
+    "id": "2201300003",
+    "slug": "herbal-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/herbal-supplements/2201300003"
+   },
+   {
+    "id": "2201300004",
+    "slug": "minerals",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/minerals/2201300004"
+   },
+   {
+    "id": "2201300007",
+    "slug": "joint-health",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/joint-health/2201300007"
+   },
+   {
+    "id": "2201300008",
+    "slug": "nutrition-diet-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/nutrition-diet-supplements/2201300008"
+   },
+   {
+    "id": "2201300011",
+    "slug": "hair-skin-nails-supplements",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/hair-skin-nails-supplements/2201300011"
+   },
+   {
+    "id": "2300100006",
+    "slug": "milk-chocolate",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/milk-chocolate/2300100006"
+   },
+   {
+    "id": "2300100007",
+    "slug": "dark-chocolate",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dark-chocolate/2300100007"
+   },
+   {
+    "id": "2300200001",
+    "slug": "bubble-gum",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bubble-gum/2300200001"
+   },
+   {
+    "id": "2300300002",
+    "slug": "fruity",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/fruity/2300300002"
+   },
+   {
+    "id": "2300400001",
+    "slug": "caramel-toffee",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/caramel-toffee/2300400001"
+   },
+   {
+    "id": "2300500001",
+    "slug": "international",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/international/2300500001"
+   },
+   {
+    "id": "2300700001",
+    "slug": "easter",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/easter/2300700001"
+   },
+   {
+    "id": "2300800001",
+    "slug": "milk-chocolate",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/milk-chocolate/2300800001"
+   },
+   {
+    "id": "2300900001",
+    "slug": "low-sugar-sugar-free",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/low-sugar-sugar-free/2300900001"
+   },
+   {
+    "id": "2300900003",
+    "slug": "gummy-chewy",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/gummy-chewy/2300900003"
+   },
+   {
+    "id": "2400100001",
+    "slug": "charcoal-fire-starters",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/charcoal-fire-starters/2400100001"
+   },
+   {
+    "id": "2500100001",
+    "slug": "family-board-games",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/family-board-games/2500100001"
+   },
+   {
+    "id": "2500200001",
+    "slug": "action-figures",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/action-figures/2500200001"
+   },
+   {
+    "id": "2500300001",
+    "slug": "balls",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/balls/2500300001"
+   },
+   {
+    "id": "2500400001",
+    "slug": "fashion-dolls",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/fashion-dolls/2500400001"
+   },
+   {
+    "id": "2500400002",
+    "slug": "preschool-baby",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/preschool-baby/2500400002"
+   },
+   {
+    "id": "2500500004",
+    "slug": "educational-toys",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/educational-toys/2500500004"
+   },
+   {
+    "id": "2500800001",
+    "slug": "toy-cars-vehicles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toy-cars-vehicles/2500800001"
+   },
+   {
+    "id": "2600100001",
+    "slug": "air-fresheners-mists",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/air-fresheners-mists/2600100001"
+   },
+   {
+    "id": "2600100010",
+    "slug": "scented-oils-refills",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/scented-oils-refills/2600100010"
+   },
+   {
+    "id": "2600200001",
+    "slug": "3-way-light-bulbs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/3-way-light-bulbs/2600200001"
+   },
+   {
+    "id": "2600300001",
+    "slug": "9-volt-batteries",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/9-volt-batteries/2600300001"
+   },
+   {
+    "id": "2600500003",
+    "slug": "dish-soap",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dish-soap/2600500003"
+   },
+   {
+    "id": "2600600001",
+    "slug": "bottles-cups-jars",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bottles-cups-jars/2600600001"
+   },
+   {
+    "id": "2600600008",
+    "slug": "lunch-boxes-bags",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/lunch-boxes-bags/2600600008"
+   },
+   {
+    "id": "2601800004",
+    "slug": "forks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/forks/2601800004"
+   },
+   {
+    "id": "2602400001",
+    "slug": "toilet-paper",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toilet-paper/2602400001"
+   },
+   {
+    "id": "2701200004",
+    "slug": "dental",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dental/2701200004"
+   },
+   {
+    "id": "2701700002",
+    "slug": "dry-dog-food",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dry-dog-food/2701700002"
+   },
+   {
+    "id": "2701700005",
+    "slug": "freeze-dried-dog-food",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/freeze-dried-dog-food/2701700005"
+   },
+   {
+    "id": "2701800001",
+    "slug": "biscuit-crunchy",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/biscuit-crunchy/2701800001"
+   },
+   {
+    "id": "2800100001",
+    "slug": "spatulas-turners",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/spatulas-turners/2800100001"
+   },
+   {
+    "id": "2800100009",
+    "slug": "brushes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/brushes/2800100009"
+   },
+   {
+    "id": "2800100016",
+    "slug": "cutting-boards-cheese-boards",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cutting-boards-cheese-boards/2800100016"
+   },
+   {
+    "id": "2800200001",
+    "slug": "pantry-refrigerator-organization",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pantry-refrigerator-organization/2800200001"
+   },
+   {
+    "id": "2800300001",
+    "slug": "liners-lids-accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/liners-lids-accessories/2800300001"
+   },
+   {
+    "id": "2800400001",
+    "slug": "coffee-filters-tea-infusers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/coffee-filters-tea-infusers/2800400001"
+   },
+   {
+    "id": "2800500001",
+    "slug": "rice-slow-cookers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/rice-slow-cookers/2800500001"
+   },
+   {
+    "id": "2800500005",
+    "slug": "electric-griddles-waffle-makers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/electric-griddles-waffle-makers/2800500005"
+   },
+   {
+    "id": "2800600001",
+    "slug": "tablecloths",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tablecloths/2800600001"
+   },
+   {
+    "id": "2800700002",
+    "slug": "blenders",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/blenders/2800700002"
+   },
+   {
+    "id": "2800700003",
+    "slug": "mixers-attachments",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/mixers-attachments/2800700003"
+   },
+   {
+    "id": "2800700004",
+    "slug": "toasters",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toasters/2800700004"
+   },
+   {
+    "id": "2800700005",
+    "slug": "electric-griddles-waffle-makers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/electric-griddles-waffle-makers/2800700005"
+   },
+   {
+    "id": "2800700006",
+    "slug": "fryers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/fryers/2800700006"
+   },
+   {
+    "id": "2800700007",
+    "slug": "food-processors",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/food-processors/2800700007"
+   },
+   {
+    "id": "2800700009",
+    "slug": "coffee-makers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/coffee-makers/2800700009"
+   },
+   {
+    "id": "2800700017",
+    "slug": "other-kitchen-appliances",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/other-kitchen-appliances/2800700017"
+   },
+   {
+    "id": "2800700024",
+    "slug": "espresso-machines",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/espresso-machines/2800700024"
+   },
+   {
+    "id": "2800800004",
+    "slug": "roasting-pans",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/roasting-pans/2800800004"
+   },
+   {
+    "id": "2800800013",
+    "slug": "tea-kettles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tea-kettles/2800800013"
+   },
+   {
+    "id": "2800900007",
+    "slug": "cookie-sheets-baking-sheets-cooling-racks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/cookie-sheets-baking-sheets-cooling-racks/2800900007"
+   },
+   {
+    "id": "2801200006",
+    "slug": "grinders",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/grinders/2801200006"
+   },
+   {
+    "id": "2801200008",
+    "slug": "espresso-machines",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/espresso-machines/2801200008"
+   },
+   {
+    "id": "2801900003",
+    "slug": "water-filtration-pitchers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/water-filtration-pitchers/2801900003"
+   },
+   {
+    "id": "2900300001",
+    "slug": "headphones-earbuds-headsets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/headphones-earbuds-headsets/2900300001"
+   },
+   {
+    "id": "3000100001",
+    "slug": "soda",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/soda/3000100001"
+   },
+   {
+    "id": "3000300001",
+    "slug": "chips",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/chips/3000300001"
+   },
+   {
+    "id": "3200100001",
+    "slug": "tapered-candles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tapered-candles/3200100001"
+   },
+   {
+    "id": "3300100001",
+    "slug": "chains-ropes-tie-downs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/chains-ropes-tie-downs/3300100001"
+   },
+   {
+    "id": "3300400001",
+    "slug": "tool-sets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/tool-sets/3300400001"
+   },
+   {
+    "id": "3400100001",
+    "slug": "drawing-pads-coloring-books",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/drawing-pads-coloring-books/3400100001"
+   },
+   {
+    "id": "3500100001",
+    "slug": "copier-paper",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/copier-paper/3500100001"
+   },
+   {
+    "id": "3500200001",
+    "slug": "spiral-notebooks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/spiral-notebooks/3500200001"
+   },
+   {
+    "id": "3500300001",
+    "slug": "pens",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pens/3500300001"
+   },
+   {
+    "id": "3500400001",
+    "slug": "pocket-folders",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/pocket-folders/3500400001"
+   },
+   {
+    "id": "3500600001",
+    "slug": "envelopes",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/envelopes/3500600001"
+   },
+   {
+    "id": "3500800001",
+    "slug": "crayons",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/crayons/3500800001"
+   },
+   {
+    "id": "3800700002",
+    "slug": "bed-pillows",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bed-pillows/3800700002"
+   },
+   {
+    "id": "3900100001",
+    "slug": "clothing-storage",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/clothing-storage/3900100001"
+   },
+   {
+    "id": "3900200006",
+    "slug": "sink-organization-racks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/sink-organization-racks/3900200006"
+   },
+   {
+    "id": "3900300002",
+    "slug": "garment-steamers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/garment-steamers/3900300002"
+   },
+   {
+    "id": "3900700005",
+    "slug": "steam-cleaners",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/steam-cleaners/3900700005"
+   },
+   {
+    "id": "3900700006",
+    "slug": "stick-vacuums",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/stick-vacuums/3900700006"
+   },
+   {
+    "id": "3900700007",
+    "slug": "upright-vacuums",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/upright-vacuums/3900700007"
+   },
+   {
+    "id": "3900700008",
+    "slug": "vacuum-cleaner-parts",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/vacuum-cleaner-parts/3900700008"
+   },
+   {
+    "id": "4000100001",
+    "slug": "bowls",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bowls/4000100001"
+   },
+   {
+    "id": "4000100004",
+    "slug": "dinnerware-sets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/dinnerware-sets/4000100004"
+   },
+   {
+    "id": "4000200001",
+    "slug": "steak-chef-knives",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/steak-chef-knives/4000200001"
+   },
+   {
+    "id": "4000300001",
+    "slug": "beer-glasses",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/beer-glasses/4000300001"
+   },
+   {
+    "id": "4000400001",
+    "slug": "insulated",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/insulated/4000400001"
+   },
+   {
+    "id": "4000400007",
+    "slug": "plastic",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/plastic/4000400007"
+   },
+   {
+    "id": "4000600001",
+    "slug": "appetizer-servers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/appetizer-servers/4000600001"
+   },
+   {
+    "id": "4200100005",
+    "slug": "accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/accessories/4200100005"
+   },
+   {
+    "id": "4200200007",
+    "slug": "stroller-accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/stroller-accessories/4200200007"
+   },
+   {
+    "id": "4200300001",
+    "slug": "diaper-bags",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/diaper-bags/4200300001"
+   },
+   {
+    "id": "4300200001",
+    "slug": "crib-sheets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/crib-sheets/4300200001"
+   },
+   {
+    "id": "4300300002",
+    "slug": "swaddle-wraps",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/swaddle-wraps/4300300002"
+   },
+   {
+    "id": "4300300003",
+    "slug": "2-in-1-swaddles",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/2-in-1-swaddles/4300300003"
+   },
+   {
+    "id": "4300300004",
+    "slug": "wearable-blankets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/wearable-blankets/4300300004"
+   },
+   {
+    "id": "4300700005",
+    "slug": "toy-storage",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/toy-storage/4300700005"
+   },
+   {
+    "id": "4400100002",
+    "slug": "breast-feeding-accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/breast-feeding-accessories/4400100002"
+   },
+   {
+    "id": "4400200001",
+    "slug": "bottles-sets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bottles-sets/4400200001"
+   },
+   {
+    "id": "4400200003",
+    "slug": "bottle-accessories",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bottle-accessories/4400200003"
+   },
+   {
+    "id": "4400200004",
+    "slug": "warmers-sterilizers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/warmers-sterilizers/4400200004"
+   },
+   {
+    "id": "4400300001",
+    "slug": "burp-cloths",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/burp-cloths/4400300001"
+   },
+   {
+    "id": "4400300002",
+    "slug": "bibs",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bibs/4400300002"
+   },
+   {
+    "id": "4400600002",
+    "slug": "utensils",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/utensils/4400600002"
+   },
+   {
+    "id": "4500600001",
+    "slug": "thermometers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/thermometers/4500600001"
+   },
+   {
+    "id": "4600100005",
+    "slug": "portable-changing-pads",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/portable-changing-pads/4600100005"
+   },
+   {
+    "id": "4600300001",
+    "slug": "bath-tub-seats",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bath-tub-seats/4600300001"
+   },
+   {
+    "id": "4600300004",
+    "slug": "bath-toys",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/bath-toys/4600300004"
+   },
+   {
+    "id": "4700300004",
+    "slug": "educational-toys",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/educational-toys/4700300004"
+   },
+   {
+    "id": "4700400001",
+    "slug": "soft-books",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/soft-books/4700400001"
+   },
+   {
+    "id": "4800200006",
+    "slug": "girl-athletic",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/girl-athletic/4800200006"
+   },
+   {
+    "id": "4800600001",
+    "slug": "swaddle-blankets",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/swaddle-blankets/4800600001"
+   },
+   {
+    "id": "5500700001",
+    "slug": "shoe-care",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/shoe-care/5500700001"
+   },
+   {
+    "id": "5800100001",
+    "slug": "corn-tortillas",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/corn-tortillas/5800100001"
+   },
+   {
+    "id": "5800200001",
+    "slug": "spices-seasonings",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/spices-seasonings/5800200001"
+   },
+   {
+    "id": "5800300001",
+    "slug": "salsas",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/salsas/5800300001"
+   },
+   {
+    "id": "5800400001",
+    "slug": "aquas-frescas",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/aquas-frescas/5800400001"
+   },
+   {
+    "id": "5800500001",
+    "slug": "snacks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/snacks/5800500001"
+   },
+   {
+    "id": "5900100001",
+    "slug": "kosher-meat-poultry-fish",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-meat-poultry-fish/5900100001"
+   },
+   {
+    "id": "5900200001",
+    "slug": "kosher-beverages",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-beverages/5900200001"
+   },
+   {
+    "id": "5900300001",
+    "slug": "kosher-frozen",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-frozen/5900300001"
+   },
+   {
+    "id": "5900500001",
+    "slug": "kosher-pantry-essentials",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-pantry-essentials/5900500001"
+   },
+   {
+    "id": "5900600001",
+    "slug": "kosher-cooking-ingredients",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-cooking-ingredients/5900600001"
+   },
+   {
+    "id": "5900700001",
+    "slug": "kosher-deli",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-deli/5900700001"
+   },
+   {
+    "id": "5900800001",
+    "slug": "kosher-candy",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/kosher-candy/5900800001"
+   },
+   {
+    "id": "6000100001",
+    "slug": "asian-sauces-marinades",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-sauces-marinades/6000100001"
+   },
+   {
+    "id": "6000200001",
+    "slug": "asian-beverages",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-beverages/6000200001"
+   },
+   {
+    "id": "6000300001",
+    "slug": "asian-meals-desserts",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-meals-desserts/6000300001"
+   },
+   {
+    "id": "6000400001",
+    "slug": "asian-appetizers",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-appetizers/6000400001"
+   },
+   {
+    "id": "6000500001",
+    "slug": "asian-candy-snacks",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-candy-snacks/6000500001"
+   },
+   {
+    "id": "6000600001",
+    "slug": "asian-noodles-rice",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-noodles-rice/6000600001"
+   },
+   {
+    "id": "6000700001",
+    "slug": "asian-cooking-ingredients",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-cooking-ingredients/6000700001"
+   },
+   {
+    "id": "6000800001",
+    "slug": "asian-fruits-vegetables",
+    "depth": "leaf",
+    "url": "https://www.marianos.com/pl/asian-fruits-vegetables/6000800001"
+   }
+  ]
+ },
+ "seo_product_pages": {
+  "total": 890,
+  "_caution": "This is the retailer's SEO product list, not its catalogue. 890 URLs against 26,166 products already collected from the API at one store means the product sitemap is a curated subset and is NOT a route to complete product enumeration. It is useful only as an independently published sample to test our own coverage against.",
+  "product_ids": [
+   "0001111000552",
+   "0001111002537",
+   "0001111003245",
+   "0001111003249",
+   "0001111003251",
+   "0001111006574",
+   "0001111009265",
+   "0001111009267",
+   "0001111009268",
+   "0001111009270",
+   "0001111009855",
+   "0001111009969",
+   "0001111010454",
+   "0001111011575",
+   "0001111011576",
+   "0001111011849",
+   "0001111012008",
+   "0001111012149",
+   "0001111012150",
+   "0001111012270",
+   "0001111012271",
+   "0001111012312",
+   "0001111012313",
+   "0001111012337",
+   "0001111012672",
+   "0001111012792",
+   "0001111012794",
+   "0001111012798",
+   "0001111012838",
+   "0001111012933",
+   "0001111013014",
+   "0001111013048",
+   "0001111013085",
+   "0001111013589",
+   "0001111013674",
+   "0001111013676",
+   "0001111013876",
+   "0001111013877",
+   "0001111013883",
+   "0001111014120",
+   "0001111014252",
+   "0001111014254",
+   "0001111014256",
+   "0001111014914",
+   "0001111014931",
+   "0001111014932",
+   "0001111014933",
+   "0001111049179",
+   "0001111049180",
+   "0001111049198",
+   "0001111049213",
+   "0001111049465",
+   "0001111049680",
+   "0001111049684",
+   "0001111049687",
+   "0001111049787",
+   "0001111078407",
+   "0001111078408",
+   "0001111078506",
+   "0001111078708",
+   "0001111079599",
+   "0001111080650",
+   "0001111082377",
+   "0001111082432",
+   "0001111084316",
+   "0001111084502",
+   "0001111084694",
+   "0001111085808",
+   "0001111086705",
+   "0001111087382",
+   "0001111087577",
+   "0001111087584",
+   "0001111087586",
+   "0001111087609",
+   "0001111087870",
+   "0001111088445",
+   "0001111088657",
+   "0001111089044",
+   "0001111089045",
+   "0001111089727",
+   "0001111090275",
+   "0001111090875",
+   "0001111090946",
+   "0001115048055",
+   "0001200000017",
+   "0001200000129",
+   "0001200000230",
+   "0001200000311",
+   "0001200000559",
+   "0001200001311",
+   "0001200001426",
+   "0001200001880",
+   "0001200003068",
+   "0001200010798",
+   "0001200014092",
+   "0001200016313",
+   "0001200017002",
+   "0001200017173",
+   "0001200017174",
+   "0001200017176",
+   "0001200017185",
+   "0001200017186",
+   "0001200017195",
+   "0001200017200",
+   "0001200017209",
+   "0001200017213",
+   "0001200017232",
+   "0001200017256",
+   "0001200017258",
+   "0001200017322",
+   "0001200017323",
+   "0001200018307",
+   "0001200019252",
+   "0001200022242",
+   "0001200023018",
+   "0001200023019",
+   "0001200023020",
+   "0001200024082",
+   "0001200050405",
+   "0001200080994",
+   "0001200080999",
+   "0001200081002",
+   "0001200081119",
+   "0001312000026",
+   "0001312000082",
+   "0001312001203",
+   "0001312001261",
+   "0001370082425",
+   "0001380012140",
+   "0001380024963",
+   "0001450000026",
+   "0001450000102",
+   "0001450001741",
+   "0001450001794",
+   "0001450001955",
+   "0001450002690",
+   "0001450003160",
+   "0001600010371",
+   "0001600012025",
+   "0001600012125",
+   "0001600012183",
+   "0001600012185",
+   "0001600012222",
+   "0001600012224",
+   "0001600012254",
+   "0001600012399",
+   "0001600012479",
+   "0001600012495",
+   "0001600012499",
+   "0001600012506",
+   "0001600012541",
+   "0001600012593",
+   "0001600012685",
+   "0001600012749",
+   "0001600015128",
+   "0001600015154",
+   "0001600015159",
+   "0001600015163",
+   "0001600015762",
+   "0001600015764",
+   "0001600015765",
+   "0001600015777",
+   "0001600015781",
+   "0001600016197",
+   "0001600016243",
+   "0001600016344",
+   "0001600016346",
+   "0001600016361",
+   "0001600016362",
+   "0001600016367",
+   "0001600017003",
+   "0001600017104",
+   "0001600017108",
+   "0001600018517",
+   "0001600018954",
+   "0001600018958",
+   "0001600019303",
+   "0001600019304",
+   "0001600019305",
+   "0001600019317",
+   "0001600019457",
+   "0001600020221",
+   "0001600020281",
+   "0001600020679",
+   "0001600020684",
+   "0001600020696",
+   "0001600020819",
+   "0001600020929",
+   "0001600021166",
+   "0001600021451",
+   "0001600022195",
+   "0001600022207",
+   "0001600022208",
+   "0001600022233",
+   "0001600022605",
+   "0001600022629",
+   "0001600022634",
+   "0001600022636",
+   "0001600022793",
+   "0001600027515",
+   "0001600027526",
+   "0001600027532",
+   "0001600027549",
+   "0001600027563",
+   "0001600027565",
+   "0001600036245",
+   "0001600047321",
+   "0001600048769",
+   "0001600048792",
+   "0001600048793",
+   "0001600048794",
+   "0001600048796",
+   "0001600049667",
+   "0001600087700",
+   "0001700310854",
+   "0001700310855",
+   "0001700310857",
+   "0001707700132",
+   "0001707710132",
+   "0001707710232",
+   "0001707710308",
+   "0001707710332",
+   "0001707710432",
+   "0001707710732",
+   "0001707710808",
+   "0001707710932",
+   "0001707711132",
+   "0001707711708",
+   "0001800028794",
+   "0001862710139",
+   "0001862710757",
+   "0001862711351",
+   "0001862711472",
+   "0001862711499",
+   "0001862711505",
+   "0001862711507",
+   "0001862711509",
+   "0001862711511",
+   "0001862711528",
+   "0001862751003",
+   "0001862770327",
+   "0001862770339",
+   "0001862770348",
+   "0001878777532",
+   "0001878777632",
+   "0001878778105",
+   "0001878778405",
+   "0001878778605",
+   "0001878778705",
+   "0001917505280",
+   "0001917505354",
+   "0002100004442",
+   "0002100008145",
+   "0002100008386",
+   "0002100062679",
+   "0002113618163",
+   "0002190813199",
+   "0002190813323",
+   "0002190813679",
+   "0002190813681",
+   "0002190813932",
+   "0002190840724",
+   "0002190845551",
+   "0002190845553",
+   "0002190845556",
+   "0002190845559",
+   "0002190845988",
+   "0002260002020",
+   "0002260090125",
+   "0002260090126",
+   "0002260090127",
+   "0002340099774",
+   "0002523101645",
+   "0002570000381",
+   "0002570000382",
+   "0002570000388",
+   "0002570000581",
+   "0002570001353",
+   "0002570001361",
+   "0002570001362",
+   "0002570070407",
+   "0002570070953",
+   "0002898910064",
+   "0002898910066",
+   "0002898910068",
+   "0002898910080",
+   "0002898910084",
+   "0002898910088",
+   "0002898910090",
+   "0002898910092",
+   "0002898910094",
+   "0002898910102",
+   "0002898910104",
+   "0002898910108",
+   "0002898910110",
+   "0002898910291",
+   "0002898910314",
+   "0002898910419",
+   "0002898910441",
+   "0002898910566",
+   "0002898910605",
+   "0002898910621",
+   "0002898957799",
+   "0002898997110",
+   "0002898997195",
+   "0002898997500",
+   "0003000006322",
+   "0003000006354",
+   "0003000006441",
+   "0003000031378",
+   "0003000031379",
+   "0003000056236",
+   "0003000056237",
+   "0003000056238",
+   "0003000057321",
+   "0003000057322",
+   "0003000057323",
+   "0003000057330",
+   "0003000057331",
+   "0003000057332",
+   "0003000057812",
+   "0003000066213",
+   "0003000066507",
+   "0003100018454",
+   "0003100018462",
+   "0003100018464",
+   "0003100030744",
+   "0003100044109",
+   "0003100044110",
+   "0003390000033",
+   "0003390020067",
+   "0003619200029",
+   "0003619212247",
+   "0003663202954",
+   "0003663203966",
+   "0003663203967",
+   "0003663203968",
+   "0003663204270",
+   "0003663204284",
+   "0003800000110",
+   "0003800018339",
+   "0003800019841",
+   "0003800019843",
+   "0003800019924",
+   "0003800019994",
+   "0003800020022",
+   "0003800023145",
+   "0003800023153",
+   "0003800023459",
+   "0003800024848",
+   "0003800024850",
+   "0003800026996",
+   "0003800027001",
+   "0003800027003",
+   "0003800027009",
+   "0003800027011",
+   "0003800027088",
+   "0003800027798",
+   "0003800027802",
+   "0003800027804",
+   "0003800028184",
+   "0003800028186",
+   "0003800028188",
+   "0003800028190",
+   "0003952890129",
+   "0003952890130",
+   "0004116707800",
+   "0004119210037",
+   "0004119210041",
+   "0004119210043",
+   "0004119210045",
+   "0004119210047",
+   "0004119210049",
+   "0004119210053",
+   "0004119210199",
+   "0004119210201",
+   "0004119210203",
+   "0004119210207",
+   "0004119210211",
+   "0004119210217",
+   "0004119210219",
+   "0004119210223",
+   "0004119210227",
+   "0004119210233",
+   "0004119210239",
+   "0004119210255",
+   "0004119210325",
+   "0004119210328",
+   "0004119210330",
+   "0004119210336",
+   "0004119210360",
+   "0004119210363",
+   "0004119210365",
+   "0004119210367",
+   "0004119210369",
+   "0004119210373",
+   "0004119210375",
+   "0004119210379",
+   "0004119210381",
+   "0004119210399",
+   "0004119210474",
+   "0004119210714",
+   "0004119210747",
+   "0004119210887",
+   "0004119210891",
+   "0004119210948",
+   "0004122642687",
+   "0004126000319",
+   "0004126000321",
+   "0004126000487",
+   "0004126000815",
+   "0004126001246",
+   "0004126001247",
+   "0004126001248",
+   "0004126001249",
+   "0004126001250",
+   "0004126001401",
+   "0004126001806",
+   "0004126001807",
+   "0004126001908",
+   "0004126001909",
+   "0004126033242",
+   "0004126033247",
+   "0004126038525",
+   "0004126038526",
+   "0004126038529",
+   "0004126038556",
+   "0004138800730",
+   "0004157300315",
+   "0004227201191",
+   "0004240002554",
+   "0004240026521",
+   "0004240038991",
+   "0004240039548",
+   "0004240040758",
+   "0004240044035",
+   "0004240046297",
+   "0004240091378",
+   "0004240093978",
+   "0004249197701",
+   "0004260847071",
+   "0004260847094",
+   "0004300001120",
+   "0004300002264",
+   "0004300002885",
+   "0004300002886",
+   "0004300003695",
+   "0004300008488",
+   "0004300009313",
+   "0004300009315",
+   "0004300094502",
+   "0004300094511",
+   "0004300094520",
+   "0004300094964",
+   "0004300095051",
+   "0004300095064",
+   "0004300095065",
+   "0004300095079",
+   "0004300095080",
+   "0004330161163",
+   "0004330161205",
+   "0004369505631",
+   "0004369505632",
+   "0004369507107",
+   "0004369507109",
+   "0004369507111",
+   "0004369507112",
+   "0004369507116",
+   "0004369507118",
+   "0004369507511",
+   "0004369507512",
+   "0004369527632",
+   "0004369549728",
+   "0004369565840",
+   "0004369595310",
+   "0004524300048",
+   "0004524301948",
+   "0004600012357",
+   "0004600013534",
+   "0004600013535",
+   "0004650004523",
+   "0004650005071",
+   "0004650005276",
+   "0004650005281",
+   "0004650022154",
+   "0004800050791",
+   "0004852600600",
+   "0004852605716",
+   "0004900000044",
+   "0004900000045",
+   "0004900000463",
+   "0004900000548",
+   "0004900000594",
+   "0004900000613",
+   "0004900001063",
+   "0004900001278",
+   "0004900001801",
+   "0004900002468",
+   "0004900002469",
+   "0004900002542",
+   "0004900002870",
+   "0004900002890",
+   "0004900002891",
+   "0004900002933",
+   "0004900002934",
+   "0004900003103",
+   "0004900003124",
+   "0004900004086",
+   "0004900004805",
+   "0004900005010",
+   "0004900005011",
+   "0004900005013",
+   "0004900005016",
+   "0004900005023",
+   "0004900005537",
+   "0004900005539",
+   "0004900005541",
+   "0004900006101",
+   "0004900006105",
+   "0004900006721",
+   "0004900006722",
+   "0004900007477",
+   "0004900007596",
+   "0004900054961",
+   "0004900055883",
+   "0004900055884",
+   "0005113164204",
+   "0005114193099",
+   "0005150000630",
+   "0005150002927",
+   "0005150002945",
+   "0005150002990",
+   "0005150004815",
+   "0005150004816",
+   "0005150004817",
+   "0005150004818",
+   "0005150004962",
+   "0005150021179",
+   "0005150026124",
+   "0005209204027",
+   "0005215901332",
+   "0005844960057",
+   "0005844977020",
+   "0005844977050",
+   "0005844977099",
+   "0005844977143",
+   "0005844977153",
+   "0005844977155",
+   "0005844977207",
+   "0005844977731",
+   "0005844977765",
+   "0005844986003",
+   "0005844986004",
+   "0005844986007",
+   "0006827419514",
+   "0006827434217",
+   "0006827434225",
+   "0006827473529",
+   "0006827491147",
+   "0007017717636",
+   "0007020078858",
+   "0007047022408",
+   "0007073407037",
+   "0007080021635",
+   "0007080074210",
+   "0007080074687",
+   "0007116927383",
+   "0007116927385",
+   "0007146426040",
+   "0007166206511",
+   "0007166207722",
+   "0007166207726",
+   "0007223932476",
+   "0007223932552",
+   "0007225100139",
+   "0007225100154",
+   "0007225100155",
+   "0007225100156",
+   "0007225100177",
+   "0007231000145",
+   "0007231000167",
+   "0007231000837",
+   "0007231000841",
+   "0007231000847",
+   "0007231000860",
+   "0007231000861",
+   "0007231000862",
+   "0007231003248",
+   "0007279600018",
+   "0007287807151",
+   "0007347200101",
+   "0007347200117",
+   "0007347200119",
+   "0007347200120",
+   "0007347200123",
+   "0007347200124",
+   "0007347200131",
+   "0007347200153",
+   "0007347200256",
+   "0007347200258",
+   "0007433347429",
+   "0007440170432",
+   "0007502001686",
+   "0007535307308",
+   "0007536557332",
+   "0007750700501",
+   "0007750700505",
+   "0007765208229",
+   "0007790000215",
+   "0007790036517",
+   "0007790036518",
+   "0007790036520",
+   "0007791405818",
+   "0007800000204",
+   "0007800000337",
+   "0007800000386",
+   "0007800000388",
+   "0007800002590",
+   "0007800002665",
+   "0007800003349",
+   "0007800003530",
+   "0007800003536",
+   "0007800003761",
+   "0007800003767",
+   "0007800004037",
+   "0007800004116",
+   "0007800008210",
+   "0007800008216",
+   "0007800008231",
+   "0007800008239",
+   "0007800008240",
+   "0007800008246",
+   "0007800008310",
+   "0007800008316",
+   "0007800008331",
+   "0007800008340",
+   "0007800008346",
+   "0007800009816",
+   "0007800009846",
+   "0007852202105",
+   "0008000052208",
+   "0008086802901",
+   "0008086806019",
+   "0008298800006",
+   "0008298801006",
+   "0008298801016",
+   "0008298801106",
+   "0008298804496",
+   "0008634117052",
+   "0018473900149",
+   "0019056912310",
+   "0019056912311",
+   "0019056950939",
+   "0019056952224",
+   "0019056952920",
+   "0019305204570",
+   "0020318500000",
+   "0020318900000",
+   "0021321700000",
+   "0022335800000",
+   "0022565000000",
+   "0022594300000",
+   "0023320500000",
+   "0023339000000",
+   "0023357510000",
+   "0024336800000",
+   "0024566390000",
+   "0024587340000",
+   "0025202400000",
+   "0026159900000",
+   "0026564020000",
+   "0027931550000",
+   "0028648060000",
+   "0029647710000",
+   "0030573055620",
+   "0030573284093",
+   "0030573286893",
+   "0030573287193",
+   "0063347232258",
+   "0063347260224",
+   "0063347260234",
+   "0063748002084",
+   "0063748002502",
+   "0063748002553",
+   "0063748004504",
+   "0065334133514",
+   "0065577201827",
+   "0065722700210",
+   "0065722720617",
+   "0066651933490",
+   "0066651961157",
+   "0067628001130",
+   "0067628001132",
+   "0067628001840",
+   "0067628002709",
+   "0069843300091",
+   "0069843300123",
+   "0069923500100",
+   "0071833422007",
+   "0073753920004",
+   "0075928367321",
+   "0078616200281",
+   "0078616200369",
+   "0079452200356",
+   "0079452270510",
+   "0079452273062",
+   "0079452273063",
+   "0080033810101",
+   "0080033810102",
+   "0080033810103",
+   "0080812411104",
+   "0080812411163",
+   "0080812411215",
+   "0080812411432",
+   "0080812412163",
+   "0080812414104",
+   "0080812470057",
+   "0081000346108",
+   "0081001572078",
+   "0081005729013",
+   "0081005729082",
+   "0081005729083",
+   "0081005729109",
+   "0081006371029",
+   "0081006371030",
+   "0081006371050",
+   "0081006371105",
+   "0081009494015",
+   "0081009494016",
+   "0081009494018",
+   "0081009559192",
+   "0081012129000",
+   "0081012129015",
+   "0081012129017",
+   "0081012129023",
+   "0081012129027",
+   "0081012129047",
+   "0081106801100",
+   "0081106801101",
+   "0081106801500",
+   "0081106801501",
+   "0081157202397",
+   "0081157202766",
+   "0081215403504",
+   "0081669702019",
+   "0081669702039",
+   "0081669702061",
+   "0081669702062",
+   "0081669702100",
+   "0081669702101",
+   "0081669702107",
+   "0081669702114",
+   "0081669702116",
+   "0081669702304",
+   "0081696002262",
+   "0081829001175",
+   "0081829001177",
+   "0081829001179",
+   "0081829001180",
+   "0081829001558",
+   "0081829001561",
+   "0081829001562",
+   "0081829001563",
+   "0081829001771",
+   "0081829001773",
+   "0081829001774",
+   "0081829001872",
+   "0081829001938",
+   "0081861702257",
+   "0081939302056",
+   "0081939302059",
+   "0081939302075",
+   "0081959701021",
+   "0081985802002",
+   "0083373500006",
+   "0083373500014",
+   "0084004530022",
+   "0084223400000",
+   "0084223400010",
+   "0084223400052",
+   "0084223400232",
+   "0084223400233",
+   "0084223400234",
+   "0084223400249",
+   "0084223400670",
+   "0084223400719",
+   "0084529603414",
+   "0085000288741",
+   "0085000288742",
+   "0085000288744",
+   "0085000288746",
+   "0085000964783",
+   "0085000994283",
+   "0085001599600",
+   "0085001599601",
+   "0085001681302",
+   "0085001746808",
+   "0085001746818",
+   "0085002026043",
+   "0085002770226",
+   "0085002803503",
+   "0085003928641",
+   "0085004411209",
+   "0085004721780",
+   "0085004721781",
+   "0085004721782",
+   "0085012500847",
+   "0085012500848",
+   "0085181700767",
+   "0085181700777",
+   "0085300400454",
+   "0085337100643",
+   "0085603500101",
+   "0085608800374",
+   "0085608800375",
+   "0085648100318",
+   "0085648100320",
+   "0085648100389",
+   "0085650200608",
+   "0085654100254",
+   "0085654100282",
+   "0085654100283",
+   "0085672600746",
+   "0085675700642",
+   "0085688520025",
+   "0086000215244",
+   "0086000215249",
+   "0086047900152",
+   "0086376500000",
+   "0086376500002",
+   "0087426700800",
+   "0087863900008",
+   "0087863900010",
+   "0087863900090",
+   "0088397809598",
+   "0088397809599",
+   "0088397814444",
+   "0088397814726",
+   "0088462310619",
+   "0088491200237",
+   "0088491200341",
+   "0088491200471",
+   "0088491200672",
+   "0088491201426",
+   "0088491201427",
+   "0088491211171",
+   "0088491211470",
+   "0088491211762",
+   "0088491212601",
+   "0088491212611",
+   "0088491212951",
+   "0088491212971",
+   "0088491218005",
+   "0088491218059",
+   "0088491218062",
+   "0088491224926",
+   "0088491224927",
+   "0088491227310",
+   "0088491228433",
+   "0088491235618",
+   "0088491235619",
+   "0088491235915",
+   "0088491235916",
+   "0088491235948",
+   "0088491237747",
+   "0088491237750",
+   "0088491237927",
+   "0088491237928",
+   "0088491239406",
+   "0088491241648",
+   "0088491243494",
+   "0088491243496",
+   "0088491243818",
+   "0088491244963",
+   "0088491246291",
+   "0088513169322",
+   "0088513169330",
+   "0088513169917",
+   "0088877701911",
+   "0088877705892",
+   "0088877710444",
+   "0089245300103",
+   "0089477300101",
+   "0089477300110",
+   "0089477300160",
+   "0089569700254",
+   "0089569700261",
+   "0089758100036",
+   "0089824800168",
+   "0089824800169"
+  ],
+  "entries": [
+   {
+    "id": "0001111000552",
+    "slug": "kroger-big-k-zero-sugar-zero-calorie-cola-soda-bottle"
+   },
+   {
+    "id": "0001111002537",
+    "slug": "kroger-vitamin-raspberry-lemonade-water-enhancer-bottle"
+   },
+   {
+    "id": "0001111003245",
+    "slug": "kroger-crispy-rice-cereal"
+   },
+   {
+    "id": "0001111003249",
+    "slug": "kroger-bite-size-shredded-wheat-cereal"
+   },
+   {
+    "id": "0001111003251",
+    "slug": "kroger-bran-flakes-wheat-cereal"
+   },
+   {
+    "id": "0001111006574",
+    "slug": "simple-truth-organic-green-tea-bags"
+   },
+   {
+    "id": "0001111009265",
+    "slug": "simple-truth-organic-toasted-oats-cereal"
+   },
+   {
+    "id": "0001111009267",
+    "slug": "simple-truth-organic-bran-flakes-cereal"
+   },
+   {
+    "id": "0001111009268",
+    "slug": "simple-truth-organic-raisin-bran-cereal"
+   },
+   {
+    "id": "0001111009270",
+    "slug": "simple-truth-organic-frosted-flakes-cereal"
+   },
+   {
+    "id": "0001111009855",
+    "slug": "kroger-purified-bottled-water"
+   },
+   {
+    "id": "0001111009969",
+    "slug": "kroger-raisin-bran-cereal"
+   },
+   {
+    "id": "0001111010454",
+    "slug": "kroger-alkaline-bottled-water"
+   },
+   {
+    "id": "0001111011575",
+    "slug": "smart-way-reclosable-quart-storage-freezer-bags"
+   },
+   {
+    "id": "0001111011576",
+    "slug": "smart-way-reclosable-gallon-size-storage-freezer-bags"
+   },
+   {
+    "id": "0001111011849",
+    "slug": "kroger-mixed-berry-flavored-mini-bottled-water"
+   },
+   {
+    "id": "0001111012008",
+    "slug": "kroger-crunchy-raisin-bran-with-oat-clusters-cereal"
+   },
+   {
+    "id": "0001111012149",
+    "slug": "simple-truth-allergy-friendly-72-cacao-dark-chocolate-chunks"
+   },
+   {
+    "id": "0001111012150",
+    "slug": "simple-truth-semi-sweet-chocolate-chips"
+   },
+   {
+    "id": "0001111012270",
+    "slug": "kroger-original-couscous"
+   },
+   {
+    "id": "0001111012271",
+    "slug": "kroger-pearl-couscous"
+   },
+   {
+    "id": "0001111012312",
+    "slug": "kroger-slider-stand-and-fill-freezer-bags"
+   },
+   {
+    "id": "0001111012313",
+    "slug": "kroger-slider-quart-freezer-bags"
+   },
+   {
+    "id": "0001111012337",
+    "slug": "kroger-honey-n-oats-with-almonds-cereal"
+   },
+   {
+    "id": "0001111012672",
+    "slug": "simple-truth-organic-100-juice-black-cherry-juice-bottle"
+   },
+   {
+    "id": "0001111012792",
+    "slug": "big-k-cola-mini-soda-cans"
+   },
+   {
+    "id": "0001111012794",
+    "slug": "big-k-zero-sugar-zero-calorie-cola-mini-soda-cans"
+   },
+   {
+    "id": "0001111012798",
+    "slug": "big-k-dr-k-mini-soda-cans"
+   },
+   {
+    "id": "0001111012838",
+    "slug": "simple-truth-organic-sprouted-honey-oat-bread"
+   },
+   {
+    "id": "0001111012933",
+    "slug": "kroger-pirate-s-charrrms-cereal"
+   },
+   {
+    "id": "0001111013014",
+    "slug": "kroger-berry-crunch-cereal"
+   },
+   {
+    "id": "0001111013048",
+    "slug": "private-selection-golden-citrus-green-tea-bags"
+   },
+   {
+    "id": "0001111013085",
+    "slug": "kroger-alkaline-bottled-water"
+   },
+   {
+    "id": "0001111013589",
+    "slug": "simple-truth-purified-electrolyte-bottled-water"
+   },
+   {
+    "id": "0001111013674",
+    "slug": "kroger-double-zipper-reclosable-gallon-freezer-bags"
+   },
+   {
+    "id": "0001111013676",
+    "slug": "kroger-double-zipper-reclosable-quart-freezer-bags"
+   },
+   {
+    "id": "0001111013876",
+    "slug": "kroger-apple-crunch-cereal"
+   },
+   {
+    "id": "0001111013877",
+    "slug": "kroger-honey-n-oats-honey-toasted-cereal"
+   },
+   {
+    "id": "0001111013883",
+    "slug": "kroger-muesli-cereal"
+   },
+   {
+    "id": "0001111014120",
+    "slug": "kroger-toasted-whole-grain-oat-cereal"
+   },
+   {
+    "id": "0001111014252",
+    "slug": "kroger-carbmaster-mango-protein-smoothie"
+   },
+   {
+    "id": "0001111014254",
+    "slug": "kroger-carbmaster-raspberry-lactose-free-lowfat-protein-yogurt-smoothie"
+   },
+   {
+    "id": "0001111014256",
+    "slug": "kroger-carbmaster-strawberry-lactose-free-lowfat-protein-yogurt-smoothie"
+   },
+   {
+    "id": "0001111014914",
+    "slug": "kroger-fruit-rings-cereal-giant-size"
+   },
+   {
+    "id": "0001111014931",
+    "slug": "kroger-frosted-flakes-cereal"
+   },
+   {
+    "id": "0001111014932",
+    "slug": "kroger-honey-nut-toasted-oats-cereal-giant-size"
+   },
+   {
+    "id": "0001111014933",
+    "slug": "kroger-cinnamon-crunch-cereal"
+   },
+   {
+    "id": "0001111049179",
+    "slug": "big-k-dr-k-soda-bottle"
+   },
+   {
+    "id": "0001111049180",
+    "slug": "big-k-cola-soda-bottle"
+   },
+   {
+    "id": "0001111049198",
+    "slug": "diet-big-k-cola-no-calorie-soda-bottle"
+   },
+   {
+    "id": "0001111049213",
+    "slug": "kroger-purified-bottled-water"
+   },
+   {
+    "id": "0001111049465",
+    "slug": "diet-big-k-cola-caffeine-free-no-calorie-soda-bottle"
+   },
+   {
+    "id": "0001111049680",
+    "slug": "big-k-cola-soda-cans"
+   },
+   {
+    "id": "0001111049684",
+    "slug": "diet-big-k-cola-no-calorie-soda-cans"
+   },
+   {
+    "id": "0001111049687",
+    "slug": "big-k-cherry-cola-soda-cans"
+   },
+   {
+    "id": "0001111049787",
+    "slug": "big-k-dr-k-soda-cans"
+   },
+   {
+    "id": "0001111078407",
+    "slug": "simple-truth-mixed-berry-granola"
+   },
+   {
+    "id": "0001111078408",
+    "slug": "simple-truth-sweet-nut-cluster-flake-granola"
+   },
+   {
+    "id": "0001111078506",
+    "slug": "kroger-toasted-flakes-with-real-strawberries-cereal"
+   },
+   {
+    "id": "0001111078708",
+    "slug": "kroger-bite-size-shredded-wheat-strawberry-frosted-cereal"
+   },
+   {
+    "id": "0001111079599",
+    "slug": "office-works-mailing-tape-clear"
+   },
+   {
+    "id": "0001111080650",
+    "slug": "kroger-recipe-beginnings-frozen-cauliflower-rice"
+   },
+   {
+    "id": "0001111082377",
+    "slug": "kroger-unroll-and-bake-pie-crusts"
+   },
+   {
+    "id": "0001111082432",
+    "slug": "kroger-green-tea-bags"
+   },
+   {
+    "id": "0001111084316",
+    "slug": "kroger-hydrate-zero-sugar-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0001111084502",
+    "slug": "kroger-hydrate-zero-sugar-raspberry-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0001111084694",
+    "slug": "kroger-toasted-flakes-with-fruit-yogurt-cereal"
+   },
+   {
+    "id": "0001111085808",
+    "slug": "kroger-purified-mini-bottled-water"
+   },
+   {
+    "id": "0001111086705",
+    "slug": "kroger-bite-size-frosted-shredded-wheat-cereal"
+   },
+   {
+    "id": "0001111087382",
+    "slug": "kroger-green-tea-bags"
+   },
+   {
+    "id": "0001111087577",
+    "slug": "kroger-frozen-tater-bites"
+   },
+   {
+    "id": "0001111087584",
+    "slug": "kroger-frozen-tater-bites-big-deal-"
+   },
+   {
+    "id": "0001111087586",
+    "slug": "kroger-frozen-tater-rounds"
+   },
+   {
+    "id": "0001111087609",
+    "slug": "kroger-rice-bitz-cereal"
+   },
+   {
+    "id": "0001111087870",
+    "slug": "kroger-corn-flakes-toasted-cereal"
+   },
+   {
+    "id": "0001111088445",
+    "slug": "private-selection-matcha-green-tea-latte-mix"
+   },
+   {
+    "id": "0001111088657",
+    "slug": "simple-truth-organic-sprouted-thin-sliced-seeded-bread"
+   },
+   {
+    "id": "0001111089044",
+    "slug": "kroger-grape-flavored-mini-bottled-water"
+   },
+   {
+    "id": "0001111089045",
+    "slug": "kroger-strawberry-flavored-bottled-water"
+   },
+   {
+    "id": "0001111089727",
+    "slug": "kroger-traditional-favorites-frozen-cauliflower"
+   },
+   {
+    "id": "0001111090275",
+    "slug": "vapor-distilled-water-with-electrolytes-added-for-taste-24-pk-simple-truth-405-6-fl-oz"
+   },
+   {
+    "id": "0001111090875",
+    "slug": "kroger-original-pork-breakfast-sausage-patties"
+   },
+   {
+    "id": "0001111090946",
+    "slug": "private-selection-pomegranate-blueberry-acai-green-tea-bags"
+   },
+   {
+    "id": "0001115048055",
+    "slug": "roundy-s-wisconsin-blue-cheese-crumbled"
+   },
+   {
+    "id": "0001200000017",
+    "slug": "pepsi-cola-soda-cans"
+   },
+   {
+    "id": "0001200000129",
+    "slug": "pepsi-cola-soda-bottle"
+   },
+   {
+    "id": "0001200000230",
+    "slug": "pepsi-cola-soda-bottle"
+   },
+   {
+    "id": "0001200000311",
+    "slug": "pepsi-cola-wild-cherry-soda-bottle"
+   },
+   {
+    "id": "0001200000559",
+    "slug": "pepsi-cola-wild-cherry-soda-bottle"
+   },
+   {
+    "id": "0001200001311",
+    "slug": "aquafina-purified-drinking-water-multipack-bottles"
+   },
+   {
+    "id": "0001200001426",
+    "slug": "pepsi-cola-soda-bottles"
+   },
+   {
+    "id": "0001200001880",
+    "slug": "pepsi-cola-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0001200003068",
+    "slug": "pepsi-cola-real-sugar-soda-cans"
+   },
+   {
+    "id": "0001200010798",
+    "slug": "pepsi-cola-wild-cherry-soda-cans"
+   },
+   {
+    "id": "0001200014092",
+    "slug": "pepsi-cola-soda-bottle"
+   },
+   {
+    "id": "0001200016313",
+    "slug": "pepsi-cola-mini-soda-cans"
+   },
+   {
+    "id": "0001200017002",
+    "slug": "lifewtr-purified-water-1-l-6-count"
+   },
+   {
+    "id": "0001200017173",
+    "slug": "diet-pepsi-cola-soda-bottle"
+   },
+   {
+    "id": "0001200017174",
+    "slug": "pepsi-cola-diet-soda-bottle"
+   },
+   {
+    "id": "0001200017176",
+    "slug": "diet-pepsi-cola-soda-bottle"
+   },
+   {
+    "id": "0001200017185",
+    "slug": "diet-pepsi-cola-soda-cans"
+   },
+   {
+    "id": "0001200017186",
+    "slug": "diet-pepsi-cola-soda-cans"
+   },
+   {
+    "id": "0001200017195",
+    "slug": "diet-pepsi-cola-soda-bottles"
+   },
+   {
+    "id": "0001200017200",
+    "slug": "diet-pepsi-cola-soda-bottles"
+   },
+   {
+    "id": "0001200017209",
+    "slug": "diet-pepsi-cola-caffeine-free-soda-cans"
+   },
+   {
+    "id": "0001200017213",
+    "slug": "diet-pepsi-cola-caffeine-free-soda-bottle"
+   },
+   {
+    "id": "0001200017232",
+    "slug": "diet-pepsi-cola-caffeine-free-soda-bottles"
+   },
+   {
+    "id": "0001200017256",
+    "slug": "pepsi-cola-zero-sugar-wild-cherry-soda-bottles"
+   },
+   {
+    "id": "0001200017258",
+    "slug": "pepsi-cola-wild-cherry-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0001200017322",
+    "slug": "pepsi-cola-mini-soda-cans"
+   },
+   {
+    "id": "0001200017323",
+    "slug": "pepsi-cola-mini-diet-cans"
+   },
+   {
+    "id": "0001200018307",
+    "slug": "pepsi-cola-zero-sugar-mini-soda-cans"
+   },
+   {
+    "id": "0001200019252",
+    "slug": "pepsi-cola-real-sugar-mini-soda-cans"
+   },
+   {
+    "id": "0001200022242",
+    "slug": "pepsi-cola-wild-cherry-mini-soda-cans"
+   },
+   {
+    "id": "0001200023018",
+    "slug": "pepsi-cola-zero-sugar-mini-soda-cans"
+   },
+   {
+    "id": "0001200023019",
+    "slug": "pepsi-cola-real-sugar-mini-soda-cans"
+   },
+   {
+    "id": "0001200023020",
+    "slug": "pepsi-cola-wild-cherry-mini-soda-cans"
+   },
+   {
+    "id": "0001200024082",
+    "slug": "pepsi-cola-wild-cherry-cream-soda-cans"
+   },
+   {
+    "id": "0001200050405",
+    "slug": "pepsi-cola-soda-bottles"
+   },
+   {
+    "id": "0001200080994",
+    "slug": "pepsi-cola-soda-cans"
+   },
+   {
+    "id": "0001200080999",
+    "slug": "pepsi-cola-wild-cherry-soda-cans"
+   },
+   {
+    "id": "0001200081002",
+    "slug": "pepsi-cola-caffeine-free-soda-cans"
+   },
+   {
+    "id": "0001200081119",
+    "slug": "pepsi-cola-wild-cherry-soda-bottles"
+   },
+   {
+    "id": "0001312000026",
+    "slug": "ore-ida-seasoned-crispy-mini-frozen-tater-tots"
+   },
+   {
+    "id": "0001312000082",
+    "slug": "ore-ida-seasoned-crispy-frozen-tater-tots"
+   },
+   {
+    "id": "0001312001203",
+    "slug": "ore-ida-seasoned-crispy-frozen-tater-tots-value-size"
+   },
+   {
+    "id": "0001312001261",
+    "slug": "ore-ida-seasoned-extra-crispy-frozen-tater-tots"
+   },
+   {
+    "id": "0001370082425",
+    "slug": "hefty-slider-freezer-bags-food-storage-bags-1-gallon-clear-1-pack-25-count"
+   },
+   {
+    "id": "0001380012140",
+    "slug": "stouffer-s-meat-fulls-grilled-chicken-parmesan-frozen-sandwiches"
+   },
+   {
+    "id": "0001380024963",
+    "slug": "stouffer-s-melt-fulls-double-cheddar-steak-frozen-sandwich"
+   },
+   {
+    "id": "0001450000026",
+    "slug": "birds-eye-bacon-cheddar-cauliflower-bake-frozen-side"
+   },
+   {
+    "id": "0001450000102",
+    "slug": "birds-eye-sweet-chili-cauliflower-wings-frozen-sides"
+   },
+   {
+    "id": "0001450001741",
+    "slug": "birds-eye-mashed-cauliflower-frozen-vegetables"
+   },
+   {
+    "id": "0001450001794",
+    "slug": "birds-eye-buffalo-style-cauliflower-wings-frozen-sides"
+   },
+   {
+    "id": "0001450001955",
+    "slug": "birds-eye-steamfresh-cauliflower-florets-frozen-vegetables"
+   },
+   {
+    "id": "0001450002690",
+    "slug": "birds-eye-riced-cauliflower-frozen-vegetables"
+   },
+   {
+    "id": "0001450003160",
+    "slug": "birds-eye-steamfresh-rainbow-cauliflower-frozen-vegetables"
+   },
+   {
+    "id": "0001600010371",
+    "slug": "general-mills-cinnamon-chex-cereal"
+   },
+   {
+    "id": "0001600012025",
+    "slug": "general-mills-golden-grahams-cereal"
+   },
+   {
+    "id": "0001600012125",
+    "slug": "general-mills-reese-s-puffs-chocolatey-peanut-butter-cereal-giant-size"
+   },
+   {
+    "id": "0001600012183",
+    "slug": "general-mills-lucky-charms-with-marshmallows-giant-size-cereal"
+   },
+   {
+    "id": "0001600012185",
+    "slug": "general-mills-reese-s-puffs-chocolatey-peanut-butter-cereal-large-size"
+   },
+   {
+    "id": "0001600012222",
+    "slug": "general-mills-reese-s-puffs-chocolatey-peanut-butter-cereal"
+   },
+   {
+    "id": "0001600012224",
+    "slug": "general-mills-golden-grahams-giant-size-cereal"
+   },
+   {
+    "id": "0001600012254",
+    "slug": "general-mills-cinnamon-toast-crunch-cereal"
+   },
+   {
+    "id": "0001600012399",
+    "slug": "general-mills-gluten-free-lucky-charms-with-marshmallows-cereal"
+   },
+   {
+    "id": "0001600012479",
+    "slug": "general-mills-honey-nut-cheerios-cereal"
+   },
+   {
+    "id": "0001600012495",
+    "slug": "general-mills-honey-nut-cheerios-giant-size-cereal"
+   },
+   {
+    "id": "0001600012499",
+    "slug": "general-mills-gluten-free-lucky-charms-with-marshmallows-large-size-cereal"
+   },
+   {
+    "id": "0001600012506",
+    "slug": "general-mills-honey-nut-cheerios-large-size-cereal"
+   },
+   {
+    "id": "0001600012541",
+    "slug": "general-mills-cheerios-giant-size-cereal"
+   },
+   {
+    "id": "0001600012593",
+    "slug": "general-mills-cinnamon-toast-crunch-large-size-cereal"
+   },
+   {
+    "id": "0001600012685",
+    "slug": "general-mills-cinnamon-toast-crunch-giant-size-cereal"
+   },
+   {
+    "id": "0001600012749",
+    "slug": "general-mills-reese-s-puffs-bunnies-easter-edition-cereal"
+   },
+   {
+    "id": "0001600015128",
+    "slug": "general-mills-cocoa-puffs-cereal"
+   },
+   {
+    "id": "0001600015154",
+    "slug": "general-mills-cocoa-puffs-giant-size-cereal"
+   },
+   {
+    "id": "0001600015159",
+    "slug": "general-mills-trix-fruity-shapes-large-size-cereal"
+   },
+   {
+    "id": "0001600015163",
+    "slug": "general-mills-cookie-crisp-cereal"
+   },
+   {
+    "id": "0001600015762",
+    "slug": "general-mills-fiber-one-original-bran-cereal"
+   },
+   {
+    "id": "0001600015764",
+    "slug": "general-mills-basic-4-cereal"
+   },
+   {
+    "id": "0001600015765",
+    "slug": "general-mills-fiber-one-honey-clusters-cereal"
+   },
+   {
+    "id": "0001600015777",
+    "slug": "general-mills-oatmeal-crisp-cereal"
+   },
+   {
+    "id": "0001600015781",
+    "slug": "general-mills-raisin-nut-bran-cereal"
+   },
+   {
+    "id": "0001600016197",
+    "slug": "general-mills-trix-fruity-shapes-giant-size-cereal"
+   },
+   {
+    "id": "0001600016243",
+    "slug": "general-mills-cinnamon-toast-crunch-value-bag-cereal"
+   },
+   {
+    "id": "0001600016344",
+    "slug": "general-mills-cheerios-oat-crunch-oats-n-honey-large-size-cereal"
+   },
+   {
+    "id": "0001600016346",
+    "slug": "general-mills-apple-cinnamon-large-size-cheerios-"
+   },
+   {
+    "id": "0001600016361",
+    "slug": "general-mills-cheerios-oat-crunch-cinnamon-large-size-cereal"
+   },
+   {
+    "id": "0001600016362",
+    "slug": "general-mills-fruity-cheerios-large-size-cereal"
+   },
+   {
+    "id": "0001600016367",
+    "slug": "general-mills-frosted-cheerios-large-size-cereal"
+   },
+   {
+    "id": "0001600017003",
+    "slug": "general-mills-cheerios-family-size-cereal"
+   },
+   {
+    "id": "0001600017104",
+    "slug": "general-mills-kix-crispy-corn-puffs-family-size-cereal"
+   },
+   {
+    "id": "0001600017108",
+    "slug": "general-mills-corn-chex-family-size-cereal"
+   },
+   {
+    "id": "0001600018517",
+    "slug": "general-mills-strawberry-banana-cheerios-large-size-cereal"
+   },
+   {
+    "id": "0001600018954",
+    "slug": "general-mills-multi-grain-cheerios-giant-size-cereal"
+   },
+   {
+    "id": "0001600018958",
+    "slug": "general-mills-cookie-crisp-giant-size-cereal"
+   },
+   {
+    "id": "0001600019303",
+    "slug": "general-mills-cheerios-cereal-cups"
+   },
+   {
+    "id": "0001600019304",
+    "slug": "general-mills-honey-nut-cheerios-cereal-cups"
+   },
+   {
+    "id": "0001600019305",
+    "slug": "general-mills-cinnamon-toast-crunch-cereal-cups"
+   },
+   {
+    "id": "0001600019317",
+    "slug": "general-mills-lucky-charms-with-marshmallows-cereal-cups"
+   },
+   {
+    "id": "0001600019457",
+    "slug": "general-mills-lucky-charms-smores-cereal"
+   },
+   {
+    "id": "0001600020221",
+    "slug": "general-mills-cocoa-puffs-bag-cereal"
+   },
+   {
+    "id": "0001600020281",
+    "slug": "general-mills-tres-leches-toast-crunch-cereal"
+   },
+   {
+    "id": "0001600020679",
+    "slug": "cocoa-puffs-loaded-crispy-cre-me-filled-breakfast-cereal"
+   },
+   {
+    "id": "0001600020684",
+    "slug": "general-mills-cinnamon-toast-crunch-loaded-large-size-cereal"
+   },
+   {
+    "id": "0001600020696",
+    "slug": "rice-chex-gluten-free-breakfast-cereal-holiday-box-homemade-chex-mix-ingredient-giant-size"
+   },
+   {
+    "id": "0001600020819",
+    "slug": "corn-chex-breakfast-cereal-giant-size"
+   },
+   {
+    "id": "0001600020929",
+    "slug": "general-mills-lucky-charms-berry-swirl-cereal"
+   },
+   {
+    "id": "0001600021166",
+    "slug": "general-mills-reese-s-puffs-peanut-butter-lovers-cereal"
+   },
+   {
+    "id": "0001600021451",
+    "slug": "maple-cinnamon-cheerios-hearty-nut-medley-large-size-cereal"
+   },
+   {
+    "id": "0001600022195",
+    "slug": "general-mills-cinnamon-toast-crunch-waffle-cereal"
+   },
+   {
+    "id": "0001600022207",
+    "slug": "ghost-protein-cereal-marshmallow"
+   },
+   {
+    "id": "0001600022208",
+    "slug": "ghost-protein-cereal-peanut-butter"
+   },
+   {
+    "id": "0001600022233",
+    "slug": "general-mills-cheerios-veggie-blends-apple-strawberry-cereal"
+   },
+   {
+    "id": "0001600022605",
+    "slug": "general-mills-cheerios-oat-crunch-chocolate-large-size-cereal"
+   },
+   {
+    "id": "0001600022629",
+    "slug": "general-mills-s-mores-loaded-large-size-cereal"
+   },
+   {
+    "id": "0001600022634",
+    "slug": "general-mills-strawberry-cheerios-protein-large-size-cereal"
+   },
+   {
+    "id": "0001600022636",
+    "slug": "general-mills-cinnamon-cheerios-protein-large-size-cereal"
+   },
+   {
+    "id": "0001600022793",
+    "slug": "general-mills-chocolate-strawberry-loaded-cereal"
+   },
+   {
+    "id": "0001600027515",
+    "slug": "general-mills-multi-grain-cheerios-cereal"
+   },
+   {
+    "id": "0001600027526",
+    "slug": "general-mills-cheerios-cereal"
+   },
+   {
+    "id": "0001600027532",
+    "slug": "general-mills-trix-fruity-shapes-cereal"
+   },
+   {
+    "id": "0001600027549",
+    "slug": "general-mills-wheat-chex-cereal"
+   },
+   {
+    "id": "0001600027563",
+    "slug": "general-mills-total-wheat-flakes-cereal"
+   },
+   {
+    "id": "0001600027565",
+    "slug": "general-mills-wheaties-whole-wheat-cereal"
+   },
+   {
+    "id": "0001600036245",
+    "slug": "general-mills-trix-fruity-shapes-cereal"
+   },
+   {
+    "id": "0001600047321",
+    "slug": "general-mills-reese-s-puffs-chocolatey-peanut-butter-cereal-bag"
+   },
+   {
+    "id": "0001600048769",
+    "slug": "general-mills-multi-grain-cheerios-large-size-cereal"
+   },
+   {
+    "id": "0001600048792",
+    "slug": "general-mills-honey-nut-chex-cereal"
+   },
+   {
+    "id": "0001600048793",
+    "slug": "general-mills-chocolate-chex-cereal"
+   },
+   {
+    "id": "0001600048794",
+    "slug": "rice-chex-gluten-free-breakfast-cereal-holiday-box-homemade-chex-mix-ingredient"
+   },
+   {
+    "id": "0001600048796",
+    "slug": "corn-chex-gluten-free-breakfast-cereal-holiday-box-homemade-chex-mix-ingredient-12-oz"
+   },
+   {
+    "id": "0001600049667",
+    "slug": "general-mills-lucky-charms-with-marshmallows-cereal-bag"
+   },
+   {
+    "id": "0001600087700",
+    "slug": "general-mills-cereal-variety-pack"
+   },
+   {
+    "id": "0001700310854",
+    "slug": "kaukauna-sharp-cheddar-spreadable-cheese-cup"
+   },
+   {
+    "id": "0001700310855",
+    "slug": "kaukauna-port-wine-spreadable-cheese-cup-11-3-oz"
+   },
+   {
+    "id": "0001700310857",
+    "slug": "kaukauna-extra-sharp-cheddar-spreadable-cheese-cup"
+   },
+   {
+    "id": "0001707700132",
+    "slug": "lifeway-plain-organic-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710132",
+    "slug": "lifeway-original-probiotic-whole-milk-kefir-drink"
+   },
+   {
+    "id": "0001707710232",
+    "slug": "lifeway-plain-kefir"
+   },
+   {
+    "id": "0001707710308",
+    "slug": "lifeway-strawberry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710332",
+    "slug": "lifeway-strawberry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710432",
+    "slug": "lifeway-raspberry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710732",
+    "slug": "lifeway-banana-strawberry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710808",
+    "slug": "lifeway-peach-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707710932",
+    "slug": "lifeway-blueberry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707711132",
+    "slug": "lifeway-vanilla-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001707711708",
+    "slug": "lifeway-mixed-berry-probiotic-low-fat-kefir-drink"
+   },
+   {
+    "id": "0001800028794",
+    "slug": "pillsbury-premade-refrigerated-pie-crusts"
+   },
+   {
+    "id": "0001862710139",
+    "slug": "kashi-go-peanut-butter-crunch-protein-cereal"
+   },
+   {
+    "id": "0001862710757",
+    "slug": "kashi-go-chocolate-crunch-protein-cereal"
+   },
+   {
+    "id": "0001862711351",
+    "slug": "kashi-maple-waffle-bites-cereal"
+   },
+   {
+    "id": "0001862711472",
+    "slug": "kashi-strawberry-banana-smoothie-loops-cereal"
+   },
+   {
+    "id": "0001862711499",
+    "slug": "kashi-organic-honey-toasted-oat-cereal"
+   },
+   {
+    "id": "0001862711505",
+    "slug": "kashi-autumn-wheat-cereal"
+   },
+   {
+    "id": "0001862711507",
+    "slug": "kashi-organic-cinnamon-harvest-cereal"
+   },
+   {
+    "id": "0001862711509",
+    "slug": "kashi-island-vanilla-cereal"
+   },
+   {
+    "id": "0001862711511",
+    "slug": "kashi-berry-fruitful-organic-cereal"
+   },
+   {
+    "id": "0001862711528",
+    "slug": "kashi-go-protein-cereal"
+   },
+   {
+    "id": "0001862751003",
+    "slug": "kashi-organic-blueberry-clusters-cereal"
+   },
+   {
+    "id": "0001862770327",
+    "slug": "kashi-go-cinnamon-crunch-protein-cereal"
+   },
+   {
+    "id": "0001862770339",
+    "slug": "kashi-go-honey-almond-flax-crunch-protein-cereal"
+   },
+   {
+    "id": "0001862770348",
+    "slug": "kashi-go-toasted-berry-crisp-protein-cereal"
+   },
+   {
+    "id": "0001878777532",
+    "slug": "dr-bronner-s-18-in-1-pure-castile-liquid-soap-peppermint"
+   },
+   {
+    "id": "0001878777632",
+    "slug": "dr-bronner-s-18-in-1-pure-castile-tea-tree-magic-soap-32-fl-oz"
+   },
+   {
+    "id": "0001878778105",
+    "slug": "dr-bronner-s-18-in-1-pure-castile-magic-bar-soap-almond"
+   },
+   {
+    "id": "0001878778405",
+    "slug": "dr-bronner-s-18-in-1-pure-castile-magic-bar-soap-lavender"
+   },
+   {
+    "id": "0001878778605",
+    "slug": "dr-bronner-s-all-one-pure-castile-magic-bar-soap-tea-tree"
+   },
+   {
+    "id": "0001878778705",
+    "slug": "dr-bronner-s-all-one-pure-castile-magic-bar-soap-citrus"
+   },
+   {
+    "id": "0001917505280",
+    "slug": "crispa-israeli-couscous"
+   },
+   {
+    "id": "0001917505354",
+    "slug": "crispa-traditional-medium-couscous"
+   },
+   {
+    "id": "0002100004442",
+    "slug": "velveeta-original-cheese-sauce-pouches-box-with-pouches"
+   },
+   {
+    "id": "0002100008145",
+    "slug": "philadelphia-strawberry-cream-cheese-non-dairy-spread"
+   },
+   {
+    "id": "0002100008386",
+    "slug": "taco-bell-creamy-crunch-dip-supreme-cravings-dip-jar"
+   },
+   {
+    "id": "0002100062679",
+    "slug": "cheez-whiz-cheese-dip-1-jar-original-flavor-easy-dip"
+   },
+   {
+    "id": "0002113618163",
+    "slug": "topo-chico-sabores-tangerine-with-ginger-extract-sparkling-water-cans"
+   },
+   {
+    "id": "0002190813199",
+    "slug": "cascadian-farm-organic-brownie-crunch-cereal"
+   },
+   {
+    "id": "0002190813323",
+    "slug": "cascadian-farm-organic-cinnamon-oat-clusters-cereal"
+   },
+   {
+    "id": "0002190813679",
+    "slug": "cascadian-farm-organic-mini-fruitfuls-cereal"
+   },
+   {
+    "id": "0002190813681",
+    "slug": "cascadian-farm-organic-mini-cookies-n-creme-cereal"
+   },
+   {
+    "id": "0002190813932",
+    "slug": "cascadian-farm-organic-no-added-sugar-mixed-berry-cereal"
+   },
+   {
+    "id": "0002190840724",
+    "slug": "cascadian-farm-organic-graham-crunch-cereal"
+   },
+   {
+    "id": "0002190845551",
+    "slug": "cascadian-farm-organic-raisin-bran-cereal"
+   },
+   {
+    "id": "0002190845553",
+    "slug": "cascadian-farm-organic-fruitful-o-s-cereal"
+   },
+   {
+    "id": "0002190845556",
+    "slug": "cascadian-farm-organic-cinnamon-crunch-cereal"
+   },
+   {
+    "id": "0002190845559",
+    "slug": "cascadian-farm-organic-honey-nut-o-s-cereal"
+   },
+   {
+    "id": "0002190845988",
+    "slug": "cascadian-farm-honey-oat-crunch-organic-cereal"
+   },
+   {
+    "id": "0002260002020",
+    "slug": "first-response-early-result-test-rapid-test-and-digital-pregnancy-test"
+   },
+   {
+    "id": "0002260090125",
+    "slug": "first-response-early-result-pregnancy-tests"
+   },
+   {
+    "id": "0002260090126",
+    "slug": "first-response-rapid-result-pregnancy-test-kit"
+   },
+   {
+    "id": "0002260090127",
+    "slug": "first-response-early-result-pregnancy-test"
+   },
+   {
+    "id": "0002340099774",
+    "slug": "combat-for-small-and-large-roach-killing-bait-stations"
+   },
+   {
+    "id": "0002523101645",
+    "slug": "pine-river-jalapeno-cold-pack-cheese-food"
+   },
+   {
+    "id": "0002570000381",
+    "slug": "ziploc-brand-quart-freezer-storage-bags-stay-open-design-easy-to-fill-38-count"
+   },
+   {
+    "id": "0002570000382",
+    "slug": "ziploc-brand-gallon-freezer-storage-bags-stay-open-design-easy-to-fill-28-count"
+   },
+   {
+    "id": "0002570000388",
+    "slug": "ziploc-brand-grip-n-seal-technology-quart-freezer-bags"
+   },
+   {
+    "id": "0002570000581",
+    "slug": "ziploc-brand-gallon-freezer-storage-bags-stay-open-design-easy-to-fill-80-count"
+   },
+   {
+    "id": "0002570001353",
+    "slug": "ziploc-brand-gallon-freezer-slider-bags-power-shield-technology-for-more-durability-28"
+   },
+   {
+    "id": "0002570001361",
+    "slug": "ziploc-brand-gallon-freezer-storage-bags-stay-open-design-easy-to-fill-66-count"
+   },
+   {
+    "id": "0002570001362",
+    "slug": "ziploc-brand-quart-freezer-storage-bags-stay-open-design-easy-to-fill-60-count"
+   },
+   {
+    "id": "0002570070407",
+    "slug": "ziploc-brand-gallon-slider-freezer-bags"
+   },
+   {
+    "id": "0002570070953",
+    "slug": "ziploc-gallon-freezer-bags-press-to-close-60-count"
+   },
+   {
+    "id": "0002898910064",
+    "slug": "morningstar-farms-spicy-plant-based-black-bean-burgers"
+   },
+   {
+    "id": "0002898910066",
+    "slug": "morningstar-farms-spicy-plant-based-black-bean-burgers"
+   },
+   {
+    "id": "0002898910068",
+    "slug": "morningstar-farms-savory-plant-based-garden-veggie-burgers"
+   },
+   {
+    "id": "0002898910080",
+    "slug": "morningstar-farms-grillers-original-value-pack-veggie-burgers"
+   },
+   {
+    "id": "0002898910084",
+    "slug": "morningstar-farms-juicy-grillers-prime-vegetarian-patties"
+   },
+   {
+    "id": "0002898910088",
+    "slug": "morningstar-farms-veggie-breakfast-original-plant-based-sausage-patties"
+   },
+   {
+    "id": "0002898910090",
+    "slug": "morningstar-farms-veggie-breakfast-original-plant-based-sausage-patties"
+   },
+   {
+    "id": "0002898910092",
+    "slug": "morningstar-farms-veggie-breakfast-maple-flavored-plant-based-sausage-patties"
+   },
+   {
+    "id": "0002898910094",
+    "slug": "morningstar-farms-veggie-breakfast-hot-and-spicy-plant-based-sausage-patties"
+   },
+   {
+    "id": "0002898910102",
+    "slug": "morningstar-farms-original-vegan"
+   },
+   {
+    "id": "0002898910104",
+    "slug": "morningstar-farms-spicy-buffalo-vegan"
+   },
+   {
+    "id": "0002898910108",
+    "slug": "morningstar-farms-original-plant-based-crispy-chik-n-nuggets"
+   },
+   {
+    "id": "0002898910110",
+    "slug": "morningstar-farms-veggitizers-spicy-buffalo-plant-based-crispy-chik-n-nuggets"
+   },
+   {
+    "id": "0002898910291",
+    "slug": "morningstar-farms-original-plant-based-crispy-chik-n-nuggets"
+   },
+   {
+    "id": "0002898910314",
+    "slug": "morningstar-farms-homestyle-plant-based-chik-n-tenders"
+   },
+   {
+    "id": "0002898910419",
+    "slug": "morningstar-farms-meal-starters-savory-grillers-vegan-crumbles"
+   },
+   {
+    "id": "0002898910441",
+    "slug": "morningstar-farms-incogmeato-original-plant-based-pancake-and-sausage-on-a-stick"
+   },
+   {
+    "id": "0002898910566",
+    "slug": "morningstar-farms-juicy-steakhouse-style-vegan"
+   },
+   {
+    "id": "0002898910605",
+    "slug": "morningstar-farms-sweet-bbq-plant-based-sauced-riblets"
+   },
+   {
+    "id": "0002898910621",
+    "slug": "morningstar-farms-applewood-black-pepper-meat-free-thick-cut-bacon-strips"
+   },
+   {
+    "id": "0002898957799",
+    "slug": "morningstar-farms-original-veggie-dogs"
+   },
+   {
+    "id": "0002898997110",
+    "slug": "morningstar-farms-veggie-breakfast-original-sausage-links"
+   },
+   {
+    "id": "0002898997195",
+    "slug": "morningstar-farms-veggie-breakfast-classic-meat-free-bacon-strips"
+   },
+   {
+    "id": "0002898997500",
+    "slug": "morningstar-farms-classic-plant-based-corn-dogs"
+   },
+   {
+    "id": "0003000006322",
+    "slug": "quaker-life-cinnamon-multigrain-breakfast-cereal"
+   },
+   {
+    "id": "0003000006354",
+    "slug": "quaker-life-original-multigrain-breakfast-cereal"
+   },
+   {
+    "id": "0003000006441",
+    "slug": "quaker-oatmeal-squares-brown-sugar-breakfast-cereal"
+   },
+   {
+    "id": "0003000031378",
+    "slug": "cap-n-crunch-original-bag-cereal"
+   },
+   {
+    "id": "0003000031379",
+    "slug": "cap-n-crunch-s-crunch-berries-breakfast-cereal"
+   },
+   {
+    "id": "0003000056236",
+    "slug": "cap-n-crunch-oops-all-berries-breakfast-cereal"
+   },
+   {
+    "id": "0003000056237",
+    "slug": "quaker-life-original-multigrain-cereal"
+   },
+   {
+    "id": "0003000056238",
+    "slug": "quaker-life-cinnamon-multigrain-breakfast-cereal"
+   },
+   {
+    "id": "0003000057321",
+    "slug": "cap-n-crunch-original-breakfast-cereal"
+   },
+   {
+    "id": "0003000057322",
+    "slug": "cap-n-crunch-s-crunch-berries-breakfast-cereal"
+   },
+   {
+    "id": "0003000057323",
+    "slug": "cap-n-crunch-s-oops-all-berries-breakfast-cereal"
+   },
+   {
+    "id": "0003000057330",
+    "slug": "cap-n-crunch-original-breakfast-cereal"
+   },
+   {
+    "id": "0003000057331",
+    "slug": "cap-n-crunch-s-crunch-berries-giant-size-cereal"
+   },
+   {
+    "id": "0003000057332",
+    "slug": "cap-n-crunch-s-oops-all-berries-breakfast-cereal"
+   },
+   {
+    "id": "0003000057812",
+    "slug": "cap-n-crunch-cinnamon-crunch-breakfast-cereal"
+   },
+   {
+    "id": "0003000066213",
+    "slug": "cap-n-crunch-s-peanut-butter-crunch-breakfast-cereal"
+   },
+   {
+    "id": "0003000066507",
+    "slug": "cap-n-crunch-s-peanut-butter-crunch-breakfast-cereal"
+   },
+   {
+    "id": "0003100018454",
+    "slug": "banquet-brown-n-serve-vermont-maple-fully-cooked-sausage-links-frozen-breakfast"
+   },
+   {
+    "id": "0003100018462",
+    "slug": "banquet-brown-n-serve-turkey-sausage-links-frozen-meat-for-breakfast"
+   },
+   {
+    "id": "0003100018464",
+    "slug": "banquet-brown-n-serve-original-fully-cooked-sausage-patties-frozen-breakfast"
+   },
+   {
+    "id": "0003100030744",
+    "slug": "banquet-brown-n-serve-original-sausage-links-frozen-breakfast-sausage"
+   },
+   {
+    "id": "0003100044109",
+    "slug": "banquet-brown-n-serve-vermont-maple-sausage-links-frozen-breakfast"
+   },
+   {
+    "id": "0003100044110",
+    "slug": "banquet-brown-n-serve-original-fully-cooked-sausage-links-frozen-breakfast-sausage"
+   },
+   {
+    "id": "0003390000033",
+    "slug": "jones-dairy-farm-golden-brown-all-natural-mild-pork-sausage-links"
+   },
+   {
+    "id": "0003390020067",
+    "slug": "jones-dairy-farm-golden-brown-all-natural-turkey-sausage-links"
+   },
+   {
+    "id": "0003619200029",
+    "slug": "santa-cruz-organic-pineapple-mango-100-juice-bottle"
+   },
+   {
+    "id": "0003619212247",
+    "slug": "santa-cruz-organic-raspberry-lemonade-beverage-bottle"
+   },
+   {
+    "id": "0003663202954",
+    "slug": "activia-strawberry-probiotic-dailies-low-fat-yogurt-drinks"
+   },
+   {
+    "id": "0003663203966",
+    "slug": "too-good-co-strawberry-banana-low-fat-smoothie-drink"
+   },
+   {
+    "id": "0003663203967",
+    "slug": "too-good-co-mixed-berry-low-fat-yogurt-smoothie-drink"
+   },
+   {
+    "id": "0003663203968",
+    "slug": "too-good-co-peach-low-fat-smoothie-drink"
+   },
+   {
+    "id": "0003663204270",
+    "slug": "oikos-pro-shots-10g-protein-mixed-berry-cultured-dairy-drinks"
+   },
+   {
+    "id": "0003663204284",
+    "slug": "oikos-pro-23g-protein-strawberry-banana-cultured-dairy-drink"
+   },
+   {
+    "id": "0003800000110",
+    "slug": "kellogg-s-corn-flakes"
+   },
+   {
+    "id": "0003800018339",
+    "slug": "kellogg-s-froot-loops-original"
+   },
+   {
+    "id": "0003800019841",
+    "slug": "kellogg-s-all-bran-original-cereal"
+   },
+   {
+    "id": "0003800019843",
+    "slug": "kellogg-s-all-bran-buds-cereal"
+   },
+   {
+    "id": "0003800019924",
+    "slug": "kellogg-s-krave-chocolate-cereal"
+   },
+   {
+    "id": "0003800019994",
+    "slug": "kellogg-s-rice-krispies-original"
+   },
+   {
+    "id": "0003800020022",
+    "slug": "kellogg-s-smart-start-original-antioxidants-cereal"
+   },
+   {
+    "id": "0003800023145",
+    "slug": "kellogg-s-corn-flakes-giant-size-cereal"
+   },
+   {
+    "id": "0003800023153",
+    "slug": "kellogg-s-rice-krispies-giant-size-cereal"
+   },
+   {
+    "id": "0003800023459",
+    "slug": "kellogg-s-jumbo-snax-froot-loops-cereal-snacks"
+   },
+   {
+    "id": "0003800024848",
+    "slug": "kellogg-s-krave-cereal-chocolate"
+   },
+   {
+    "id": "0003800024850",
+    "slug": "kellogg-s-frosted-flakes-original"
+   },
+   {
+    "id": "0003800026996",
+    "slug": "kellogg-s-mini-wheats-original"
+   },
+   {
+    "id": "0003800027001",
+    "slug": "kellogg-s-corn-pops-giant-size-cereal"
+   },
+   {
+    "id": "0003800027003",
+    "slug": "kellogg-s-apple-jacks-original"
+   },
+   {
+    "id": "0003800027009",
+    "slug": "kellogg-s-froot-loops-original"
+   },
+   {
+    "id": "0003800027011",
+    "slug": "kellogg-s-frosted-flakes-frosted-flakes"
+   },
+   {
+    "id": "0003800027088",
+    "slug": "kellogg-s-cocoa-krispies-chocolatey-flavor-cereal"
+   },
+   {
+    "id": "0003800027798",
+    "slug": "kellogg-s-apple-jacks-cereal-cups"
+   },
+   {
+    "id": "0003800027802",
+    "slug": "kellogg-s-frosted-flakes-value-pack-cereal-cups"
+   },
+   {
+    "id": "0003800027804",
+    "slug": "kellogg-s-froot-loops-cereal-cups"
+   },
+   {
+    "id": "0003800028184",
+    "slug": "kellogg-s-corn-pops-original-13-1oz"
+   },
+   {
+    "id": "0003800028186",
+    "slug": "kellogg-s-froot-loops-original-13-2oz"
+   },
+   {
+    "id": "0003800028188",
+    "slug": "kellogg-s-apple-jacks-original-13-2oz"
+   },
+   {
+    "id": "0003800028190",
+    "slug": "kellogg-s-frosted-flakes-frosted-flakes"
+   },
+   {
+    "id": "0003952890129",
+    "slug": "pizzeria-uno-steak-and-cheese-stromboli-9oz-frozen"
+   },
+   {
+    "id": "0003952890130",
+    "slug": "pizzeria-uno-pepperoni-and-cheese-stromboli-9oz-frozen"
+   },
+   {
+    "id": "0004116707800",
+    "slug": "gold-bond-healing-foot-cream-with-aloe"
+   },
+   {
+    "id": "0004119210037",
+    "slug": "kellogg-s-apple-jacks-original"
+   },
+   {
+    "id": "0004119210041",
+    "slug": "kellogg-s-froot-loops-original"
+   },
+   {
+    "id": "0004119210043",
+    "slug": "kellogg-s-frosted-flakes-original"
+   },
+   {
+    "id": "0004119210045",
+    "slug": "kellogg-s-frosted-flakes-chocolate-milkshake-cereal"
+   },
+   {
+    "id": "0004119210047",
+    "slug": "kellogg-s-froot-loops-original-with-marshmallows-cereal"
+   },
+   {
+    "id": "0004119210049",
+    "slug": "kellogg-s-frosted-krispies-original-cereal"
+   },
+   {
+    "id": "0004119210053",
+    "slug": "kellogg-s-frosted-flakes-strawberry-milkshake-cereal"
+   },
+   {
+    "id": "0004119210199",
+    "slug": "kellogg-s-frosted-mini-wheats-blueberry-muffin-cereal"
+   },
+   {
+    "id": "0004119210201",
+    "slug": "kellogg-s-frosted-mini-wheats-strawberry-cereal"
+   },
+   {
+    "id": "0004119210203",
+    "slug": "kellogg-s-frosted-mini-wheats-little-bites-cereal"
+   },
+   {
+    "id": "0004119210207",
+    "slug": "kellogg-s-raisin-bran-crunch-15-4oz"
+   },
+   {
+    "id": "0004119210211",
+    "slug": "kellogg-s-raisin-bran-original-16-1oz"
+   },
+   {
+    "id": "0004119210217",
+    "slug": "kellogg-s-special-k-cereal-fruit-yogurt-12-6oz"
+   },
+   {
+    "id": "0004119210219",
+    "slug": "kellogg-s-special-k-protein-original-multi-grain-touch-of-cinnamon-12-9oz-cereal"
+   },
+   {
+    "id": "0004119210223",
+    "slug": "kellogg-s-special-k-cereal-red-berries-11-4oz"
+   },
+   {
+    "id": "0004119210227",
+    "slug": "kellogg-s-special-k-blueberry-cereal"
+   },
+   {
+    "id": "0004119210233",
+    "slug": "kellogg-s-special-k-strawberries-and-vanilla-cereal"
+   },
+   {
+    "id": "0004119210239",
+    "slug": "kellogg-s-mini-wheats-original"
+   },
+   {
+    "id": "0004119210255",
+    "slug": "kellogg-s-special-k-vanilla-and-almond-family-size-cereal"
+   },
+   {
+    "id": "0004119210325",
+    "slug": "kellogg-s-frosted-mini-wheats-cocoa-cereal"
+   },
+   {
+    "id": "0004119210328",
+    "slug": "kellogg-s-special-k-cereal-red-berries"
+   },
+   {
+    "id": "0004119210330",
+    "slug": "kellogg-s-special-k-breakfast-cereal-fruit-and-yogurt-family-breakfast-22-oz"
+   },
+   {
+    "id": "0004119210336",
+    "slug": "kellogg-s-raisin-bran-crunch"
+   },
+   {
+    "id": "0004119210360",
+    "slug": "kellogg-s-special-k-cereal-red-berries-14-7oz"
+   },
+   {
+    "id": "0004119210363",
+    "slug": "kellogg-s-special-k-cereal-fruit-yogurt-17-1oz"
+   },
+   {
+    "id": "0004119210365",
+    "slug": "kellogg-s-special-k-breakfast-cereal-chocolatey-delight-family-breakfast-15-5-oz"
+   },
+   {
+    "id": "0004119210367",
+    "slug": "kellogg-s-special-k-breakfast-cereal-original-family-breakfast-12-oz"
+   },
+   {
+    "id": "0004119210369",
+    "slug": "kellogg-s-special-k-breakfast-cereal-vanilla-and-almond-fiber-cereal-16-1-oz"
+   },
+   {
+    "id": "0004119210373",
+    "slug": "kellogg-s-crispix-original"
+   },
+   {
+    "id": "0004119210375",
+    "slug": "kellogg-s-frosted-mini-wheats-high-fiber-large-size-cereal"
+   },
+   {
+    "id": "0004119210379",
+    "slug": "kellogg-s-raisin-bran-crunch-19-7oz"
+   },
+   {
+    "id": "0004119210381",
+    "slug": "kellogg-s-raisin-bran-original-20-9oz"
+   },
+   {
+    "id": "0004119210399",
+    "slug": "kellogg-s-cracklin-oat-bran-breakfast-cereal-original-16-5-oz"
+   },
+   {
+    "id": "0004119210474",
+    "slug": "kellogg-s-raisin-bran-original"
+   },
+   {
+    "id": "0004119210714",
+    "slug": "kellogg-s-frosted-flakes-glazed-donut-holes-cereal"
+   },
+   {
+    "id": "0004119210747",
+    "slug": "kellogg-s-raisin-bran-blueberry-15-8oz"
+   },
+   {
+    "id": "0004119210887",
+    "slug": "kellogg-s-krave-glazed-donut-holes-glazed-chocolate-cereal"
+   },
+   {
+    "id": "0004119210891",
+    "slug": "kellogg-s-apple-jacks-glazed-donut-holes-apple-cinnamon-cereal"
+   },
+   {
+    "id": "0004119210948",
+    "slug": "kellogg-s-extra-toasted-almond-granola"
+   },
+   {
+    "id": "0004122642687",
+    "slug": "everyday-living-dish-cloths-5-pack-white"
+   },
+   {
+    "id": "0004126000319",
+    "slug": "kroger-hemorrhoidal-suppositories"
+   },
+   {
+    "id": "0004126000321",
+    "slug": "kroger-maximum-strength-hemorrhoidal-cream"
+   },
+   {
+    "id": "0004126000487",
+    "slug": "pretty-savvy-sleep-mask"
+   },
+   {
+    "id": "0004126000815",
+    "slug": "simple-truth-baby-teething-ring"
+   },
+   {
+    "id": "0004126001246",
+    "slug": "kroger-early-ovulation-test"
+   },
+   {
+    "id": "0004126001247",
+    "slug": "kroger-advanced-one-step-pregnancy-test"
+   },
+   {
+    "id": "0004126001248",
+    "slug": "kroger-advanced-pregnancy-test"
+   },
+   {
+    "id": "0004126001249",
+    "slug": "kroger-advanced-early-result-pregnancy-test"
+   },
+   {
+    "id": "0004126001250",
+    "slug": "kroger-digital-one-step-pregnancy-test"
+   },
+   {
+    "id": "0004126001401",
+    "slug": "pretty-savvy-stainless-steel-cuticle-scissors"
+   },
+   {
+    "id": "0004126001806",
+    "slug": "simple-truth-shea-flower-and-coconut-foaming-hand-soap"
+   },
+   {
+    "id": "0004126001807",
+    "slug": "simple-truth-spa-eucalyptus-foaming-hand-soap"
+   },
+   {
+    "id": "0004126001908",
+    "slug": "kroger-maximum-strength-flushable-hemorrhoidal-medicated-wipes"
+   },
+   {
+    "id": "0004126001909",
+    "slug": "kroger-maximum-strength-flushable-hemorrhoidal-medicated-wipes-twin-pack"
+   },
+   {
+    "id": "0004126033242",
+    "slug": "kroger-milk-honey-bubble-bath"
+   },
+   {
+    "id": "0004126033247",
+    "slug": "kroger-soak-lavender-bubble-bath"
+   },
+   {
+    "id": "0004126038525",
+    "slug": "simple-truth-hypoallergenic-pure-castile-soap-tea-tree-eucalyptus"
+   },
+   {
+    "id": "0004126038526",
+    "slug": "simple-truth-hypoallergenic-pure-castile-bar-soap-honey-almond-scent"
+   },
+   {
+    "id": "0004126038529",
+    "slug": "simple-truth-rosemary-mint-hand-soap"
+   },
+   {
+    "id": "0004126038556",
+    "slug": "kroger-soapy-safari-kiwi-melon-kids-bubble-bath"
+   },
+   {
+    "id": "0004138800730",
+    "slug": "tucks-medicated-hemorrhoidal-cooling-pads"
+   },
+   {
+    "id": "0004157300315",
+    "slug": "spicy-wings-cold"
+   },
+   {
+    "id": "0004227201191",
+    "slug": "amy-s-vegan-cheeze-pizza-snacks"
+   },
+   {
+    "id": "0004240002554",
+    "slug": "malt-o-meal-frosted-mini-spooners-cereal-bag"
+   },
+   {
+    "id": "0004240026521",
+    "slug": "malt-o-meal-cocoa-dyno-bites-chocolate-cereal-bag"
+   },
+   {
+    "id": "0004240038991",
+    "slug": "malt-o-meal-fruity-dyno-bites-with-marshmallows-super-size-cereal-bag"
+   },
+   {
+    "id": "0004240039548",
+    "slug": "malt-o-meal-marshmallow-mateys-super-size-cereal-bag"
+   },
+   {
+    "id": "0004240040758",
+    "slug": "malt-o-meal-golden-puffs-cereal-bag"
+   },
+   {
+    "id": "0004240044035",
+    "slug": "mom-s-best-frosted-flakes-cereal-13-5-oz"
+   },
+   {
+    "id": "0004240046297",
+    "slug": "mom-s-best-fruity-rings-cereal"
+   },
+   {
+    "id": "0004240091378",
+    "slug": "malt-o-meal-tootie-fruities-super-size-cereal-bag"
+   },
+   {
+    "id": "0004240093978",
+    "slug": "malt-o-meal-cinnamon-toasters-super-size-cereal-bag"
+   },
+   {
+    "id": "0004249197701",
+    "slug": "officemate-oic-full-strip-plastic-transparent-stand-up-stapler"
+   },
+   {
+    "id": "0004260847071",
+    "slug": "lakewood-organic-super-beet-juice"
+   },
+   {
+    "id": "0004260847094",
+    "slug": "lakewood-organic-pure-lemon-juice"
+   },
+   {
+    "id": "0004300001120",
+    "slug": "crystal-light-raspberry-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300002264",
+    "slug": "crystal-light-zero-sugar-decaf-lemon-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300002885",
+    "slug": "crystal-light-zero-sugar-peach-mango-green-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300002886",
+    "slug": "crystal-light-zero-sugar-pink-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300003695",
+    "slug": "crystal-light-zero-sugar-caffeinated-peach-mango-green-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300008488",
+    "slug": "crystal-light-zero-sugar-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300009313",
+    "slug": "crystal-light-raspberry-lemonade-energy-boost-drink-mix-on-the-go-packets"
+   },
+   {
+    "id": "0004300009315",
+    "slug": "crystal-light-lemonade-energy-boost-drink-mix-on-the-go-packets"
+   },
+   {
+    "id": "0004300094502",
+    "slug": "crystal-light-zero-sugar-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300094511",
+    "slug": "crystal-light-zero-sugar-lemon-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300094520",
+    "slug": "crystal-light-zero-sugar-peach-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300094964",
+    "slug": "crystal-light-zero-sugar-raspberry-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300095051",
+    "slug": "crystal-light-zero-sugar-pink-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300095064",
+    "slug": "crystal-light-zero-sugar-lemon-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300095065",
+    "slug": "crystal-light-zero-sugar-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0004300095079",
+    "slug": "crystal-light-zero-sugar-raspberry-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004300095080",
+    "slug": "crystal-light-zero-sugar-peach-iced-tea-drink-mix-packets"
+   },
+   {
+    "id": "0004330161163",
+    "slug": "grown-in-idaho-super-crispy-tots-frozen-potatoes"
+   },
+   {
+    "id": "0004330161205",
+    "slug": "sonic-super-crispy-tot-frozen-potatoes"
+   },
+   {
+    "id": "0004369505631",
+    "slug": "hot-pockets-pepperoni-pizza-crispy-crust-frozen-snacks-pizza-snacks-made-with-mozzarella-cheese"
+   },
+   {
+    "id": "0004369505632",
+    "slug": "hot-pockets-hickory-ham-and-cheddar-croissant-crust-frozen-snack"
+   },
+   {
+    "id": "0004369507107",
+    "slug": "hot-pockets-philly-steak-and-cheese-frozen-snack"
+   },
+   {
+    "id": "0004369507109",
+    "slug": "hot-pockets-four-cheese-pizza-frozen-snack"
+   },
+   {
+    "id": "0004369507111",
+    "slug": "hot-pockets-pepperoni-pizza-italian-style-seasoned-crust-frozen-snack"
+   },
+   {
+    "id": "0004369507112",
+    "slug": "hot-pockets-hickory-ham-and-cheddar-crispy-buttery-crust-frozen-snack"
+   },
+   {
+    "id": "0004369507116",
+    "slug": "hot-pockets-italian-style-meatballs-and-mozzarella-frozen-snack"
+   },
+   {
+    "id": "0004369507118",
+    "slug": "hot-pockets-hot-ones-smoky-green-chili"
+   },
+   {
+    "id": "0004369507511",
+    "slug": "hot-pockets-pepperoni-pizza-italian-style-crust-frozen-snack"
+   },
+   {
+    "id": "0004369507512",
+    "slug": "hot-pockets-hickory-ham-and-cheddar-crispy-crust-frozen-snacks-12-pack"
+   },
+   {
+    "id": "0004369527632",
+    "slug": "hot-pockets-pepperoni-pizza-crispy-crust-frozen-sandwiches-frozen-snacks-12pk"
+   },
+   {
+    "id": "0004369549728",
+    "slug": "hot-pockets-four-meat-four-cheese-italian-style-seasoned-crust-frozen-snacks-8pk"
+   },
+   {
+    "id": "0004369565840",
+    "slug": "hot-pockets-italian-style-meatballs-and-mozzarella-frozen-sandwiches"
+   },
+   {
+    "id": "0004369595310",
+    "slug": "hot-pockets-philly-steak-and-cheese-frozen-sandwiches"
+   },
+   {
+    "id": "0004524300048",
+    "slug": "sprecher-cherry-cola-soda-bottles"
+   },
+   {
+    "id": "0004524301948",
+    "slug": "sprecher-cherry-cola-soda-can"
+   },
+   {
+    "id": "0004600012357",
+    "slug": "old-el-paso-spicy-queso-blanco-squeeze-sauce"
+   },
+   {
+    "id": "0004600013534",
+    "slug": "old-el-paso-beef-and-cheese-taco-bites-frozen-snacks"
+   },
+   {
+    "id": "0004600013535",
+    "slug": "old-el-paso-chicken-and-cheese-taco-bites-frozen-snacks"
+   },
+   {
+    "id": "0004650004523",
+    "slug": "stem-light-trap-attracts-and-traps-flying-insects-emits-soft-blue-light"
+   },
+   {
+    "id": "0004650005071",
+    "slug": "off-insect-repellent-spritz-for-adults-kids-fragrance-free-bug-spray-for-everyday-protection"
+   },
+   {
+    "id": "0004650005276",
+    "slug": "stem-flying-insect-fan-trap-for-indoor-bug-control-plug-in-fan-with-uv-light"
+   },
+   {
+    "id": "0004650005281",
+    "slug": "stem-glue-trap-re-ll-pads-for-stem-flying-insect-fan-trap-device"
+   },
+   {
+    "id": "0004650022154",
+    "slug": "off-familycare-mosquito-repellent-smooth-dry-non-greasy-spray-4-oz"
+   },
+   {
+    "id": "0004800050791",
+    "slug": "chicken-of-the-sea-packet-up-tuna-salad-kit"
+   },
+   {
+    "id": "0004852600600",
+    "slug": "nuby-icybite-soothing-ice-gel-teether-keys"
+   },
+   {
+    "id": "0004852605716",
+    "slug": "nuby-printed-fabric-pacifinders"
+   },
+   {
+    "id": "0004900000044",
+    "slug": "coca-cola-soda-bottle"
+   },
+   {
+    "id": "0004900000045",
+    "slug": "diet-coke-soda-bottle"
+   },
+   {
+    "id": "0004900000463",
+    "slug": "coca-cola-de-mexico-soda-glass-bottle"
+   },
+   {
+    "id": "0004900000548",
+    "slug": "coca-cola-soda-bottles"
+   },
+   {
+    "id": "0004900000594",
+    "slug": "diet-coke-soda-bottles"
+   },
+   {
+    "id": "0004900000613",
+    "slug": "diet-coke-caffeine-free-soda-bottles"
+   },
+   {
+    "id": "0004900001063",
+    "slug": "diet-coke-soda-cans"
+   },
+   {
+    "id": "0004900001278",
+    "slug": "coca-cola-soda-cans"
+   },
+   {
+    "id": "0004900001801",
+    "slug": "coca-cola-cherry-soda-bottle"
+   },
+   {
+    "id": "0004900002468",
+    "slug": "coca-cola-soda-bottles"
+   },
+   {
+    "id": "0004900002469",
+    "slug": "diet-coke-soda-bottles"
+   },
+   {
+    "id": "0004900002542",
+    "slug": "diet-coke-caffeine-free-soda-bottles"
+   },
+   {
+    "id": "0004900002870",
+    "slug": "dasani-purified-water-bottles"
+   },
+   {
+    "id": "0004900002890",
+    "slug": "coca-cola-soda-cans"
+   },
+   {
+    "id": "0004900002891",
+    "slug": "diet-coke-soda-cans"
+   },
+   {
+    "id": "0004900002933",
+    "slug": "coca-cola-caffeine-free-soda-cans"
+   },
+   {
+    "id": "0004900002934",
+    "slug": "diet-coke-caffeine-free-soda-cans"
+   },
+   {
+    "id": "0004900003103",
+    "slug": "coca-cola-cherry-soda-cans"
+   },
+   {
+    "id": "0004900003124",
+    "slug": "coca-cola-vanilla-soda-cans"
+   },
+   {
+    "id": "0004900004086",
+    "slug": "coca-cola-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0004900004805",
+    "slug": "dasani-purified-water-bottles"
+   },
+   {
+    "id": "0004900005010",
+    "slug": "coca-cola-soda-bottle"
+   },
+   {
+    "id": "0004900005011",
+    "slug": "diet-coke-soda-bottle"
+   },
+   {
+    "id": "0004900005013",
+    "slug": "diet-coke-caffeine-free-soda-bottle"
+   },
+   {
+    "id": "0004900005016",
+    "slug": "coca-cola-cherry-soda-bottle"
+   },
+   {
+    "id": "0004900005023",
+    "slug": "barq-s-root-beer-soda-bottle"
+   },
+   {
+    "id": "0004900005537",
+    "slug": "coca-cola-soda-bottle"
+   },
+   {
+    "id": "0004900005539",
+    "slug": "diet-coke-soda-bottle"
+   },
+   {
+    "id": "0004900005541",
+    "slug": "coca-cola-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0004900006101",
+    "slug": "coca-cola-soda-mini-cans"
+   },
+   {
+    "id": "0004900006105",
+    "slug": "diet-coke-soda-mini-can"
+   },
+   {
+    "id": "0004900006721",
+    "slug": "coca-cola-soda-mini-cans"
+   },
+   {
+    "id": "0004900006722",
+    "slug": "diet-coke-soda-mini-cans"
+   },
+   {
+    "id": "0004900007477",
+    "slug": "coca-cola-cherry-soda-mini-cans"
+   },
+   {
+    "id": "0004900007596",
+    "slug": "coca-cola-cherry-soda-bottles"
+   },
+   {
+    "id": "0004900054961",
+    "slug": "coca-cola-cherry-soda-bottle"
+   },
+   {
+    "id": "0004900055883",
+    "slug": "coca-cola-zero-sugar-orange-cream-soda-cans"
+   },
+   {
+    "id": "0004900055884",
+    "slug": "coca-cola-orange-cream-soda-cans"
+   },
+   {
+    "id": "0005113164204",
+    "slug": "scotch-heavy-duty-shipping-packaging-tape-1-88-in-x-22-2-yd-1-pack-with-dispenser"
+   },
+   {
+    "id": "0005114193099",
+    "slug": "scotch-shipping-packaging-tape-1-88-in-x-84-2-yd"
+   },
+   {
+    "id": "0005150000630",
+    "slug": "smucker-s-uncrustables-peanut-butter-raspberry-spread-sandwiches"
+   },
+   {
+    "id": "0005150002927",
+    "slug": "smucker-s-uncrustables-peanut-butter-grape-jelly-sandwiches"
+   },
+   {
+    "id": "0005150002945",
+    "slug": "smucker-s-uncrustables-peanut-butter-strawberry-jam-sandwiches"
+   },
+   {
+    "id": "0005150002990",
+    "slug": "smucker-s-uncrustables-chocolate-flavored-hazelnut-sandwiches"
+   },
+   {
+    "id": "0005150004815",
+    "slug": "smucker-s-uncrustables-peanut-butter-grape-jelly-sandwiches"
+   },
+   {
+    "id": "0005150004816",
+    "slug": "smucker-s-uncrustables-peanut-butter-strawberry-jam-sandwiches"
+   },
+   {
+    "id": "0005150004817",
+    "slug": "smucker-s-uncrustables-peanut-butter-grape-jelly-sandwiches"
+   },
+   {
+    "id": "0005150004818",
+    "slug": "smucker-s-uncrustables-peanut-butter-strawberry-jam-sandwiches"
+   },
+   {
+    "id": "0005150004962",
+    "slug": "smucker-s-uncrustables-peanut-butter-honey-spread-sandwiches"
+   },
+   {
+    "id": "0005150021179",
+    "slug": "smucker-s-uncrustables-chocolate-flavored-hazelnut-sandwiches"
+   },
+   {
+    "id": "0005150026124",
+    "slug": "smucker-s-uncrustables-peanut-butter-raspberry-sandwiches"
+   },
+   {
+    "id": "0005209204027",
+    "slug": "handi-foil-extra-large-storage-w-folded-lids"
+   },
+   {
+    "id": "0005215901332",
+    "slug": "stonyfield-organic-probiotic-wild-berry-lowfat-yogurt-smoothies-6-fl-oz-bottles-4-ct"
+   },
+   {
+    "id": "0005844960057",
+    "slug": "nature-s-path-organic-fruit-juice-corn-flakes-cereal"
+   },
+   {
+    "id": "0005844977020",
+    "slug": "nature-s-path-heritage-flakes-breakfast-cereal"
+   },
+   {
+    "id": "0005844977050",
+    "slug": "nature-s-path-organic-flax-plus-multibran-flakes-cereal"
+   },
+   {
+    "id": "0005844977099",
+    "slug": "nature-s-path-organic-flax-plus-raisin-bran-cereal"
+   },
+   {
+    "id": "0005844977143",
+    "slug": "nature-s-path-flax-plus-maple-pecan-crunch-breakfast-cereal"
+   },
+   {
+    "id": "0005844977153",
+    "slug": "nature-s-path-organic-sunrise-crunchy-maple-cereal"
+   },
+   {
+    "id": "0005844977155",
+    "slug": "nature-s-path-sunrise-crunchy-vanilla-breakfast-cereal"
+   },
+   {
+    "id": "0005844977207",
+    "slug": "nature-s-path-organic-sunrise-crunchy-cinnamon-cereal"
+   },
+   {
+    "id": "0005844977731",
+    "slug": "nature-s-path-organic-flax-plus-pumpkin-raisin-crunch-cereal"
+   },
+   {
+    "id": "0005844977765",
+    "slug": "nature-s-path-organic-flax-plus-red-berry-crunch-cereal"
+   },
+   {
+    "id": "0005844986003",
+    "slug": "nature-s-path-envirokidz-koala-crisp-organic-cereal"
+   },
+   {
+    "id": "0005844986004",
+    "slug": "nature-s-path-organic-envirokidz-panda-puffs-cereal"
+   },
+   {
+    "id": "0005844986007",
+    "slug": "nature-s-path-organic-envirokidz-leapin-lemurs-organic-cereal"
+   },
+   {
+    "id": "0006827419514",
+    "slug": "pure-life-purified-bottled-water"
+   },
+   {
+    "id": "0006827434217",
+    "slug": "splash-refresher-wild-berry-flavored-bottled-water"
+   },
+   {
+    "id": "0006827434225",
+    "slug": "splash-refresher-acai-grape-flavored-bottled-water"
+   },
+   {
+    "id": "0006827473529",
+    "slug": "pure-life-purified-bottled-water"
+   },
+   {
+    "id": "0006827491147",
+    "slug": "splash-refresher-mandarin-orange-flavored-bottled-water"
+   },
+   {
+    "id": "0007017717636",
+    "slug": "twinings-of-london-pure-green-tea-bags"
+   },
+   {
+    "id": "0007020078858",
+    "slug": "buffalo-wild-wings-spicy-beer-cheese-dip"
+   },
+   {
+    "id": "0007047022408",
+    "slug": "go-gurt-protein-strawberry-kids-low-fat-yogurt-tubes"
+   },
+   {
+    "id": "0007073407037",
+    "slug": "celestial-seasonings-caffeinated-honey-lemon-ginseng-green-tea"
+   },
+   {
+    "id": "0007080021635",
+    "slug": "smithfield-applewood-smoked-bacon-dry-rubbed-pork-loin-filet"
+   },
+   {
+    "id": "0007080074210",
+    "slug": "smithfield-marinated-portobello-mushroom-fresh-pork-loin-filet"
+   },
+   {
+    "id": "0007080074687",
+    "slug": "smithfield-roasted-garlic-herb-pork-loin-filet"
+   },
+   {
+    "id": "0007116927383",
+    "slug": "betty-crocker-decorating-icing-red"
+   },
+   {
+    "id": "0007116927385",
+    "slug": "bc-decor-icing-pouch-green"
+   },
+   {
+    "id": "0007146426040",
+    "slug": "bolthouse-farms-vanilla-chai-soy-tea-beverage"
+   },
+   {
+    "id": "0007166206511",
+    "slug": "mkr-16ct-fl-signatur-e-dual-st-fl-12p"
+   },
+   {
+    "id": "0007166207722",
+    "slug": "crayola-broadline-classic-markers"
+   },
+   {
+    "id": "0007166207726",
+    "slug": "crayola-fineline-classic-markers"
+   },
+   {
+    "id": "0007223932476",
+    "slug": "dr-brown-s-natural-flow-fox-silicone-learning-loop-teether"
+   },
+   {
+    "id": "0007223932552",
+    "slug": "dr-brown-s-natural-flow-happypaci-one-piece-silicone-pacifier"
+   },
+   {
+    "id": "0007225100139",
+    "slug": "near-east-wild-mushroom-herb-couscous-mix"
+   },
+   {
+    "id": "0007225100154",
+    "slug": "near-east-mediterranean-curry-couscous-mix"
+   },
+   {
+    "id": "0007225100155",
+    "slug": "near-east-roasted-garlic-olive-oil-couscous-mix"
+   },
+   {
+    "id": "0007225100156",
+    "slug": "near-east-parmesan-couscous-mix"
+   },
+   {
+    "id": "0007225100177",
+    "slug": "near-east-toasted-pine-nut-couscous-mix"
+   },
+   {
+    "id": "0007231000145",
+    "slug": "bigelow-green-tea-with-lemon-tea-bags"
+   },
+   {
+    "id": "0007231000167",
+    "slug": "bigelow-green-tea-with-mint-tea-bags"
+   },
+   {
+    "id": "0007231000837",
+    "slug": "bigelow-green-tea-with-pomegranate-tea-bags"
+   },
+   {
+    "id": "0007231000841",
+    "slug": "bigelow-jasmine-green-tea-bags"
+   },
+   {
+    "id": "0007231000847",
+    "slug": "bigelow-classic-green-tea-bags"
+   },
+   {
+    "id": "0007231000860",
+    "slug": "bigelow-green-tea-with-ginger-plus-probiotics-tea-bags"
+   },
+   {
+    "id": "0007231000861",
+    "slug": "bigelow-matcha-with-turmeric-green-tea-bags"
+   },
+   {
+    "id": "0007231000862",
+    "slug": "bigelow-green-tea-with-elderberry-vitamin-c-tea-bags"
+   },
+   {
+    "id": "0007231003248",
+    "slug": "bigelow-classic-green-tea-decaffeinated-tea-bags"
+   },
+   {
+    "id": "0007279600018",
+    "slug": "ibc-black-cherry-made-with-sugar"
+   },
+   {
+    "id": "0007287807151",
+    "slug": "herdez-queso-blanco-cheese-dip-with-jalapenos-15-oz-"
+   },
+   {
+    "id": "0007347200101",
+    "slug": "food-for-life-7-sprouted-frozen-bread"
+   },
+   {
+    "id": "0007347200117",
+    "slug": "food-for-life-cinnamon-raisin-frozen-english-muffins"
+   },
+   {
+    "id": "0007347200119",
+    "slug": "food-for-life-ezekiel-4-9-frozen-english-muffins"
+   },
+   {
+    "id": "0007347200120",
+    "slug": "food-for-life-whole-grain-frozen-bread"
+   },
+   {
+    "id": "0007347200123",
+    "slug": "food-for-life-ezekiel-4-9-sprouted-grain-frozen-bread"
+   },
+   {
+    "id": "0007347200124",
+    "slug": "food-for-life-ezekiel-4-9-organic-sprouted-grain-frozen-bread"
+   },
+   {
+    "id": "0007347200131",
+    "slug": "food-for-life-ezekiel-4-9-cinnamon-raisin-frozen-bread"
+   },
+   {
+    "id": "0007347200153",
+    "slug": "food-for-life-ezekiel-4-9-flourless-sprouted-grain-frozen-bread"
+   },
+   {
+    "id": "0007347200256",
+    "slug": "food-for-life-ezekiel-4-9-golden-flax-sprouted-organic-cereal"
+   },
+   {
+    "id": "0007347200258",
+    "slug": "food-for-life-organic-ezekiel-4-9-almond-sprouted-whole-grain-cereal"
+   },
+   {
+    "id": "0007433347429",
+    "slug": "arrowhead-mills-puffed-rice-cereal-6-oz-bag"
+   },
+   {
+    "id": "0007440170432",
+    "slug": "riceselect-original-moroccan-style-couscous"
+   },
+   {
+    "id": "0007502001686",
+    "slug": "philips-avent-3-months-assorted-soothie-baby-pacifiers"
+   },
+   {
+    "id": "0007535307308",
+    "slug": "duck-hd-clear-22-yd-tape"
+   },
+   {
+    "id": "0007536557332",
+    "slug": "opaa-gyros-sandwich-kit"
+   },
+   {
+    "id": "0007750700501",
+    "slug": "sandwich-bros-burger-melts-frozen-pita-sandwiches"
+   },
+   {
+    "id": "0007750700505",
+    "slug": "sandwich-bros-chicken-melts-frozen-pita-sandwiches"
+   },
+   {
+    "id": "0007765208229",
+    "slug": "stash-tea-premium-green-tea-bags-20-ct"
+   },
+   {
+    "id": "0007790000215",
+    "slug": "jimmy-dean-all-natural-fully-cooked-turkey-sausage-patties"
+   },
+   {
+    "id": "0007790036517",
+    "slug": "jimmy-dean-heat-n-serve-turkey-sausage-frozen-breakfast-patties"
+   },
+   {
+    "id": "0007790036518",
+    "slug": "jimmy-dean-heat-n-serve-turkey-sausage-frozen-breakfast-links"
+   },
+   {
+    "id": "0007790036520",
+    "slug": "jimmy-dean-heat-n-serve-original-pork-sausage-frozen-breakfast-patties"
+   },
+   {
+    "id": "0007791405818",
+    "slug": "bostitch-5-000ct-standard-staples"
+   },
+   {
+    "id": "0007800000204",
+    "slug": "dr-pepper-soda-mini-cans"
+   },
+   {
+    "id": "0007800000337",
+    "slug": "rc-cola-soda-bottle"
+   },
+   {
+    "id": "0007800000386",
+    "slug": "dr-pepper-soda-bottles"
+   },
+   {
+    "id": "0007800000388",
+    "slug": "diet-dr-pepper-soda-bottles"
+   },
+   {
+    "id": "0007800002590",
+    "slug": "dr-pepper-cherry-soda-bottles"
+   },
+   {
+    "id": "0007800002665",
+    "slug": "dr-pepper-7-5-fl-oz-cans-10-pack"
+   },
+   {
+    "id": "0007800003349",
+    "slug": "dr-pepper-cream-soda-cans"
+   },
+   {
+    "id": "0007800003530",
+    "slug": "dr-pepper-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0007800003536",
+    "slug": "dr-pepper-cherry-zero-sugar-soda-bottle"
+   },
+   {
+    "id": "0007800003761",
+    "slug": "dr-pepper-strawberries-and-cream-soda-cans"
+   },
+   {
+    "id": "0007800003767",
+    "slug": "dr-pepper-strawberries-and-cream-soda-bottle"
+   },
+   {
+    "id": "0007800004037",
+    "slug": "dr-pepper-blackberry-soda-cans"
+   },
+   {
+    "id": "0007800004116",
+    "slug": "rc-cola-soda-cans"
+   },
+   {
+    "id": "0007800008210",
+    "slug": "dr-pepper-soda-cans"
+   },
+   {
+    "id": "0007800008216",
+    "slug": "dr-pepper-soda-cans"
+   },
+   {
+    "id": "0007800008231",
+    "slug": "dr-pepper-soda-bottles"
+   },
+   {
+    "id": "0007800008239",
+    "slug": "dr-pepper-soda-bottle"
+   },
+   {
+    "id": "0007800008240",
+    "slug": "dr-pepper-soda-bottle"
+   },
+   {
+    "id": "0007800008246",
+    "slug": "dr-pepper-soda-bottle"
+   },
+   {
+    "id": "0007800008310",
+    "slug": "diet-dr-pepper-soda-cans"
+   },
+   {
+    "id": "0007800008316",
+    "slug": "diet-dr-pepper-soda-cans"
+   },
+   {
+    "id": "0007800008331",
+    "slug": "diet-dr-pepper-soda-bottles"
+   },
+   {
+    "id": "0007800008340",
+    "slug": "diet-dr-pepper-soda-bottle"
+   },
+   {
+    "id": "0007800008346",
+    "slug": "diet-dr-pepper-soda-bottle"
+   },
+   {
+    "id": "0007800009816",
+    "slug": "dr-pepper-cherry-soda-cans"
+   },
+   {
+    "id": "0007800009846",
+    "slug": "dr-pepper-cherry-soda-bottle"
+   },
+   {
+    "id": "0007852202105",
+    "slug": "jason-body-wash-soothing-aloe-vera"
+   },
+   {
+    "id": "0008000052208",
+    "slug": "starkist-tuna-creations-lemon-pepper-pouch"
+   },
+   {
+    "id": "0008086802901",
+    "slug": "dr-praeger-s-meatless-perfect-burger-"
+   },
+   {
+    "id": "0008086806019",
+    "slug": "black-bean-quinoa-veggie-burger"
+   },
+   {
+    "id": "0008298800006",
+    "slug": "white-castle-original-sliders"
+   },
+   {
+    "id": "0008298801006",
+    "slug": "white-castle-classic-cheese-sliders"
+   },
+   {
+    "id": "0008298801016",
+    "slug": "white-castle-classic-cheese-sliders"
+   },
+   {
+    "id": "0008298801106",
+    "slug": "white-castle-jalapeno-cheese-sliders"
+   },
+   {
+    "id": "0008298804496",
+    "slug": "white-castle-jalapeno-cheese-sliders"
+   },
+   {
+    "id": "0008634117052",
+    "slug": "the-silver-palate-grain-berry-multi-bran-flakes-cereal"
+   },
+   {
+    "id": "0018473900149",
+    "slug": "hint-the-classics-variety-pack"
+   },
+   {
+    "id": "0019056912310",
+    "slug": "green-giant-riced-veggies-cauliflower-frozen-vegetables"
+   },
+   {
+    "id": "0019056912311",
+    "slug": "green-giant-riced-veggies-cauliflower-broccoli"
+   },
+   {
+    "id": "0019056950939",
+    "slug": "green-giant-riced-veggies-asian-stir-fry-style-cauliflower"
+   },
+   {
+    "id": "0019056952224",
+    "slug": "green-giant-simply-steam-cauliflower-cheese-sauce"
+   },
+   {
+    "id": "0019056952920",
+    "slug": "green-giant-restaurant-style-honey-glazed-carrots-with-sage-butter"
+   },
+   {
+    "id": "0019305204570",
+    "slug": "zuru-oosh-slime-tub"
+   },
+   {
+    "id": "0020318500000",
+    "slug": "boneless-butt-pork-roast"
+   },
+   {
+    "id": "0020318900000",
+    "slug": "fresh-pork-boston-butt-roast"
+   },
+   {
+    "id": "0021321700000",
+    "slug": "moist-tender-boneless-half-pork-loin"
+   },
+   {
+    "id": "0022335800000",
+    "slug": "pork-tenderloin"
+   },
+   {
+    "id": "0022565000000",
+    "slug": "private-selection-genoa-uncured-deli-salami-sliced"
+   },
+   {
+    "id": "0022594300000",
+    "slug": "private-selection-uncured-deli-pepperoni-sliced"
+   },
+   {
+    "id": "0023320500000",
+    "slug": "pork-shoulder-butt-roast-1-roast-"
+   },
+   {
+    "id": "0023339000000",
+    "slug": "hormel-bone-in-pork-shoulder-butt"
+   },
+   {
+    "id": "0023357510000",
+    "slug": "home-chef-cold-popcorn-chicken"
+   },
+   {
+    "id": "0024336800000",
+    "slug": "moist-tender-pork-boneless-center-cut-roast"
+   },
+   {
+    "id": "0024566390000",
+    "slug": "dietz-watson-sliced-natural-casing-genoa-salami-fresh-sliced-deli-meat"
+   },
+   {
+    "id": "0024587340000",
+    "slug": "private-selection-grab-and-go-uncured-deli-pepperoni-sliced"
+   },
+   {
+    "id": "0025202400000",
+    "slug": "beef-choice-angus-ribeye-steak-thin"
+   },
+   {
+    "id": "0026159900000",
+    "slug": "beef-short-ribs"
+   },
+   {
+    "id": "0026564020000",
+    "slug": "dietz-watson-sliced-hard-salami-fresh-sliced-deli-meat"
+   },
+   {
+    "id": "0027931550000",
+    "slug": "whole-cooked-lobster"
+   },
+   {
+    "id": "0028648060000",
+    "slug": "point-reyes-original-blue-cheese"
+   },
+   {
+    "id": "0029647710000",
+    "slug": "murray-s-blue-stilton-cheese"
+   },
+   {
+    "id": "0030573055620",
+    "slug": "preparation-h-hemorrhoid-wipes-with-witch-hazel-for-skin-irritation-relief"
+   },
+   {
+    "id": "0030573284093",
+    "slug": "preparation-h-hemorrhoid-cooling-gel-with-aloe-for-fast-discomfort-relief"
+   },
+   {
+    "id": "0030573286893",
+    "slug": "preparation-h-multi-symptom-relief-hemorrhoidal-cream"
+   },
+   {
+    "id": "0030573287193",
+    "slug": "preparation-h-hemorrhoid-ointment-itching-burning-and-discomfort-relief"
+   },
+   {
+    "id": "0063347232258",
+    "slug": "clearblue-rapid-detection-pregnancy-test"
+   },
+   {
+    "id": "0063347260224",
+    "slug": "clearblue-menopause-stage-indicator"
+   },
+   {
+    "id": "0063347260234",
+    "slug": "clearblue-early-combo-pack-pregnancy-test"
+   },
+   {
+    "id": "0063748002084",
+    "slug": "atkins-protein-meal-bar-chocolate-peanut-butter"
+   },
+   {
+    "id": "0063748002502",
+    "slug": "atkins-protein-meal-bar-chocolate-peanut-butter"
+   },
+   {
+    "id": "0063748002553",
+    "slug": "atkins-caramel-chocolate-nut-roll-snack-protein-bar"
+   },
+   {
+    "id": "0063748004504",
+    "slug": "atkins-peanut-butter-granola-meal-protein-bar"
+   },
+   {
+    "id": "0065334133514",
+    "slug": "pure-green-turmeric-tonic-shot"
+   },
+   {
+    "id": "0065577201827",
+    "slug": "toastmaster-nonstick-griddle-10-x-16-black"
+   },
+   {
+    "id": "0065722700210",
+    "slug": "essentia-bottled-water-1-liter-6-pack-ionized-alkaline-water"
+   },
+   {
+    "id": "0065722720617",
+    "slug": "essentia-ionized-alkaline-water"
+   },
+   {
+    "id": "0066651933490",
+    "slug": "tommee-tippee-fun-style-pacifier-and-fun-style-night-glow-in-the-dark-pacifier"
+   },
+   {
+    "id": "0066651961157",
+    "slug": "tommee-tippee-ultra-light-pacifiers"
+   },
+   {
+    "id": "0067628001130",
+    "slug": "hempz-original-herbal-body-moisturizer"
+   },
+   {
+    "id": "0067628001132",
+    "slug": "hempz-age-defying-herbal-body-moisturizer"
+   },
+   {
+    "id": "0067628001840",
+    "slug": "hempz-triple-moisture-body-moisturizer"
+   },
+   {
+    "id": "0067628002709",
+    "slug": "hempz-sweet-pineapple-honey-melon-herbal-body-moisturizer"
+   },
+   {
+    "id": "0069843300091",
+    "slug": "o-dough-s-gluten-free-frozen-bagel-thins"
+   },
+   {
+    "id": "0069843300123",
+    "slug": "o-doughs-vegan-everything-bagel-thins"
+   },
+   {
+    "id": "0069923500100",
+    "slug": "yakult-probiotic-nonfat-yogurt-drinks"
+   },
+   {
+    "id": "0071833422007",
+    "slug": "desert-essence-100-pure-jojoba-oil"
+   },
+   {
+    "id": "0073753920004",
+    "slug": "sunbutter-jammies-sunflower-butter-grape-jelly-sandwiches"
+   },
+   {
+    "id": "0075928367321",
+    "slug": "boca-all-american-veggie-burgers-box"
+   },
+   {
+    "id": "0078616200281",
+    "slug": "smartwater-vapor-distilled-electrolyte-premium-bottled-water"
+   },
+   {
+    "id": "0078616200369",
+    "slug": "smartwater-vapor-distilled-water-bottles"
+   },
+   {
+    "id": "0079452200356",
+    "slug": "tazo-regenerative-organic-green-ginger-tea-bags"
+   },
+   {
+    "id": "0079452270510",
+    "slug": "tazo-conc-green-tea-matcha-latte"
+   },
+   {
+    "id": "0079452273062",
+    "slug": "lipton-green-tea"
+   },
+   {
+    "id": "0079452273063",
+    "slug": "lipton-decaffeinated-green-tea-bags"
+   },
+   {
+    "id": "0080033810101",
+    "slug": "gordo-s-mild-mexican-restaurant-style-queso-cheese-dip"
+   },
+   {
+    "id": "0080033810102",
+    "slug": "gordo-s-hot-mexican-restaurant-style-queso-cheese-dip"
+   },
+   {
+    "id": "0080033810103",
+    "slug": "gordo-s-original-mexican-restaurant-style-queso-cheese-dip"
+   },
+   {
+    "id": "0080812411104",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-lavender"
+   },
+   {
+    "id": "0080812411163",
+    "slug": "mmcd-handsoaprefill-lavender-33floz-6us"
+   },
+   {
+    "id": "0080812411215",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-rain-water"
+   },
+   {
+    "id": "0080812411432",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-daisy"
+   },
+   {
+    "id": "0080812412163",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-refill-lemon-verbena"
+   },
+   {
+    "id": "0080812414104",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-basil"
+   },
+   {
+    "id": "0080812470057",
+    "slug": "mrs-meyer-s-clean-day-hand-soap-lilac"
+   },
+   {
+    "id": "0081000346108",
+    "slug": "lily-s-chocolate-salted-caramel-flavored-no-sugar-added-baking-chips-bag"
+   },
+   {
+    "id": "0081001572078",
+    "slug": "roar-organic-strawberry-lemonade-bottle"
+   },
+   {
+    "id": "0081005729013",
+    "slug": "beyond-meat-cookout-classic-plant-based-burger-patties"
+   },
+   {
+    "id": "0081005729082",
+    "slug": "beyond-popcorn-chicken-plant-based-bites-original"
+   },
+   {
+    "id": "0081005729083",
+    "slug": "beyond-meat-beyond-steak-plant-based-seared-tips"
+   },
+   {
+    "id": "0081005729109",
+    "slug": "beyond-meat-stack-burger-plant-based-frozen-patties"
+   },
+   {
+    "id": "0081006371029",
+    "slug": "poppi-classic-cola-prebiotic-soda-can"
+   },
+   {
+    "id": "0081006371030",
+    "slug": "poppi-doc-pop-prebiotic-soda-can"
+   },
+   {
+    "id": "0081006371050",
+    "slug": "poppi-classic-cola-prebiotic-soda-cans"
+   },
+   {
+    "id": "0081006371105",
+    "slug": "poppi-cherry-cola-prebiotic-soda-can"
+   },
+   {
+    "id": "0081009494015",
+    "slug": "eat-meati-mushroomroot-classic-steaks"
+   },
+   {
+    "id": "0081009494016",
+    "slug": "eat-meati-classic-cutlet"
+   },
+   {
+    "id": "0081009494018",
+    "slug": "eat-meati-mushroomroot-carne-asada-steaks"
+   },
+   {
+    "id": "0081009559192",
+    "slug": "dr-squatch-bar-soap-summer-citrus"
+   },
+   {
+    "id": "0081012129000",
+    "slug": "zevo-max-flying-insect-indoor-fly-trap-easy-mess-free-solution"
+   },
+   {
+    "id": "0081012129015",
+    "slug": "zevo-on-body-mosquito-repellent-tick-repellent-bug-spray-6oz-aerosol-spray"
+   },
+   {
+    "id": "0081012129017",
+    "slug": "zevo-on-body-mosquito-repellent-tick-repellent-bug-spray-pump-spray"
+   },
+   {
+    "id": "0081012129023",
+    "slug": "zevo-ant-roach-fly-multi-insect-trigger-spray"
+   },
+   {
+    "id": "0081012129027",
+    "slug": "zevo-ant-roach-spider-crawling-insect-aerosol-spray"
+   },
+   {
+    "id": "0081012129047",
+    "slug": "zevo-flying-insect-killer-spray"
+   },
+   {
+    "id": "0081106801100",
+    "slug": "dr-teal-s-soothe-sleep-foaming-bath-with-pure-epsom-salt-lavender"
+   },
+   {
+    "id": "0081106801101",
+    "slug": "dr-teal-s-relax-relief-foaming-bath-with-pure-epsom-salt-eucalyptus-spearmint"
+   },
+   {
+    "id": "0081106801500",
+    "slug": "dr-teal-s-foaming-bath-with-pink-himalayan-salt-restore-replenish-with-pure-epsom-salt"
+   },
+   {
+    "id": "0081106801501",
+    "slug": "dr-teal-s-foaming-bath-with-pure-epsom-salt-nourish-protect-with-coconut-oil"
+   },
+   {
+    "id": "0081157202397",
+    "slug": "sodastream-diet-zerp-sugar-energy-flavor-sodamix"
+   },
+   {
+    "id": "0081157202766",
+    "slug": "sodastream-diet-carbonated-drink-makers-drink-mix"
+   },
+   {
+    "id": "0081215403504",
+    "slug": "native-shower-bath-liquid"
+   },
+   {
+    "id": "0081669702019",
+    "slug": "impossible-plant-based-frozen-savory-sausage-patties"
+   },
+   {
+    "id": "0081669702039",
+    "slug": "impossible-wild-nuggies-plant-based-chicken-nuggets"
+   },
+   {
+    "id": "0081669702061",
+    "slug": "impossible-plant-based-frozen-spicy-chicken-nuggets"
+   },
+   {
+    "id": "0081669702062",
+    "slug": "impossible-plant-based-frozen-spicy-chicken-patties"
+   },
+   {
+    "id": "0081669702100",
+    "slug": "impossible-plant-based-beef"
+   },
+   {
+    "id": "0081669702101",
+    "slug": "impossible-plant-based-burger-patties"
+   },
+   {
+    "id": "0081669702107",
+    "slug": "impossible-plant-based-frozen-burger-patties"
+   },
+   {
+    "id": "0081669702114",
+    "slug": "impossible-plant-based-frozen-chicken-nuggets"
+   },
+   {
+    "id": "0081669702116",
+    "slug": "impossible-steak-bites-meat-from-plants-frozen-fully-cooked-10-oz"
+   },
+   {
+    "id": "0081669702304",
+    "slug": "impossible-plant-based-frozen-homestyle-meatballs"
+   },
+   {
+    "id": "0081696002262",
+    "slug": "tiesta-tea-superior-matcha-green-tea"
+   },
+   {
+    "id": "0081829001175",
+    "slug": "chobani-low-fat-greek-yogurt-peach-drink-7oz"
+   },
+   {
+    "id": "0081829001177",
+    "slug": "chobani-low-fat-greek-yogurt-mango-drink"
+   },
+   {
+    "id": "0081829001179",
+    "slug": "chobani-low-fat-greek-yogurt-strawberry-banana-drink-7oz"
+   },
+   {
+    "id": "0081829001180",
+    "slug": "chobani-mixed-berry-low-fat-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001558",
+    "slug": "chobani-zero-added-sugar-strawberries-cream-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001561",
+    "slug": "chobani-zero-added-sugar-tropical-punch-flavored-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001562",
+    "slug": "chobani-30g-protein-lowfat-greek-yogurt-drink-strawberries-cream-14-fl-oz"
+   },
+   {
+    "id": "0081829001563",
+    "slug": "chobani-zero-added-sugar-vanilla-ice-cream-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001771",
+    "slug": "chobani-20g-protein-lowfat-greek-yogurt-drink-strawberries-cream"
+   },
+   {
+    "id": "0081829001773",
+    "slug": "chobani-zero-added-sugar-mixed-berry-vanilla-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001774",
+    "slug": "chobani-20g-protein-lowfat-greek-yogurt-drink-vanilla"
+   },
+   {
+    "id": "0081829001872",
+    "slug": "chobani-zero-added-sugar-cookies-cream-flavored-greek-yogurt-drink"
+   },
+   {
+    "id": "0081829001938",
+    "slug": "chobani-lowfat-greek-strawberry-yogurt-drink-7-fl-oz"
+   },
+   {
+    "id": "0081861702257",
+    "slug": "suja-organic-immunity-elderberry-apple-shot"
+   },
+   {
+    "id": "0081939302056",
+    "slug": "lala-wild-strawberry-probiotic-yogurt-smoothie"
+   },
+   {
+    "id": "0081939302059",
+    "slug": "lala-strawberry-banana-probiotic-yogurt-smoothie"
+   },
+   {
+    "id": "0081939302075",
+    "slug": "lala-mixed-berry-drinkable-yogurt-smoothie"
+   },
+   {
+    "id": "0081959701021",
+    "slug": "enjoy-life-baking-dark-chocolate-morsels"
+   },
+   {
+    "id": "0081985802002",
+    "slug": "core-hydration-perfectly-balanced-bottled-water"
+   },
+   {
+    "id": "0083373500006",
+    "slug": "quorn-frozen-meatless-chiqin-nuggets"
+   },
+   {
+    "id": "0083373500014",
+    "slug": "quorn-meatless-grounds-frozen-meal"
+   },
+   {
+    "id": "0084004530022",
+    "slug": "pacha-soap-co-sand-sea-bar-soap"
+   },
+   {
+    "id": "0084223400000",
+    "slug": "gardein-ultimate-plant-based-ground-be-f-crumbles-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400010",
+    "slug": "gardein-ultimate-plant-based-original-chick-n-strips-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400052",
+    "slug": "gardein-plant-based-seven-grain-crispy-tenders-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400232",
+    "slug": "gardein-ultimate-plant-based-chick-n-filets-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400233",
+    "slug": "gardein-ultimate-plant-based-chick-n-nuggets-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400234",
+    "slug": "gardein-ultimate-plant-based-chick-n-tenders-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400249",
+    "slug": "gardein-ultimate-plant-based-spicy-chick-n-filets-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400670",
+    "slug": "gardein-ultimate-plant-based-meatballs-frozen-meat-alternative"
+   },
+   {
+    "id": "0084223400719",
+    "slug": "gardein-ultimate-plant-based-buffalo-chick-n-wings-frozen-meat-alternative"
+   },
+   {
+    "id": "0084529603414",
+    "slug": "mam-16-months-silicone-toddler-pacifiers"
+   },
+   {
+    "id": "0085000288741",
+    "slug": "cocoa-magic-spoon-protein-cereal"
+   },
+   {
+    "id": "0085000288742",
+    "slug": "blueberry-muffin-magic-spoon-protein-cereal"
+   },
+   {
+    "id": "0085000288744",
+    "slug": "fruity-magic-spoon-protein-cereal"
+   },
+   {
+    "id": "0085000288746",
+    "slug": "magic-spoon-peanut-butter-high-protein-grain-free-breakfast-cereal"
+   },
+   {
+    "id": "0085000964783",
+    "slug": "hu-organic-baking-chocolate-gems"
+   },
+   {
+    "id": "0085000994283",
+    "slug": "bodyarmor-sportwater-sports-drink-bottles"
+   },
+   {
+    "id": "0085001599600",
+    "slug": "lily-s-toaster-grills-american-grilled-cheese-sandwich"
+   },
+   {
+    "id": "0085001599601",
+    "slug": "lily-s-toaster-grills-grilled-ham-cheese-frozen-sandwiches"
+   },
+   {
+    "id": "0085001681302",
+    "slug": "three-wishes-grain-free-cereal-fruity"
+   },
+   {
+    "id": "0085001746808",
+    "slug": "catalina-crunch-protein-cereal-fruity-8-oz"
+   },
+   {
+    "id": "0085001746818",
+    "slug": "catalina-crunch-protein-cereal-chocolate-peanut-butter"
+   },
+   {
+    "id": "0085002026043",
+    "slug": "actual-veggies-purple-roots-veggie-burgers"
+   },
+   {
+    "id": "0085002770226",
+    "slug": "olipop-cherry-cola-prebiotic-soda-can-refrigerated"
+   },
+   {
+    "id": "0085002803503",
+    "slug": "everything-legendary-plnt-based-cheese-burgers"
+   },
+   {
+    "id": "0085003928641",
+    "slug": "liquid-i-v-hydration-multiplier-electrolytes-strawberry-lemonade-drink-mix-packets"
+   },
+   {
+    "id": "0085004411209",
+    "slug": "catalina-crunch-blueberry-muffin-protein-cereal-with-blueberries"
+   },
+   {
+    "id": "0085004721780",
+    "slug": "yulu-foods-classic-milk-tea-boba-kit"
+   },
+   {
+    "id": "0085004721781",
+    "slug": "yulu-foods-taro-milk-tea-boba-kit"
+   },
+   {
+    "id": "0085004721782",
+    "slug": "yulu-foods-matcha-milk-tea-boba-kit"
+   },
+   {
+    "id": "0085012500847",
+    "slug": "pacha-soap-co-jasmine-gardenia-classic-froth-bomb-"
+   },
+   {
+    "id": "0085012500848",
+    "slug": "pacha-soap-co-sweet-honey-almond-classic-froth-bath-bomb"
+   },
+   {
+    "id": "0085181700767",
+    "slug": "dr-squatch-bar-soap-fresh-falls-scent-made-from-natural-oils"
+   },
+   {
+    "id": "0085181700777",
+    "slug": "dr-squatch-bar-soap-wood-barrel-bourbon-scent-made-from-natural-oils"
+   },
+   {
+    "id": "0085300400454",
+    "slug": "core-hydration-perfectly-balanced-bottled-water"
+   },
+   {
+    "id": "0085337100643",
+    "slug": "jade-leaf-organic-japanese-matcha-latte-mix"
+   },
+   {
+    "id": "0085603500101",
+    "slug": "dead-sea-warehouse-amazing-minerals-bath-salts"
+   },
+   {
+    "id": "0085608800374",
+    "slug": "seven-sundays-real-maple-sunflower-cereal"
+   },
+   {
+    "id": "0085608800375",
+    "slug": "seven-sundays-real-cocoa-sunflower-cereal"
+   },
+   {
+    "id": "0085648100318",
+    "slug": "lily-s-dark-chocolate-style-no-sugar-added-baking-chips-bag"
+   },
+   {
+    "id": "0085648100320",
+    "slug": "lily-s-peanut-butter-flavored-no-added-sugar-baking-chips-bag"
+   },
+   {
+    "id": "0085648100389",
+    "slug": "lily-s-semi-sweet-chocolate-style-no-sugar-added-baking-chips-bag"
+   },
+   {
+    "id": "0085650200608",
+    "slug": "vive-organic-immunity-boost-original-wellness-shot-with-ginger-and-turmeric-potent-wellness-shots"
+   },
+   {
+    "id": "0085654100254",
+    "slug": "eboost-super-fuel-blue-raspberry-plant-based-energy-vitamins"
+   },
+   {
+    "id": "0085654100282",
+    "slug": "eboost-super-fuel-strawberry-lemonade-plant-based-energy-vitamins"
+   },
+   {
+    "id": "0085654100283",
+    "slug": "eboost-super-fuel-orange-mango-plant-based-energy-vitamins"
+   },
+   {
+    "id": "0085672600746",
+    "slug": "maestri-ditalia-spianata-piccante-sliced-salami"
+   },
+   {
+    "id": "0085675700642",
+    "slug": "dash-aqua-mini-waffle-maker"
+   },
+   {
+    "id": "0085688520025",
+    "slug": "south-of-france-shea-butter-bar-soap"
+   },
+   {
+    "id": "0086000215244",
+    "slug": "three-wishes-grain-free-cereal-cinnamon"
+   },
+   {
+    "id": "0086000215249",
+    "slug": "three-wishes-grain-free-cereal-cocoa"
+   },
+   {
+    "id": "0086047900152",
+    "slug": "catalina-crunch-cinnamon-toast-protein-cereal"
+   },
+   {
+    "id": "0086376500000",
+    "slug": "dr-squatch-natural-bar-soap-pine-tar"
+   },
+   {
+    "id": "0086376500002",
+    "slug": "dr-squatch-natural-bar-soap-bay-rum"
+   },
+   {
+    "id": "0087426700800",
+    "slug": "gardein-ultimate-plant-based-ste-k-tips-frozen"
+   },
+   {
+    "id": "0087863900008",
+    "slug": "every-man-jack-men-s-hydrating-cedarwood-amber-body-wash"
+   },
+   {
+    "id": "0087863900010",
+    "slug": "every-man-jack-men-s-hydrating-sandalwood-teak-body-wash"
+   },
+   {
+    "id": "0087863900090",
+    "slug": "every-man-jack-men-s-hydrating-sea-salt-citrus-body-wash"
+   },
+   {
+    "id": "0088397809598",
+    "slug": "mom-s-best-sweetened-wheatfuls-cereal"
+   },
+   {
+    "id": "0088397809599",
+    "slug": "mom-s-best-honey-nut-toasty-o-s-cereal"
+   },
+   {
+    "id": "0088397814444",
+    "slug": "honey-grahams-whole-grain-breakfast-cereal"
+   },
+   {
+    "id": "0088397814726",
+    "slug": "crispy-cocoa-rice-gluten-free-cereal"
+   },
+   {
+    "id": "0088462310619",
+    "slug": "bear-naked-cacao-cashew-butter-crunch-granola"
+   },
+   {
+    "id": "0088491200237",
+    "slug": "post-great-grains-cranberry-almond-crunch-cereal"
+   },
+   {
+    "id": "0088491200341",
+    "slug": "honey-bunches-of-oats-honey-roasted-granola-cereal-bag"
+   },
+   {
+    "id": "0088491200471",
+    "slug": "grape-nuts-original-no-added-sugar-large-size-cereal"
+   },
+   {
+    "id": "0088491200672",
+    "slug": "marshmallow-fruity-pebbles-cereal"
+   },
+   {
+    "id": "0088491201426",
+    "slug": "honey-bunches-of-oats-honey-roasted-family-size-cereal"
+   },
+   {
+    "id": "0088491201427",
+    "slug": "honey-bunches-of-oats-with-almonds-breakfast-cereal-18-oz"
+   },
+   {
+    "id": "0088491211171",
+    "slug": "honeycomb-cereal-12-5-oz"
+   },
+   {
+    "id": "0088491211470",
+    "slug": "post-raisin-bran-cereal"
+   },
+   {
+    "id": "0088491211762",
+    "slug": "golden-crisp-honey-cereal"
+   },
+   {
+    "id": "0088491212601",
+    "slug": "post-great-grains-crunchy-pecan-cereal"
+   },
+   {
+    "id": "0088491212611",
+    "slug": "post-great-grains-raisins-dates-and-pecans-breakfast-cereal"
+   },
+   {
+    "id": "0088491212951",
+    "slug": "cocoa-pebbles-cereal"
+   },
+   {
+    "id": "0088491212971",
+    "slug": "fruity-pebbles-gluten-free-breakfast-cereal"
+   },
+   {
+    "id": "0088491218005",
+    "slug": "post-big-biscuit-shredded-wheat-cereal"
+   },
+   {
+    "id": "0088491218059",
+    "slug": "post-wheat-n-bran-shredded-wheat-cereal"
+   },
+   {
+    "id": "0088491218062",
+    "slug": "post-shredded-wheat-cereal"
+   },
+   {
+    "id": "0088491224926",
+    "slug": "honey-bunches-of-oats-with-almonds-mega-size-cereal"
+   },
+   {
+    "id": "0088491224927",
+    "slug": "honey-bunches-of-oats-honey-roasted-mega-size-cereal"
+   },
+   {
+    "id": "0088491227310",
+    "slug": "honey-maid-s-mores-cereal"
+   },
+   {
+    "id": "0088491228433",
+    "slug": "honey-ohs-cereal"
+   },
+   {
+    "id": "0088491235618",
+    "slug": "cocoa-pebbles-mega-size-chocolate-cereal-27-5-oz"
+   },
+   {
+    "id": "0088491235619",
+    "slug": "fruity-pebbles-mega-size-cereal"
+   },
+   {
+    "id": "0088491235915",
+    "slug": "honey-bunches-of-oats-honey-roasted-cereal"
+   },
+   {
+    "id": "0088491235916",
+    "slug": "honey-bunches-of-oats-with-almonds-cereal"
+   },
+   {
+    "id": "0088491235948",
+    "slug": "honey-bunches-of-oats-with-real-strawberries-cereal"
+   },
+   {
+    "id": "0088491237747",
+    "slug": "premier-protein-mixed-berry-almond-protein-cereal"
+   },
+   {
+    "id": "0088491237750",
+    "slug": "premier-protein-chocolate-almond-protein-cereal"
+   },
+   {
+    "id": "0088491237927",
+    "slug": "fruity-pebbles-family-size-cereal"
+   },
+   {
+    "id": "0088491237928",
+    "slug": "cocoa-pebbles-family-size-cereal"
+   },
+   {
+    "id": "0088491239406",
+    "slug": "marshmallow-fruity-pebbles-family-size-cereal"
+   },
+   {
+    "id": "0088491241648",
+    "slug": "honeycomb-family-size-cereal"
+   },
+   {
+    "id": "0088491243494",
+    "slug": "fruity-pebbles-cereal-bag"
+   },
+   {
+    "id": "0088491243496",
+    "slug": "cocoa-pebbles-cereal-bag"
+   },
+   {
+    "id": "0088491243818",
+    "slug": "honey-bunches-of-oats-honey-roasted-cereal-bag"
+   },
+   {
+    "id": "0088491244963",
+    "slug": "oreo-puffs-chocolate-cereal"
+   },
+   {
+    "id": "0088491246291",
+    "slug": "honey-bunches-of-oats-chocolate-cereal-12-oz"
+   },
+   {
+    "id": "0088513169322",
+    "slug": "nuk-orthodontic-baby-pacifier-value-pack"
+   },
+   {
+    "id": "0088513169330",
+    "slug": "nuk-orthodontic-pacifiers-18-36-months-2-pack"
+   },
+   {
+    "id": "0088513169917",
+    "slug": "nuk-first-choice-comfy-100-silicone-pacifier-0-6-months-3-pack"
+   },
+   {
+    "id": "0088877701911",
+    "slug": "top-flight-office-works-push-pins-clear"
+   },
+   {
+    "id": "0088877705892",
+    "slug": "sds-for-hd-designs-13-inch-scalloped-footed-wood-board"
+   },
+   {
+    "id": "0088877710444",
+    "slug": "sds-for-hd-designs-10-inch-scalloped-footed-wood-board"
+   },
+   {
+    "id": "0089245300103",
+    "slug": "against-the-grain-gluten-and-grain-free-gourmet-baguette"
+   },
+   {
+    "id": "0089477300101",
+    "slug": "zevia-cola-zero-calorie-soda-cans"
+   },
+   {
+    "id": "0089477300110",
+    "slug": "zevia-black-cherry-zero-sugar-soda-cans"
+   },
+   {
+    "id": "0089477300160",
+    "slug": "zevia-cherry-cola-zero-calorie-soda-cans"
+   },
+   {
+    "id": "0089569700254",
+    "slug": "raw-sugar-watermelon-fresh-mint-moisture-loving-body-wash"
+   },
+   {
+    "id": "0089569700261",
+    "slug": "raw-sugar-living-green-tea-cucumber-aloe-vera-sensitive-skin-simply-body-wash"
+   },
+   {
+    "id": "0089758100036",
+    "slug": "dandies-vegan-marshmallows"
+   },
+   {
+    "id": "0089824800168",
+    "slug": "siggi-s-probiotic-drinkable-lowfat-yogurt"
+   },
+   {
+    "id": "0089824800169",
+    "slug": "siggi-s-probiotic-drinkable-lowfat-yogurt-vanilla"
+   }
+  ]
+ }
+}

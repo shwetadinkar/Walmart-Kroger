@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
 import time
 from dataclasses import dataclass
 from urllib.parse import urlencode
@@ -76,8 +77,14 @@ class KrogerClient:
         self._expires=time.monotonic()+int(result.get('expires_in', 1800))
         return token
 
+    # Product details by id. Kept to exactly this shape rather than allowing
+    # '/products/*' so the endpoint allowlist stays an allowlist: a 13-digit
+    # productId and nothing else.
+    _PRODUCT_BY_ID=re.compile(r'^/products/\d{13}$')
+
     def get(self,path, params=None):
-        if path not in ('/locations','/products') and not path.startswith('/locations/'):
+        if (path not in ('/locations','/products') and not path.startswith('/locations/')
+                and not self._PRODUCT_BY_ID.match(path)):
             raise KrogerError('Only approved documented Kroger endpoints are supported')
         url=ROOT+path+(('?'+urlencode(params)) if params else '')
         req=Request(url,headers={'Authorization':f'Bearer {self.token()}','Accept':'application/json'})
