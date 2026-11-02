@@ -284,6 +284,23 @@ class CompositeSource:
         self._bindings = {}
 
     @property
+    def spine_source_mode(self) -> str:
+        """What actually enumerated the data.
+
+        The runner's mode-dependent checks read this rather than
+        `source_mode`, because `source_mode` reports `composite(...)`, which
+        starts with neither `synthetic_fixture` nor `authorized_provider`.
+        Wrapping a fixture therefore cleared `source_is_synthetic` and hid the
+        synthetic label; wrapping a provider skipped the location-evidence
+        check that mode requires. The composite must not be able to launder
+        the spine's identity.
+
+        The `getattr` makes this recurse, so a composite wrapped in another
+        composite still reports the real enumerating source.
+        """
+        return getattr(self.spine, "spine_source_mode", self.spine.source_mode)
+
+    @property
     def source_mode(self) -> str:
         parts = [self.spine_name] + [
             e.name for e in self.enrichments if e.availability().available

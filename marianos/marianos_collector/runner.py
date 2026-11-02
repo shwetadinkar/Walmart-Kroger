@@ -59,6 +59,19 @@ class Collector:
         # Prevent two-category experiments from replacing the complete 28-root dataset.
         self.namespace, self.checkpoint_root = storage_namespaces(categories, trial)
 
+    @property
+    def _base_mode(self) -> str:
+        """The mode of whatever actually enumerated the assortment.
+
+        Mode-dependent gates must read this, never `source.source_mode`. A
+        CompositeSource reports `composite(...)`, which starts with neither
+        `synthetic_fixture` nor `authorized_provider`, so wrapping a fixture
+        cleared the synthetic label and wrapping a provider skipped the
+        location-evidence requirement. Same shape as the Walmart runner's
+        `_base_mode`.
+        """
+        return getattr(self.source, "spine_source_mode", self.source.source_mode)
+
     def _checkpoint_key(self, store, category):
         return f"{self.checkpoint_root}/{store.store_id}/{category.slug}.json"
 
@@ -90,7 +103,7 @@ class Collector:
             page = self.source.fetch(store, category, task["url"], task["cursor"])
             if page.store_id != store.store_id or page.zipcode != store.zipcode or not page.store_context_verified:
                 raise ValidationFailure(f"Location context mismatch: {category.name}")
-            if self.source.source_mode.startswith("authorized_provider") and not page.location_evidence_url:
+            if self._base_mode.startswith("authorized_provider") and not page.location_evidence_url:
                 raise ValidationFailure("Authorized provider did not provide independent location evidence URI")
             if page.source_url.split("?",1)[0] != task["url"].split("?",1)[0]:
                 raise ValidationFailure("Provider source URL does not match the page being collected")
@@ -238,7 +251,7 @@ class Collector:
         field_completeness = {f:{"nonempty":field_counts[f], "percentage":round(100*field_counts[f]/len(records),2)} for f in FIELDS}
         report = {
             "store_id": store.store_id, "zipcode":store.zipcode, "source_mode":self.source.source_mode,
-            "source_is_synthetic": self.source.source_mode.startswith("synthetic_fixture"),
+            "source_is_synthetic": self._base_mode.startswith("synthetic_fixture"),
             "status":"validated", "timestamp_utc":datetime.now(timezone.utc).isoformat(),
             "runtime_seconds":round(time.monotonic()-start,3),
             "unique_records":len(records),"duplicate_placements":duplicates,
