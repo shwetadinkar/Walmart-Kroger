@@ -1,0 +1,519 @@
+{
+ "store": {
+  "zipcode": "60061",
+  "store_name": "Marianos - Marianos Vernon Hills",
+  "store_location": "1720 N Milwaukee Ave, Vernon Hills, IL 60061"
+ },
+ "locationId": "53100502",
+ "generated_from": {
+  "records": 26166,
+  "run_report_generated_utc": "2026-10-31T21:23:38.432996+00:00"
+ },
+ "required_roots": 28,
+ "roots_with_products": 23,
+ "roots_with_no_products": [
+  "Coupons",
+  "Seafood",
+  "Coffee",
+  "Batteries",
+  "Light Bulbs"
+ ],
+ "roots": [
+  {
+   "root": "Coupons",
+   "products": 0,
+   "kroger_labels_that_produced_them": [],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Produce",
+   "products": 636,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Produce",
+     "products": 636
+    }
+   ],
+   "with_displayed_ppm": 6,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Meat",
+   "products": 987,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Meat & Seafood",
+     "products": 987
+    }
+   ],
+   "with_displayed_ppm": 53,
+   "with_volume_deal_wording": 5,
+   "with_digital_deal_wording": 4
+  },
+  {
+   "root": "Seafood",
+   "products": 0,
+   "kroger_labels_that_produced_them": [],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Deli",
+   "products": 468,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Deli",
+     "products": 468
+    }
+   ],
+   "with_displayed_ppm": 13,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 3
+  },
+  {
+   "root": "Bakery",
+   "products": 604,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Bakery",
+     "products": 604
+    }
+   ],
+   "with_displayed_ppm": 25,
+   "with_volume_deal_wording": 3,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Floral",
+   "products": 49,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Floral",
+     "products": 49
+    }
+   ],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Grocery",
+   "products": 5000,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Snacks",
+     "products": 1194
+    },
+    {
+     "label": "Canned & Packaged",
+     "products": 1158
+    },
+    {
+     "label": "Baking Goods",
+     "products": 967
+    },
+    {
+     "label": "Pasta, Sauces, Grain",
+     "products": 680
+    },
+    {
+     "label": "Condiment & Sauces",
+     "products": 529
+    },
+    {
+     "label": "International",
+     "products": 472
+    }
+   ],
+   "with_displayed_ppm": 28,
+   "with_volume_deal_wording": 8,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Dairy",
+   "products": 1164,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Dairy",
+     "products": 1164
+    }
+   ],
+   "with_displayed_ppm": 33,
+   "with_volume_deal_wording": 5,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Frozen",
+   "products": 1999,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Frozen",
+     "products": 1999
+    }
+   ],
+   "with_displayed_ppm": 32,
+   "with_volume_deal_wording": 10,
+   "with_digital_deal_wording": 2
+  },
+  {
+   "root": "Natural Organic",
+   "products": 1130,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Natural & Organic",
+     "products": 1130
+    }
+   ],
+   "with_displayed_ppm": 19,
+   "with_volume_deal_wording": 1,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Beverages",
+   "products": 2572,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Beverages",
+     "products": 2572
+    }
+   ],
+   "with_displayed_ppm": 50,
+   "with_volume_deal_wording": 34,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Breakfast",
+   "products": 802,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Breakfast",
+     "products": 802
+    }
+   ],
+   "with_displayed_ppm": 24,
+   "with_volume_deal_wording": 13,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Coffee",
+   "products": 0,
+   "kroger_labels_that_produced_them": [],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Candy",
+   "products": 883,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Candy",
+     "products": 883
+    }
+   ],
+   "with_displayed_ppm": 26,
+   "with_volume_deal_wording": 4,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Beer Wine Liquor",
+   "products": 1752,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Adult Beverage",
+     "products": 1752
+    }
+   ],
+   "with_displayed_ppm": 24,
+   "with_volume_deal_wording": 10,
+   "with_digital_deal_wording": 9
+  },
+  {
+   "root": "Health",
+   "products": 1344,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Health",
+     "products": 1344
+    }
+   ],
+   "with_displayed_ppm": 24,
+   "with_volume_deal_wording": 16,
+   "with_digital_deal_wording": 1
+  },
+  {
+   "root": "Personal Care",
+   "products": 1773,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Personal Care",
+     "products": 1773
+    }
+   ],
+   "with_displayed_ppm": 11,
+   "with_volume_deal_wording": 5,
+   "with_digital_deal_wording": 3
+  },
+  {
+   "root": "Beauty",
+   "products": 1361,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Beauty",
+     "products": 1361
+    }
+   ],
+   "with_displayed_ppm": 40,
+   "with_volume_deal_wording": 3,
+   "with_digital_deal_wording": 9
+  },
+  {
+   "root": "Baby",
+   "products": 564,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Baby",
+     "products": 564
+    }
+   ],
+   "with_displayed_ppm": 25,
+   "with_volume_deal_wording": 25,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Household",
+   "products": 1470,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Cleaning Products",
+     "products": 1470
+    }
+   ],
+   "with_displayed_ppm": 90,
+   "with_volume_deal_wording": 17,
+   "with_digital_deal_wording": 13
+  },
+  {
+   "root": "Kitchen Dining",
+   "products": 496,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Kitchen",
+     "products": 496
+    }
+   ],
+   "with_displayed_ppm": 1,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Pet Supplies",
+   "products": 709,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Pet Care",
+     "products": 709
+    }
+   ],
+   "with_displayed_ppm": 24,
+   "with_volume_deal_wording": 16,
+   "with_digital_deal_wording": 5
+  },
+  {
+   "root": "Candles Home Fragrances",
+   "products": 66,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Home Decor",
+     "products": 66
+    }
+   ],
+   "with_displayed_ppm": 23,
+   "with_volume_deal_wording": 3,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Batteries",
+   "products": 0,
+   "kroger_labels_that_produced_them": [],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Light Bulbs",
+   "products": 0,
+   "kroger_labels_that_produced_them": [],
+   "with_displayed_ppm": 0,
+   "with_volume_deal_wording": 0,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "School Office",
+   "products": 101,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Office, School, & Crafts",
+     "products": 101
+    }
+   ],
+   "with_displayed_ppm": 15,
+   "with_volume_deal_wording": 1,
+   "with_digital_deal_wording": 0
+  },
+  {
+   "root": "Hardware Home Improvement",
+   "products": 49,
+   "kroger_labels_that_produced_them": [
+    {
+     "label": "Hardware",
+     "products": 41
+    },
+    {
+     "label": "Garden & Patio",
+     "products": 8
+    }
+   ],
+   "with_displayed_ppm": 3,
+   "with_volume_deal_wording": 2,
+   "with_digital_deal_wording": 2
+  }
+ ],
+ "records_with_no_root": 187,
+ "unmapped_labels": {
+  "labels": [
+   "Apparel",
+   "Automotive",
+   "Entertainment",
+   "Furniture",
+   "Halloween",
+   "Holiday & Seasonal Goods",
+   "Other",
+   "Party",
+   "Sporting Goods",
+   "Thanksgiving"
+  ],
+  "distinct_products_left_without_a_root": 187,
+  "encounters_during_the_sweep": 255,
+  "why_those_two_numbers_differ": "The sweep counts an encounter each time a term returns a product, and one product is commonly returned by several terms. The run collapsed 17,089 repeat placements overall. The distinct figure is the one that describes the delivered data; the encounter figure describes the sweep.",
+  "products_given_a_root_despite_an_unmapped_label": 0,
+  "rule": "An unmapped label leaves `category` empty and is reported. The count above must be zero; a non-zero value means a root was guessed."
+ },
+ "root_assigned_from_product_not_search_term": {
+  "disagreements_between_term_root_and_product_label": 17881,
+  "note": "The search term is a way of reaching a product, not evidence of its category. Where the two disagreed the product's own Kroger label won, which is why this number is large."
+ },
+ "pages": {
+  "terms_swept": 301,
+  "requests_spent": 998,
+  "pages_per_term_ceiling": 20,
+  "max_start_accepted_by_kroger": 250,
+  "results_reachable_per_term": 300,
+  "page_failures": 0,
+  "terms_that_hit_the_ceiling": 69,
+  "terms_that_hit_the_ceiling_by_root": {
+   "Grocery": 12,
+   "Produce": 9,
+   "Candy": 6,
+   "Dairy": 5,
+   "Beer Wine Liquor": 4,
+   "Beverages": 4,
+   "Frozen": 4,
+   "Meat": 4,
+   "Natural Organic": 4,
+   "Bakery": 3,
+   "Beauty": 2,
+   "Breakfast": 2,
+   "Health": 2,
+   "Kitchen Dining": 2,
+   "Coffee": 1,
+   "Hardware Home Improvement": 1,
+   "Household": 1,
+   "Personal Care": 1,
+   "School Office": 1,
+   "Seafood": 1
+  },
+  "terms_that_hit_the_ceiling_named": [
+   "Bakery||bread",
+   "Bakery||cake",
+   "Bakery||pie",
+   "Beauty||face cream",
+   "Beauty||makeup",
+   "Beer Wine Liquor||beer",
+   "Beer Wine Liquor||red wine",
+   "Beer Wine Liquor||white wine",
+   "Beer Wine Liquor||wine",
+   "Beverages||drink mix",
+   "Beverages||juice",
+   "Beverages||seltzer",
+   "Beverages||soda",
+   "Breakfast||cereal",
+   "Breakfast||granola",
+   "Candy||candy",
+   "Candy||caramel",
+   "Candy||chocolate",
+   "Candy||gum",
+   "Candy||gummy",
+   "Candy||mints",
+   "Coffee||coffee",
+   "Dairy||butter",
+   "Dairy||cheese",
+   "Dairy||eggs",
+   "Dairy||milk",
+   "Dairy||yogurt",
+   "Frozen||frozen chicken",
+   "Frozen||frozen dinner",
+   "Frozen||frozen vegetables",
+   "Frozen||ice cream",
+   "Grocery||beans",
+   "Grocery||broth",
+   "Grocery||canned soup",
+   "Grocery||crackers",
+   "Grocery||jelly",
+   "Grocery||pasta",
+   "Grocery||pasta sauce",
+   "Grocery||peanut butter",
+   "Grocery||rice",
+   "Grocery||salsa",
+   "Grocery||spices",
+   "Grocery||sugar",
+   "Hardware Home Improvement||tool",
+   "Health||supplements",
+   "Health||vitamins",
+   "Household||bleach",
+   "Kitchen Dining||baking pan",
+   "Kitchen Dining||food storage",
+   "Meat||ham",
+   "Meat||roast",
+   "Meat||sausage",
+   "Meat||steak",
+   "Natural Organic||gluten free",
+   "Natural Organic||organic eggs",
+   "Natural Organic||organic snacks",
+   "Natural Organic||plant based",
+   "Personal Care||shampoo",
+   "Produce||apple",
+   "Produce||broccoli",
+   "Produce||lemon",
+   "Produce||lime",
+   "Produce||orange",
+   "Produce||pepper",
+   "Produce||potato",
+   "Produce||strawberry",
+   "Produce||tomato",
+   "School Office||markers",
+   "Seafood||clams"
+  ]
+ },
+ "unexpected_roots_in_data": [],
+ "does_not_establish": [
+  "Complete category discovery. The public API has no category enumeration; products are reached by search term, so no count here is a statement about what the store carries.",
+  "Complete results per term. 69 of 301 terms hit the 300-result ceiling, so there were more products behind those terms than were fetched.",
+  "Subcategory completeness. `sub_category` is the Kroger label the product reports about itself, not a traversal of the retailer's subcategory tree, which this route cannot enumerate.",
+  "That a root showing zero products means the store carries none. It means no product reached by these terms reported that label."
+ ]
+}

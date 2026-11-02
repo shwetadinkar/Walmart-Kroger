@@ -1,0 +1,813 @@
+{
+ "delivered_records": 26166,
+ "page_cards_examined": 656,
+ "products_the_page_prices_by_weight_or_variably": 34,
+ "of_those_caught_by_the_existing_exclusion": 0,
+ "of_those_the_exclusion_cannot_see": 34,
+ "page_cards_with_no_delivered_record": 1,
+ "api_weight_values_on_these_products": {
+  "1 lb": 31,
+  "12 ounces": 2,
+  "1 each": 1
+ },
+ "by_category": {
+  "Meat": 24,
+  "Produce": 7,
+  "Candles Home Fragrances": 2,
+  "Natural Organic": 1
+ },
+ "by_price_basis": {
+  "about each, sold by weight": 25,
+  "about each on sale, sold by weight": 6,
+  "prices may vary": 3
+ },
+ "findings": [
+  {
+   "upc": "0000000004011",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Fresh Bunch of Bananas – 5-7 Bananas",
+    "weight": "1 lb",
+    "regular_price": "0.69",
+    "url": "https://www.marianos.com/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.45",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$0.69/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000094011",
+   "category": "Natural Organic",
+   "api_observation": {
+    "product_title": "Fresh Bunch of Organic Bananas – 5-7 Bananas",
+    "weight": "1 lb",
+    "regular_price": "0.79",
+    "url": "https://www.marianos.com/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.66",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$0.79/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000003082",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Broccoli Crown",
+    "weight": "1 lb",
+    "regular_price": "2.39",
+    "url": "https://www.marianos.com/p/broccoli-crown/0000000003082"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.64",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.39/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/broccoli-crown/0000000003082"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000003283",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Large Honeycrisp Apple – Each",
+    "weight": "1 lb",
+    "regular_price": "2.49",
+    "url": "https://www.marianos.com/p/large-honeycrisp-apple-each/0000000003283"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.25",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.49/lb",
+    "size_as_rendered": "Coupon: $1.79 lb Honeycrisp Apples",
+    "term_that_found_it": "banana",
+    "path": "/p/large-honeycrisp-apple-each/0000000003283"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000004023",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Fresh Seedless Red Grapes",
+    "weight": "1 lb",
+    "regular_price": "3.59",
+    "url": "https://www.marianos.com/p/fresh-seedless-red-grapes/0000000004023"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.18",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$3.59/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/fresh-seedless-red-grapes/0000000004023"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000004087",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Fresh Roma Tomato",
+    "weight": "1 lb",
+    "regular_price": "1.49",
+    "url": "https://www.marianos.com/p/fresh-roma-tomato/0000000004087"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$0.36",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$1.49/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/fresh-roma-tomato/0000000004087"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000004770",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Jumbo Fresh Ripe Avocado",
+    "weight": "1 each",
+    "regular_price": "",
+    "url": "https://www.marianos.com/p/jumbo-fresh-ripe-avocado/0000000004770"
+   },
+   "page_observation": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "1 each",
+    "term_that_found_it": "banana",
+    "path": "/p/jumbo-fresh-ripe-avocado/0000000004770"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0000000004022",
+   "category": "Produce",
+   "api_observation": {
+    "product_title": "Fresh Seedless Green Grapes",
+    "weight": "1 lb",
+    "regular_price": "3.59",
+    "url": "https://www.marianos.com/p/fresh-seedless-green-grapes/0000000004022"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$3.38",
+    "approximate_each_regular_price": "$7.18",
+    "displayed_rate": "$1.69/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "banana",
+    "path": "/p/fresh-seedless-green-grapes/0000000004022"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0022066450000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® HARVESTLAND® Free Range Boneless Skinless Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "6.49",
+    "url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0022066450000"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.78",
+    "approximate_each_regular_price": "$10.38",
+    "displayed_rate": "$2.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0022066450000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0024890600000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Miller Poultry Boneless Skinless Fresh Chicken Breast",
+    "weight": "1 lb",
+    "regular_price": "6.49",
+    "url": "https://www.marianos.com/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024890600000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.09",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.49/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024890600000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0025074900000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® Fresh Boneless Skinless Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "5.99",
+    "url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breasts/0025074900000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.46",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "Buy 1, Get 1 Free",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-fresh-boneless-skinless-chicken-breasts/0025074900000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0029082900000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Simple Truth Organic® Boneless & Skinless Fresh Organic Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "8.99",
+    "url": "https://www.marianos.com/p/simple-truth-organic-boneless-skinless-fresh-organic-chicken-breasts/0029082900000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$12.14",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$8.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/simple-truth-organic-boneless-skinless-fresh-organic-chicken-breasts/0029082900000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0028334900000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Heritage Farm® Boneless Skinless Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "2.50",
+    "url": "https://www.marianos.com/p/heritage-farm-boneless-skinless-chicken-breasts/0028334900000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.25",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.50/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/heritage-farm-boneless-skinless-chicken-breasts/0028334900000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0020094700000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Simple Truth® Natural Boneless Skinless Fresh Chicken Breast BIG DEAL! (Limit 2 at sale price)",
+    "weight": "1 lb",
+    "regular_price": "5.99",
+    "url": "https://www.marianos.com/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-big-deal-limit-2-at-sale-price-/0020094700000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$16.47",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-big-deal-limit-2-at-sale-price-/0020094700000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0027094650000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Prime Cut Chicken Breast",
+    "weight": "1 lb",
+    "regular_price": "5.99",
+    "url": "https://www.marianos.com/p/prime-cut-chicken-breast/0027094650000"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.99",
+    "approximate_each_regular_price": "$5.99",
+    "displayed_rate": "$4.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/prime-cut-chicken-breast/0027094650000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0024058100000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Miller Poultry Boneless Skinless Fresh Chicken Breast",
+    "weight": "1 lb",
+    "regular_price": "6.29",
+    "url": "https://www.marianos.com/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024058100000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$15.73",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.29/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024058100000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0024077800000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Miller Poultry Thin-Sliced Fresh Chicken Breast",
+    "weight": "1 lb",
+    "regular_price": "6.99",
+    "url": "https://www.marianos.com/p/miller-poultry-thin-sliced-fresh-chicken-breast/0024077800000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$8.11",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/miller-poultry-thin-sliced-fresh-chicken-breast/0024077800000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0024096150000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Simple Truth® Natural Boneless Skinless Fresh Chicken Breast Cutlets",
+    "weight": "1 lb",
+    "regular_price": "6.99",
+    "url": "https://www.marianos.com/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-cutlets/0024096150000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.69",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-cutlets/0024096150000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0025093600000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® Fresh Boneless Skinless Chicken Breast Tenderloins",
+    "weight": "1 lb",
+    "regular_price": "6.99",
+    "url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breast-tenderloins/0025093600000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.69",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "Buy 1, Get 1 Free",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-fresh-boneless-skinless-chicken-breast-tenderloins/0025093600000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0023061850000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® HARVESTLAND® Free Range Boneless Skinless Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "5.99",
+    "url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0023061850000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$17.37",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0023061850000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0024890000000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Miller Poultry Bone-In Fresh Chicken Breast",
+    "weight": "1 lb",
+    "regular_price": "3.99",
+    "url": "https://www.marianos.com/p/miller-poultry-bone-in-fresh-chicken-breast/0024890000000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$6.78",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$3.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/miller-poultry-bone-in-fresh-chicken-breast/0024890000000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0025064650000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® HARVESTLAND® Free Range Boneless Skinless Chicken Thighs",
+    "weight": "1 lb",
+    "regular_price": "5.49",
+    "url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-thighs/0025064650000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.61",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.49/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-thighs/0025064650000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0027061550000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® Fresh Boneless Skinless Chicken Breasts Value Pack",
+    "weight": "1 lb",
+    "regular_price": "5.49",
+    "url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breasts-value-pack/0027061550000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$17.79",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.49/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-fresh-boneless-skinless-chicken-breasts-value-pack/0027061550000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0028094750000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® HARVESTLAND® Free Range Boneless Skinless Chicken Breast Tenderloins",
+    "weight": "1 lb",
+    "regular_price": "7.49",
+    "url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breast-tenderloins/0028094750000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.49",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$7.49/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breast-tenderloins/0028094750000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0020265500000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Miller Poultry Boneless Chicken Breast Strips",
+    "weight": "1 lb",
+    "regular_price": "6.99",
+    "url": "https://www.marianos.com/p/miller-poultry-boneless-chicken-breast-strips/0020265500000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$6.99",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/miller-poultry-boneless-chicken-breast-strips/0020265500000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0022083500000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Prime Cut Chicken Breast Family Pack",
+    "weight": "1 lb",
+    "regular_price": "5.99",
+    "url": "https://www.marianos.com/p/prime-cut-chicken-breast-family-pack/0022083500000"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.99",
+    "approximate_each_regular_price": "$5.99",
+    "displayed_rate": "$4.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/prime-cut-chicken-breast-family-pack/0022083500000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0025061900000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "PERDUE® Thin Sliced Boneless Skinless Chicken Breasts",
+    "weight": "1 lb",
+    "regular_price": "6.99",
+    "url": "https://www.marianos.com/p/perdue-thin-sliced-boneless-skinless-chicken-breasts/0025061900000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.09",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "Buy 1, Get 1 Free",
+    "term_that_found_it": "chicken breast",
+    "path": "/p/perdue-thin-sliced-boneless-skinless-chicken-breasts/0025061900000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0021544150000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Kroger® Fresh Farm Raised Atlantic Salmon Fillet",
+    "weight": "1 lb",
+    "regular_price": "11.99",
+    "url": "https://www.marianos.com/p/kroger-fresh-farm-raised-atlantic-salmon-fillet/0021544150000"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$22.48",
+    "approximate_each_regular_price": "$29.98",
+    "displayed_rate": "$8.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "salmon",
+    "path": "/p/kroger-fresh-farm-raised-atlantic-salmon-fillet/0021544150000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0023857740000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Organic Salmon Filet",
+    "weight": "1 lb",
+    "regular_price": "18.99",
+    "url": "https://www.marianos.com/p/organic-salmon-filet/0023857740000"
+   },
+   "page_observation": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$16.99",
+    "approximate_each_regular_price": "$18.98",
+    "displayed_rate": "$16.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "salmon",
+    "path": "/p/organic-salmon-filet/0023857740000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0023858700000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Rushing Waters Fisheries Smoke House Cracked Pepper Salmon",
+    "weight": "1 lb",
+    "regular_price": "21.99",
+    "url": "https://www.marianos.com/p/rushing-waters-fisheries-smoke-house-cracked-pepper-salmon/0023858700000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.00",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$21.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "salmon",
+    "path": "/p/rushing-waters-fisheries-smoke-house-cracked-pepper-salmon/0023858700000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0028864650000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Wild Caught Sockeye Salmon Fillet",
+    "weight": "1 lb",
+    "regular_price": "18.99",
+    "url": "https://www.marianos.com/p/wild-caught-sockeye-salmon-fillet/0028864650000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$18.99",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$18.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "salmon",
+    "path": "/p/wild-caught-sockeye-salmon-fillet/0028864650000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0025858700000",
+   "category": "Meat",
+   "api_observation": {
+    "product_title": "Rushing Waters Fisheries Smoke House Cajun Salmon",
+    "weight": "1 lb",
+    "regular_price": "21.99",
+    "url": "https://www.marianos.com/p/rushing-waters-fisheries-smoke-house-cajun-salmon/0025858700000"
+   },
+   "page_observation": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.00",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$21.99/lb",
+    "size_as_rendered": "",
+    "term_that_found_it": "salmon",
+    "path": "/p/rushing-waters-fisheries-smoke-house-cajun-salmon/0025858700000"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0064412473973",
+   "category": "Candles Home Fragrances",
+   "api_observation": {
+    "product_title": "Tuscany Candle™ Serene Clean Collection Scented Jar Candle - Eucalyptus Aloe",
+    "weight": "12 ounces",
+    "regular_price": "",
+    "url": "https://www.marianos.com/p/tuscany-candle-serene-clean-collection-scented-jar-candle-eucalyptus-aloe/0064412473973"
+   },
+   "page_observation": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "12 ounces",
+    "term_that_found_it": "candle",
+    "path": "/p/tuscany-candle-serene-clean-collection-scented-jar-candle-eucalyptus-aloe/0064412473973"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  },
+  {
+   "upc": "0064412473968",
+   "category": "Candles Home Fragrances",
+   "api_observation": {
+    "product_title": "Tuscany Candle™ Serene Clean™ Collection Beach Rose Scented Jar Candle",
+    "weight": "12 ounces",
+    "regular_price": "",
+    "url": "https://www.marianos.com/p/tuscany-candle-serene-clean-collection-beach-rose-scented-jar-candle/0064412473968"
+   },
+   "page_observation": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "size_as_rendered": "12 ounces",
+    "term_that_found_it": "candle",
+    "path": "/p/tuscany-candle-serene-clean-collection-beach-rose-scented-jar-candle/0064412473968"
+   },
+   "existing_exclusion": {
+    "title_matches_approximate_wording": false,
+    "weight_matches_approximate_wording": false
+   }
+  }
+ ],
+ "what_this_does_not_establish": [
+  "A rate for the rest of the delivered set. Only products the page read reached can be checked this way, and it reached a small fraction. The status of the others is unknown and is not estimated here.",
+  "That these products should be removed. The brief excludes approximate-weight products and the page evidence says these are sold by weight, but the decision to drop delivered rows is the client's. Nothing is excluded by this tool.",
+  "That the exclusion rule is wrong. It tests the title and the weight field, which is correct. The API simply does not put the wording there."
+ ]
+}
