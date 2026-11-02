@@ -3,11 +3,12 @@
   "measured": "2026-10-31",
   "measured_store": "53100502",
   "source_mode": "kroger_public_products_api_term_sweep",
+  "_evidence": "Each reason below now cites the retailer's own published taxonomy, read from its product-listing sitemap on 2 November 2026 and captured at evidence/2026-11-02-marianos-sitemap-taxonomy.json. Four of these five roots are real categories on the site; they sit at a level or under a parent that the Kroger API's category labels never produce. That is a vocabulary mismatch between two sources, evidenced, rather than an assertion that the shelf is empty.",
   "uncovered": {
-    "Coupons": "Coupons is a savings surface on the retailer site, not a Kroger product category label. No API category maps to it, and the public tier exposes no clipping state or coupon terms at all.",
-    "Seafood": "Every product reached by the Seafood terms carried a Kroger category label that maps elsewhere, most often Meat. The shelf exists; the label does not.",
-    "Coffee": "Kroger labels coffee under Beverages and Breakfast. No label maps to a Coffee root.",
-    "Batteries": "No Kroger category label maps here. The 34 Batteries products collected separately on 24 October came from retailer page reads, not from this API.",
-    "Light Bulbs": "No Kroger category label maps here. Products a shopper would find under it carry Household or Hardware Home Improvement labels."
+    "Coupons": "Coupons is a savings surface, not a product category. The site publishes it as its own coupons-sitemap.xml rather than as a /pl/ listing page, no Kroger API category label maps to it, and the public API tier exposes no clipping state, household limit or coupon term at all.",
+    "Seafood": "The site publishes seafood as 05004 fish, a subcategory inside department 05 meat-seafood, not as a department of its own. Every product reached by the Seafood terms therefore carried a Kroger label that maps to Meat.",
+    "Coffee": "The site publishes coffee as 04003 coffee, a subcategory inside department 04 beverages. The Kroger API labels coffee products under Beverages and Breakfast, so no label maps to a Coffee root.",
+    "Batteries": "The site publishes 26003 batteries as a subcategory inside department 26 cleaning-and-household, with leaves such as 2600300001 9-volt-batteries. No Kroger API category label maps to it. The 34 Batteries products collected separately on 24 October came from retailer page reads, not from this API.",
+    "Light Bulbs": "The site publishes 26002 light-bulbs as a subcategory inside department 26 cleaning-and-household, with leaves such as 2600200001 3-way-light-bulbs. No Kroger API category label maps to it; products a shopper would find there carry Household or Hardware Home Improvement labels."
   }
 }

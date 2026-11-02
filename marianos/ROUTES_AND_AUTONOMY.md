@@ -1,0 +1,213 @@
+# Every route to a complete entry, and what autonomy actually needs
+
+2 November 2026. This supersedes the "What is feasible without new
+entitlement" section of `PRODUCTION_ROUTE.md`, which is narrower and older.
+
+Read the first two sections before the table. The table is a list of options;
+the two sections are the reason the list looks the way it does.
+
+## The one thing that blocks both contests
+
+Five of the twenty-two fields are store-bound facts the retailer renders on
+its own pages and nowhere else:
+
+| Field | Where it exists |
+|---|---|
+| `ppm` | the rendered product or search card. Walmart renders it in cents |
+| `volume_deals_description` | the rendered offer text, verbatim |
+| `volume_deals_price` | the rendered offer price |
+| `digital_deals_description` | the clipped-coupon surface, behind an account |
+| `digital_deals_price` | the same |
+
+`sub_category` is a sixth, partly. It is populated, from the Kroger API's own
+category label, so it is an observed value and not a gap. But the label is not
+the listing page: the retailer's taxonomy has 184 subcategories and 238 leaves
+that the API labels never name, so the field says less than the client's
+"Category + ALL subcategories" scope asks for. Only a listing page gives true
+membership.
+
+Everything else — title, weight, regular price, sale price, UPC, brand, image,
+URL, category root — a documented API gives us, store-bound, unattended,
+today. That is why 26,166 Mariano's records exist and are store-verified.
+
+The six above are the whole problem, and no amount of engineering moves them.
+The Kroger public API does not carry a rate or a coupon term, and an
+independent client library that claims to wrap every public endpoint lists
+Authorization, Products, Locations, Cart and Identity, with no coupon
+endpoint anywhere. Walmart's provider holds the rate as two split fields and
+refused in writing on 1 November to render the string.
+
+So a route is only interesting if it answers one question: **does it reach a
+rendered retailer page, lawfully, unattended?**
+
+## Why the obvious answer is unavailable here
+
+The rendered pages are not forbidden. Mariano's `robots.txt`, captured 1
+November, disallows checkout, accounts, clickstream, the recipes API, PDFs,
+in-store pages and the store locator. It does **not** disallow `/pl/` listing
+pages, `/p/` product pages or `/search`, and it advertises the sitemap we
+read on 2 November.
+
+What refuses us is not the rules, it is the egress. Measured, not assumed:
+
+- 30 October, two Azure regions and a second cloud provider: Mariano's closed
+  the connection with `ERR_HTTP2_PROTOCOL_ERROR` before any HTTP exchange;
+  Walmart returned a PerimeterX challenge. A neutral control returned HTTP 200
+  in 336 ms from the same container in the same run, so this is a retailer
+  refusal and not a network fault.
+- 2 November, a `curl` of `sitemap.xml` through a datacenter: the same
+  pre-HTTP refusal.
+- 2 November, the same URL in a browser on an ordinary residential
+  connection: HTTP 200, five sitemap files read.
+
+The standing position in `CLAUDE.md` is that no identity rotation, no
+residential proxy routing and no bot-challenge defeat is built here, by any
+name. That is not a reading of the brief and it does not change. It rules out
+the three things that would otherwise make a datacenter reach those pages.
+
+What it does **not** rule out is running the collector somewhere the retailer
+does not refuse. That is option 4 below, and it is the only route in this
+document that reaches all six fields unattended.
+
+## The routes
+
+| # | Route | Reaches the six fields? | Needs | Status |
+|---|---|---|---|---|
+| 1 | Kroger public Products API sweep, inside the collector | No | nothing new | **Running.** 26,166 records. Now driven by the runner, in the trial namespace |
+| 2 | Kroger Catalog V2, partner tier | Unknown; it has a `unit` field nobody here has seen populated | a partner request, which is **not authorized** | Blocked by the client's instruction |
+| 3 | Bright Data, the account already held | Walmart: the rate, as two split fields. Mariano's: unknown | their defect fixed | Walmart yes, 615 records. Mariano's blocked on their ticket #754403 |
+| 4 | The collector on a machine the retailer serves | **Yes, all six** | the client's decision, and a machine | Not built. See below |
+| 5 | Another commercial provider | Possibly | a new paid entitlement | Not pursued; the client is not paying |
+| 6 | Deliver the fields the lawful routes carry, blank the rest, report the gap | No | nothing | **This is the current delivery** |
+| 7 | Publish Kroger's `regularPerUnitEstimate` in a separate labelled column | Partly, and honestly | the client's say-so | Not built. See below |
+
+### Option 4, in detail, because it is the only complete one
+
+Run the collector on a machine the retailer serves — a small always-on box on
+an ordinary connection, or the client's own hardware. Azure keeps the storage,
+the checkpointing and the schedule; only the fetching moves.
+
+This uses no evasion. No proxy, no rotated identity, no challenge answered.
+It is one ordinary client on one ordinary connection, at a request rate well
+under a human browsing, reading pages `robots.txt` permits.
+
+What it would deliver that nothing else does: displayed `ppm` and verbatim
+deal wording at scale, and true subcategory membership from the listing pages,
+for both retailers.
+
+Three things to be straight about before anyone calls it the answer:
+
+- **It is still automated access.** The retailer refuses datacenters, which is
+  reasonable evidence it would rather not be crawled at all, whatever
+  `robots.txt` permits. That is a judgement for the client and his own
+  counsel, not for us, and it should be made deliberately rather than arrived
+  at because it was the only box left.
+- **It is not what the brief says.** The brief says Azure. The honest reply is
+  that Azure egress is refused by both retailers, measured from two regions and
+  two providers, so "unattended in Azure" and "displayed price per measure" are
+  in direct conflict and the client has to choose which he wants.
+- **Digital coupon terms need a signed-in account.** Even on a served machine,
+  the clipped-coupon surface is behind a login. That means the client's own
+  account and his explicit instruction, and credentials stay with their owner:
+  we would produce the command, he would run it. The 17 coupon terms collected
+  on 24 October came from a signed-in session on his side.
+
+### Option 7, in detail, because it is cheap and nobody has asked for it
+
+Kroger's public API carries `regularPerUnitEstimate`. `CLAUDE.md` forbids it
+in `ppm`, and that stays: `ppm` is the *displayed* rate, and an estimate is
+not one.
+
+But the rule governs what may go in `ppm`, not whether an observed API field
+may be delivered under its own name. A separate column, named
+`ppm_api_estimate`, carrying Kroger's own figure, labelled as an estimate from
+the API and not a displayed rate, breaks nothing: the value is observed, it is
+not reconstructed, and it is not presented as something it is not.
+
+That would put a per-unit figure on most of the 26,166 records instead of 592
+of them, with the displayed-versus-estimate distinction on the face of the
+data. It is the client's call because it is his schema and his downstream
+pipeline. It is the single largest improvement available for no new access.
+
+Not done, and not to be done, until he says so.
+
+## Autonomy: what is now true, and what is left
+
+### Done
+
+**The sweep runs inside the collector.** `--source sweep`, or `--spine sweep`
+under `--source composite`. The route that produces the data now carries the
+publication gate, retention reconciliation, trial and published namespace
+separation, and resume. That was the client's fourth point on 2 November and
+it needed nothing from outside.
+
+**A scheduled run can complete.** Five of the 28 roots return nothing from
+this API for a permanent vocabulary reason, so the zero-products gate would
+have failed every run forever. `config/sweep_coverage.json` declares them with
+the retailer's own taxonomy as the reason, they drop out of the configured
+set, the release names them, and the run fails if one of them ever starts
+returning products.
+
+**The Azure job can select it.** `MARIANOS_SOURCE=sweep` resolves the store
+from Kroger's own `/locations` response with the ZIP and street asserted,
+passes the declaration, and deliberately does not pass `--authorized-source`,
+because the public tier has no authorization to assert.
+
+**The store columns cannot be invented.** They come from the Locations
+response, never from a config file. The first sweep run shipped 18,351 records
+with a blank `store_name`; that cannot recur.
+
+### Left, in the order it matters
+
+1. **Nobody has watched the schedule fire.** The deployment template exists
+   and Azure execution is not hypothetical — three executions ran there on 28
+   October — but the cron has never been observed running by itself across a
+   week, and nothing has run in the client's environment. This is the weakest
+   of the five evidence claims and it is weak for a reason that is about
+   observation, not code.
+2. **The sweep cannot resume across Azure executions.** Its checkpoint and raw
+   responses live under `MARIANOS_SWEEP_WORK_DIR`, container-local by default,
+   and each Container Apps execution gets a fresh container. The runner's own
+   checkpoint is in Blob storage and does survive. Mounting a volume fixes it;
+   `deploy_jobs.sh` does not mount one and no run has exercised the mounted
+   case.
+3. **A stopped run should still report.** A budget-exhausted or API-stopped
+   sweep currently raises. For a twice-weekly job the right behaviour is a
+   release that says what it reached and what it did not, which is a change to
+   how `Budget.Exhausted` surfaces, not to any gate.
+4. **187 products have no root to be delivered under.** Their retailer label
+   is not in the explicit map. They are counted and named, never guessed. Each
+   one is a one-line addition to `config/category_map.json` once someone looks
+   at the labels, and that is ordinary work nobody has done yet.
+5. **The 326-product question is open and answerable today.** 326 of the 890
+   products in the retailer's own SEO sitemap are absent from our data.
+   `tools/resolve_sitemap_gap.py` decides, per id against this store, whether
+   each is a coverage gap or simply not carried. It needs the Kroger
+   credentials, so it is a command for their owner to run:
+
+   ```bash
+   cd marianos
+   set -a; . ./.env.kroger; set +a
+   python3 tools/resolve_sitemap_gap.py --location-id 53100502 --probe-only
+   ```
+
+   One request. If it reports `probe: worked`, rerun without `--probe-only`
+   and `--out reports/2026-11-02-sitemap-gap` for all 326. The
+   `carried_and_missed` count is the first hard lower bound this project has
+   on what the term sweep misses. It is a lower bound and not an estimate: the
+   890 are an SEO subset the retailer chose, not a random sample.
+
+## What this document does not establish
+
+- That option 4 is acceptable. It is lawful as described and uses no evasion,
+  and it is still automated access to a site that refuses datacenters. That is
+  the client's decision and his counsel's, not a technical finding.
+- That option 7 is acceptable. It is compatible with the no-unobserved-value
+  rule as argued above. It changes his schema, so it is his call.
+- That any of this resolves the acceptable-use question in
+  `ACCEPTABLE_USE_POSITION.md`. It does not. `publication_eligible` is still
+  false and that decision is still open.
+- That bringing the sweep inside the collector produced PPM or deal wording.
+  It did not, and it was never going to. It fixed how the assortment is
+  produced, not what the public tier carries.
+- Any dated milestone. Dates are set by the account holder.
