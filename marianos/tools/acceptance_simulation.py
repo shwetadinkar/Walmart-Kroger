@@ -21,6 +21,9 @@ from marianos_collector.storage import LocalStorage, read_json
 
 class SyntheticAcceptanceProvider:
     source_mode = "synthetic_fixture_acceptance_simulation_NEVER_CONTEST_EVIDENCE"
+    # Stands in for a source that attests coverage: the simulation walks the
+    # full configured 28-root set and its pages carry subcategories_complete.
+    coverage_attested = True
 
     def __init__(self, fail_once_at: int = -1):
         self.calls = 0

@@ -58,7 +58,8 @@ NOTES = ("README.md", "CHECKLIST.md", "DOES_NOT_ESTABLISH.md",
          "R6_COMPLETENESS_AND_BLOCKING.md", "R7_FAILED_RUN_PROTECTION.md",
          "R8_ARCHITECTURE_AND_SERVICES.md", "R9_OPERATING_COST.md",
          "R10_EVIDENCE_OF_GENERATION.md")
-SOURCES = ("tools/kroger_full_sweep.py", "marianos_collector/api_trial.py",
+SOURCES = ("tools/kroger_full_sweep.py", "marianos_collector/sweep_core.py",
+           "marianos_collector/api_trial.py",
            "marianos_collector/kroger.py", "marianos_collector/schema.py",
            "marianos_collector/retention.py", "marianos_collector/runner.py",
            "marianos_collector/storage.py", "marianos_collector/sources.py",
@@ -66,8 +67,14 @@ SOURCES = ("tools/kroger_full_sweep.py", "marianos_collector/api_trial.py",
            "azure/deploy_jobs.sh", "Dockerfile")
 # A note's description of the code must still be true of the code shipped with it.
 CODE_CLAIMS = {
-    "tools/kroger_full_sweep.py": ('state["page_failures"].append', 'start = page * 50',
-                                   'if start > max_start:', 'expected_context=',
+    # The paging and failure-recording behaviour moved into the package on
+    # 2 November so a collector Source and this tool share one implementation.
+    # The guard follows the code rather than being relaxed: these needles must
+    # still exist, in their new home.
+    "marianos_collector/sweep_core.py": ('state["page_failures"].append',
+                                         'start = page * 50',
+                                         'if start > max_start:'),
+    "tools/kroger_full_sweep.py": ('expected_context=',
                                    'upc_collisions="record"'),
     "marianos_collector/runner.py": ("Zero eligible products", "Suspicious yield collapse",
                                      "Missing canary product", "PUBLISHED_IDENTITY_LOST",
@@ -325,7 +332,10 @@ def check_source(source):
         missing = [needle for needle in needles if needle not in text]
         if missing:
             raise PackageRefused(f"{name} no longer does what the notes say: {missing}")
-    sweep = (source / "tools/kroger_full_sweep.py").read_text(encoding="utf-8").lower()
+    sweep = "\n".join(
+        (source / name).read_text(encoding="utf-8").lower()
+        for name in ("tools/kroger_full_sweep.py",
+                     "marianos_collector/sweep_core.py"))
     imports = "\n".join(line for line in sweep.splitlines() if line.startswith(("import ", "from ")))
     used = [word for word in NOT_IN_SWEEP if word in imports]
     if used:

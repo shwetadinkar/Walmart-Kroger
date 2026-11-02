@@ -56,8 +56,35 @@ class Collector:
         self.max_pages = max_pages
         self.canaries = canaries or {}
         self.trial = trial
+        # A source that cannot reconcile against the full configured category
+        # set must not produce a full release. Publishing scope=full with
+        # source_coverage_attested=false is a disclosure, not a gate: a
+        # reviewer reading "validated" would reasonably take the release as
+        # complete. Such a source may still run, but its output stays in the
+        # trial namespace. Ported from the Walmart runner, which already
+        # separated "can collect" from "can attest coverage"; this one
+        # conflated them and refused the source outright.
+        if not trial and not getattr(source, "coverage_attested", False):
+            raise ValidationFailure(
+                f"Source {source.source_mode!r} does not attest complete coverage, so it "
+                "cannot publish a full release. Run it as a trial, or supply a source "
+                "that reconciles against the full configured category set.")
         # Prevent two-category experiments from replacing the complete 28-root dataset.
         self.namespace, self.checkpoint_root = storage_namespaces(categories, trial)
+
+    def _publication_allowed(self):
+        """Re-checked at run time, not only in the constructor.
+
+        Setting `collector.trial = False` or swapping `collector.source`
+        afterwards would otherwise produce exactly the scope=full with
+        source_coverage_attested=false release the constructor gate exists to
+        prevent.
+        """
+        if not self.trial and not getattr(self.source, "coverage_attested", False):
+            raise ValidationFailure(
+                f"Source {self.source.source_mode!r} does not attest complete coverage, "
+                "so it cannot publish a full release. Run it as a trial, or supply a "
+                "source that reconciles against the full configured category set.")
 
     @property
     def _base_mode(self) -> str:
@@ -107,7 +134,13 @@ class Collector:
                 raise ValidationFailure("Authorized provider did not provide independent location evidence URI")
             if page.source_url.split("?",1)[0] != task["url"].split("?",1)[0]:
                 raise ValidationFailure("Provider source URL does not match the page being collected")
-            if not page.subcategories_complete:
+            # This catches a source that claims authority and then silently
+            # fails to enumerate. A source that declares coverage_attested
+            # False makes no such claim and is already confined to the trial
+            # namespace by the gate above, so enforcing it there would only
+            # make an honest declaration unusable. The gate is not relaxed for
+            # anything that does claim to attest.
+            if getattr(self.source, "coverage_attested", False) and not page.subcategories_complete:
                 raise ValidationFailure(f"Provider cannot attest complete subcategory discovery: {category.name}")
             for prod in page.products:
                 if not isinstance(prod, dict):
@@ -148,6 +181,7 @@ class Collector:
         return stages
 
     def run(self, store):
+        self._publication_allowed()
         # A source that tracks offers it could not publish, or accumulates
         # provenance, starts each run clean. Without this a reused source
         # reports another run's numbers: three runs of one CompositeSource gave
@@ -252,6 +286,8 @@ class Collector:
         report = {
             "store_id": store.store_id, "zipcode":store.zipcode, "source_mode":self.source.source_mode,
             "source_is_synthetic": self._base_mode.startswith("synthetic_fixture"),
+            "scope": "trial" if self.trial else "full",
+            "source_coverage_attested": bool(getattr(self.source, "coverage_attested", False)),
             "status":"validated", "timestamp_utc":datetime.now(timezone.utc).isoformat(),
             "runtime_seconds":round(time.monotonic()-start,3),
             "unique_records":len(records),"duplicate_placements":duplicates,

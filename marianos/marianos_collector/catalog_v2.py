@@ -374,6 +374,12 @@ class CatalogV2Source:
     """
 
     source_mode = "kroger_catalog_v2_partner_api"
+    # Catalog V2 has no category filter, so a paged sweep of the location is
+    # exhaustive by construction once the API reports hasMore false. If the
+    # sweep stops early the per-page subcategories_complete it returns is
+    # False and the runner refuses the page, so this flag cannot be used to
+    # wave through an incomplete sweep.
+    coverage_attested = True
 
     def __init__(
         self,

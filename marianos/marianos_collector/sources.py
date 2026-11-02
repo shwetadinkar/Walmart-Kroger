@@ -67,6 +67,13 @@ class Page:
 
 class FixtureSource:
     source_mode = "synthetic_fixture_NOT_contest_proof"
+    # Declared explicitly because the publication gate refuses any source that
+    # does not state its position. A fixture page carries
+    # subcategories_complete and the runner enforces it, so coverage is
+    # attested in the same structural sense as a live crawl. That the data is
+    # synthetic is a separate matter, reported as source_is_synthetic, and is
+    # not what this flag means.
+    coverage_attested = True
     def __init__(self, directory: Path):
         self.directory = directory
     def fetch(self, store, category, url: str, cursor: str) -> Page:
@@ -83,6 +90,10 @@ class AuthorizedProviderSource:
     Authorization is explicit; a Marianos site URL is not an authorized feed.
     """
     source_mode = "authorized_provider_data_unverified_until_review"
+    # The provider contract makes the provider responsible for complete
+    # product and category discovery, and the runner enforces
+    # subcategories_complete on every page it returns.
+    coverage_attested = True
     def __init__(self, base_url: str, token: str, timeout: int = 35, max_attempts: int = 3):
         parsed = urlparse(base_url)
         if parsed.scheme != "https" or not parsed.hostname:

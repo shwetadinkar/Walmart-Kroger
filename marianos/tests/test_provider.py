@@ -57,6 +57,7 @@ class Tests(unittest.TestCase):
     def test_provider_page_no_evidence_rejects_publish(self):
         class Provider:
             source_mode='authorized_provider_data_unverified_until_review'
+            coverage_attested=True
             def fetch(self,store,cat,url,cursor):
                 p=self._page(cat,url)
                 p.location_evidence_url=''
@@ -71,6 +72,7 @@ class Tests(unittest.TestCase):
     def test_pagination_resume_after_crash(self):
         class Retriable:
             source_mode='authorized_provider_data_unverified_until_review'
+            coverage_attested=True
             times=0
             def fetch(self,store,cat,url,cursor):
                 self.times+=1
