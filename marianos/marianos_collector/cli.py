@@ -12,8 +12,10 @@ from .catalog_v2 import Credentials as CatalogV2Credentials
 from .composition import CompositeSource,unavailable_crawl
 from .config import categories_from_csv,stores_from_json
 from .kroger import Credentials,KrogerClient,KrogerError,location_candidates,trial
+from .kroger_sweep_source import KrogerSweepSource
 from .runner import Collector,storage_namespaces
 from .sources import FixtureSource,AuthorizedProviderSource
+from .sweep_core import store_from_locations
 from .storage import LocalStorage,AzureBlobStorage,read_json
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -37,6 +39,20 @@ CRAWL_BLOCKED_REASON=(
 )
 
 
+# Whether a source kind attests complete category coverage. Read before any
+# source is constructed, because the storage namespace depends on it and
+# constructing a source needs credentials that `status` and `export` must not
+# require. `None` means "ask the spine". Asserted against the classes
+# themselves in tests/test_sweep_source.py, so this cannot drift from them.
+ATTESTS_COVERAGE={'fixture':True,'provider':True,'catalog_v2':True,'sweep':False,
+                  'composite':None}
+
+
+def attests_coverage(a):
+    kind=a.spine if a.source=='composite' else a.source
+    return bool(ATTESTS_COVERAGE.get(kind))
+
+
 def build_source(kind,a,store,p):
     """Construct one source and its minimum-product floor.
 
@@ -54,6 +70,21 @@ def build_source(kind,a,store,p):
             p.error('Catalog V2 requires a verified real store ID, not a demo placeholder')
         client=CatalogV2Client(CatalogV2Credentials.from_environment())
         return CatalogV2Source(client,a.location_id or store.store_id),a.minimum_products or 500
+    if kind=='sweep':
+        # The Kroger public Products API term sweep, inside the collector. It
+        # cannot attest category coverage, so the runner confines it to the
+        # trial namespace; see KrogerSweepSource for what it does and does not
+        # establish. No --authorized-source gate here because this is the
+        # public tier, which is also why the acceptable-use question in
+        # ACCEPTABLE_USE_POSITION.md applies to it and is still open.
+        if not a.location_id or a.location_id.upper().startswith(('DEMO','REPLACE')):
+            p.error('--source sweep requires --location-id from a verified Kroger Locations response')
+        terms=json.loads(a.sweep_terms.read_text())['terms']
+        return KrogerSweepSource(KrogerClient(Credentials.from_environment()),
+                                 a.location_id,a.sweep_work_dir,terms,
+                                 max_requests=a.sweep_max_requests,
+                                 max_seconds=a.sweep_max_seconds,
+                                 resume=not a.no_resume),a.minimum_products or 500
     if kind=='provider':
         if not a.authorized_source or os.environ.get('MARIANOS_DATA_AUTHORIZED')!='yes':
             p.error('Provider mode requires --authorized-source and MARIANOS_DATA_AUTHORIZED=yes')
@@ -71,9 +102,23 @@ def parser_():
     p.add_argument('--stores',type=Path,default=ROOT/'config/stores.json')
     p.add_argument('--categories',type=Path,default=ROOT/'config/categories.csv')
     p.add_argument('--store',default='DEMO-LAKESHORE-60601')
-    p.add_argument('--source',choices=['fixture','provider','catalog_v2','composite'],default='fixture')
-    p.add_argument('--spine',choices=['fixture','provider','catalog_v2'],default='catalog_v2',
+    p.add_argument('--source',choices=['fixture','provider','catalog_v2','sweep','composite'],default='fixture')
+    p.add_argument('--spine',choices=['fixture','provider','catalog_v2','sweep'],default='catalog_v2',
                    help='Which source enumerates the assortment when --source composite')
+    p.add_argument('--sweep-terms',type=Path,default=ROOT/'config/sweep_terms.json')
+    p.add_argument('--sweep-work-dir',type=Path,default=ROOT/'.sweep-work',
+                   help='Where the sweep keeps its checkpoint and the raw API responses')
+    p.add_argument('--sweep-max-requests',type=int,default=1500)
+    p.add_argument('--sweep-max-seconds',type=float,default=7200.0)
+    p.add_argument('--no-resume',action='store_true',
+                   help='Start the sweep from scratch instead of continuing its checkpoint')
+    p.add_argument('--resolve-store',action='store_true',
+                   help='Build the store columns from Kroger /locations for --location-id '
+                        'instead of reading them from the stores file')
+    p.add_argument('--expect-zipcode',default='',
+                   help='ZIP the resolved location must be in, asserted not assumed')
+    p.add_argument('--expect-street',default='',
+                   help='Street the resolved location must be at, asserted not assumed')
     p.add_argument('--fixtures',type=Path,default=ROOT/'fixtures')
     p.add_argument('--backend',choices=['local','azure'],default='local')
     p.add_argument('--output',type=Path,default=ROOT/'.collector-output')
@@ -121,9 +166,25 @@ def main(argv=None):
             print('TRIAL ONLY: this subset cannot demonstrate complete catalog coverage.',file=sys.stderr)
         # One helper, shared with the Collector. Deriving this here a second
         # time is what made run, status, export and clear-checkpoints disagree.
-        namespace,checkpoint_root=storage_namespaces(categories,subset)
-        store=next((s for s in stores if s.store_id==a.store),None)
-        if store is None:p.error('Unknown store_id: '+a.store)
+        # A source that cannot attest coverage must not write to the published
+        # namespace even over the full 28 roots, so scope is not the same
+        # question as "is this a category subset". The runner re-checks the
+        # attestation itself; deciding it here is what keeps run, status,
+        # export and clear-checkpoints pointing at one namespace.
+        trial_scope = subset or not attests_coverage(a)
+        namespace,checkpoint_root=storage_namespaces(categories,trial_scope)
+        if a.resolve_store:
+            if not a.location_id or a.location_id.upper().startswith(('DEMO','REPLACE')):
+                p.error('--resolve-store requires --location-id from a verified Kroger Locations response')
+            if not a.expect_zipcode or not a.expect_street:
+                p.error('--resolve-store requires --expect-zipcode and --expect-street: the '
+                        'assigned store id differs from West Loop by two characters, so the '
+                        'address is asserted rather than assumed')
+            store,_=store_from_locations(KrogerClient(Credentials.from_environment()),
+                                         a.location_id,a.expect_zipcode,a.expect_street)
+        else:
+            store=next((s for s in stores if s.store_id==a.store),None)
+            if store is None:p.error('Unknown store_id: '+a.store)
         if a.backend=='azure':
             cs=os.environ.get('AZURE_STORAGE_CONNECTION_STRING','')
             if not cs:p.error('Missing Azure storage connection string')
@@ -157,7 +218,7 @@ def main(argv=None):
             src=CompositeSource(spine,a.spine,[unavailable_crawl(CRAWL_BLOCKED_REASON)])
         else:
             src,minp=build_source(a.source,a,store,p)
-        output=Collector(storage,src,categories,min_products=minp,trial=subset).run(store)
+        output=Collector(storage,src,categories,min_products=minp,trial=trial_scope).run(store)
         print(json.dumps(output,indent=2));return 0
     except (Exception,KeyboardInterrupt) as exc:
         log.error('run_failed')

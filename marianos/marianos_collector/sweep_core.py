@@ -22,7 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
-from .api_trial import api_categories, observe
+from .api_trial import api_categories, observe, verify_store
+from .config import Store
 from .kroger import KrogerError
 from .retention import observation, stable_identity
 
@@ -116,6 +117,26 @@ def resolve_store(store_response, location_id, expected_zipcode="", expected_str
         "store_name": " - ".join(parts) if parts else f"Store {location_id}",
         "store_location": f"{line}, {city}, {state} {zipcode}".strip(),
     }
+
+def store_from_locations(client, location_id, expected_zipcode="", expected_street=""):
+    """(Store, resolved columns) built from Kroger's own /locations response.
+
+    The store columns are observed rather than typed into a config file. That
+    is the whole reason this exists: a hand-written store_name and
+    store_location would be unobserved values sitting in all 26,166 records,
+    and the first run of the sweep shipped blank ones instead, which is the
+    fifth defect in the working rules. `resolve_store` supplies the columns and
+    refuses a response that contradicts the id, ZIP or street; `verify_store`
+    asserts the chain and banner on top. Same sequence the sweep tool uses, so
+    the collector and the tool cannot drift apart about which store a run is.
+    """
+    document = client.get("/locations/" + str(location_id))
+    resolved = resolve_store(document, location_id, expected_zipcode, expected_street)
+    verify_store(document.get("data"), str(location_id), resolved["zipcode"])
+    store = Store(str(location_id), resolved["zipcode"],
+                  resolved["store_name"], resolved["store_location"])
+    return store, resolved
+
 
 def _raw_path(raw_dir, key, start):
     slug = re.sub(r"[^a-z0-9]+", "-", key.lower()).strip("-")

@@ -157,12 +157,18 @@ def _identity_basis(upc, url):
     return "upc" if upc else ""
 
 
-def observe(product, store, crawl_date, category_map=None):
-    """(22-field record, per-record context). Refuses only what is not a product.
+def to_raw_product(product, store, category_map=None):
+    """(raw product, category root, retailer label, partial context).
 
-    What is missing is an empty string in the record and a reason in the context.
-    Raises ValueError for a non-object, and RecordRejected for the exclusions the
-    brief itself makes, such as approximate-weight wording.
+    The single mapping from a Kroger public Products API product to the raw
+    dict the schema layer accepts. `observe` turns that into a record here; a
+    collector Source hands the same raw dict to the runner, which makes the
+    record through the same `make_retained_record`. One implementation on
+    purpose: the sweep and the collector must not be able to disagree about
+    what a product is, and a rule added to one must not miss the other.
+
+    The returned context has no `value_refusals` key, because nothing has been
+    refused yet. `observe` adds it after making the record.
     """
     if not isinstance(product, dict):
         raise ValueError("MALFORMED_PRODUCT")
@@ -195,7 +201,6 @@ def observe(product, store, crawl_date, category_map=None):
            "regular_price": _observed_money(price.get("regular")),
            "sale_price": _observed_money(promo) if isinstance(promo, (int, float)) and promo > 0 else "",
            "image_url": _front_image(product), "url": url, "upc": upc}
-    record, refused = make_retained_record(raw, store, category, label, crawl_date)
     context = {
         "location_id": store.store_id,
         "identity_basis": _identity_basis(upc, url),
@@ -203,13 +208,25 @@ def observe(product, store, crawl_date, category_map=None):
         "offer_status": "no_qualifying_pickup_offer" if offer_gaps else "qualifying_pickup_offer",
         "offer_gaps": offer_gaps,
         "record_gaps": gaps,
-        "value_refusals": refused,
         "sold_by": str(item.get("soldBy") or ""),
         "fulfillment": item.get("fulfillment") if isinstance(item.get("fulfillment"), dict) else {},
         "stock_level": (item.get("inventory") or {}).get("stockLevel", "")
                        if isinstance(item.get("inventory"), dict) else "",
         "availability_state": availability_state(item),
     }
+    return raw, category, label, context
+
+
+def observe(product, store, crawl_date, category_map=None):
+    """(22-field record, per-record context). Refuses only what is not a product.
+
+    What is missing is an empty string in the record and a reason in the context.
+    Raises ValueError for a non-object, and RecordRejected for the exclusions the
+    brief itself makes, such as approximate-weight wording.
+    """
+    raw, category, label, context = to_raw_product(product, store, category_map)
+    record, refused = make_retained_record(raw, store, category, label, crawl_date)
+    context["value_refusals"] = refused
     return record, context
 
 

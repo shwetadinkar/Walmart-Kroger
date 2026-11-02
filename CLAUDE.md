@@ -126,7 +126,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 549.
+  counts: Walmart 251, Mariano's 587.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -205,6 +205,59 @@ October set at the same store, for shared UPCs, price movement and newly
 covered roots.
 
 Keep the 24 October output untouched. New runs go to their own output folder.
+
+## The sweep inside the collector
+
+The 26,166 delivered records were produced by `tools/kroger_full_sweep.py`,
+outside the runner, so they never passed the publication gate, retention
+reconciliation, the trial and published namespace separation, or a
+runner-driven resume. The client identified that directly on 2 November. Three
+pieces close it, and all three are in:
+
+1. The coverage-attestation gate separates "did this page enumerate its
+   children" from "can this route reconcile against the 28 roots". A source
+   that cannot attest may collect; its output stays in the trial namespace and
+   the report says `source_coverage_attested: false`. The gate still binds
+   anything that does claim to attest.
+2. `marianos_collector/sweep_core.py` holds the sweep as importable code, with
+   `tools/kroger_full_sweep.py` importing it. One implementation.
+3. `marianos_collector/kroger_sweep_source.py` is the Source. `--source sweep`,
+   or `--spine sweep` under `--source composite` to add the page-read
+   enrichment.
+
+Two properties of the adapter are load-bearing and must not be traded away:
+
+- **The source serves raw products, not records.** `api_trial.to_raw_product`
+  is the single mapping from a Kroger product to the raw dict; `observe` makes
+  the record from it and so does the runner, through the same
+  `make_retained_record`. A rule added to one path therefore cannot miss the
+  other. A test asserts the two produce an identical record for the same
+  product.
+- **The index is read back from the persisted API responses, not from the
+  sweep's return value.** The checkpoint holds *finished records*, so a resumed
+  sweep would have nothing to hand the runner for terms already done, and a
+  resumed run would deliver less than a fresh one. Reading the responses makes
+  the two identical, and is the re-filter-rather-than-re-fetch property defect
+  4 above asked for, used rather than claimed.
+
+Two things the runner route delivers differently from the tool, both honest and
+both reported rather than smoothed over:
+
+- **187 of 26,166 products have no configured root**, because the retailer's own
+  label is not in the explicit map. The tool kept them with an empty
+  `category`. The runner is category-driven, so they cannot be served under any
+  root; they are counted and named in `provenance()` and never guessed into one.
+- **Five of the 28 roots came back empty** in the 31 October sweep: Coupons,
+  Seafood, Coffee, Batteries, Light Bulbs. Kroger's label vocabulary has no
+  equivalent, which is not the same as the shelf being empty. The runner refuses
+  a release with an empty configured root, which is correct, so a sweep run
+  names the 23 roots it can populate and `missing_roots()` reports the rest
+  before a reviewer has to infer it from a validation failure.
+
+The store columns come from Kroger's own `/locations` response via
+`sweep_core.store_from_locations`, never from a hand-written config entry, and
+`--resolve-store` requires `--expect-zipcode` and `--expect-street` because the
+assigned id differs from West Loop's by two characters.
 
 ## Reporting
 
