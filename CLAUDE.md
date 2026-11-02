@@ -247,6 +247,14 @@ both reported rather than smoothed over:
   label is not in the explicit map. The tool kept them with an empty
   `category`. The runner is category-driven, so they cannot be served under any
   root; they are counted and named in `provenance()` and never guessed into one.
+  This is **not** a map with ten entries missing. The labels are `Party` 117,
+  `Halloween` 38, `Entertainment` 10, `Thanksgiving` 10, `Automotive` 4,
+  `Other` 3, `Apparel` 2, `Furniture` 1, `Holiday & Seasonal Goods` 1,
+  `Sporting Goods` 1 — seasonal and non-grocery departments outside the
+  client's 28 roots. Mapping them would be assigning a category from the one
+  the product is not in. What to do with out-of-scope products is a scope
+  question for the client, not a defect to fix here; see
+  `ROUTES_AND_AUTONOMY.md`.
 - **Five of the 28 roots came back empty** in the 31 October sweep: Coupons,
   Seafood, Coffee, Batteries, Light Bulbs. Kroger's label vocabulary has no
   equivalent, which is not the same as the shelf being empty. The runner refuses

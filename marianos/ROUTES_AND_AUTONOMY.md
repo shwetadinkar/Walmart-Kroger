@@ -175,10 +175,38 @@ with a blank `store_name`; that cannot recur.
    sweep currently raises. For a twice-weekly job the right behaviour is a
    release that says what it reached and what it did not, which is a change to
    how `Budget.Exhausted` surfaces, not to any gate.
-4. **187 products have no root to be delivered under.** Their retailer label
-   is not in the explicit map. They are counted and named, never guessed. Each
-   one is a one-line addition to `config/category_map.json` once someone looks
-   at the labels, and that is ordinary work nobody has done yet.
+4. **187 products have no root to be delivered under, and this turns out not
+   to be a mapping omission.** An earlier draft of this document said each was
+   a one-line addition to `config/category_map.json` once someone looked at
+   the labels. Someone looked. The labels are:
+
+   | Records | Retailer label |
+   |---:|---|
+   | 117 | `Party` |
+   | 38 | `Halloween` |
+   | 10 | `Entertainment` |
+   | 10 | `Thanksgiving` |
+   | 4 | `Automotive` |
+   | 3 | `Other` |
+   | 2 | `Apparel` |
+   | 1 | `Furniture` |
+   | 1 | `Holiday & Seasonal Goods` |
+   | 1 | `Sporting Goods` |
+
+   Not one of those is any of the client's 28 roots. They are seasonal and
+   non-grocery departments he did not ask for, plus three products the
+   retailer itself labels `Other`. So the map is not missing ten entries;
+   these are products outside the requested scope, and mapping them anywhere
+   would be inventing a category assignment from the category the product is
+   *not* in.
+
+   What is genuinely open is what should happen to them, and it is the
+   client's call because it is a scope question rather than a defect. The tool
+   kept them with an empty `category`, which honours the rule that a product
+   is never dropped for a missing value. The runner is category-driven, so
+   under that route they are reported and not delivered. Those are two
+   defensible readings of the same rule and we should not pick between them on
+   his behalf.
 5. **The 326-product question is open and answerable today.** 326 of the 890
    products in the retailer's own SEO sitemap are absent from our data.
    `tools/resolve_sitemap_gap.py` decides, per id against this store, whether
