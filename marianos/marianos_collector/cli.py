@@ -119,6 +119,11 @@ def parser_():
                    help='ZIP the resolved location must be in, asserted not assumed')
     p.add_argument('--expect-street',default='',
                    help='Street the resolved location must be at, asserted not assumed')
+    p.add_argument('--uncovered-roots',type=Path,
+                   help='A JSON file declaring roots this route cannot reach, with the '
+                        'reason for each. They are dropped from the configured set so '
+                        'the zero-products gate still binds every other root, and the '
+                        'declaration is carried in the release report')
     p.add_argument('--fixtures',type=Path,default=ROOT/'fixtures')
     p.add_argument('--backend',choices=['local','azure'],default='local')
     p.add_argument('--output',type=Path,default=ROOT/'.collector-output')
@@ -164,6 +169,21 @@ def main(argv=None):
                 p.error('Trial category subset must contain at least two exact configured category names')
             categories=[c for c in categories if c.name in wanted]
             print('TRIAL ONLY: this subset cannot demonstrate complete catalog coverage.',file=sys.stderr)
+        uncovered={}
+        if a.uncovered_roots:
+            declared=json.loads(a.uncovered_roots.read_text())
+            uncovered=declared.get('uncovered') or {}
+            if not isinstance(uncovered,dict) or not all(
+                    isinstance(k,str) and isinstance(v,str) and v.strip() for k,v in uncovered.items()):
+                p.error('Every uncovered root needs a non-empty reason string')
+            unknown=sorted(set(uncovered)-{c.name for c in categories})
+            if unknown:
+                p.error(f'Uncovered roots are not configured categories: {unknown}')
+            categories=[c for c in categories if c.name not in uncovered]
+            if not categories:
+                p.error('Every configured root is declared uncovered; there is nothing to collect')
+            print(f'{len(uncovered)} of the configured roots are declared unreachable by this '
+                  f'route and are named in the release report: {sorted(uncovered)}',file=sys.stderr)
         # One helper, shared with the Collector. Deriving this here a second
         # time is what made run, status, export and clear-checkpoints disagree.
         # A source that cannot attest coverage must not write to the published
@@ -218,7 +238,8 @@ def main(argv=None):
             src=CompositeSource(spine,a.spine,[unavailable_crawl(CRAWL_BLOCKED_REASON)])
         else:
             src,minp=build_source(a.source,a,store,p)
-        output=Collector(storage,src,categories,min_products=minp,trial=trial_scope).run(store)
+        output=Collector(storage,src,categories,min_products=minp,trial=trial_scope,
+                         uncovered_roots=uncovered).run(store)
         print(json.dumps(output,indent=2));return 0
     except (Exception,KeyboardInterrupt) as exc:
         log.error('run_failed')

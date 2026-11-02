@@ -263,6 +263,15 @@ class KrogerSweepSource:
 
     # --------------------------------------------------------------- reporting
 
+    def populated_roots(self) -> list[str]:
+        """Roots the sweep actually found products for.
+
+        The runner reads this to check a declaration of uncovered roots
+        against what the route really reached, so a stale declaration cannot
+        quietly suppress a root that has started working.
+        """
+        return self._index.populated_roots() if self._index else []
+
     def missing_roots(self, categories) -> list[str]:
         """Configured roots the sweep did not populate.
 

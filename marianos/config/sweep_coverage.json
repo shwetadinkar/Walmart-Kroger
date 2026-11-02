@@ -1,0 +1,13 @@
+{
+  "_note": "Roots of the client's 28 that the Kroger public Products API term sweep returned no product for, measured on the 31 October 2026 run at Vernon Hills 53100502 over 301 terms and 26,166 products. Kroger's category label vocabulary has no equivalent for these; that is NOT evidence that the store's shelf is empty, and nothing here may be read as a coverage claim for the other 23. A root declared here is removed from the configured set for a sweep run so that the runner's zero-products gate still protects every root that is supposed to have products, and the declaration travels in the release report as roots_not_covered_by_source. If one of these ever returns a product, the run fails until this file is updated: a declaration that has gone stale must not quietly suppress a root that now works.",
+  "measured": "2026-10-31",
+  "measured_store": "53100502",
+  "source_mode": "kroger_public_products_api_term_sweep",
+  "uncovered": {
+    "Coupons": "Coupons is a savings surface on the retailer site, not a Kroger product category label. No API category maps to it, and the public tier exposes no clipping state or coupon terms at all.",
+    "Seafood": "Every product reached by the Seafood terms carried a Kroger category label that maps elsewhere, most often Meat. The shelf exists; the label does not.",
+    "Coffee": "Kroger labels coffee under Beverages and Breakfast. No label maps to a Coffee root.",
+    "Batteries": "No Kroger category label maps here. The 34 Batteries products collected separately on 24 October came from retailer page reads, not from this API.",
+    "Light Bulbs": "No Kroger category label maps here. Products a shopper would find under it carry Household or Hardware Home Improvement labels."
+  }
+}

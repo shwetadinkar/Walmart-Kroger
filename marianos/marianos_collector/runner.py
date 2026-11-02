@@ -47,7 +47,7 @@ def storage_namespaces(categories, trial: bool) -> tuple[str, str]:
     return f"trials/{signature}", f"checkpoints-trials/{signature}"
 
 class Collector:
-    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False):
+    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False, uncovered_roots=None):
         self.storage = storage
         self.source = source
         self.categories = categories
@@ -56,6 +56,14 @@ class Collector:
         self.max_pages = max_pages
         self.canaries = canaries or {}
         self.trial = trial
+        # Roots a route is declared unable to reach, each with the reason, so
+        # the zero-products gate still protects every root that is supposed to
+        # have products. The declaration travels in the release rather than
+        # living in a note, because a root that is simply absent from the
+        # configured set is indistinguishable from one that was never asked
+        # for. Nothing here suppresses a root: a declared root that does
+        # return products fails the run until the declaration is corrected.
+        self.uncovered_roots = dict(uncovered_roots or {})
         # A source that cannot reconcile against the full configured category
         # set must not produce a full release. Publishing scope=full with
         # source_coverage_attested=false is a disclosure, not a gate: a
@@ -98,6 +106,33 @@ class Collector:
         `_base_mode`.
         """
         return getattr(self.source, "spine_source_mode", self.source.source_mode)
+
+    def _check_uncovered_declaration(self):
+        """A root declared uncovered must not quietly suppress one that works.
+
+        Removing a root from the configured set is how a route that genuinely
+        cannot reach it still runs without defeating the zero-products gate.
+        The risk that creates is the opposite one: the declaration goes stale,
+        the route starts returning products for that root, and nobody notices
+        because the root is no longer asked for. So the declaration is checked
+        against what the source actually found, and a root that now returns
+        products stops the run until the file is corrected.
+        """
+        if not self.uncovered_roots:
+            return
+        declared = set(self.uncovered_roots)
+        configured = {c.name for c in self.categories}
+        if declared & configured:
+            raise ValidationFailure(
+                "Roots declared uncovered are also configured for collection: "
+                f"{sorted(declared & configured)}")
+        populated = getattr(self.source, "populated_roots", None)
+        found = set(populated()) if callable(populated) else set()
+        if found & declared:
+            raise ValidationFailure(
+                "A root declared uncovered returned products, so the declaration is "
+                f"stale: {sorted(found & declared)}. Correct the declaration rather "
+                "than leaving the root out of the release.")
 
     def _checkpoint_key(self, store, category):
         return f"{self.checkpoint_root}/{store.store_id}/{category.slug}.json"
@@ -203,6 +238,7 @@ class Collector:
         LOG.info("run_started", extra={"event":"run_started", "store_id":store.store_id, "source_mode":self.source.source_mode})
         for cat in self.categories:
             all_stages[cat.name] = self._collect_category(store, cat)
+        self._check_uncovered_declaration()
         records = []
         observations = {}
         value_refusals = Counter()
@@ -301,6 +337,12 @@ class Collector:
             "pages_by_category":{k:len(v) for k,v in all_stages.items()},
             "location_evidence_urls":[st["page"].get("location_evidence_url", "") for stages in all_stages.values() for st in stages if st["page"].get("location_evidence_url")][:15],
             "coverage_scope": "subset_trial" if self.trial else "all_configured_roots",
+            # Roots this route is declared unable to reach, with the reason for
+            # each. They are absent from category_counts above, and without
+            # this a reader cannot tell a root that was never asked for from
+            # one that returned nothing.
+            "roots_not_covered_by_source": dict(sorted(self.uncovered_roots.items())),
+            "roots_collected": [c.name for c in self.categories],
             "independent_live_review_required": True,
             # Offers the source saw but could not publish, and why. Without this
             # the record lives only on the source object, which the CLI discards

@@ -22,11 +22,17 @@ fi
 # Which authorized route this deployment uses. Both run the same image.
 #   provider   - approved third-party feed implementing the Page contract
 #   catalog_v2 - Kroger Catalog V2 partner API (see marianos/CATALOG_V2_RUNBOOK.md)
+#   sweep      - Kroger PUBLIC Products API term sweep, driven by the collector.
+#                Publishes to the trial namespace only, because term-filtered
+#                search cannot attest category coverage. Carries no displayed
+#                price per measure and no deal wording: the public tier has
+#                neither. Sits under the open question in
+#                marianos/ACCEPTABLE_USE_POSITION.md.
 # The synthetic fixture source is intentionally not deployable.
 MARIANOS_SOURCE="${MARIANOS_SOURCE:-provider}"
 case "$MARIANOS_SOURCE" in
-  provider|catalog_v2) ;;
-  *) echo "MARIANOS_SOURCE must be 'provider' or 'catalog_v2', not '$MARIANOS_SOURCE'" >&2; exit 2;;
+  provider|catalog_v2|sweep) ;;
+  *) echo "MARIANOS_SOURCE must be 'provider', 'catalog_v2' or 'sweep', not '$MARIANOS_SOURCE'" >&2; exit 2;;
 esac
 
 if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
@@ -38,6 +44,15 @@ else
   case "$KROGER_LOCATION_ID" in
     DEMO*|REPLACE*|UNRESOLVED*) echo 'KROGER_LOCATION_ID must be a verified location, not a placeholder' >&2; exit 2;;
   esac
+fi
+
+if [[ "$MARIANOS_SOURCE" == 'sweep' ]]; then
+  # The sweep resolves its store from Kroger's own /locations response rather
+  # than from stores_live.json, and asserts the address: the assigned store id
+  # differs from West Loop's by two characters, and the first sweep run shipped
+  # 18,351 records with a blank store_name and store_location.
+  : "${MARIANOS_EXPECT_ZIPCODE:?Set MARIANOS_EXPECT_ZIPCODE to the ZIP the resolved store must be in}"
+  : "${MARIANOS_EXPECT_STREET:?Set MARIANOS_EXPECT_STREET to the street the resolved store must be at}"
 fi
 
 if [[ "$MODE" == '--execute' ]]; then
@@ -112,6 +127,23 @@ for STORE_ID in "${STORE_IDS[@]}"; do
     # or when a live response has shown the `unit` field to be displayed PPM.
     [[ -n "${CATALOG_V2_SCOPE:-}" ]] && ENVVARS+=("CATALOG_V2_SCOPE=$CATALOG_V2_SCOPE")
     [[ -n "${CATALOG_V2_UNIT_IS_PPM:-}" ]] && ENVVARS+=("CATALOG_V2_UNIT_IS_PPM=$CATALOG_V2_UNIT_IS_PPM")
+  fi
+  if [[ "$MARIANOS_SOURCE" == 'sweep' ]]; then
+    ENVVARS+=("MARIANOS_EXPECT_ZIPCODE=$MARIANOS_EXPECT_ZIPCODE"
+              "MARIANOS_EXPECT_STREET=$MARIANOS_EXPECT_STREET")
+    # MARIANOS_DATA_AUTHORIZED is set above for every job. The sweep does not
+    # pass --authorized-source, so it does not assert an authorization it has
+    # not got; see container_entrypoint.py.
+    #
+    # The sweep's own checkpoint and its raw API responses live under
+    # MARIANOS_SWEEP_WORK_DIR, which defaults to container-local /tmp. Each
+    # execution of an Azure Container Apps job gets a fresh container, so
+    # without a mounted volume there is no resume ACROSS executions: a stopped
+    # sweep restarts from term one next time. The runner's own checkpoint is in
+    # Blob storage and does survive. Set MARIANOS_SWEEP_WORK_DIR to a mounted
+    # path to make the sweep resumable between executions; this script does not
+    # mount one, and no observed run has exercised that.
+    [[ -n "${MARIANOS_SWEEP_WORK_DIR:-}" ]] && ENVVARS+=("MARIANOS_SWEEP_WORK_DIR=$MARIANOS_SWEEP_WORK_DIR")
   fi
   az containerapp job create \
     --name "$JOB_NAME" --resource-group "$RESOURCE_GROUP" \
