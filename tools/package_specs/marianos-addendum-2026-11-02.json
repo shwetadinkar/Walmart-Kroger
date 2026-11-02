@@ -1,0 +1,45 @@
+{
+ "title": "Marianos Vernon Hills - addendum of 2 November 2026",
+ "files": [
+  [
+   "docs/client-package-readmes/marianos_addendum_README.md",
+   "README.md"
+  ],
+  [
+   "marianos/PRODUCTION_ROUTE.md",
+   "PRODUCTION_ROUTE.md"
+  ],
+  [
+   "marianos/reports/2026-11-02-coverage-reconciliation/REPORT.md",
+   "coverage-reconciliation/REPORT.md"
+  ],
+  [
+   "marianos/reports/2026-11-02-coverage-reconciliation/data/coverage_reconciliation.json",
+   "coverage-reconciliation/data/coverage_reconciliation.json"
+  ],
+  [
+   "marianos/reports/2026-11-02-sold-by-weight/REPORT.md",
+   "sold-by-weight/REPORT.md"
+  ],
+  [
+   "marianos/reports/2026-11-02-sold-by-weight/data/sold_by_weight_audit.json",
+   "sold-by-weight/data/sold_by_weight_audit.json"
+  ],
+  [
+   "marianos/reports/2026-11-02-separated-evidence/REPORT.md",
+   "separated-evidence/REPORT.md"
+  ],
+  [
+   "marianos/reports/2026-11-01-vernon-hills-merge/data/provenance.json",
+   "provenance/merge_provenance.json"
+  ],
+  [
+   "marianos/reports/2026-11-01-vernon-hills-merge/data/merge_report.json",
+   "provenance/merge_report.json"
+  ],
+  [
+   "marianos/reports/2026-11-01-vernon-hills-merge/data/store_verification.json",
+   "provenance/store_verification.json"
+  ]
+ ]
+}
