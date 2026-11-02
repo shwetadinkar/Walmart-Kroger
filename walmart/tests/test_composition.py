@@ -1,5 +1,6 @@
 """Field-level composition for Walmart: precedence, provenance, conflicts and honest gaps."""
 import unittest
+from datetime import datetime, timedelta, timezone
 
 import sys as _sys, pathlib as _pathlib
 _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parent.parent))
@@ -61,8 +62,15 @@ def CallableEnrichment(name, fields, lookup, **kw):
     def bound(store, identity, product):
         return {**(lookup(store, identity, product) or {}),
                 "_binding": {"identity": identity, "store_id": store.store_id,
-                             "fulfillment": "pickup", "observed_at": "2026-11-06T12:00:00Z"}}
+                             "fulfillment": "pickup", "observed_at": RECENTLY}}
     return _Unbound(name, fields, bound, **kw)
+
+
+# Observation times must be recent for the binding to accept them, so they are
+# computed relative to now. A hardcoded date rots: the previous value here was
+# 2026-11-06, which is in the future, and the fixtures below were 2026-10-24,
+# which is outside the freshness window.
+RECENTLY = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
 
 
 class Spine:
@@ -79,7 +87,7 @@ class Spine:
             zipcode=store.zipcode,
             store_context_verified=True,
             source_url=url,
-            products=[dict(p) for p in self.products],
+            products=[{"fulfillment": "pickup", **dict(p)} for p in self.products],
             children=[],
             next_cursor="",
             subcategories_complete=True,

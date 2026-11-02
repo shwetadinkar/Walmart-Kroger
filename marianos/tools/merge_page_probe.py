@@ -77,7 +77,12 @@ def page_source(pages, reason):
 
 
 def merge(rows, pages, store, reason):
-    composite = CompositeSource(Spine(rows, store), API, [page_source(pages, reason)], policy=POLICY)
+    # The spine replays finished rows, which carry no fulfilment column, so
+    # the required fulfilment is stated here. Without it the composition
+    # refuses every contribution as unbound, which is the correct fail-closed
+    # behaviour when a fulfilment cannot be determined.
+    composite = CompositeSource(Spine(rows, store), API, [page_source(pages, reason)],
+                                policy=POLICY, required_fulfillment='pickup')
     page = composite.fetch(store, Category(name='spine', url=''), '', '')
     products = [{f: p.get(f, '') for f in FIELDS} for p in page.products]
     evidence = {r['upc']: composite.evidence_for(r['upc']) for r in rows}

@@ -121,7 +121,10 @@ def main(argv=None):
     p.add_argument("--zipcode", default="60061")
     p.add_argument("--store-name", default="Marianos - Marianos Vernon Hills")
     p.add_argument("--store-location", default="1720 N Milwaukee Ave, Vernon Hills, IL 60061")
-    p.add_argument("--observed-at", default="2026-11-01")
+    p.add_argument("--observed-at", default="2026-11-01",
+                   help="When the pages were read. Must parse and be within the "
+                        "composition freshness window, or contributions are refused "
+                        "and retained as history instead of merged.")
     p.add_argument("--out", required=True, help="Output directory")
     args = p.parse_args(argv)
 
@@ -142,8 +145,13 @@ def main(argv=None):
 
     lookup, by_upc = build_lookup(page, args.store_id, args.observed_at)
     crawl = CallableEnrichment("crawl", CRAWL_FIELDS, lookup)
+    # The spine here is a replay of finished 22-field records, which carry no
+    # fulfilment column, so the required fulfilment is stated explicitly. The
+    # composition refuses a contribution whose fulfilment it cannot determine,
+    # and it should: a value not tied to a fulfilment is not tied to anything.
     composite = CompositeSource(_Spine(api, store), "kroger_public",
-                                enrichments=[crawl], policy=POLICY)
+                                enrichments=[crawl], policy=POLICY,
+                                required_fulfillment="pickup")
 
     class _Cat:
         name = "all"
@@ -178,6 +186,11 @@ def main(argv=None):
         "values_by_field_and_source": prov["values_by_field_and_source"],
         "conflicts": prov["conflict_count"],
         "refused_as_unbound": prov["contributions_refused_as_unbound"],
+        # A re-run against page data older than the composition's freshness
+        # window refuses every contribution and would otherwise look like a
+        # successful merge that simply found nothing. Say so instead.
+        "all_contributions_refused": bool(page) and filled["ppm"] == 0
+        and bool(prov["contributions_refused_as_unbound"]),
         "store": {"store_id": args.store_id, "zipcode": args.zipcode,
                   "store_name": args.store_name},
         "does_not_establish": [

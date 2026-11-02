@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 
 from .schema import FIELDS
@@ -126,21 +127,71 @@ class Availability:
 # The same rule as Walmart's composition; it is also what stops a West Loop page
 # read reaching a Vernon Hills row.
 BINDING_KEY = "_binding"
+# The fulfilments the brief admits at all. Membership here is necessary and
+# NOT sufficient: a contribution must also match the fulfilment of the
+# observation it is being merged into. Accepting anything in this set was the
+# defect, because it let an in-store reading pass as a pickup one.
 FULFILMENTS = ("pickup", "in_store")
 
+# An observation describes a shelf at a moment. Past some age it is a
+# historical record, not evidence about the run being published. Seven days
+# matches the checkpoint staleness rule in runner.py, so the two agree.
+MAX_OBSERVATION_AGE = timedelta(days=7)
+# Clocks on the observing machine and this one are not the same clock.
+FUTURE_TOLERANCE = timedelta(minutes=5)
 
-def binding_refusal(binding, store, identity: str) -> str:
-    """Why a contribution cannot be tied to this observation, or ""."""
+
+def parse_observed_at(value):
+    """The observation time as an aware UTC datetime, or None if unusable.
+
+    Checking only that the field was non-empty meant any string at all passed
+    as a timestamp, so an unparseable or absurd value was indistinguishable
+    from a real one.
+    """
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if text.endswith(("Z", "z")):
+        text = text[:-1] + "+00:00"
+    try:
+        stamp = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if stamp.tzinfo is None:
+        stamp = stamp.replace(tzinfo=timezone.utc)
+    return stamp.astimezone(timezone.utc)
+
+
+def binding_refusal(binding, store, identity: str, required_fulfillment=None,
+                    now=None, max_age=MAX_OBSERVATION_AGE) -> str:
+    """Why a contribution cannot be tied to this observation, or "".
+
+    `required_fulfillment` is the fulfilment of the observation being enriched.
+    It is not optional in practice: `CompositeSource` always supplies it and
+    refuses the contribution when it cannot be determined, because a
+    contribution that cannot be tied to a fulfilment is not tied to anything.
+    """
     if not isinstance(binding, dict):
         return "UNBOUND_NO_BINDING"
     if str(binding.get("identity") or "") != identity or not identity:
         return "UNBOUND_PRODUCT"
     if str(binding.get("store_id") or "") != store.store_id:
         return "UNBOUND_STORE"
-    if binding.get("fulfillment") not in FULFILMENTS:
+    fulfillment = binding.get("fulfillment")
+    if fulfillment not in FULFILMENTS:
         return "UNBOUND_FULFILLMENT"
-    if not str(binding.get("observed_at") or "").strip():
+    if required_fulfillment is None:
+        return "UNBOUND_FULFILLMENT_UNKNOWN"
+    if fulfillment != required_fulfillment:
+        return "UNBOUND_FULFILLMENT_MISMATCH"
+    observed = parse_observed_at(binding.get("observed_at"))
+    if observed is None:
         return "UNBOUND_TIME"
+    now = now or datetime.now(timezone.utc)
+    if observed > now + FUTURE_TOLERANCE:
+        return "UNBOUND_TIME_FUTURE"
+    if now - observed > max_age:
+        return "UNBOUND_STALE"
     return ""
 
 
@@ -236,11 +287,15 @@ class CompositeSource:
     schema, storage and retention logic are untouched.
     """
 
-    def __init__(self, spine, spine_name: str, enrichments=None, policy=None):
+    def __init__(self, spine, spine_name: str, enrichments=None, policy=None,
+                 required_fulfillment=None):
         if not hasattr(spine, "fetch"):
             raise CompositionError("The spine must implement fetch()")
         self.spine = spine
         self.spine_name = spine_name
+        # When set, every contribution must carry this fulfilment. When not,
+        # it is taken per product from the observation being enriched.
+        self.required_fulfillment = required_fulfillment
         self.enrichments = list(enrichments or [])
         names = [spine_name] + [e.name for e in self.enrichments]
         if len(set(names)) != len(names):
@@ -256,6 +311,7 @@ class CompositeSource:
         self._conflicts: list = []
         self._skipped: dict[str, str] = {}
         self._unbound = Counter()
+        self._refused = []
         self._bindings: dict = {}
 
     # --- delegation ----------------------------------------------------
@@ -281,6 +337,7 @@ class CompositeSource:
         self._conflicts = []
         self._skipped = {}
         self._unbound = Counter()
+        self._refused = []
         self._bindings = {}
 
     @property
@@ -329,9 +386,20 @@ class CompositeSource:
         binding = result.pop(BINDING_KEY, None)
         if not result:
             return {}
-        refusal = binding_refusal(binding, store, identity)
+        required = self.required_fulfillment or (product or {}).get("fulfillment")
+        refusal = binding_refusal(binding, store, identity,
+                                  required_fulfillment=required)
         if refusal:
             self._unbound[(enrichment.name, refusal)] += len(result)
+            # Retained, not merely counted. A refused contribution is a real
+            # observation that does not apply here; it is kept with its own
+            # context and date so it stays available as history.
+            self._refused.append({
+                "source": enrichment.name, "reason": refusal,
+                "identity": identity, "required_fulfillment": required,
+                "binding": binding if isinstance(binding, dict) else None,
+                "values": {k: v for k, v in result.items()},
+            })
             return {}
         self._bindings[(identity, enrichment.name)] = dict(binding)
         return result
@@ -446,6 +514,11 @@ class CompositeSource:
             "products_traced": len(self._traces),
             "contributions_refused_as_unbound": {
                 f"{name}:{reason}": count for (name, reason), count in self._unbound.items()},
+            # Counts say how many were refused; these say what they were, so a
+            # refused observation is retained with its own context and date
+            # rather than disappearing into a tally.
+            "refused_contributions": self._refused[:200],
+            "refused_contribution_count": len(self._refused),
         }
 
     def provenance_for(self, identity: str) -> dict:

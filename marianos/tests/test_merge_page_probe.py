@@ -5,6 +5,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -21,7 +22,10 @@ STORE = Store(store_id='53100502', zipcode='60061', store_name='Marianos - Maria
               store_location='1720 N Milwaukee Ave, Vernon Hills, IL 60061')
 PAGE_STORE = {'id': '53100502', 'name': 'Marianos Vernon Hills',
               'street': '1720 N Milwaukee Ave', 'zipcode': '60061'}
-OBSERVED = '2026-10-31T15:00:00Z'
+# Relative, not a fixed date. The composition applies a freshness rule, so a
+# hardcoded timestamp silently puts the whole file outside the window as the
+# calendar moves.
+OBSERVED = (datetime.now(timezone.utc) - timedelta(hours=6)).isoformat()
 
 
 def row(upc, price='3.99'):
