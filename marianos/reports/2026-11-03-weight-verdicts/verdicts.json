@@ -1,0 +1,793 @@
+{
+ "_what": "One verdict per product, decided from observed title and size/weight wording only. Nothing has been removed.",
+ "generated": "3 November 2026",
+ "source_audit": "/home/claude/walmart-kroger/marianos/reports/2026-11-02-sold-by-weight/data/sold_by_weight_audit.json",
+ "counts": {
+  "EXCLUDE": 0,
+  "KEEP": 3,
+  "UNDETERMINED": 31
+ },
+ "products": [
+  {
+   "upc": "0000000004011",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Fresh Bunch of Bananas \u2013 5-7 Bananas",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.45",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$0.69/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011",
+   "product_url": "https://www.marianos.com/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011",
+   "regular_price": "0.69"
+  },
+  {
+   "upc": "0000000094011",
+   "category": "Natural Organic",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Fresh Bunch of Organic Bananas \u2013 5-7 Bananas",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.66",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$0.79/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011",
+   "product_url": "https://www.marianos.com/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011",
+   "regular_price": "0.79"
+  },
+  {
+   "upc": "0000000003082",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Broccoli Crown",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.64",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.39/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/broccoli-crown/0000000003082",
+   "product_url": "https://www.marianos.com/p/broccoli-crown/0000000003082",
+   "regular_price": "2.39"
+  },
+  {
+   "upc": "0000000003283",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "The page capture holds 'Coupon: $1.79 lb Honeycrisp Apples' in the size slot, which is promotional or price text rather than a size, so it is not evidence of a fixed size. That it carries no approximate-weight wording says nothing: a promotional badge would not. Retained, and the page's size element still needs reading.",
+   "exact_wording_observed": {
+    "api_product_title": "Large Honeycrisp Apple \u2013 Each",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": "Coupon: $1.79 lb Honeycrisp Apples"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$1.25",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/large-honeycrisp-apple-each/0000000003283",
+   "product_url": "https://www.marianos.com/p/large-honeycrisp-apple-each/0000000003283",
+   "regular_price": "2.49"
+  },
+  {
+   "upc": "0000000004023",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Fresh Seedless Red Grapes",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.18",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$3.59/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/fresh-seedless-red-grapes/0000000004023",
+   "product_url": "https://www.marianos.com/p/fresh-seedless-red-grapes/0000000004023",
+   "regular_price": "3.59"
+  },
+  {
+   "upc": "0000000004087",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Fresh Roma Tomato",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$0.36",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$1.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/fresh-roma-tomato/0000000004087",
+   "product_url": "https://www.marianos.com/p/fresh-roma-tomato/0000000004087",
+   "regular_price": "1.49"
+  },
+  {
+   "upc": "0000000004770",
+   "category": "Produce",
+   "verdict": "KEEP",
+   "reason": "The page rendered a size of '1 each', a quantity and a unit, with no approximate-weight wording. An eligible fixed-size identity on the evidence held.",
+   "exact_wording_observed": {
+    "api_product_title": "Jumbo Fresh Ripe Avocado",
+    "api_weight_field": "1 each",
+    "page_size_as_rendered": "1 each"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/jumbo-fresh-ripe-avocado/0000000004770",
+   "product_url": "https://www.marianos.com/p/jumbo-fresh-ripe-avocado/0000000004770",
+   "regular_price": ""
+  },
+  {
+   "upc": "0000000004022",
+   "category": "Produce",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Fresh Seedless Green Grapes",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$3.38",
+    "approximate_each_regular_price": "$7.18",
+    "displayed_rate": "$1.69/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/fresh-seedless-green-grapes/0000000004022",
+   "product_url": "https://www.marianos.com/p/fresh-seedless-green-grapes/0000000004022",
+   "regular_price": "3.59"
+  },
+  {
+   "upc": "0022066450000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae HARVESTLAND\u00ae Free Range Boneless Skinless Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.78",
+    "approximate_each_regular_price": "$10.38",
+    "displayed_rate": "$2.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0022066450000",
+   "product_url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0022066450000",
+   "regular_price": "6.49"
+  },
+  {
+   "upc": "0024890600000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Miller Poultry Boneless Skinless Fresh Chicken Breast",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.09",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024890600000",
+   "product_url": "https://www.marianos.com/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024890600000",
+   "regular_price": "6.49"
+  },
+  {
+   "upc": "0025074900000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "The page capture holds 'Buy 1, Get 1 Free' in the size slot, which is promotional or price text rather than a size, so it is not evidence of a fixed size. That it carries no approximate-weight wording says nothing: a promotional badge would not. Retained, and the page's size element still needs reading.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae Fresh Boneless Skinless Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": "Buy 1, Get 1 Free"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.46",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-fresh-boneless-skinless-chicken-breasts/0025074900000",
+   "product_url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breasts/0025074900000",
+   "regular_price": "5.99"
+  },
+  {
+   "upc": "0029082900000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Simple Truth Organic\u00ae Boneless & Skinless Fresh Organic Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$12.14",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$8.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/simple-truth-organic-boneless-skinless-fresh-organic-chicken-breasts/0029082900000",
+   "product_url": "https://www.marianos.com/p/simple-truth-organic-boneless-skinless-fresh-organic-chicken-breasts/0029082900000",
+   "regular_price": "8.99"
+  },
+  {
+   "upc": "0028334900000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Heritage Farm\u00ae Boneless Skinless Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.25",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$2.50/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/heritage-farm-boneless-skinless-chicken-breasts/0028334900000",
+   "product_url": "https://www.marianos.com/p/heritage-farm-boneless-skinless-chicken-breasts/0028334900000",
+   "regular_price": "2.50"
+  },
+  {
+   "upc": "0020094700000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Simple Truth\u00ae Natural Boneless Skinless Fresh Chicken Breast BIG DEAL! (Limit 2 at sale price)",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$16.47",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-big-deal-limit-2-at-sale-price-/0020094700000",
+   "product_url": "https://www.marianos.com/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-big-deal-limit-2-at-sale-price-/0020094700000",
+   "regular_price": "5.99"
+  },
+  {
+   "upc": "0027094650000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Prime Cut Chicken Breast",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.99",
+    "approximate_each_regular_price": "$5.99",
+    "displayed_rate": "$4.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/prime-cut-chicken-breast/0027094650000",
+   "product_url": "https://www.marianos.com/p/prime-cut-chicken-breast/0027094650000",
+   "regular_price": "5.99"
+  },
+  {
+   "upc": "0024058100000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Miller Poultry Boneless Skinless Fresh Chicken Breast",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$15.73",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.29/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024058100000",
+   "product_url": "https://www.marianos.com/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024058100000",
+   "regular_price": "6.29"
+  },
+  {
+   "upc": "0024077800000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Miller Poultry Thin-Sliced Fresh Chicken Breast",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$8.11",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/miller-poultry-thin-sliced-fresh-chicken-breast/0024077800000",
+   "product_url": "https://www.marianos.com/p/miller-poultry-thin-sliced-fresh-chicken-breast/0024077800000",
+   "regular_price": "6.99"
+  },
+  {
+   "upc": "0024096150000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Simple Truth\u00ae Natural Boneless Skinless Fresh Chicken Breast Cutlets",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.69",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-cutlets/0024096150000",
+   "product_url": "https://www.marianos.com/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-cutlets/0024096150000",
+   "regular_price": "6.99"
+  },
+  {
+   "upc": "0025093600000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "The page capture holds 'Buy 1, Get 1 Free' in the size slot, which is promotional or price text rather than a size, so it is not evidence of a fixed size. That it carries no approximate-weight wording says nothing: a promotional badge would not. Retained, and the page's size element still needs reading.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae Fresh Boneless Skinless Chicken Breast Tenderloins",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": "Buy 1, Get 1 Free"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.69",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-fresh-boneless-skinless-chicken-breast-tenderloins/0025093600000",
+   "product_url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breast-tenderloins/0025093600000",
+   "regular_price": "6.99"
+  },
+  {
+   "upc": "0023061850000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae HARVESTLAND\u00ae Free Range Boneless Skinless Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$17.37",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0023061850000",
+   "product_url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0023061850000",
+   "regular_price": "5.99"
+  },
+  {
+   "upc": "0024890000000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Miller Poultry Bone-In Fresh Chicken Breast",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$6.78",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$3.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/miller-poultry-bone-in-fresh-chicken-breast/0024890000000",
+   "product_url": "https://www.marianos.com/p/miller-poultry-bone-in-fresh-chicken-breast/0024890000000",
+   "regular_price": "3.99"
+  },
+  {
+   "upc": "0025064650000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae HARVESTLAND\u00ae Free Range Boneless Skinless Chicken Thighs",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.61",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-thighs/0025064650000",
+   "product_url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-thighs/0025064650000",
+   "regular_price": "5.49"
+  },
+  {
+   "upc": "0027061550000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae Fresh Boneless Skinless Chicken Breasts Value Pack",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$17.79",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$5.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-fresh-boneless-skinless-chicken-breasts-value-pack/0027061550000",
+   "product_url": "https://www.marianos.com/p/perdue-fresh-boneless-skinless-chicken-breasts-value-pack/0027061550000",
+   "regular_price": "5.49"
+  },
+  {
+   "upc": "0028094750000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae HARVESTLAND\u00ae Free Range Boneless Skinless Chicken Breast Tenderloins",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$7.49",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$7.49/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breast-tenderloins/0028094750000",
+   "product_url": "https://www.marianos.com/p/perdue-harvestland-free-range-boneless-skinless-chicken-breast-tenderloins/0028094750000",
+   "regular_price": "7.49"
+  },
+  {
+   "upc": "0020265500000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Miller Poultry Boneless Chicken Breast Strips",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$6.99",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$6.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/miller-poultry-boneless-chicken-breast-strips/0020265500000",
+   "product_url": "https://www.marianos.com/p/miller-poultry-boneless-chicken-breast-strips/0020265500000",
+   "regular_price": "6.99"
+  },
+  {
+   "upc": "0022083500000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Prime Cut Chicken Breast Family Pack",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$4.99",
+    "approximate_each_regular_price": "$5.99",
+    "displayed_rate": "$4.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/prime-cut-chicken-breast-family-pack/0022083500000",
+   "product_url": "https://www.marianos.com/p/prime-cut-chicken-breast-family-pack/0022083500000",
+   "regular_price": "5.99"
+  },
+  {
+   "upc": "0025061900000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "The page capture holds 'Buy 1, Get 1 Free' in the size slot, which is promotional or price text rather than a size, so it is not evidence of a fixed size. That it carries no approximate-weight wording says nothing: a promotional badge would not. Retained, and the page's size element still needs reading.",
+   "exact_wording_observed": {
+    "api_product_title": "PERDUE\u00ae Thin Sliced Boneless Skinless Chicken Breasts",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": "Buy 1, Get 1 Free"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$9.09",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/perdue-thin-sliced-boneless-skinless-chicken-breasts/0025061900000",
+   "product_url": "https://www.marianos.com/p/perdue-thin-sliced-boneless-skinless-chicken-breasts/0025061900000",
+   "regular_price": "6.99"
+  },
+  {
+   "upc": "0021544150000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Kroger\u00ae Fresh Farm Raised Atlantic Salmon Fillet",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$22.48",
+    "approximate_each_regular_price": "$29.98",
+    "displayed_rate": "$8.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/kroger-fresh-farm-raised-atlantic-salmon-fillet/0021544150000",
+   "product_url": "https://www.marianos.com/p/kroger-fresh-farm-raised-atlantic-salmon-fillet/0021544150000",
+   "regular_price": "11.99"
+  },
+  {
+   "upc": "0023857740000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Organic Salmon Filet",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each on sale, sold by weight",
+    "approximate_each_price": "$16.99",
+    "approximate_each_regular_price": "$18.98",
+    "displayed_rate": "$16.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/organic-salmon-filet/0023857740000",
+   "product_url": "https://www.marianos.com/p/organic-salmon-filet/0023857740000",
+   "regular_price": "18.99"
+  },
+  {
+   "upc": "0023858700000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Rushing Waters Fisheries Smoke House Cracked Pepper Salmon",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.00",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$21.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/rushing-waters-fisheries-smoke-house-cracked-pepper-salmon/0023858700000",
+   "product_url": "https://www.marianos.com/p/rushing-waters-fisheries-smoke-house-cracked-pepper-salmon/0023858700000",
+   "regular_price": "21.99"
+  },
+  {
+   "upc": "0028864650000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Wild Caught Sockeye Salmon Fillet",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$18.99",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$18.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/wild-caught-sockeye-salmon-fillet/0028864650000",
+   "product_url": "https://www.marianos.com/p/wild-caught-sockeye-salmon-fillet/0028864650000",
+   "regular_price": "18.99"
+  },
+  {
+   "upc": "0025858700000",
+   "category": "Meat",
+   "verdict": "UNDETERMINED",
+   "reason": "No page size or weight wording was captured for this product. The API size '1 lb' is not evidence about the page, so whether the page carries excluded wording is unknown. Retained, because a product is never removed on an absent value.",
+   "exact_wording_observed": {
+    "api_product_title": "Rushing Waters Fisheries Smoke House Cajun Salmon",
+    "api_weight_field": "1 lb",
+    "page_size_as_rendered": ""
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "about each, sold by weight",
+    "approximate_each_price": "$11.00",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "$21.99/lb",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/rushing-waters-fisheries-smoke-house-cajun-salmon/0025858700000",
+   "product_url": "https://www.marianos.com/p/rushing-waters-fisheries-smoke-house-cajun-salmon/0025858700000",
+   "regular_price": "21.99"
+  },
+  {
+   "upc": "0064412473973",
+   "category": "Candles Home Fragrances",
+   "verdict": "KEEP",
+   "reason": "The page rendered a size of '12 ounces', a quantity and a unit, with no approximate-weight wording. An eligible fixed-size identity on the evidence held.",
+   "exact_wording_observed": {
+    "api_product_title": "Tuscany Candle\u2122 Serene Clean Collection Scented Jar Candle - Eucalyptus Aloe",
+    "api_weight_field": "12 ounces",
+    "page_size_as_rendered": "12 ounces"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/tuscany-candle-serene-clean-collection-scented-jar-candle-eucalyptus-aloe/0064412473973",
+   "product_url": "https://www.marianos.com/p/tuscany-candle-serene-clean-collection-scented-jar-candle-eucalyptus-aloe/0064412473973",
+   "regular_price": ""
+  },
+  {
+   "upc": "0064412473968",
+   "category": "Candles Home Fragrances",
+   "verdict": "KEEP",
+   "reason": "The page rendered a size of '12 ounces', a quantity and a unit, with no approximate-weight wording. An eligible fixed-size identity on the evidence held.",
+   "exact_wording_observed": {
+    "api_product_title": "Tuscany Candle\u2122 Serene Clean\u2122 Collection Beach Rose Scented Jar Candle",
+    "api_weight_field": "12 ounces",
+    "page_size_as_rendered": "12 ounces"
+   },
+   "matched_exclusion_wording": {},
+   "page_pricing_evidence_not_used_for_the_verdict": {
+    "price_basis": "prices may vary",
+    "approximate_each_price": "",
+    "approximate_each_regular_price": "",
+    "displayed_rate": "",
+    "_why_not_used": "This is the basis on which the retailer prices the product, not the product's size or weight. The exclusion rule matches 'sold by weight', so using this field would exclude 31 of 34 on the ground the client ruled out."
+   },
+   "page_path": "/p/tuscany-candle-serene-clean-collection-beach-rose-scented-jar-candle/0064412473968",
+   "product_url": "https://www.marianos.com/p/tuscany-candle-serene-clean-collection-beach-rose-scented-jar-candle/0064412473968",
+   "regular_price": ""
+  }
+ ],
+ "undetermined_page_paths": [
+  "/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011",
+  "/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011",
+  "/p/broccoli-crown/0000000003082",
+  "/p/large-honeycrisp-apple-each/0000000003283",
+  "/p/fresh-seedless-red-grapes/0000000004023",
+  "/p/fresh-roma-tomato/0000000004087",
+  "/p/fresh-seedless-green-grapes/0000000004022",
+  "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0022066450000",
+  "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024890600000",
+  "/p/perdue-fresh-boneless-skinless-chicken-breasts/0025074900000",
+  "/p/simple-truth-organic-boneless-skinless-fresh-organic-chicken-breasts/0029082900000",
+  "/p/heritage-farm-boneless-skinless-chicken-breasts/0028334900000",
+  "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-big-deal-limit-2-at-sale-price-/0020094700000",
+  "/p/prime-cut-chicken-breast/0027094650000",
+  "/p/miller-poultry-boneless-skinless-fresh-chicken-breast/0024058100000",
+  "/p/miller-poultry-thin-sliced-fresh-chicken-breast/0024077800000",
+  "/p/simple-truth-natural-boneless-skinless-fresh-chicken-breast-cutlets/0024096150000",
+  "/p/perdue-fresh-boneless-skinless-chicken-breast-tenderloins/0025093600000",
+  "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breasts/0023061850000",
+  "/p/miller-poultry-bone-in-fresh-chicken-breast/0024890000000",
+  "/p/perdue-harvestland-free-range-boneless-skinless-chicken-thighs/0025064650000",
+  "/p/perdue-fresh-boneless-skinless-chicken-breasts-value-pack/0027061550000",
+  "/p/perdue-harvestland-free-range-boneless-skinless-chicken-breast-tenderloins/0028094750000",
+  "/p/miller-poultry-boneless-chicken-breast-strips/0020265500000",
+  "/p/prime-cut-chicken-breast-family-pack/0022083500000",
+  "/p/perdue-thin-sliced-boneless-skinless-chicken-breasts/0025061900000",
+  "/p/kroger-fresh-farm-raised-atlantic-salmon-fillet/0021544150000",
+  "/p/organic-salmon-filet/0023857740000",
+  "/p/rushing-waters-fisheries-smoke-house-cracked-pepper-salmon/0023858700000",
+  "/p/wild-caught-sockeye-salmon-fillet/0028864650000",
+  "/p/rushing-waters-fisheries-smoke-house-cajun-salmon/0025858700000"
+ ]
+}
