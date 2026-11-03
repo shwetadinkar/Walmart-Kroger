@@ -693,6 +693,40 @@ lookup covers the Mariano's banner at all or only Kroger-branded stores.
 unobtainable *through every route currently open to us*, which is a different
 sentence and the one the client should get.
 
+## Scope for anything expensive: 500 across categories, not 28,549
+
+Set by the account holder on 4 November. Any route that costs real effort per
+product - attended page reads, a served machine, a partner tier, a paid
+provider - targets **500 distinct products spread across the categories**, not
+the whole set. It matches the client's own instruction in
+`REVIEW_ACTIONS_2026-10-31.md`: the demonstration minimum is 500 genuine
+distinct products in total, not per category, and full coverage is a
+production requirement rather than a demonstration one.
+
+**On the numbers, that target is already met and the remainder is small.** The
+1 November page read produced 592 rated products spread across 22 of the 28
+roots, not clustered. Measured on 4 November against the configured roots:
+
+| Target | Roots short | Extra page reads |
+|---|---:|---:|
+| 10 rated products in every root | 9 | **80** |
+| 20 in every root | 13 | **192** |
+
+So the gap between what exists and a rate in every single root is about 80
+page reads. That is one attended session on the route that produced the 592,
+and it changes what a negative answer from a provider costs: not much.
+
+**Four of the six roots at zero are the ones the API cannot reach at all** -
+Seafood, Coffee, Batteries, Light Bulbs - and the retailer's sitemap publishes
+each as a real listing page. Page reading therefore closes the empty-root gap
+and the rate gap in one pass, which no API route can do at any price. Coupons
+is a savings surface rather than a product category and may yield nothing;
+Floral has 45 API products and no rate yet.
+
+Before proposing any scaled route again, price it against 80 to 200 products,
+not 28,549. The Oxylabs evening was spent on a capability that would have been
+needed for the whole set and is not needed for this one.
+
 ## Reporting
 
 Every run report states what it does **not** establish, in its own words, not
