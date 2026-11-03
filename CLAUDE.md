@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 777.
+  counts: Walmart 251, Mariano's 797.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works. Two such tests were found
   by review on 3 November and rewritten. One asserted a published row's store
@@ -412,6 +412,34 @@ Azure**: nothing ran there, nothing ran in the client's environment, no Azure
 cron fired, and the data is replayed. The cron day-of-week conversion is the
 load-bearing detail - cron Monday is 1 where Python's `weekday()` makes it 0,
 and getting it wrong shifts every reported firing by a day.
+
+## Presence in a catalogue is not carriage
+
+`tools/resolve_sitemap_gap.py` resolves the 326 sitemap products missing from
+the delivered data against the store. Its first version returned a carriage
+verdict for **any** product the endpoint returned, and treated a 404 as a
+lookup failure. On the real run it reported 324 carried and **zero** confirmed
+absences, which is not a finding about the store but a classifier that never
+says no. Its own docstring stated the correct rule - at least one item the
+store prices or stocks - and the code did not implement it. The client caught
+it before the number was used anywhere.
+
+Kroger's product-details endpoint returns the catalogue record whether or not
+the location carries the product. So a price or an explicit stock level **at
+that location** is carriage evidence; presence in the response is not. Absence
+of both is undetermined and says so. A 404 is an answer, not a failure.
+
+**The output is a range, never a single number.** On the 3 November run: 186
+priced at the store, 138 undetermined, 2 absent from the catalogue. So the
+sweep missed at least 186 of those products and at most 324. Neither end
+estimates the whole catalogue, because the 890 sitemap products are an SEO
+subset the retailer chose rather than a random sample.
+
+Two further things this cost. The first run recorded only whether a price
+existed, not stock levels, so its undetermined bucket cannot be narrowed
+without re-running; stock levels are retained now. And the probe item itself
+had no price at the location, so the very first call was already showing the
+defect - a probe is to be read, not just passed.
 
 ## Reporting
 

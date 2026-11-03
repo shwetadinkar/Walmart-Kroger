@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Decide whether the sitemap products missing from our data are a gap or not.
+"""Decide what the sitemap products missing from our data actually show.
 
 `sitemap_reconciliation.py` finds that 326 of the 890 products in the
 retailer's own SEO product sitemap are absent from the delivered dataset. That
@@ -8,17 +8,35 @@ may not be carried at this store. Two very different facts produce the same
 absence, and the reports must not merge them.
 
 This resolves each one against the store, by id, through Kroger's documented
-product-details endpoint. For every absent id the answer is one of:
+product-details endpoint. The verdicts are:
 
-  carried_and_missed    the store returns the product, so the term sweep did
-                        not reach it. This is a real coverage gap and the
-                        count is the first hard lower bound this project has
-                        on how much the sweep misses.
-  not_carried           the store returns nothing for it. Absence from our
-                        data is correct and is an assortment fact.
-  unresolved            the lookup itself failed. Recorded as neither, with
-                        the error, because an unanswered question is not an
-                        answer.
+  priced_at_this_store            the location returned a regular price, which
+                                  is evidence it carries the product. Counted
+                                  in the lower bound of what the sweep missed.
+  stocked_at_this_store           no price, but an explicit stock level at the
+                                  location. Also carriage evidence.
+  in_catalogue_no_store_evidence  the catalogue record came back with neither.
+                                  UNDETERMINED: Kroger returns the catalogue
+                                  record whether or not the store carries the
+                                  product, so this is neither a missed product
+                                  nor a confirmed absence.
+  absent_from_catalogue           nothing returned, or HTTP 404. Absence from
+                                  our data is not a collection gap.
+  unresolved                      the lookup failed some other way. An
+                                  unanswered question is not an answer.
+
+**The honest output is a range, not a number.** The lower bound counts only
+products with price or stock evidence; the upper bound adds the undetermined
+ones. Neither end estimates the whole catalogue: the 890 sitemap products are
+an SEO subset the retailer chose, not a random sample, so the rate among them
+projects onto nothing.
+
+The first version of this tool got that wrong. It returned a carriage verdict
+for **any** product the endpoint returned, and treated a 404 as a lookup
+failure. On the real run of 326 ids it reported 324 carried and **zero**
+confirmed absences, which is not a finding about the store but a classifier
+that never says no. Its own docstring stated the correct rule and the code did
+not implement it. The client caught it before the number was used.
 
 Nothing is published from this. It writes a report. The products it finds are
 not appended to the dataset: they would be observations made by a different
@@ -31,18 +49,26 @@ yourself:
 
     cd marianos
     set -a; . ./.env.kroger; set +a
-    python3 tools/resolve_sitemap_gap.py \\
-      --location-id 53100502 \\
-      --absent reports/2026-11-02-sitemap-reconciliation/absent_from_delivered.json \\
-      --out reports/2026-11-02-sitemap-gap
+    python3 tools/resolve_sitemap_gap.py --location-id 53100502 --probe-only
+    python3 tools/resolve_sitemap_gap.py --location-id 53100502 \\
+      --out reports/<today>-sitemap-gap
 
-Start with --probe-only. It makes exactly one request and reports whether the
-product-details path works at all with these credentials, so a wrong
-assumption about the endpoint costs one call rather than 326.
+Start with --probe-only: one request, so a wrong assumption about the endpoint
+costs one call rather than 326. Note what the probe reports as well as whether
+it worked - on the real run the probe item itself had no price at the location,
+which was the defect showing itself in the very first call.
+
+To correct the verdicts on a report you already have, without spending the
+calls again:
+
+    python3 tools/resolve_sitemap_gap.py \\
+      --reclassify reports/<run>/GAP_RESOLUTION.json \\
+      --out reports/<run>
 """
 
 import argparse
 import json
+from collections import Counter
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -61,45 +87,151 @@ def lookup(client, product_id, location_id):
                       {"filter.locationId": location_id})
 
 
-def classify(document):
-    """carried_and_missed or not_carried, from the response alone.
+PRICED = "priced_at_this_store"
+STOCKED = "stocked_at_this_store"
+NO_STORE_EVIDENCE = "in_catalogue_no_store_evidence"
+ABSENT = "absent_from_catalogue"
+UNRESOLVED = "unresolved"
 
-    `data` present with at least one item that the store prices or stocks is
-    the store carrying it. An empty data array is Kroger saying it has nothing
-    for that id at that location.
+CARRIAGE_EVIDENCE = (PRICED, STOCKED)
+
+
+def classify(document):
+    """What this store's response actually evidences about carriage.
+
+    The first version of this returned "carried_and_missed" for **any**
+    returned product and only recorded `has_regular_price` as a detail it
+    never used. Its own docstring stated the correct rule - at least one item
+    the store prices or stocks - and the code did not implement it. The result
+    was 0 `not_carried` out of 326, which is not a finding about the store but
+    a classifier that never says no. The client caught it before the number
+    reached anyone.
+
+    Kroger's product-details endpoint returns the catalogue record whether or
+    not the location carries the product, so presence in the response is not
+    evidence of carriage. A price or an explicit stock level **at this
+    location** is. Absence of both is not evidence either way, and it says so
+    rather than picking a side.
     """
     data = document.get("data") if isinstance(document, dict) else None
     if isinstance(data, dict):
         data = [data]
     if not isinstance(data, list) or not data:
-        return "not_carried", {}
+        return ABSENT, {"_why": "Kroger returned no product for this id at this location"}
     product = next((p for p in data if isinstance(p, dict)), None)
     if product is None:
-        return "not_carried", {}
+        return ABSENT, {"_why": "Kroger returned no product object for this id"}
+
     items = product.get("items") if isinstance(product.get("items"), list) else []
-    return "carried_and_missed", {
+    priced = any(isinstance(i, dict) and isinstance(i.get("price"), dict)
+                 and i["price"].get("regular") for i in items)
+    stock_levels = [str((i.get("inventory") or {}).get("stockLevel") or "")
+                    for i in items if isinstance(i, dict)
+                    and isinstance(i.get("inventory"), dict)]
+    stocked = any(level for level in stock_levels)
+
+    detail = {
         "description": str(product.get("description") or ""),
         "categories": product.get("categories") if isinstance(product.get("categories"), list) else [],
         "items": len(items),
-        # Recorded, not published. See the module docstring.
-        "has_regular_price": any(
-            isinstance(i, dict) and isinstance(i.get("price"), dict)
-            and i["price"].get("regular") for i in items),
+        "has_regular_price": priced,
+        # Recorded from the first version onward only as a count; the levels
+        # themselves were not kept, so an earlier report cannot be
+        # reclassified on stock. They are kept now.
+        "stock_levels": stock_levels,
     }
+    if priced:
+        return PRICED, dict(detail, _why="the location returned a regular price")
+    if stocked:
+        return STOCKED, dict(detail, _why="the location returned an explicit stock level")
+    return NO_STORE_EVIDENCE, dict(
+        detail, _why=("the catalogue record came back with no price and no stock level "
+                      "at this location, so whether the store carries it is unknown"))
+
+
+def classify_error(message: str):
+    """A 404 is an answer, not a failure.
+
+    Lumping it into `unresolved` conflated "we could not find out" with "we
+    found out it is gone", which are different facts about the dataset.
+    """
+    if "404" in str(message):
+        return ABSENT, {"_why": f"Kroger returned HTTP 404 for this id: {message}"}
+    return UNRESOLVED, {"error": str(message)}
+
+
+def reclassify(previous: dict) -> dict:
+    """Recompute verdicts from a saved report, with no new requests.
+
+    Offered because the first run's verdicts were wrong and re-spending 326
+    calls to correct an error of mine is not the client's cost to bear. What
+    can be recovered from a saved report is the price test and the 404 test;
+    stock levels were not retained by the first version, so a product with no
+    price cannot be narrowed further here and stays undetermined.
+    """
+    out, counts = {}, Counter()
+    for product_id, record in (previous.get("results") or {}).items():
+        if record.get("verdict") == "unresolved" or record.get("error"):
+            verdict, detail = classify_error(record.get("error", ""))
+        elif record.get("has_regular_price"):
+            verdict, detail = PRICED, {"_why": "the location returned a regular price"}
+        else:
+            verdict, detail = NO_STORE_EVIDENCE, {
+                "_why": ("no price at this location, and the first run did not retain "
+                         "stock levels, so carriage is undetermined from this report")}
+        counts[verdict] += 1
+        out[product_id] = dict(record, verdict=verdict, **detail)
+    return {"results": out, "counts": dict(counts)}
 
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--location-id", required=True)
+    p.add_argument("--location-id", default="",
+                   help="Required unless --reclassify")
     p.add_argument("--absent", type=Path,
                    default=ROOT / "reports/2026-11-02-sitemap-reconciliation/absent_from_delivered.json")
     p.add_argument("--out", type=Path)
+    p.add_argument("--reclassify", type=Path,
+                   help="Recompute verdicts from a saved GAP_RESOLUTION.json without "
+                        "making any request. Use this when the classifier was wrong "
+                        "rather than re-spending the calls.")
     p.add_argument("--probe-only", action="store_true",
                    help="One request, to confirm the endpoint works before spending 326")
     p.add_argument("--limit", type=int, default=0, help="Stop after this many ids")
     p.add_argument("--pause", type=float, default=0.25,
                    help="Seconds between requests. Keep it unhurried")
     a = p.parse_args(argv)
+
+    if a.reclassify:
+        if not a.out:
+            p.error("--out is required with --reclassify")
+        previous = json.loads(a.reclassify.read_text())
+        redone = reclassify(previous)
+        report = {
+            "_what": ("Verdicts recomputed from a saved report, with no new requests. "
+                      "The first run's classifier returned a carriage verdict for any "
+                      "returned product, which produced zero confirmed absences out of "
+                      "326 and was wrong."),
+            "reclassified_from": str(a.reclassify),
+            "original_counts": previous.get("counts"),
+            "counts": redone["counts"],
+            "lower_bound_missed_by_the_sweep": sum(
+                redone["counts"].get(v, 0) for v in CARRIAGE_EVIDENCE),
+            "upper_bound_missed_by_the_sweep": (
+                sum(redone["counts"].get(v, 0) for v in CARRIAGE_EVIDENCE)
+                + redone["counts"].get(NO_STORE_EVIDENCE, 0)),
+            "_stock_was_not_retained": (
+                "The first run recorded only whether a price existed, not stock "
+                "levels, so a product with no price cannot be narrowed here and stays "
+                "undetermined. A fresh run now retains stock levels and would move "
+                "some of those either way."),
+            "results": redone["results"],
+        }
+        a.out.mkdir(parents=True, exist_ok=True)
+        (a.out / "GAP_RESOLUTION_RECLASSIFIED.json").write_text(json.dumps(report, indent=1))
+        print(json.dumps({k: v for k, v in report.items() if k != "results"}, indent=1)[:1400])
+        print(f"\nwrote {a.out}")
+        return 0
 
     if a.location_id.upper().startswith(("DEMO", "REPLACE", "UNRESOLVED")):
         p.error("--location-id must be a verified Kroger location, not a placeholder")
@@ -135,19 +267,19 @@ def main(argv=None):
     wanted = ids[:a.limit] if a.limit else ids
     started = datetime.now(timezone.utc).isoformat()
     results = {}
-    counts = {"carried_and_missed": 0, "not_carried": 0, "unresolved": 0}
+    counts = Counter()
     for n, product_id in enumerate(wanted, 1):
         try:
             verdict, detail = classify(lookup(client, product_id, a.location_id))
         except KrogerError as exc:
-            verdict, detail = "unresolved", {"error": str(exc)}
+            verdict, detail = classify_error(exc)
         results[product_id] = dict(detail, verdict=verdict)
         counts[verdict] += 1
         if n % 25 == 0 or n == len(wanted):
-            print(f"  {n}/{len(wanted)}  {counts}", flush=True)
+            print(f"  {n}/{len(wanted)}  {dict(counts)}", flush=True)
         time.sleep(a.pause)
 
-    resolved = counts["carried_and_missed"] + counts["not_carried"]
+    resolved = sum(counts[v] for v in CARRIAGE_EVIDENCE) + counts[ABSENT]
     report = {
         "_what": ("Each product the retailer publishes in its SEO sitemap but that is "
                   "absent from the delivered dataset, resolved against this store by id."),
@@ -156,16 +288,32 @@ def main(argv=None):
         "finished_utc": datetime.now(timezone.utc).isoformat(),
         "ids_checked": len(wanted),
         "ids_available": len(ids),
-        "counts": counts,
-        "_carried_and_missed_means": (
-            "The store returns this product and our sweep did not reach it. This is a "
-            "real coverage gap in the term sweep and the count is a hard LOWER bound "
-            "on it, not an estimate of it: these 890 sitemap products are an SEO "
-            "subset chosen by the retailer, not a random sample of the catalogue, so "
-            "the rate among them supports no projection onto the whole."),
-        "_not_carried_means": (
-            "The store returns nothing for this id. Its absence from our data is "
-            "correct and is a fact about the assortment, not about our collection."),
+        "counts": dict(counts),
+        "lower_bound_missed_by_the_sweep": sum(counts[v] for v in CARRIAGE_EVIDENCE),
+        "upper_bound_missed_by_the_sweep": (
+            sum(counts[v] for v in CARRIAGE_EVIDENCE) + counts[NO_STORE_EVIDENCE]),
+        "_what_each_verdict_means": {
+            PRICED: ("The location returned a regular price, which is evidence it "
+                     "carries the product, and our sweep did not reach it. Counted in "
+                     "the lower bound."),
+            STOCKED: ("No price, but the location returned an explicit stock level. "
+                      "Also carriage evidence. Counted in the lower bound."),
+            NO_STORE_EVIDENCE: (
+                "The catalogue record came back with no price and no stock level at "
+                "this location. Kroger returns the catalogue record whether or not the "
+                "store carries the product, so this is UNDETERMINED - neither a missed "
+                "product nor a confirmed absence. It is the difference between the "
+                "lower and upper bound."),
+            ABSENT: ("Kroger returned nothing, or HTTP 404, for this id at this "
+                     "location. Its absence from our data is not a collection gap."),
+            UNRESOLVED: "The lookup failed for some other reason. An unanswered question.",
+        },
+        "_the_bounds": (
+            "lower_bound_missed_by_the_sweep counts only products with price or stock "
+            "evidence at this location. upper_bound adds the undetermined ones. The "
+            "honest figure is the range, and neither end is an estimate of the whole "
+            "catalogue: these 890 sitemap products are an SEO subset the retailer "
+            "chose, not a random sample, so the rate among them projects onto nothing."),
         "_nothing_here_is_published": (
             "No product found here has been added to the dataset. These are "
             "observations made by a different method on a later date, and merging "
@@ -175,7 +323,9 @@ def main(argv=None):
     }
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "GAP_RESOLUTION.json").write_text(json.dumps(report, indent=1))
-    print(json.dumps({"counts": counts, "resolved": resolved,
+    print(json.dumps({"counts": dict(counts), "resolved": resolved,
+                      "lower_bound": report["lower_bound_missed_by_the_sweep"],
+                      "upper_bound": report["upper_bound_missed_by_the_sweep"],
                       "out": str(a.out)}, indent=1))
     return 0
 
