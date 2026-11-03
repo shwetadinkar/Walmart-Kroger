@@ -58,7 +58,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-ENDPOINT = "https://realtime.oxylabs.io/v1/queries"
+# Two shapes, because Oxylabs has two. "classic" is the Realtime endpoint the
+# client named, which takes {"source": "marianos_product", ...} and HTTP Basic.
+# "scrape" is the newer Web API product, whose dashboard issues an API key and
+# whose endpoint reference spells the target as a path. Which one an account
+# gets depends on the product instance, so both are here and --dry-run shows
+# exactly which is about to be used rather than this file assuming.
+CLASSIC_ENDPOINT = "https://realtime.oxylabs.io/v1/queries"
+SCRAPE_ENDPOINT = "https://api.oxylabs.io/v1/scrape/marianos/product"
 HARD_CAP = 25            # Enforced before the first request, not after.
 DEFAULT_COUNT = 5
 
@@ -76,15 +83,25 @@ DEAL_PATTERNS = ("promo", "deal", "coupon", "saving", "discount", "offer",
                  "was_price", "sale")
 
 
-def credentials():
+def auth_header():
+    """Bearer if an API key is set, Basic otherwise. Never from a command line.
+
+    The newer Web API product issues a single API key from the dashboard; the
+    Classic Realtime endpoint uses a username and password. Supporting only one
+    of them would have cost a round trip to find out which the account got.
+    """
+    key = os.environ.get("OXYLABS_API_KEY", "").strip()
+    if key:
+        return "Bearer " + key, "OXYLABS_API_KEY"
     user = os.environ.get("OXYLABS_USERNAME", "")
     secret = os.environ.get("OXYLABS_PASSWORD", "")
-    if not user or not secret:
-        raise SystemExit(
-            "OXYLABS_USERNAME and OXYLABS_PASSWORD are required in the environment.\n"
-            "Credentials stay with their owner: export them in the shell that runs\n"
-            "this, never pass them as arguments. Nothing was sent.")
-    return user, secret
+    if user and secret:
+        return ("Basic " + base64.b64encode(f"{user}:{secret}".encode()).decode(),
+                "OXYLABS_USERNAME / OXYLABS_PASSWORD")
+    raise SystemExit(
+        "Set OXYLABS_API_KEY, or OXYLABS_USERNAME and OXYLABS_PASSWORD, in the\n"
+        "environment. Credentials stay with their owner: export them in the shell\n"
+        "that runs this, never pass them as arguments. Nothing was sent.")
 
 
 def subjects(data_path: Path, count: int):
@@ -109,8 +126,10 @@ def subjects(data_path: Path, count: int):
              "observed_weight": r.get("weight", "")} for r in chosen]
 
 
-def payload(subject, source_name, query_field, with_store):
-    body = {"source": source_name, query_field: subject["upc"], "parse": True}
+def payload(subject, source_name, query_field, with_store, style):
+    body = {query_field: subject["upc"], "parse": True}
+    if style == "classic":
+        body["source"] = source_name          # the target is a field
     if with_store:
         body.update({"store_id": STORE_ID, "delivery_zip": DELIVERY_ZIP,
                      "fulfillment_type": FULFILLMENT})
@@ -141,12 +160,11 @@ def candidates(paths, patterns):
     return hits
 
 
-def send(body, user, secret, timeout):
+def send(body, endpoint, authorization, timeout):
     request = urllib.request.Request(
-        ENDPOINT, data=json.dumps(body).encode(), method="POST",
+        endpoint, data=json.dumps(body).encode(), method="POST",
         headers={"Content-Type": "application/json",
-                 "Authorization": "Basic " + base64.b64encode(
-                     f"{user}:{secret}".encode()).decode()})
+                 "Authorization": authorization})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             return response.status, json.loads(response.read().decode())
@@ -174,6 +192,13 @@ def main(argv=None):
     p.add_argument("--no-store-context", action="store_true",
                    help="Omit store_id, delivery_zip and fulfillment_type, to "
                         "see whether they change the answer")
+    p.add_argument("--style", choices=("scrape", "classic"), default="scrape",
+                   help="scrape: the newer Web API, target in the path, API key. "
+                        "classic: the Realtime endpoint, target as a source field, "
+                        "username and password. Default scrape, because that is "
+                        "what a Web API product instance issues today")
+    p.add_argument("--endpoint", default="",
+                   help="Override the URL entirely if neither default is right")
     p.add_argument("--timeout", type=int, default=90)
     a = p.parse_args(argv)
 
@@ -185,30 +210,36 @@ def main(argv=None):
     if not a.dry_run and not a.out:
         p.error("--out is required for a real run, so the responses are kept")
 
+    endpoint = a.endpoint or (SCRAPE_ENDPOINT if a.style == "scrape"
+                              else CLASSIC_ENDPOINT)
     picked = subjects(a.from_data, a.count)
     rated = sum(1 for s in picked if s["observed_ppm"])
     print(f"{len(picked)} UPCs, {rated} of them with a page-read ppm already observed",
           file=sys.stderr)
 
-    bodies = [(s, payload(s, a.source_name, a.query_field, not a.no_store_context))
+    bodies = [(s, payload(s, a.source_name, a.query_field,
+                          not a.no_store_context, a.style))
               for s in picked]
 
     if a.dry_run:
         print(json.dumps({
             "_what": "Exactly what would be sent. Nothing was sent.",
-            "endpoint": ENDPOINT,
+            "endpoint": endpoint,
+            "style": a.style,
             "requests": len(bodies),
-            "auth": "HTTP Basic from OXYLABS_USERNAME / OXYLABS_PASSWORD",
+            "auth": ("OXYLABS_API_KEY as a Bearer token if set, otherwise "
+                     "HTTP Basic from OXYLABS_USERNAME / OXYLABS_PASSWORD"),
             "payloads": [b for _, b in bodies],
             "subjects": picked,
         }, indent=1))
         return 0
 
-    user, secret = credentials()
+    authorization, which = auth_header()
+    print(f"authenticating with {which}", file=sys.stderr)
     a.out.mkdir(parents=True, exist_ok=True)
     results = []
     for subject, body in bodies:
-        status, document = send(body, user, secret, a.timeout)
+        status, document = send(body, endpoint, authorization, a.timeout)
         (a.out / f"raw_{subject['upc']}.json").write_text(json.dumps(
             {"request": body, "status": status, "response": document}, indent=1))
         content = {}
@@ -238,7 +269,8 @@ def main(argv=None):
                   "this probe is an observation by a different method on a different "
                   "date and merging it into an earlier run would misdate it."),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "endpoint": ENDPOINT,
+        "endpoint": endpoint,
+        "style": a.style,
         "source_name": a.source_name,
         "store_context_sent": not a.no_store_context,
         "requests_made": len(results),

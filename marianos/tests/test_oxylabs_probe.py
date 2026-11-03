@@ -94,22 +94,59 @@ class ItIsBoundedAndSendsNothingUnasked(unittest.TestCase):
 
     def test_the_store_context_is_sent_by_default(self):
         subject = {"upc": "0001"}
-        body = probe.payload(subject, "marianos_product", "query", True)
+        body = probe.payload(subject, "marianos_product", "query", True, "scrape")
         self.assertEqual(body["store_id"], "53100502")
         self.assertEqual(body["delivery_zip"], "60061")
         self.assertEqual(body["fulfillment_type"], "pickup")
 
     def test_the_store_context_can_be_omitted_to_see_if_it_matters(self):
-        body = probe.payload({"upc": "0001"}, "marianos_product", "query", False)
+        body = probe.payload({"upc": "0001"}, "marianos_product", "query",
+                             False, "scrape")
         for key in ("store_id", "delivery_zip", "fulfillment_type"):
             self.assertNotIn(key, body)
+
+    def test_the_target_is_in_the_path_for_scrape_and_a_field_for_classic(self):
+        """Oxylabs has two shapes and the account decides which. Getting this
+        wrong costs a round trip, so both are supported rather than assumed."""
+        scrape = probe.payload({"upc": "1"}, "marianos_product", "query", False, "scrape")
+        classic = probe.payload({"upc": "1"}, "marianos_product", "query", False, "classic")
+        self.assertNotIn("source", scrape)
+        self.assertEqual(classic["source"], "marianos_product")
+
+    def test_an_api_key_is_preferred_over_a_username(self):
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"OXYLABS_API_KEY": "k",
+                                          "OXYLABS_USERNAME": "u",
+                                          "OXYLABS_PASSWORD": "p"}, clear=True):
+            header, which = probe.auth_header()
+        self.assertEqual(header, "Bearer k")
+        self.assertEqual(which, "OXYLABS_API_KEY")
+
+    def test_basic_auth_is_used_when_there_is_no_key(self):
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"OXYLABS_USERNAME": "u",
+                                          "OXYLABS_PASSWORD": "p"}, clear=True):
+            header, _ = probe.auth_header()
+        self.assertTrue(header.startswith("Basic "))
+
+    def test_no_credentials_at_all_sends_nothing(self):
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(SystemExit) as caught:
+                probe.auth_header()
+        self.assertIn("Nothing was sent", str(caught.exception))
 
     def test_credentials_are_never_an_argument(self):
         flags = probe.main.__doc__ or ""
         source = (ROOT / "tools/oxylabs_probe.py").read_text()
         self.assertNotIn("add_argument(\"--password", source)
         self.assertNotIn("add_argument(\"--username", source)
+        self.assertNotIn("add_argument(\"--api-key", source)
         self.assertIn("OXYLABS_USERNAME", source)
+        self.assertIn("OXYLABS_API_KEY", source)
 
 
 class ItDoesNotAnswerTheQuestionItself(unittest.TestCase):
