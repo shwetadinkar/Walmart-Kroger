@@ -70,6 +70,7 @@ calls again:
 
 import argparse
 import json
+import textwrap
 from collections import Counter
 import time
 from datetime import datetime, timezone
@@ -186,6 +187,91 @@ def reclassify(previous: dict) -> dict:
     return {"results": out, "counts": dict(counts)}
 
 
+# The keys of a first-run report whose content the reclassification contradicts.
+# `counts` holds the wrong numbers; the two `_means` keys hold the wrong prose,
+# which is the worse of the two because prose is what gets quoted.
+SUPERSEDED_KEYS = ("counts", "_carried_and_missed_means", "_not_carried_means")
+
+TOOL_NAME = "tools/resolve_sitemap_gap.py"
+MARKER_WIDTH = 79
+
+
+def P(text: str) -> str:
+    """One paragraph, wrapped. The marker is read by a client, so it is wrapped
+    like prose. Wrapping it here rather than by choosing where the f-strings
+    break means the wrap stays right whatever width the numbers turn out to be:
+    the first version broke mid-sentence around a three-digit count and ran a
+    line to 89 characters around a one-digit one."""
+    return textwrap.fill(text, width=MARKER_WIDTH)
+
+
+def write_supersession_marker(source: Path, previous: dict, report: dict) -> Path:
+    """Leave a signal beside a report whose verdicts have been recomputed.
+
+    The first run's report is kept byte-identical, because it is the evidence
+    that the defect was real and a corrected file cannot evidence that. But a
+    file kept unchanged carries its own wrong numbers and its own wrong prose,
+    and someone opening it later - a reviewer, the client, a future run of this
+    repository - has nothing local telling them so. The marker is that signal,
+    written by the tool rather than by hand, so it cannot drift from the
+    reclassification it describes.
+    """
+    counts = previous.get("counts", {}) or {}
+    low = report["lower_bound_missed_by_the_sweep"]
+    high = report["upper_bound_missed_by_the_sweep"]
+    wrong = [k for k in SUPERSEDED_KEYS if k in previous]
+
+    blocks = [
+        f"# {source.name} is superseded",
+        P(f"This file is the **first run** of `{TOOL_NAME}` and its verdicts are wrong. "
+          f"It is kept unchanged on purpose: it is the evidence that the defect was "
+          f"real, and a corrected file cannot evidence that."),
+        P(f"**Do not read a number out of it.** The corrected figures are in "
+          f"`GAP_RESOLUTION_RECLASSIFIED.json`, recomputed from this file with no new "
+          f"requests."),
+        "## What was wrong",
+        P(f"It returned a carriage verdict for any product the endpoint returned. "
+          f"Kroger's product-details endpoint returns the catalogue record whether or "
+          f"not the queried location carries the product, so the response arriving "
+          f"evidences nothing about the store. A price or an explicit stock level **at "
+          f"that location** does. It also treated a 404 as a lookup failure rather than "
+          f"as an answer."),
+        P(f"So it reported {counts.get('carried_and_missed', '?')} carried and "
+          f"{counts.get('not_carried', '?')} confirmed absences out of "
+          f"{previous.get('ids_checked', '?')}, which is a property of the classifier "
+          f"and not a finding about the store: a classifier that cannot say no carries "
+          f"no information when it says yes."),
+        "## What replaces it",
+        "\n".join([
+            f"- `{PRICED}`: **{report['counts'].get(PRICED, 0)}**",
+            f"- `{STOCKED}`: **{report['counts'].get(STOCKED, 0)}**"
+            f" (see the note below before reading this one)",
+            f"- `{NO_STORE_EVIDENCE}`: **{report['counts'].get(NO_STORE_EVIDENCE, 0)}**"
+            f" (evidence neither way)",
+            f"- `{ABSENT}`: **{report['counts'].get(ABSENT, 0)}**",
+        ]),
+        P(f"Products missed by the sweep: at least **{low}**, at most **{high}**. A "
+          f"range, because that is what the measurement supports. Neither end "
+          f"estimates total catalogue coverage."),
+        P(f"A zero against `{STOCKED}` is **not** a finding that nothing is stocked. "
+          f"The first run recorded only whether a price existed and not stock levels, "
+          f"so no product in it can be classified on stock at all, and every product "
+          f"without a price falls to `{NO_STORE_EVIDENCE}` whatever its stock. A fresh "
+          f"run retains stock levels and would move some of those either way. That is "
+          f"why the upper bound is kept rather than dropped."),
+        "## The keys in this file not to rely on",
+        "\n".join([f"- `{k}`" for k in wrong])
+        or "- (none of the known keys are present)",
+        P(f"`_carried_and_missed_means` is the one to watch. It describes its count as "
+          f"a hard lower bound on the coverage gap, and that count is the uncorrected "
+          f"{counts.get('carried_and_missed', '?')}. The lower bound is the "
+          f"`{PRICED}` figure above."),
+    ]
+    marker = source.parent / "SUPERSEDED.md"
+    marker.write_text("\n\n".join(blocks) + "\n")
+    return marker
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--location-id", default="",
@@ -231,8 +317,10 @@ def main(argv=None):
         }
         a.out.mkdir(parents=True, exist_ok=True)
         (a.out / "GAP_RESOLUTION_RECLASSIFIED.json").write_text(json.dumps(report, indent=1))
+        marker = write_supersession_marker(a.reclassify, previous, report)
         print(json.dumps({k: v for k, v in report.items() if k != "results"}, indent=1)[:1400])
         print(f"\nwrote {a.out}")
+        print(f"wrote {marker}")
         return 0
 
     if a.location_id.upper().startswith(("DEMO", "REPLACE", "UNRESOLVED")):

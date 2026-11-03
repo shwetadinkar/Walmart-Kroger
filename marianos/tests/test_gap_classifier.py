@@ -154,6 +154,102 @@ class TheSavedReportCanBeCorrectedWithoutSpendingCalls(unittest.TestCase):
                 gap.main(["--reclassify", str(src), "--out", str(Path(td) / "o")]), 0)
 
 
+class TheSupersededReportCarriesASignal(unittest.TestCase):
+    """The first run's report is kept byte-identical because it is the evidence
+    that the defect was real. Kept unchanged, it also keeps its own wrong
+    numbers and its own wrong prose, and `_carried_and_missed_means` describes
+    the uncorrected 324 as a hard lower bound on the coverage gap. Anyone
+    opening that file - a reviewer, the client - needs a local signal, so the
+    tool writes one beside it.
+    """
+
+    def run_reclassify(self, priced=186, unpriced=138, not_found=2):
+        td = tempfile.mkdtemp()
+        src = Path(td) / "first-run" / "GAP_RESOLUTION.json"
+        src.parent.mkdir(parents=True)
+        results = {}
+        for i in range(priced):
+            results[f"p{i}"] = {"verdict": "carried_and_missed", "has_regular_price": True}
+        for i in range(unpriced):
+            results[f"q{i}"] = {"verdict": "carried_and_missed", "has_regular_price": False}
+        for i in range(not_found):
+            results[f"r{i}"] = {"verdict": "unresolved", "error": "Kroger API HTTP 404"}
+        src.write_text(json.dumps({
+            "ids_checked": priced + unpriced + not_found,
+            "counts": {"carried_and_missed": priced + unpriced,
+                       "not_carried": 0, "unresolved": not_found},
+            "_carried_and_missed_means": "a hard LOWER bound on it",
+            "_not_carried_means": "the store returns nothing for this id",
+            "results": results}))
+        gap.main(["--reclassify", str(src), "--out", str(Path(td) / "out")])
+        return src, src.parent / "SUPERSEDED.md"
+
+    def test_a_marker_is_written_beside_the_superseded_file(self):
+        src, marker = self.run_reclassify()
+        self.assertTrue(marker.is_file(),
+                        "nothing beside the first run says it is superseded")
+        self.assertEqual(marker.parent, src.parent)
+
+    def test_the_original_report_is_not_modified(self):
+        """Correcting the evidence would destroy what it is evidence of."""
+        td = tempfile.mkdtemp()
+        src = Path(td) / "GAP_RESOLUTION.json"
+        src.write_text(json.dumps({"counts": {"carried_and_missed": 3, "not_carried": 0},
+                                   "results": {"a": {"verdict": "carried_and_missed",
+                                                     "has_regular_price": True}}}))
+        before = src.read_bytes()
+        gap.main(["--reclassify", str(src), "--out", str(Path(td) / "out")])
+        self.assertEqual(src.read_bytes(), before)
+
+    def test_the_marker_names_the_keys_not_to_rely_on(self):
+        _, marker = self.run_reclassify()
+        text = marker.read_text()
+        for key in ("counts", "_carried_and_missed_means", "_not_carried_means"):
+            with self.subTest(key=key):
+                self.assertIn(f"`{key}`", text)
+
+    def test_the_marker_carries_the_corrected_bounds_not_the_wrong_number(self):
+        _, marker = self.run_reclassify()
+        text = marker.read_text()
+        self.assertIn("**186**", text)
+        self.assertIn("**324**", text)
+        self.assertRegex(text, r"at least \*\*186\*\*")
+
+    def test_the_marker_says_not_to_read_a_number_out_of_the_file(self):
+        _, marker = self.run_reclassify()
+        self.assertIn("Do not read a number out of it", marker.read_text())
+
+    def test_a_zero_stocked_count_is_not_presented_as_a_finding(self):
+        """The first run kept no stock levels, so nothing in it can be
+        classified on stock and the stocked count is necessarily zero. Printed
+        bare, that reads as a finding that the store stocks none of them."""
+        _, marker = self.run_reclassify()
+        text = marker.read_text()
+        self.assertIn("`stocked_at_this_store`: **0**", text)
+        self.assertIn("not** a finding that nothing is", text)
+        self.assertIn("recorded only whether a price existed", text)
+
+    def test_no_line_in_the_marker_runs_long(self):
+        """It is read by a client, so it is wrapped like prose rather than
+        however the f-strings happened to break."""
+        _, marker = self.run_reclassify()
+        long = [line for line in marker.read_text().splitlines() if len(line) > 88]
+        self.assertEqual(long, [], f"lines over 88 chars: {long}")
+
+    def test_it_names_only_the_superseded_keys_the_file_actually_has(self):
+        """A marker listing a key the report does not contain would send a
+        reader looking for something that is not there."""
+        td = tempfile.mkdtemp()
+        src = Path(td) / "GAP_RESOLUTION.json"
+        src.write_text(json.dumps({"counts": {"carried_and_missed": 1, "not_carried": 0},
+                                   "results": {"a": {"verdict": "carried_and_missed",
+                                                     "has_regular_price": True}}}))
+        gap.main(["--reclassify", str(src), "--out", str(Path(td) / "out")])
+        text = (src.parent / "SUPERSEDED.md").read_text()
+        self.assertIn("`counts`", text)
+        self.assertNotIn("`_not_carried_means`\n", text)
+
+
 class TheUndeterminedBucketIsNotHidden(unittest.TestCase):
     """Asserted against the written report rather than the source text, so a
     line wrap cannot break it and a reworded source cannot pass it."""
