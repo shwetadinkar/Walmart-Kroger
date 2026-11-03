@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 705.
+  counts: Walmart 251, Mariano's 724.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -239,6 +239,19 @@ pieces close it, and all three are in:
 3. `marianos_collector/kroger_sweep_source.py` is the Source. `--source sweep`,
    or `--spine sweep` under `--source composite` to add the page-read
    enrichment.
+
+`CompositeSource` forwards every public attribute it does not define itself to
+the spine, read live, and one the spine lacks stays absent. Forwarding names
+one at a time lost three in turn: `unresolved_offers`, `reset_unresolved`, and
+then `coverage_attested`, which made the composite publish path **unrunnable**
+because the CLI decided scope from the spine's attestation while the runner
+read the composite's and found nothing. The same omission silently skipped the
+uncovered-roots staleness gate, since `populated_roots` never reached the spine
+either. The generic forwarding is ported from the Walmart module, which had
+already been fixed this way; neither module may go back to hand-written
+forwards, and neither may forward a neutral default, because
+`unresolved_offers` returning `[]` made a spine that keeps no such record read
+as a count of zero.
 
 Two properties of the adapter are load-bearing and must not be traded away:
 

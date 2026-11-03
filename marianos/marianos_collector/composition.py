@@ -322,15 +322,30 @@ class CompositeSource:
     # --- delegation ----------------------------------------------------
     #
     # A composite wraps a spine, and anything the runner asks of a source must
-    # reach it. Without these, `--source composite --spine opd` silently lost
-    # the spine's record of offers it could not publish: the run report carried
-    # no `unresolved_offers`, and because `reset_unresolved` never arrived the
-    # spine accumulated across stores and repeat runs. That is the same defect
-    # that was fixed inside the spine, reintroduced one layer up by wrapping it.
+    # reach it. Forwarding names one at a time lost three in turn here:
+    # `unresolved_offers`, `reset_unresolved`, and then `coverage_attested`,
+    # which made the composite publish path unrunnable - the CLI decided scope
+    # from the spine's attestation while the runner read the composite's, found
+    # nothing, and refused every authorized composite release. The same
+    # omission silently skipped the uncovered-roots staleness gate, because
+    # `populated_roots` never reached the spine either.
+    #
+    # So forwarding is the default, ported from the Walmart module which had
+    # already been fixed this way: every public attribute the composite does
+    # not define itself comes from the spine, read live, and one the spine
+    # lacks stays absent. The gate judges the spine's own statement and nothing
+    # here claims coverage on its behalf. `unresolved_offers` is no longer
+    # forwarded as an empty list either, so a spine that keeps no such record
+    # does not read as a count of zero.
+    #
+    # Defined here rather than forwarded: fetch, source_mode, reset_unresolved,
+    # provenance_report, durable_evidence and spine_source_mode, which do the
+    # spine's work plus the composite's.
 
-    @property
-    def unresolved_offers(self):
-        return getattr(self.spine, "unresolved_offers", [])
+    def __getattr__(self, name):
+        if name.startswith("_") or "spine" not in self.__dict__:
+            raise AttributeError(name)
+        return getattr(self.__dict__["spine"], name)
 
     def reset_unresolved(self):
         if hasattr(self.spine, "reset_unresolved"):
