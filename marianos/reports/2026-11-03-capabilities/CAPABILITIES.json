@@ -1,0 +1,65 @@
+{
+ "_what": "The sweep-through-collector path exercised against the four capabilities the client named. Runnable with no credentials and no network; only the Kroger HTTP client is replayed.",
+ "commit": "99bc6b87f4f8c1ed6739e095161a3abb2b50711e",
+ "working_tree_clean": false,
+ "generated_utc": "2026-11-03T11:42:18.424793+00:00",
+ "source_mode": "kroger_public_products_api_term_sweep",
+ "coverage_attested": false,
+ "capabilities": [
+  {
+   "capability": "Indefinite retention of eligible products",
+   "what_was_done": "Two runs through the collector with the sweep source. Between them one product stopped being returned by the API, and a new one arrived with no price and out of stock.",
+   "first_run_records": 7,
+   "second_run_records": 8,
+   "product_the_api_stopped_returning": "0001111060003",
+   "it_is_still_in_the_second_release": true,
+   "its_crawl_date_is_unchanged": true,
+   "carried_forward_count": 1,
+   "current_count": 7,
+   "unpriced_out_of_stock_product_retained": true,
+   "its_regular_price_is_blank_not_invented": true,
+   "verdict": "PASS"
+  },
+  {
+   "capability": "Resume from a durable checkpoint",
+   "what_was_done": "A run was interrupted mid-category by the page safety limit, leaving a checkpoint. A second run with a fresh source object resumed it.",
+   "first_run_stopped_with": "Page safety limit reached for Dairy",
+   "checkpoint_survived": true,
+   "checkpoint_pages_staged": 1,
+   "checkpoint_queue_carried_a_cursor": true,
+   "api_calls_made_by_the_resumed_sweep": 0,
+   "_why_zero_calls": "The sweep checkpointed each completed term, so the resumed sweep re-fetched nothing. The products it serves were re-read from the persisted API responses on disk.",
+   "resumed_run_published": 14,
+   "verdict": "PASS"
+  },
+  {
+   "capability": "Trial and published namespace separation",
+   "what_was_done": "A sweep source was asked to publish a full release, then run as a trial.",
+   "full_release_refused_with": "Source 'kroger_public_products_api_term_sweep' does not attest complete coverage, so it cannot publish a full release. Run it as a trial, or supply a source that reconciles against the full configured category set.",
+   "trial_namespace_used": "trials/5db342b4abaf",
+   "manifest_key": "trials/5db342b4abaf/53100502/runs/20261103T114218Z_ba2bec6a/data.json",
+   "wrote_under_trials": true,
+   "published_namespace_contents": [],
+   "report_declares_scope": "trial",
+   "report_declares_coverage_attested": false,
+   "verdict": "PASS"
+  },
+  {
+   "capability": "Failed-run publication protection",
+   "what_was_done": "A good release was published, then three bad runs were attempted, each against a different gate: a collapsed yield, a run below the minimum product floor, and a run carrying another store's context. Checkpoints were cleared between them so each run exercises its own gate.",
+   "good_release": "20261103T114218Z_0f85f1a7",
+   "good_release_records": 12,
+   "gates_that_refused": {
+    "yield_collapse": "Suspicious yield collapse in Dairy: 1 vs prior 6",
+    "minimum_product_floor": "Only 12 valid unique products, minimum 10000",
+    "wrong_store_context": "PRIOR_STORE_CONTEXT_MISMATCH"
+   },
+   "each_gate_refused_for_its_own_reason": true,
+   "latest_pointer_unchanged": true,
+   "latest_pointer_still_names": "20261103T114218Z_0f85f1a7",
+   "_note_on_checkpoints": "A failed run leaves a resumable checkpoint, and a later run resumes it with the failed run's staged pages. The protections still held here, but it means a rerun after a failure can republish the failed run's pages rather than collecting afresh. Use clear-checkpoints after a failure. This is reported, not fixed.",
+   "verdict": "PASS"
+  }
+ ],
+ "all_pass": true
+}
