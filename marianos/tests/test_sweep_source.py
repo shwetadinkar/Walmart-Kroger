@@ -285,15 +285,35 @@ class OneDefinitionOfAProduct(unittest.TestCase):
     """The source hands raw products to the runner, which makes the record
     through the same function the sweep uses. The two must agree."""
 
-    def test_the_runner_builds_the_same_record_the_sweep_would(self):
+    def test_the_runner_publishes_the_same_record_the_sweep_would(self):
+        """Through the actual runner, and without handing it the answer.
+
+        The version of this test that used to sit here passed
+        `raw["sub_category"]` as the sub_category argument, which the source
+        had set from the same label `observe` uses, so that field was compared
+        against itself. It also called `make_retained_record` directly, so it
+        never exercised the runner's own
+        `sub_category or str(raw.get("sub_category") or "")`. Both are fixed by
+        driving the collector and reading the published row.
+        """
         with tempfile.TemporaryDirectory() as td:
             item = product("0001111060933")
-            src = source({"milk": [item]}, Path(td))
-            raw = served(src, "Dairy")[0]
-            through_runner, _ = make_retained_record(
-                raw, STORE, "Dairy", raw["sub_category"], "2026-11-02")
-            through_sweep, _ = observe(item, STORE, "2026-11-02", CATEGORY_MAP)
-            self.assertEqual(through_runner, through_sweep)
+            other = product("0002222060001", ("Produce",))
+            src = source({"milk": [item], "apples": [other]}, Path(td) / "w",
+                         terms={"Dairy": ["milk"], "Produce": ["apples"]})
+            storage = LocalStorage(Path(td) / "s")
+            out = Collector(storage, src, CATEGORIES, min_products=1,
+                            trial=True).run(STORE)
+            rows = {r["upc"]: r for r in json.loads(storage.read(out["manifest"]["data_key"]))}
+            published = rows["0001111060933"]
+
+            through_sweep, _ = observe(item, STORE, published["crawl_date"],
+                                       CATEGORY_MAP)
+            self.assertEqual(published, through_sweep)
+            # And the field that was previously compared against itself really
+            # carries the retailer's label rather than being blank or the root.
+            self.assertEqual(published["sub_category"], "Dairy")
+            self.assertEqual(through_sweep["sub_category"], published["sub_category"])
 
     def test_the_raw_product_satisfies_the_runners_store_context_check(self):
         with tempfile.TemporaryDirectory() as td:
@@ -368,9 +388,39 @@ class ARunThroughTheCollector(unittest.TestCase):
                              {"APPROXIMATE_WEIGHT": 1})
             self.assertEqual(out["report"]["unique_records"], 4)
 
-    def test_published_records_hold_the_resolved_store_columns(self):
-        """The first sweep run wrote 18,351 records with a blank store_name
-        and store_location. Nothing may serve a record without them."""
+    def test_a_store_with_blank_columns_cannot_publish(self):
+        """The first sweep run wrote 18,351 records with a blank store_name and
+        store_location, because every record copies those from the Store object
+        unconditionally.
+
+        The test that used to sit here asserted the published row matched the
+        Store it had just been handed, which holds whatever that object says
+        and so passed however the source behaved. Checking properly showed the
+        defect could recur through the collector: a blank-column Store
+        published three blank-column records and nothing refused it.
+        """
+        with tempfile.TemporaryDirectory() as td:
+            blank = Store("53100502", "60061", "", "", "")
+            src = source({"milk": [product("0001111060933")]}, Path(td) / "w",
+                         terms={"Dairy": ["milk"]})
+            with self.assertRaises(ValidationFailure) as caught:
+                Collector(LocalStorage(Path(td) / "s"), src, CATEGORIES[:1],
+                          min_products=1, trial=True).run(blank)
+            self.assertIn("missing required columns", str(caught.exception))
+
+    def test_each_required_store_column_is_required_on_its_own(self):
+        for field, blanked in (("store_name", ("53100502", "60061", "", "L", "")),
+                               ("store_location", ("53100502", "60061", "N", "", "")),
+                               ("zipcode", ("53100502", "", "N", "L", ""))):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as td:
+                src = source({"milk": [product("0001111060933")]}, Path(td) / "w",
+                             terms={"Dairy": ["milk"]})
+                with self.assertRaises(ValidationFailure):
+                    Collector(LocalStorage(Path(td) / "s"), src, CATEGORIES[:1],
+                              min_products=1, trial=True).run(Store(*blanked))
+
+    def test_a_blank_store_logo_is_still_allowed(self):
+        """It is legitimately blank, so requiring it would refuse good runs."""
         with tempfile.TemporaryDirectory() as td:
             by_term = {"milk": [product("0001111060933")],
                        "apples": [product("0002222060001", ("Produce",))]}
@@ -378,13 +428,8 @@ class ARunThroughTheCollector(unittest.TestCase):
                          terms={"Dairy": ["milk"], "Produce": ["apples"]})
             out = Collector(LocalStorage(Path(td) / "s"), src, CATEGORIES,
                             min_products=1, trial=True).run(STORE)
-            rows = json.loads(LocalStorage(Path(td) / "s").read(
-                out["manifest"]["data_key"]))
-            self.assertTrue(rows)
-            for row in rows:
-                self.assertEqual(list(row), list(FIELDS))
-                self.assertEqual(row["store_name"], STORE.store_name)
-                self.assertEqual(row["store_location"], STORE.store_location)
+            self.assertEqual(out["report"]["unique_records"], 2)
+            self.assertEqual(STORE.store_logo, "")
 
 
 class TheStoreColumnsAreObservedNotTyped(unittest.TestCase):

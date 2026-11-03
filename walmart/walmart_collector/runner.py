@@ -159,8 +159,33 @@ class Collector:
                 "so it cannot publish a full release. Run it as a trial, or supply a "
                 "source that reconciles against the full configured category set.")
 
+    REQUIRED_STORE_COLUMNS = ("store_id", "zipcode", "store_name", "store_location")
+
+    def _store_is_usable(self, store):
+        """Refuse a store whose own columns are blank.
+
+        Every record copies these from the Store object unconditionally, so a
+        Store with blank columns publishes blank columns in every row. That is
+        exactly what happened once: a sweep whose main replaced the resolved
+        store with blank flag values shipped 18,351 records with an empty
+        store_name and store_location. Nothing in the collector refused it, so
+        the same defect could arrive through this path, and the test that
+        claimed to cover it asserted the published row matched the Store object
+        it had just been handed, which holds whatever that object says.
+
+        store_logo is not required; it is legitimately blank.
+        """
+        missing = [f for f in self.REQUIRED_STORE_COLUMNS
+                   if not str(getattr(store, f, "") or "").strip()]
+        if missing:
+            raise ValidationFailure(
+                f"Store is missing required columns {missing}, so every record would "
+                "carry them blank. Resolve the store from the retailer rather than "
+                "publishing a placeholder.")
+
     def run(self, store):
         self._publication_allowed()
+        self._store_is_usable(store)
         # A source that tracks offers it could not publish starts each run with
         # a clean slate, so a reused instance does not report another run's.
         if hasattr(self.source, "reset_unresolved"):
