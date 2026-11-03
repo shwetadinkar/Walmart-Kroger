@@ -30,9 +30,14 @@ rule is that claims in client-facing files are checked rather than written from
 memory, and this file broke it. The conclusions below are different from the
 first version's because the facts are.
 
-**The short answer now: there is a documented Mariano's interface that accepts
-our store and pickup context, and the remaining question is a narrow one about
-two output fields that a bounded probe settles.**
+**The short answer, now that it has been run rather than argued about: the
+dedicated Mariano's target exists, it works, and it is refused. Not on
+capability. On what it turns out to be.**
+
+A trial account was taken on 3 November so the question could be settled
+without touching the client's entitlement or his budget. Sixteen requests,
+about four cents. What they established is in section 5, and it is the
+opposite of what section 3 of the first version assumed in both directions.
 
 ## 1. The exact adapter
 
@@ -102,44 +107,44 @@ mentions a unit price, a price per measure, or any promotion, deal or coupon
 text field.** That is now the whole of the open question, and it is undetermined
 rather than answered either way.
 
-## 3. The acceptable-use position, restated
+## 3. The acceptable-use position, after testing rather than before
 
-The first version refused the Mariano's route on the ground that it meant
-pointing a general proxy network at a retailer that refuses our datacenter
-egress. That ground was the false claim: there is a dedicated, parsed,
-retailer-specific interface, not a `universal` fetch of an arbitrary URL.
+The first version refused the Mariano's route on the ground that no dedicated
+target existed, so the only route would be `universal` fetching of
+`marianos.com`. That ground was false. The second version then accepted the
+dedicated target on the ground that it is a *maintained, parsed,
+retailer-specific interface* rather than arbitrary page fetching.
 
-The test this file already applied to Walmart was that `walmart_product` with
-its dedicated parser is a documented product interface rather than proxy
-fetching a page on our behalf, and that it was the one part worth proposing.
-`marianos_product` is the same shape. Applying a stricter rule to Mariano's
-than to Walmart when both are dedicated targets would be incoherent, so it is
-not applied.
+**That ground is false too, and `OPTIONS` on the endpoint is what settled it.**
+Its output enum is `html`, `markdown`, `screenshot`, `json`, where `json` is
+parsed by an LLM against a `json.schema` or `json.prompt` the caller supplies.
+There is no vendor-maintained product parser for this retailer. The target
+resolves a query, accepts store context, and returns the page.
 
-What the standing position in `CLAUDE.md` still rules out, unchanged:
-
-- `source: universal` against `marianos.com`, or any arbitrary-URL fetching of
-  a retailer that has refused us.
-- Anything whose purpose is to defeat a bot challenge, under any name.
-- Identity rotation or residential routing arranged by us or at our direction
-  for that purpose.
-
-And the honest qualification, stated rather than glossed: **a dedicated target
-is still a vendor fetching a page our own egress cannot reach.** The
-distinction between a maintained, parsed, retailer-specific product interface
-and proxy-fetching an arbitrary URL is a real one, and it is the distinction
-already drawn for Walmart and for Bright Data. It is not a bright line. The
-broader commercial and legal judgment about collecting a retailer's data
-through a third party belongs to the client and his own counsel, which is where
-`marianos/ACCEPTABLE_USE_POSITION.md` leaves it. Nothing here changes that
-file.
+So the dedicated target delivers the same bytes as the generic route, and the
+distinction cannot carry the weight that was put on it. The standing position
+in `CLAUDE.md` covers both, and both are refused in code: `REFUSED_HOSTS` for
+the URL route, `REFUSED_TARGETS` for the dedicated one, each with a test
+asserting no request is sent.
 
 The measured refusal of our own egress stands as recorded: two Azure regions
 and a second cloud provider on 30 October, and a datacenter `curl` of
 `sitemap.xml` on 2 November, all refused before any HTTP exchange, against the
 same URL a browser on an ordinary residential connection served normally.
 
-## 4. What it could resolve, if the output carries the fields
+**A second and independent reason.** The `json` output is LLM extraction. A
+value a model produced by reading a page is not an observed value, and `ppm`
+is required to be the *displayed* rate. That reason would stand even if the
+first did not.
+
+**What is not being claimed.** Not that this is unlawful, and not that the
+client may not do it. The capability is real and the obstacle was never
+technical. Whether to collect this retailer through a third party is a
+commercial and legal judgement for the client with his own counsel, which is
+where `marianos/ACCEPTABLE_USE_POSITION.md` leaves it and where it stays. What
+is decided here is only what this repository will build.
+
+## 4. What it would have resolved
 
 **Mariano's, the enrichment gap.** Displayed price per measure and the
 retailer's own deal wording exist only on the rendered page. The Kroger public
@@ -162,46 +167,59 @@ whether their pickup claim reproduces.
 Neither of these is a coverage route. `marianos_search` is term-filtered and
 attests nothing about category completeness.
 
-## 5. A bounded probe
+## 5. The probe, and what it returned
 
-Not a collection. It would produce no delivered records.
+Run on 3 November against a trial account, not the client's. Sixteen requests.
 
-| Step | Requests | What it settles |
-|---|---:|---|
-| `marianos_product` on 5 UPCs already in the delivered set, with `store_id` 53100502, `delivery_zip` 60061, `fulfillment_type` pickup | 5 | Whether the parsed output carries a unit price or price-per-measure field, and any promotion or deal text at all. **This is the one that matters.** |
-| The same 5 with no `store_id` | 5 | Whether the store context changes the price, which is the only way to know the parameter does anything |
-| `marianos_search` on 2 terms whose Kroger-API results we already hold | 2 | Whether its result set differs from the API's for the same term, and whether it carries the two fields |
-| `walmart_product` on 5 Store 100 product IDs we already hold, with `store_id` 100 and `fulfillment_type` | 5 | Whether the pickup claim on those records reproduces from an independent provider, and whether a unit price appears |
-| **Total** | **17** | |
+| Step | Result |
+|---|---|
+| `POST /v1/scrape/marianos/product`, 5 UPCs, with `store_id` 53100502, `delivery_zip` 60061, `fulfillment_type` pickup | **400** `UNSUPPORTED_BODY_PROPERTY`, pointer `#/parse` |
+| The same 5 without `parse` | **200**, `state: done`, each carrying `results[0].html` |
+| `OPTIONS /v1/scrape/marianos/product` | The typed parameters, including the output enum |
 
-Seventeen requests. I am deliberately not quoting a unit price: the rate card
-depends on the plan on his account, and guessing it would be the same error as
-guessing a retailer field. Seventeen results is a rounding error against any
-commitment tier, so cost is not the constraint.
+Three things follow, in order of how much they matter.
 
-**The first five requests are the whole value of this.** If the parsed output
-has no unit price and no deal text, everything else here is a store-context
-cross-check and nothing more.
+**The 400 was the most informative response of the set.** A missing target or
+a rejected key fails before the body is read, so a complaint about one body
+property established that the endpoint exists and that the key reaches it.
+`parse` belongs to the Classic Realtime API; the dedicated endpoints do not
+take it.
 
-## 6. The question that has to go back to him
+**The 200s returned the retailer's product page**, not a product record. The
+five UPCs were chosen because each already carries a price per measure read
+off that retailer's own rendered page, so a returned rate could have been
+checked against an observed one rather than trusted. There was no rate to
+check, because there was no parsed object.
 
-He named **Classic Web Scraper API** specifically. The dedicated e-commerce
-scrapers may or may not sit inside that entitlement; Oxylabs has reorganised
-these products and the naming across its documentation is not consistent. If
-the banner targets are a separate product or tier, then every parameter in
-section 2 is documentation he cannot use, and the answer reverts to something
-close to the first version of this file for reasons of access rather than of
-capability.
+**`OPTIONS` then explained why**, and is the reason section 3 now reads as it
+does: `html`, `markdown`, `screenshot`, and an LLM-parsed `json`. No vendor
+parser exists.
 
-That is his to answer and not ours to assume, which is why it is a question
-here rather than a premise.
+The probe cost about four cents and changed the answer twice. It is the whole
+argument for running a bounded probe instead of reasoning from documentation,
+which is what the first version of this file did, twice, wrongly.
+
+## 6. What is now known about entitlement
+
+He named **Classic Web Scraper API**. The trial account used here was a **Web
+API** product instance, and on that instance the dedicated banner targets are
+callable: the 400 and then the 200s prove it for `marianos_product`.
+
+That answers the question for a Web API instance. It does not answer it for
+his Classic entitlement, which may be a different product with a different
+target list. Since the route is refused on other grounds, the entitlement
+question no longer blocks anything, and it is recorded here rather than put to
+him as a decision he needs to make.
 
 ## What this assessment does not establish
 
-- **That `marianos_product` returns a price per measure or deal wording.** It
-  establishes that the documentation reachable on 3 November does not say so,
-  and does not say otherwise. Undetermined. Section 5 exists for that.
-- **That the account can call these targets.** Section 6.
+- **That the page markup does not contain the rate.** It almost certainly
+  does: these are the rendered product pages. What is established is that the
+  endpoint returns no parsed rate field, and that extracting one would mean
+  parsing a page a vendor fetched on our behalf, which is the act refused in
+  section 3, or accepting an LLM's reading of it, which is not an observation.
+- **That the client's Classic entitlement includes these targets.** Only that
+  a Web API trial instance does. Section 6.
 - **Anything about cost.** No rate card was read. Request counts are bounded
   above; the price per result is on his account and not visible here.
 - **Any category coverage claim.** `marianos_search` is term-filtered search.
@@ -210,8 +228,16 @@ here rather than a premise.
   their pickup claim reproduces now. It cannot observe the past.
 - **That the partner question is affected.** It is not. The partner request
   stays unsubmitted, as agreed.
-- **That the acceptable-use position has moved.** The standing refusals in
-  section 3 are unchanged. What changed is that this route is not one of them.
+- **That this route is unlawful, or that the client may not use it.** It
+  establishes only what this repository will build. The capability is real and
+  the obstacle was never technical.
+- **Anything about Bright Data.** That route is assessed separately and is a
+  different shape: a dataset the provider collects under its own arrangements,
+  rather than per-URL fetches we direct. On 1 November the provider confirmed
+  in writing that displayed price per measure and digital coupon fields are
+  returned when publicly shown for the product and the selected store. It
+  cannot currently resolve the assigned store: ZIP 60061 returns `bad_input`,
+  retested 3 November, open with their R&D.
 
 ## Sources
 

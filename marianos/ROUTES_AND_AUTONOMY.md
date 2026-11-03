@@ -28,7 +28,7 @@ membership.
 
 Everything else — title, weight, regular price, sale price, UPC, brand, image,
 URL, category root — a documented API gives us, store-bound, unattended,
-today. That is why 26,166 Mariano's records exist and are store-verified.
+today. That is why 28,549 Mariano's records exist and are store-verified, release 20261103T175940Z_426c12e8 of 3 November, superseding the 26,166 produced outside the runner.
 
 The six above are the whole problem, and no amount of engineering moves them.
 The Kroger public API does not carry a rate or a coupon term, and an
@@ -73,7 +73,7 @@ document that reaches all six fields unattended.
 
 | # | Route | Reaches the six fields? | Needs | Status |
 |---|---|---|---|---|
-| 1 | Kroger public Products API sweep, inside the collector | No | nothing new | **Running.** 26,166 records. Now driven by the runner, in the trial namespace |
+| 1 | Kroger public Products API sweep, inside the collector | No | nothing new | **Running.** 28,549 records at the assigned store, release 20261103T175940Z_426c12e8, produced through the runner in the trial namespace |
 | 2 | Kroger Catalog V2, partner tier | Unknown; it has a `unit` field nobody here has seen populated | a partner request, which is **not authorized** | Blocked by the client's instruction |
 | 3 | Bright Data, the account already held | Walmart: the rate, as two split fields. **Mariano's: the provider states in writing that displayed price per measure and digital coupon fields are returned when publicly shown for the product and selected store** | a test against the *assigned* store, which has never been run | Walmart yes, 615 records. Mariano's **not blocked on the provider**: the single test used ZIP 60601, the DEMO-LAKESHORE placeholder, a week before Vernon Hills 60061 was assigned |
 | 4 | The collector on a machine the retailer serves | **Yes, all six** | the client's decision, and a machine | Not built. See below |
@@ -161,7 +161,7 @@ may be delivered under its own name. A separate column, named
 the API and not a displayed rate, breaks nothing: the value is observed, it is
 not reconstructed, and it is not presented as something it is not.
 
-That would put a per-unit figure on most of the 26,166 records instead of 592
+That would put a per-unit figure on most of the 28,549 records instead of 592
 of them, with the displayed-versus-estimate distinction on the face of the
 data. It is the client's call because it is his schema and his downstream
 pipeline. It is the single largest improvement available for no new access.
