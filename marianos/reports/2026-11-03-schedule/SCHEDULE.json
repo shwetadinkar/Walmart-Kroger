@@ -1,0 +1,85 @@
+{
+ "_what": "Two separate claims about the schedule, kept apart so neither carries the other.",
+ "generated_utc": "2026-11-03T13:52:00.114392+00:00",
+ "deployed_expression": "0 6 * * 1,4",
+ "deployed_expression_read_from": "/home/claude/walmart-kroger/marianos/azure/deploy_jobs.sh",
+ "claims": [
+  {
+   "claim": "The deployed cron expression fires on the days and times intended",
+   "method": "Computed, not simulated, from the expression read out of azure/deploy_jobs.sh rather than retyped here.",
+   "expression": "0 6 * * 1,4",
+   "next_firings_utc": [
+    "2026-11-05T06:00:00+00:00",
+    "2026-11-09T06:00:00+00:00",
+    "2026-11-12T06:00:00+00:00",
+    "2026-11-16T06:00:00+00:00",
+    "2026-11-19T06:00:00+00:00",
+    "2026-11-23T06:00:00+00:00",
+    "2026-11-26T06:00:00+00:00",
+    "2026-11-30T06:00:00+00:00"
+   ],
+   "days_it_fires": [
+    "Monday",
+    "Thursday"
+   ],
+   "times_it_fires_utc": [
+    "06:00"
+   ],
+   "hours_between_firings": [
+    72,
+    96
+   ],
+   "fires_twice_a_week": true,
+   "verdict": "PASS"
+  },
+  {
+   "claim": "A scheduler left alone executes the job repeatedly",
+   "method": "Real elapsed time. The scheduler was started and nothing touched it; each firing drove a real Collector run through the real KrogerSweepSource with only the Kroger HTTP client replayed.",
+   "cadence_used": "every 5 seconds",
+   "_cadence_is_compressed": "The deployed cadence is twice weekly. Waiting for two real Mondays would not make the unattended-repetition property any more true, so the cadence is compressed and said so. The real times are claim A, checked by computation.",
+   "observed_window_utc": [
+    "2026-11-03T13:51:47.771481+00:00",
+    "2026-11-03T13:52:00.114373+00:00"
+   ],
+   "executions_requested": 3,
+   "executions_observed": 3,
+   "executions_published": 3,
+   "distinct_releases": 3,
+   "operator_interventions": 0,
+   "latest_pointer_after": "20261103T135200Z_b80b3c76",
+   "refused_executions": [],
+   "failure_records_written": 0,
+   "executions": [
+    {
+     "execution": 1,
+     "fired_at_utc": "2026-11-03T13:51:50.077318+00:00",
+     "outcome": "published",
+     "release": "20261103T135150Z_6eb4098b",
+     "records": 6,
+     "scope": "trial",
+     "finished_at_utc": "2026-11-03T13:51:50.108484+00:00"
+    },
+    {
+     "execution": 2,
+     "fired_at_utc": "2026-11-03T13:51:55.054150+00:00",
+     "outcome": "published",
+     "release": "20261103T135155Z_0fbe85dd",
+     "records": 6,
+     "scope": "trial",
+     "finished_at_utc": "2026-11-03T13:51:55.070225+00:00"
+    },
+    {
+     "execution": 3,
+     "fired_at_utc": "2026-11-03T13:52:00.084110+00:00",
+     "outcome": "published",
+     "release": "20261103T135200Z_b80b3c76",
+     "records": 6,
+     "scope": "trial",
+     "finished_at_utc": "2026-11-03T13:52:00.106047+00:00"
+    }
+   ],
+   "verdict": "PASS"
+  }
+ ],
+ "all_pass": true
+}

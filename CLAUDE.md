@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 755.
+  counts: Walmart 251, Mariano's 777.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works. Two such tests were found
   by review on 3 November and rewritten. One asserted a published row's store
@@ -385,6 +385,33 @@ to recur unattended.
 The names in `getattr(self.source, ...)` there are literals on purpose. The
 delegation surface is derived by parsing the runner for what it reads off a
 source, and a variable name made that derivation blind.
+
+## The schedule, as two separate claims
+
+"Twice-weekly Azure operation" was a template plus a manually driven
+three-execution pilot, with the schedule never observed running by itself.
+`tools/observe_schedule.py` closes what can be closed away from the client's
+subscription, and keeps two claims apart so neither carries the other.
+
+**The deployed expression fires when it should.** Computed, not simulated, from
+the cron default read out of `azure/deploy_jobs.sh` rather than retyped, and
+both deployment scripts are read because they spell it differently. `0 6 * * 1,4`
+gives Mondays and Thursdays at 06:00 UTC with 72 and 96 hour gaps. If a script
+is edited in one of its two places so its defaults disagree, this refuses
+rather than attesting whichever it found first.
+
+**A scheduler left alone repeats the job.** Observed in real elapsed time:
+three executions, three distinct releases, zero operator interventions, each
+with its own wall-clock timestamp, each a real `Collector` run through the real
+`KrogerSweepSource` with only the Kroger HTTP client replayed.
+
+The cadence is compressed to seconds and says so. The real times are the first
+claim, checked by computation; the unattended repetition is the second,
+observed in real time. Neither establishes the other, and **neither establishes
+Azure**: nothing ran there, nothing ran in the client's environment, no Azure
+cron fired, and the data is replayed. The cron day-of-week conversion is the
+load-bearing detail - cron Monday is 1 where Python's `weekday()` makes it 0,
+and getting it wrong shifts every reported firing by a day.
 
 ## Reporting
 
