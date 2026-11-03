@@ -615,6 +615,37 @@ The general `/v1/search` and `/v1/scrape` endpoints are a web search and page
 reader. They are **not** the dedicated e-commerce scrapers, and a Web API
 product instance is not evidence that the banner targets are entitled.
 
+## The Bright Data Mariano's route was never tested at the assigned store
+
+Reported as "blocked on their ticket #754403" since 24 October. That overstates
+it, and the overstatement cost the better part of a day chasing a second
+vendor.
+
+The single Mariano's compatibility test, snapshot `sd_mvlszutt1sfyjzr6jr` on
+24 October, used **ZIP 60601**. That is the `DEMO-LAKESHORE` entry in
+`config/stores.json`, 333 E Benton Pl, a placeholder. Vernon Hills is
+**60061** and West Loop is **60661**; 60601 is neither. The assigned store was
+not confirmed until 31 October, a week after the test, and the test has never
+been rerun against it. `BRIGHTDATA_MARIANOS_TEST_2026-10-24.md` was accurate
+about its own scope - it says plainly that the test "proves this exact
+configuration failed" and nothing wider - but the route table and the client
+reporting since then have carried it as a provider defect.
+
+On 1 November the provider answered the question directly on that ticket:
+displayed price-per-measure and digital coupon fields **are** returned when
+they are publicly shown for the product and the selected store, with no
+guarantee of population for every product. That is the answer the enrichment
+gap has been waiting for, from the route this repository already accepts -
+consuming a dataset the provider collected under its own arrangements, which
+is a different act from directing per-URL fetches at a retailer that refuses
+our egress.
+
+So before any further vendor work: rerun that test with ZIP 60061 against
+Vernon Hills, on products that already carry a page-read `ppm`, so the
+provider's rate can be checked against one observed on the retailer's page.
+Until that runs, "Mariano's PPM is unobtainable" is not established, and no
+report may say it is.
+
 ## Reporting
 
 Every run report states what it does **not** establish, in its own words, not
