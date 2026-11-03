@@ -113,6 +113,15 @@ class ItIsBoundedAndSendsNothingUnasked(unittest.TestCase):
         self.assertNotIn("source", scrape)
         self.assertEqual(classic["source"], "marianos_product")
 
+    def test_parse_is_sent_only_to_the_classic_endpoint(self):
+        """The dedicated endpoints parse by default and reject the flag. The
+        first real run was 400 UNSUPPORTED_BODY_PROPERTY, pointer #/parse, on
+        all five requests."""
+        scrape = probe.payload({"upc": "1"}, "marianos_product", "query", False, "scrape")
+        classic = probe.payload({"upc": "1"}, "marianos_product", "query", False, "classic")
+        self.assertNotIn("parse", scrape)
+        self.assertTrue(classic["parse"])
+
     def test_an_api_key_is_preferred_over_a_username(self):
         import os
         from unittest import mock

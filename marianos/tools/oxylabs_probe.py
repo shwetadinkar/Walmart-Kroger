@@ -130,9 +130,16 @@ def subjects(data_path: Path, count: int):
 
 
 def payload(subject, source_name, query_field, with_store, style):
-    body = {query_field: subject["upc"], "parse": True}
+    body = {query_field: subject["upc"]}
     if style == "classic":
-        body["source"] = source_name          # the target is a field
+        # Classic Realtime names the target as a field and needs parse: true
+        # to get structured output. The dedicated endpoints parse by default
+        # and reject the flag: the first real run came back 400
+        # UNSUPPORTED_BODY_PROPERTY with pointer #/parse on all five. That 400
+        # is also what proved the endpoint exists and the key reaches it,
+        # because a missing target or a bad key fails earlier than the body.
+        body["source"] = source_name
+        body["parse"] = True
     if with_store:
         body.update({"store_id": STORE_ID, "delivery_zip": DELIVERY_ZIP,
                      "fulfillment_type": FULFILLMENT})
