@@ -421,8 +421,10 @@ verdict for **any** product the endpoint returned, and treated a 404 as a
 lookup failure. On the real run it reported 324 carried and **zero** confirmed
 absences, which is not a finding about the store but a classifier that never
 says no. Its own docstring stated the correct rule - at least one item the
-store prices or stocks - and the code did not implement it. The client caught
-it before the number was used anywhere.
+store prices or stocks - and the code did not implement it. It was caught in
+review here, before the number was used anywhere and before it was sent to the
+client, by reading the run's own output rather than by any test: zero absences
+out of 326 is a classifier, not a store.
 
 Kroger's product-details endpoint returns the catalogue record whether or not
 the location carries the product. So a price or an explicit stock level **at

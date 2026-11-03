@@ -36,7 +36,9 @@ for **any** product the endpoint returned, and treated a 404 as a lookup
 failure. On the real run of 326 ids it reported 324 carried and **zero**
 confirmed absences, which is not a finding about the store but a classifier
 that never says no. Its own docstring stated the correct rule and the code did
-not implement it. The client caught it before the number was used.
+not implement it. It was caught in review here before the number was used,
+by reading the run's own output: zero absences out of 326 is a classifier,
+not a store.
 
 Nothing is published from this. It writes a report. The products it finds are
 not appended to the dataset: they would be observations made by a different
@@ -104,8 +106,8 @@ def classify(document):
     never used. Its own docstring stated the correct rule - at least one item
     the store prices or stocks - and the code did not implement it. The result
     was 0 `not_carried` out of 326, which is not a finding about the store but
-    a classifier that never says no. The client caught it before the number
-    reached anyone.
+    a classifier that never says no. It was caught in review here before the
+    number reached anyone.
 
     Kroger's product-details endpoint returns the catalogue record whether or
     not the location carries the product, so presence in the response is not

@@ -9,10 +9,10 @@ wrong one implemented.
 The run of 326 ids therefore reported 324 carried and **zero** confirmed
 absences, which is not a finding about the store but a classifier that never
 says no. Kroger's product-details endpoint returns the catalogue record whether
-or not the location carries the product. The client caught it before the number
-reached anyone, and asked for two changes: count a product as carried only on
-price or stock evidence at the location, and treat a 404 as absence rather than
-a lookup failure.
+or not the location carries the product. It was caught in review here before
+the number reached anyone, which asked for two changes: count a product as
+carried only on price or stock evidence at the location, and treat a 404 as
+absence rather than a lookup failure.
 
 The test that matters most is `test_a_catalogue_record_alone_is_not_carriage`.
 Under the old classifier it was impossible to write, because nothing could
