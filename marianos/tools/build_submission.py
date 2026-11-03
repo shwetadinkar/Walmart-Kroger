@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import textwrap
 import json
 import shutil
 from datetime import datetime, timezone
@@ -36,14 +37,19 @@ ROOT = Path(__file__).resolve().parent.parent
 # Why each column that is blank is blank. Written out rather than summarised,
 # because "unobtainable" and "unobtainable through every route open to us" are
 # different sentences and only the second one is true.
-BLANK_COLUMNS = {
-    "ppm": "The displayed price per measure. Blank on every record here.",
-    "volume_deals_description": "Retailer volume offer wording. Blank.",
-    "volume_deals_price": "Blank; never computed from a description.",
-    "digital_deals_description": "Retailer digital coupon wording. Blank.",
-    "digital_deals_price": "Blank; never computed.",
-    "gupc": "Always blank by the brief.",
-    "unit_price": "Always blank; the client's pipeline computes it.",
+# What each column is, NOT whether it is blank. The first version asserted
+# blankness in the text while printing a populated count beside it, so the
+# enriched build read "589 populated: blank on every record here". The count
+# is the fact; the note explains the column.
+COLUMN_NOTES = {
+    "ppm": "The displayed price per measure, read from the retailer page. "
+           "Never the API estimate.",
+    "volume_deals_description": "Retailer volume offer wording, verbatim.",
+    "volume_deals_price": "Never computed from a description.",
+    "digital_deals_description": "Retailer digital coupon wording, verbatim.",
+    "digital_deals_price": "Never computed.",
+    "gupc": "Always empty by the brief.",
+    "unit_price": "Always empty; the client's pipeline computes it.",
     "store_logo": "Kroger's /locations response does not supply one.",
 }
 
@@ -69,6 +75,19 @@ ROUTES_CLOSED = {
         "store: zip_code 60061 returns bad_input, 'No Kroger pickup store "
         "found for zip code 60061', retested 3 November. Open with their R&D."),
 }
+
+
+def P(text: str) -> str:
+    """One paragraph, wrapped. This file is read by a client, so it is wrapped
+    like prose rather than wherever the f-strings happened to break."""
+    return textwrap.fill(text, width=79)
+
+
+def B(text: str) -> str:
+    """One bullet, wrapped with a hanging indent so the continuation lines sit
+    under the text rather than under the dash."""
+    return textwrap.fill(text, width=79, initial_indent="- ",
+                         subsequent_indent="  ")
 
 
 def sha256(path: Path) -> str:
@@ -158,12 +177,13 @@ def main(argv=None):
         enriched_note = [
             "## Three columns came from a page read, not from the API",
             "",
-            "`ppm`, `volume_deals_description` and `digital_deals_description`",
-            "are not in the Kroger public Products API at any tier. They were",
-            "read from the rendered retailer pages at this store on 1 November",
-            "and merged onto the API spine through the composition layer, which",
-            "binds every contribution to the product, store, fulfilment and time",
-            "it was observed at, and records per field which source supplied it.",
+            P("`ppm`, `volume_deals_description` and "
+              "`digital_deals_description` are not in the Kroger public "
+              "Products API at any tier. They were read from the rendered "
+              "retailer pages at this store on 1 November and merged onto the "
+              "API spine through the composition layer, which binds every "
+              "contribution to the product, store, fulfilment and time it was "
+              "observed at, and records per field which source supplied it."),
             "",
             f"- `ppm`: **{merge_report.get('fields_populated_after_merge', {}).get('ppm', 0)}** "
             f"records, all from the page read",
@@ -172,20 +192,22 @@ def main(argv=None):
             f"- `digital_deals_description`: "
             f"**{merge_report.get('fields_populated_after_merge', {}).get('digital_deals_description', 0)}**",
             "",
-            f"Of {merge_report.get('page_distinct_upcs', 0)} distinct products on the",
-            f"pages read, {merge_report.get('page_upcs_matched_in_api', 0)} are in this",
-            f"dataset and {merge_report.get('page_upcs_not_in_api', 0)} are not, so those",
-            "contributions were not used rather than being attached to anything.",
-            f"Conflicts between the two sources: **{merge_report.get('conflicts', 0)}**.",
-            f"Contributions refused as unbindable: "
-            f"**{sum((merge_report.get('refused_as_unbound') or {}).values()) or 0}**.",
+            P(f"Of {merge_report.get('page_distinct_upcs', 0):,} distinct products "
+              f"on the pages read, {merge_report.get('page_upcs_matched_in_api', 0):,} "
+              f"are in this dataset and {merge_report.get('page_upcs_not_in_api', 0)} "
+              f"are not, so those contributions were not used rather than being "
+              f"attached to anything. Conflicts between the two sources: "
+              f"**{merge_report.get('conflicts', 0)}**. Contributions refused as "
+              f"unbindable: "
+              f"**{sum((merge_report.get('refused_as_unbound') or {}).values()) or 0}**."),
             "",
-            "`provenance.json` carries the per-field record. `merge_report.json`",
-            "carries the counts above. Neither is a summary written by hand.",
+            P("`provenance.json` carries the per-field record. "
+              "`merge_report.json` carries the counts above. Neither is a "
+              "summary written by hand."),
             "",
-            "**The remaining records have these three columns blank**, and the",
-            "reasons are below. The page route covers what one attended session",
-            "reached, not the assortment.",
+            P("**The remaining records have these three columns empty**, and "
+              "the reasons are below. The page route covers what one attended "
+              "session reached, not the assortment."),
             "",
         ]
 
@@ -193,15 +215,15 @@ def main(argv=None):
         "# Mariano's submission, Vernon Hills",
         "",
         f"Release `{a.release}`, store `{a.store}`, "
-        f"{len(records)} records, {len(records[0]) if records else 0} fields.",
+        f"{len(records):,} records, {len(records[0]) if records else 0} fields.",
         "",
         "## What this is",
         "",
-        "A live collection from the Kroger public Products API at the assigned",
-        "store, produced through the collector: it passed the publication gate,",
-        "retention reconciliation and the store-usability gate, and the store",
-        "columns were read from Kroger's own /locations response rather than",
-        "from a config file.",
+        P("A live collection from the Kroger public Products API at the "
+          "assigned store, produced through the collector: it passed the "
+          "publication gate, retention reconciliation and the store-usability "
+          "gate, and the store columns were read from Kroger's own /locations "
+          "response rather than from a config file."),
         "",
         "## What this is not",
         "",
@@ -215,24 +237,35 @@ def main(argv=None):
         "  added 10.3 percent more products and the count of terms hitting the",
         "  ceiling went from 68 to 114, so the ceiling is structural rather than",
         "  something more terms reach past.",
+    ] + ([
         "- Nothing here has been merged with any earlier run or any other store.",
+    ] if not merge_report else [
+        B("The three page-read columns below come from a separate observation "
+          "on a different date, at this same store. Nothing from any OTHER "
+          "store has been merged in, and no earlier API run has been merged "
+          "in."),
+    ]) + [
         "",
     ] + enriched_note + [
         "## Column population, counted from the delivered file",
         "",
     ]
-    for column, why in BLANK_COLUMNS.items():
-        readme.append(f"- **`{column}`** ({populated.get(column, 0)} populated): {why}")
+    for column, why in COLUMN_NOTES.items():
+        count = populated.get(column, 0)
+        state = f"**{count:,}** populated" if count else "empty on every record"
+        readme.append(B(f"**`{column}`**, {state}. {why}"))
     readme += [
         "",
-        "## Why `ppm` and the deal columns are blank: four routes, four reasons",
+        (f"## Why the other {len(records) - populated.get('ppm', 0):,} records have no rate: "
+         f"four routes, four reasons") if populated.get("ppm") else
+        "## Why `ppm` and the deal columns are empty: four routes, four reasons",
         "",
-        "Not \"unobtainable\". Unobtainable through every route open to us, which",
-        "is a different sentence.",
+        P("Not \"unobtainable\". Unobtainable through every route open to us, "
+          "which is a different sentence."),
         "",
     ]
     for route, why in ROUTES_CLOSED.items():
-        readme += [f"**{route}**", "", why, ""]
+        readme += [f"**{route}**", "", P(why), ""]
     if beside:
         readme += [
             "## The page-read evidence beside this",
@@ -267,7 +300,7 @@ def main(argv=None):
         "release": a.release,
         "records": len(records),
         "files": sorted(manifest),
-        "populated_counts": {k: v for k, v in populated.items() if k in BLANK_COLUMNS},
+        "populated_counts": {k: v for k, v in populated.items() if k in COLUMN_NOTES},
         "built_utc": datetime.now(timezone.utc).isoformat(),
     }, indent=1))
     return 0
