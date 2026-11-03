@@ -197,6 +197,31 @@ store: store columns 100 percent, `coverage_scope: subset_trial`,
 25,876-record release of the same day and the 26,166 produced outside the
 runner.
 
+**That release left the page-read enrichment behind, and nearly shipped
+without it.** A fresh sweep carries no `ppm` and no deal wording, because the
+API has neither, so the 3 November release had those three columns at zero
+while the superseded 26,166 set had 592 of them. A submission was built and a
+client letter written saying those fields were blank through four closed
+routes, when 592 observed values at the assigned store were sitting in
+`reports/2026-11-01-vernon-hills-page-harvest/`, tracked, in the repository.
+The account holder asked whether there was progress, which is what surfaced
+it. **A new spine does not inherit an enrichment. Re-merge after every sweep,
+and check the three page-only columns before calling a release deliverable.**
+
+Merged on 4 November through `tools/merge_page_enrichment.py`: `ppm` on 589,
+`volume_deals_description` on 181, `digital_deals_description` on 51, zero
+conflicts, zero contributions refused as unbindable, each attributed to
+`crawl` rather than the API in the per-field provenance. 628 of 649 page UPCs
+bound; the 21 that are not in the API set contributed nothing rather than
+being attached to anything.
+
+The merge refused twice before it ran, both times correctly. It will not merge
+a page read onto rows whose store columns differ, so passing a tidied
+`Marianos - Vernon Hills` was rejected against the observed
+`Marianos - Marianos Vernon Hills` that Kroger's `/locations` returns. That
+gate exists because of the West Loop relabelling defect and it caught a store
+name typed from memory instead of read from the data.
+
 The assigned store for the demonstration is **Vernon Hills,
 `53100502`, 1720 N Milwaukee Ave, IL 60061, PICKUP**, confirmed by the client
 on 31 October. Everything collected so far is West Loop `53100508` and must

@@ -99,9 +99,16 @@ def main(argv=None):
                    help="Release id, e.g. 20261103T175940Z_426c12e8")
     p.add_argument("--out", type=Path,
                    default=ROOT / "submission/2026-11-04-vernon-hills")
+    p.add_argument("--enriched-from", type=Path, default=None,
+                   help="A merge_page_enrichment output directory. Its enriched "
+                        "data replaces the release data.json, and its merge "
+                        "report and provenance ship beside it. The release "
+                        "report and retention are still copied unchanged, "
+                        "because they describe the collection that produced the "
+                        "spine.")
     p.add_argument("--page-read-evidence", type=Path, default=None,
-                   help="Optional. A file of West Loop page-read records to "
-                        "ship BESIDE the release, never merged into it.")
+                   help="Optional. A file of page-read records from ANOTHER "
+                        "store to ship BESIDE the release, never merged in.")
     a = p.parse_args(argv)
 
     base = find_release(a.output_root, a.namespace, a.store, a.release)
@@ -115,6 +122,20 @@ def main(argv=None):
             copied[name] = source
     if "data.json" not in copied:
         raise SystemExit(f"No data.json under {base}")
+
+    merge_report = {}
+    if a.enriched_from:
+        enriched = next((a.enriched_from / n for n in
+                         ("data_22_fields_enriched.json", "data_22_fields.json",
+                          "data.json") if (a.enriched_from / n).is_file()), None)
+        if enriched is None:
+            raise SystemExit(f"No enriched data file under {a.enriched_from}")
+        shutil.copy2(enriched, a.out / "data.json")
+        for name in ("merge_report.json", "provenance.json"):
+            if (a.enriched_from / name).is_file():
+                shutil.copy2(a.enriched_from / name, a.out / name)
+        if (a.out / "merge_report.json").is_file():
+            merge_report = json.loads((a.out / "merge_report.json").read_text())
 
     records = json.loads((a.out / "data.json").read_text())
     report = json.loads((a.out / "report.json").read_text()) if (
@@ -130,6 +151,43 @@ def main(argv=None):
     if a.page_read_evidence and a.page_read_evidence.is_file():
         beside = "page-read-evidence-west-loop.json"
         shutil.copy2(a.page_read_evidence, a.out / beside)
+
+    enriched_note = []
+    if merge_report:
+        by_source = merge_report.get("values_by_field_and_source", {})
+        enriched_note = [
+            "## Three columns came from a page read, not from the API",
+            "",
+            "`ppm`, `volume_deals_description` and `digital_deals_description`",
+            "are not in the Kroger public Products API at any tier. They were",
+            "read from the rendered retailer pages at this store on 1 November",
+            "and merged onto the API spine through the composition layer, which",
+            "binds every contribution to the product, store, fulfilment and time",
+            "it was observed at, and records per field which source supplied it.",
+            "",
+            f"- `ppm`: **{merge_report.get('fields_populated_after_merge', {}).get('ppm', 0)}** "
+            f"records, all from the page read",
+            f"- `volume_deals_description`: "
+            f"**{merge_report.get('fields_populated_after_merge', {}).get('volume_deals_description', 0)}**",
+            f"- `digital_deals_description`: "
+            f"**{merge_report.get('fields_populated_after_merge', {}).get('digital_deals_description', 0)}**",
+            "",
+            f"Of {merge_report.get('page_distinct_upcs', 0)} distinct products on the",
+            f"pages read, {merge_report.get('page_upcs_matched_in_api', 0)} are in this",
+            f"dataset and {merge_report.get('page_upcs_not_in_api', 0)} are not, so those",
+            "contributions were not used rather than being attached to anything.",
+            f"Conflicts between the two sources: **{merge_report.get('conflicts', 0)}**.",
+            f"Contributions refused as unbindable: "
+            f"**{sum((merge_report.get('refused_as_unbound') or {}).values()) or 0}**.",
+            "",
+            "`provenance.json` carries the per-field record. `merge_report.json`",
+            "carries the counts above. Neither is a summary written by hand.",
+            "",
+            "**The remaining records have these three columns blank**, and the",
+            "reasons are below. The page route covers what one attended session",
+            "reached, not the assortment.",
+            "",
+        ]
 
     readme = [
         "# Mariano's submission, Vernon Hills",
@@ -159,7 +217,8 @@ def main(argv=None):
         "  something more terms reach past.",
         "- Nothing here has been merged with any earlier run or any other store.",
         "",
-        "## Columns that are blank, and why",
+    ] + enriched_note + [
+        "## Column population, counted from the delivered file",
         "",
     ]
     for column, why in BLANK_COLUMNS.items():
