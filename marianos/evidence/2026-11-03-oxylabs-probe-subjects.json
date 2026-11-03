@@ -1,0 +1,74 @@
+[
+ {
+  "upc": "0000000004011",
+  "product_title": "Fresh Bunch of Bananas \u2013 5-7 Bananas",
+  "ppm": "$0.69/lb",
+  "regular_price": "0.69",
+  "weight": "1 lb",
+  "sub_category": "Produce",
+  "url": "https://www.marianos.com/p/fresh-bunch-of-bananas-5-7-bananas/0000000004011"
+ },
+ {
+  "upc": "0000000094011",
+  "product_title": "Fresh Bunch of Organic Bananas \u2013 5-7 Bananas",
+  "ppm": "$0.79/lb",
+  "regular_price": "0.79",
+  "weight": "1 lb",
+  "sub_category": "Natural & Organic",
+  "url": "https://www.marianos.com/p/fresh-bunch-of-organic-bananas-5-7-bananas/0000000094011"
+ },
+ {
+  "upc": "0000000003283",
+  "product_title": "Large Honeycrisp Apple \u2013 Each",
+  "ppm": "$2.49/lb",
+  "regular_price": "2.49",
+  "weight": "1 lb",
+  "sub_category": "Produce",
+  "url": "https://www.marianos.com/p/large-honeycrisp-apple-each/0000000003283"
+ },
+ {
+  "upc": "0004650005514",
+  "product_title": "Glade Single Wick Candles, Apple Cinnamon, 8.16 oz, 2 Count",
+  "ppm": "$1.00/oz",
+  "regular_price": "8.69",
+  "weight": "2 ct / 8.16 oz",
+  "sub_category": "Home Decor",
+  "url": "https://www.marianos.com/p/glade-single-wick-candles-apple-cinnamon-8-16-oz-2-count/0004650005514"
+ },
+ {
+  "upc": "0088877722873",
+  "product_title": "HD Designs\u00ae Harvest Apple Orchard Scented Jar Candle",
+  "ppm": "$4.89/each",
+  "regular_price": "6.99",
+  "weight": "1 ea",
+  "sub_category": "Home Decor",
+  "url": "https://www.marianos.com/p/hd-designs-harvest-apple-orchard-scented-jar-candle/0088877722873"
+ },
+ {
+  "upc": "0088877722886",
+  "product_title": "HD Designs\u00ae Harvest Caramel Apple Scented Jar Candle",
+  "ppm": "$9.09/each",
+  "regular_price": "12.99",
+  "weight": "1 ea",
+  "sub_category": "Home Decor",
+  "url": "https://www.marianos.com/p/hd-designs-harvest-caramel-apple-scented-jar-candle/0088877722886"
+ },
+ {
+  "upc": "0019283330664",
+  "product_title": "Yankee Candle\u00ae Sugared Cinnamon Apple, Holiday Scented",
+  "ppm": "$1.17/oz",
+  "regular_price": "16.99",
+  "weight": "count",
+  "sub_category": "Home Decor",
+  "url": "https://www.marianos.com/p/yankee-candle-sugared-cinnamon-apple-holiday-scented/0019283330664"
+ },
+ {
+  "upc": "0002531758600",
+  "product_title": "Applegate Naturals \u00ae Oven Roasted Turkey Breast Sliced",
+  "ppm": "$1.21/oz",
+  "regular_price": "8.49",
+  "weight": "7 oz",
+  "sub_category": "Meat & Seafood",
+  "url": "https://www.marianos.com/p/applegate-naturals-oven-roasted-turkey-breast-sliced/0002531758600"
+ }
+]
