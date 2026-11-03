@@ -88,10 +88,15 @@ class TheRootMapIsCheckedNotAsserted(unittest.TestCase):
         self.tax = json.loads(TAXONOMY.read_text())
 
     def test_every_mapped_id_exists_in_the_captured_taxonomy(self):
+        """A root may map to more than one department: the client's single
+        Kitchen Dining root spans the retailer's 28 kitchen and 40 dining."""
         ids = {e["id"] for e in self.tax["listing_pages"]["entries"]}
-        for name, site_id in recon.ROOT_TO_SITE.items():
-            if site_id:
-                with self.subTest(root=name):
+        for name, value in recon.ROOT_TO_SITE.items():
+            if value is None:
+                continue
+            mapped = (value,) if isinstance(value, str) else tuple(value)
+            for site_id in mapped:
+                with self.subTest(root=name, id=site_id):
                     self.assertIn(site_id, ids)
 
     def test_a_wrong_id_in_the_map_stops_the_report(self):

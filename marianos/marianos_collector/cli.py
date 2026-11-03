@@ -79,6 +79,15 @@ def build_source(kind,a,store,p):
         # ACCEPTABLE_USE_POSITION.md applies to it and is still open.
         if not a.location_id or a.location_id.upper().startswith(('DEMO','REPLACE')):
             p.error('--source sweep requires --location-id from a verified Kroger Locations response')
+        # Without --resolve-store the store columns come from stores.json while
+        # the sweep queries --location-id, and nothing tied the two together:
+        # --store <any configured id> --location-id 53100508 published West Loop
+        # data under whatever name the config held. Either resolve the store
+        # from Kroger, or name the same store twice.
+        if not a.resolve_store and a.store!=a.location_id:
+            p.error(f'--source sweep without --resolve-store requires --store to equal '
+                    f'--location-id, so the store columns describe the store queried; '
+                    f'got --store {a.store!r} and --location-id {a.location_id!r}')
         terms=json.loads(a.sweep_terms.read_text())['terms']
         return KrogerSweepSource(KrogerClient(Credentials.from_environment()),
                                  a.location_id,a.sweep_work_dir,terms,

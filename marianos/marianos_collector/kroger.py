@@ -80,7 +80,9 @@ class KrogerClient:
     # Product details by id. Kept to exactly this shape rather than allowing
     # '/products/*' so the endpoint allowlist stays an allowlist: a 13-digit
     # productId and nothing else.
-    _PRODUCT_BY_ID=re.compile(r'^/products/\d{13}$')
+    # \Z, not $: in Python `$` also matches before a trailing newline, so
+    # '/products/0001111078407\n' passed the allowlist.
+    _PRODUCT_BY_ID=re.compile(r'^/products/\d{13}\Z')
 
     def get(self,path, params=None):
         if (path not in ('/locations','/products') and not path.startswith('/locations/')

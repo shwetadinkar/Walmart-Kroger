@@ -76,7 +76,10 @@ ROOT_TO_SITE = {
     "Beauty": "20",
     "Baby": "10",
     "Household": "26",                             # cleaning-and-household
-    "Kitchen Dining": "28",                        # kitchen; 40 dining is a second department
+    # Two departments, because the client's single root spans both. Mapping it
+    # to 28 alone compared 496 delivered records against the children of half
+    # the published structure, and only a comment admitted it.
+    "Kitchen Dining": ("28", "40"),                # kitchen and dining
     "Pet Supplies": "27",                          # pet
     "Candles Home Fragrances": "32001",            # candles-home-fragrances, inside home-decor
     "Batteries": "26003",                          # batteries, inside cleaning-and-household
@@ -103,7 +106,13 @@ def product_ids(rows):
 def reconcile(taxonomy, rows, configured_roots):
     entries = {e["id"]: e for e in taxonomy["listing_pages"]["entries"]}
 
-    unknown_ids = sorted(v for v in ROOT_TO_SITE.values() if v and v not in entries)
+    def ids_for(value):
+        if value is None:
+            return ()
+        return (value,) if isinstance(value, str) else tuple(value)
+
+    unknown_ids = sorted(i for v in ROOT_TO_SITE.values()
+                         for i in ids_for(v) if i not in entries)
     if unknown_ids:
         raise SystemExit(
             f"Mapped listing ids absent from the captured taxonomy: {unknown_ids}. "
@@ -116,22 +125,23 @@ def reconcile(taxonomy, rows, configured_roots):
 
     roots = []
     for name in configured_roots:
-        site_id = ROOT_TO_SITE.get(name)
-        entry = entries.get(site_id) if site_id else None
-        children = ([e for e in entries.values()
-                     if e["id"] != site_id and e["id"].startswith(site_id)]
-                    if site_id else [])
+        site_ids = ids_for(ROOT_TO_SITE.get(name))
+        mapped = [entries[i] for i in site_ids]
+        children = [e for e in entries.values()
+                    if e["id"] not in site_ids
+                    and any(e["id"].startswith(i) for i in site_ids)]
+        depths = {DEPTH_LABEL[len(i)] for i in site_ids}
         roots.append({
             "root": name,
             "records_delivered": by_root.get(name, 0),
-            "published_listing_id": site_id or "",
-            "published_listing_slug": entry["slug"] if entry else "",
-            "published_depth": DEPTH_LABEL[len(site_id)] if site_id else "none",
+            "published_listing_id": ", ".join(site_ids),
+            "published_listing_slug": ", ".join(e["slug"] for e in mapped),
+            "published_depth": ", ".join(sorted(depths)) if depths else "none",
             "published_children": len(children),
             "evidenced_by": (
                 "retailer sitemap and Kroger API labels"
-                if site_id and by_root.get(name) else
-                "retailer sitemap only, no records collected" if site_id else
+                if site_ids and by_root.get(name) else
+                "retailer sitemap only, no records collected" if site_ids else
                 "Kroger API labels only, no published listing page"
                 if by_root.get(name) else
                 "neither"),
@@ -151,7 +161,7 @@ def reconcile(taxonomy, rows, configured_roots):
         "published_leaves": taxonomy["listing_pages"]["leaves"],
         "configured_roots": len(configured_roots),
         "roots_with_a_published_department": sum(
-            1 for r in roots if r["published_depth"] == "department"),
+            1 for r in roots if "department" in r["published_depth"]),
         "roots_published_only_as_a_subcategory": sum(
             1 for r in roots if r["published_depth"] == "subcategory"),
         "roots_with_no_published_listing_page": sum(
@@ -176,9 +186,10 @@ DOES_NOT_ESTABLISH = """\
 **It is not a coverage percentage, and no figure in it should be read as one.**
 
 The retailer's product-listing sitemap gives, for the first time in this
-project, a denominator for *categories*: 461 published listing pages, being 39
-departments, 184 subcategories and 238 leaves, read from the retailer's own
-file on {captured}. That is what the numbers above count.
+project, a denominator for *categories*: {pages} published listing pages, being
+{departments} departments, {subcategories} subcategories and {leaves} leaves,
+read from the retailer's own file on {captured}. That is what the numbers above
+count.
 
 It gives no denominator for *products*. The product sitemap holds {seo}
 URLs. {collected} products were collected from the Kroger API at this one
@@ -187,14 +198,14 @@ catalogue, and three things follow that have to be said plainly:
 
 - **{absent} of those {seo} products are not in the delivered dataset.** That
   is not {absent} missed products. A sitemap is site-wide and a product in it
-  may not be carried at Vernon Hills at all. Separating a collection gap from
+  may not be carried at {store} at all. Separating a collection gap from
   an assortment fact needs a store-bound lookup per id, which is what
   `tools/resolve_sitemap_gap.py` does and what has not been run yet.
 - **Presence in the sitemap is not a random sample**, so the {present} that
   are present support no estimate of the whole.
-- **The published taxonomy is not the whole taxonomy.** `bakery`, `floral`
-  and `wine` have no listing page in the sitemap at all, and the Kroger API
-  labels produce all three, with records delivered under each. The site's
+- **The published taxonomy is not the whole taxonomy.** {no_page} have no
+  listing page in the sitemap at all. Of those, {api_only_count} carry
+  delivered records that the Kroger API's own labels produced. So the site's
   listing vocabulary and the API's category labels are two different
   vocabularies, each incomplete relative to the other. Neither is treated here
   as authoritative, and the per-root table says which source evidences which
@@ -236,12 +247,34 @@ def main(argv=None):
 
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "RECONCILIATION.json").write_text(json.dumps(report, indent=1))
+    # Every figure substituted, none written in. The first version stated the
+    # page counts, the store and the three unlisted roots as literal text while
+    # claiming to derive them, so running it against a newer capture would have
+    # produced a disclaimer contradicting the JSON beside it. That is the exact
+    # failure the working rules record: a release note once stated a property
+    # that was false and falsifiable in one command.
+    # Two separate facts, because one dataset can satisfy the first and not
+    # the second. The earlier wording asserted both at once and would have read
+    # as false against a dataset with no records in those roots.
+    no_page = sorted(r["root"] for r in report["roots"]
+                     if r["published_depth"] == "none")
+    api_only = sorted(r["root"] for r in report["roots"]
+                      if r["evidenced_by"].startswith("Kroger API labels only"))
+    stores = sorted({str(r.get("store_name") or "").strip() for r in rows} - {""})
     (a.out / "DOES_NOT_ESTABLISH.md").write_text(DOES_NOT_ESTABLISH.format(
         captured=report["taxonomy_captured_utc"],
         seo=report["seo_product_sitemap"]["published"],
         collected=len(rows),
         absent=report["seo_product_sitemap"]["absent_from_delivered_dataset"],
-        present=report["seo_product_sitemap"]["in_delivered_dataset"]))
+        present=report["seo_product_sitemap"]["in_delivered_dataset"],
+        pages=report["published_listing_pages"],
+        departments=report["published_departments"],
+        subcategories=report["published_subcategories"],
+        leaves=report["published_leaves"],
+        store=", ".join(stores) if stores else "this store",
+        no_page=", ".join(f"`{r}`" for r in no_page) or "No roots",
+        api_only_count=(f"{len(api_only)} ({', '.join(api_only)})" if api_only
+                        else "none")))
     (a.out / "absent_from_delivered.json").write_text(json.dumps(
         report["seo_product_sitemap"]["absent_ids"], indent=1))
 

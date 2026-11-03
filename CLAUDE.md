@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 724.
+  counts: Walmart 251, Mariano's 741.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -353,8 +353,9 @@ that `--store` and `--location-id` describe the same store**, so
 `--source sweep --store <any configured id> --location-id 53100508` publishes
 West Loop data under whatever name the config holds. This file previously
 stated the observed-columns property unconditionally, which was false for the
-CLI. Still unfixed; `build_source`'s sweep branch should require the two to
-agree.
+CLI. **Fixed on 3 November:** without `--resolve-store`, `--source sweep` now
+requires `--store` to equal `--location-id`, so the store columns describe the
+store queried.
 
 ## Reporting
 
