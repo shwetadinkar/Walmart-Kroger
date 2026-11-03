@@ -193,11 +193,26 @@ class TheRefusedHostIsEnforcedInCode(unittest.TestCase):
                 with self.assertRaises(OxylabsError):
                     self.client().scrape(url)
 
-    def test_a_dedicated_target_is_a_different_interface_and_is_allowed(self):
+    def test_the_dedicated_target_for_that_retailer_is_refused_too(self):
+        """This test asserted the opposite until 3 November. OPTIONS on the
+        endpoint showed its outputs are html, markdown, screenshot and an
+        LLM-parsed json against a caller-supplied schema: there is no vendor
+        parser, so it delivers the same page as the generic route and
+        allowing one while blocking the other was incoherent."""
+        self.opener = opener_for([])
+        client = OxylabsClient(key=KEY, opener=self.opener, sleep=lambda s: None)
+        with self.assertRaises(OxylabsError) as caught:
+            client.scrape_target("marianos", "product", {"query": "0001"})
+        self.assertIn("refuses our datacenter egress", str(caught.exception))
+        self.assertEqual(self.opener.calls, [], "a request was sent anyway")
+
+    def test_a_dedicated_target_for_another_retailer_still_works(self):
+        """The refusal is about one retailer's measured refusal of us, not
+        about dedicated endpoints as a kind."""
         opener = opener_for([{"results": [{"content": {}}]}])
         client = OxylabsClient(key=KEY, opener=opener, sleep=lambda s: None)
-        client.scrape_target("marianos", "product", {"query": "0001"})
-        self.assertTrue(opener.calls[0]["url"].endswith("/v1/scrape/marianos/product"))
+        client.scrape_target("bestbuy", "product", {"query": "0001"})
+        self.assertTrue(opener.calls[0]["url"].endswith("/v1/scrape/bestbuy/product"))
 
     def test_other_hosts_are_not_blocked(self):
         opener = opener_for([{"results": [{"markdown": "x" * 500}]}])

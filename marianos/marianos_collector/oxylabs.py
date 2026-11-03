@@ -14,10 +14,15 @@ our egress cannot reach is the thing `CLAUDE.md` refuses by any name, and a new
 product name is not a new act. `REFUSED_HOSTS` enforces it in code rather than
 leaving it to whoever writes the next caller.
 
-A *dedicated* target, `/v1/scrape/marianos/product`, is a different matter: it
-is a maintained, parsed, retailer-specific interface, the same shape as the
-Bright Data route already in use and as `walmart_product`. Whether this account
-has one is answered by `scrapers()`, not assumed.
+The dedicated target `/v1/scrape/marianos/product` was argued to be a
+different matter: a maintained, parsed, retailer-specific interface rather
+than page fetching. **That was checked on 3 November and it is false.**
+`OPTIONS` on the endpoint returns an output enum of `html`, `markdown`,
+`screenshot`, `json`, where `json` is parsed by an LLM against a schema or
+prompt the caller supplies. There is no vendor-maintained product parser. The
+target resolves a query and accepts store context, and then returns the same
+page bytes the generic route would. So it is refused too, by `REFUSED_TARGETS`,
+and allowing one while blocking the other would have been incoherent.
 
 Checklist from the vendor's agent page, each enforced here:
 key from the environment and never logged; Bearer on every request; a 150
@@ -54,12 +59,21 @@ ALPHA2 = re.compile(r"^[A-Z]{2}$")
 # target for the same retailer is reached through scrape_target(), which is a
 # different interface and not covered by this.
 REFUSED_HOSTS = ("marianos.com", "www.marianos.com")
+
+# Dedicated targets for the same retailer. Added after OPTIONS showed the
+# endpoint has no vendor parser, so it delivers the page rather than a product
+# record and is the same act as fetching the URL.
+REFUSED_TARGETS = ("marianos", "kroger")
 REFUSAL = (
-    "This client will not fetch {host} as an arbitrary URL. That retailer "
-    "refuses our datacenter egress, measured on 30 October and 2 November, and "
-    "having a vendor fetch the page we cannot reach is the route CLAUDE.md "
-    "refuses by any name. If a dedicated target exists for it, use "
-    "scrape_target(); scrapers() says whether this account has one.")
+    "This client will not fetch {host}. That retailer refuses our datacenter "
+    "egress, measured on 30 October and 2 November, and having a vendor fetch "
+    "the page we cannot reach is the route CLAUDE.md refuses by any name. The "
+    "dedicated target is not an exception: OPTIONS on it shows html, markdown, "
+    "screenshot and an LLM-parsed json against a caller-supplied schema, so "
+    "there is no vendor parser and it delivers the same page. Whether to "
+    "collect this retailer through a third party is the client's decision with "
+    "his own counsel, not something to arrive at here because it was the only "
+    "box left.")
 
 # Country-code TLDs worth one retry with a matching location. Brand-use TLDs
 # are skipped because .io or .ai says nothing about where a site is served.
@@ -213,10 +227,21 @@ class OxylabsClient:
         return self._post("/v1/scrape", body)
 
     def scrape_target(self, target, kind, body):
-        """A dedicated, parsed, retailer-specific endpoint, e.g.
-        /v1/scrape/marianos/product. Distinct from scrape(): the vendor
-        maintains the parser and the target, which is the distinction
-        CLAUDE.md draws and the reason REFUSED_HOSTS does not apply."""
+        """A dedicated endpoint, e.g. /v1/scrape/<target>/product.
+
+        This was written believing a dedicated target was a parsed,
+        vendor-maintained interface and so a different act from fetching a
+        URL. OPTIONS on the Marianos endpoint showed otherwise: the outputs
+        are html, markdown, screenshot and an LLM-parsed json against a schema
+        the caller supplies. No vendor parser exists, so for the retailer that
+        refuses our egress this delivers the same page the generic route
+        would, and REFUSED_TARGETS refuses it on the same ground.
+
+        Other targets are unaffected: the refusal is about one retailer's
+        measured refusal of us, not about dedicated endpoints as a kind.
+        """
+        if str(target).lower() in REFUSED_TARGETS:
+            raise OxylabsError(REFUSAL.format(host=f"the {target} target"))
         return self._post(f"/v1/scrape/{target}/{kind}", dict(body))
 
 

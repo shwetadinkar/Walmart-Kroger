@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 870.
+  counts: Walmart 262, Mariano's 871.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -570,23 +570,42 @@ is not a new act. `scrape()` raises on that host before anything is sent, with
 a test asserting no request was made. A *dedicated* target reached through
 `scrape_target()` is a different interface and is not covered by the refusal.
 
-**The dedicated target is entitled, and what it returns is page HTML.** On
-3 November five requests to `/v1/scrape/marianos/product` with `store_id`,
-`delivery_zip` and `fulfillment_type` came back 200, `state: done`, each
-carrying `results[0].html`: the retailer's own product page. The first attempt
-had returned 400 `UNSUPPORTED_BODY_PROPERTY` on `#/parse`, which is itself
-what established the endpoint exists and the key reaches it, since a missing
-target or a bad key fails before the body is read.
+**The dedicated target is entitled, and it is not what the argument for it
+claimed.** On 3 November five requests to `/v1/scrape/marianos/product` with
+`store_id`, `delivery_zip` and `fulfillment_type` returned 200, `state: done`,
+each carrying `results[0].html`: the retailer's own product page. `OPTIONS` on
+the endpoint then gave its typed parameters, and they are decisive. The output
+enum is `html`, `markdown`, `screenshot`, `json` - and `json` is parsed by an
+LLM against a `json.schema` or `json.prompt` **we** supply. Oxylabs maintains
+no structured product schema for this retailer.
 
-**That weakens the distinction this repository has been drawing, and the
-weakening is the finding.** The case for the dedicated target over
-`/v1/scrape` on a retailer URL was that it is a *maintained, parsed,
-retailer-specific interface* rather than arbitrary page fetching. If its output
-is the page markup, the parsed half of that is absent and the bytes are the
-same page our egress is refused. `OPTIONS` on the endpoint returns its typed
-parameters and settles whether a parsed product output exists; until that is
-read, the distinction should not be leaned on, and `ppm` must not be taken
-from this route on the strength of it.
+**So the distinction this repository drew does not exist, and the route is
+refused.** The case for the dedicated target over `/v1/scrape` on a retailer
+URL was that it is a *maintained, parsed, retailer-specific interface* rather
+than a vendor fetching the page our egress cannot reach. Checked, it is the
+second thing: query resolution, store-context parameters, and the page. The
+bytes are identical to the generic route that `REFUSED_HOSTS` blocks, so
+allowing one while blocking the other is incoherent and the standing position
+covers both. `scrape_target()` therefore must not be pointed at this retailer
+either.
+
+This is the same failure as the one above it, inverted. That entry records a
+*refusal* built on an unchecked fact about a vendor. This was nearly a
+*permission* built on one, and the only reason it was caught is that `OPTIONS`
+was asked before the capability was used. **Check the fact that carries the
+decision, whichever way the decision goes.**
+
+A second and independent reason, which would stand even if the first did not:
+`json` output is LLM extraction. A value a model produced by reading a page is
+not an observed value, and `ppm` is required to be the *displayed* rate. The
+one rule at the top of this file covers it.
+
+What this does establish, and it is worth keeping: the capability is real.
+Displayed price per measure and retailer deal wording are reachable this way.
+The obstacle is not technical and never was, which is exactly how it should be
+reported to the client - as a decision that is his to make with his own
+counsel, not a limitation to be worked around here. See
+`marianos/ACCEPTABLE_USE_POSITION.md`.
 
 Whether this account even has a dedicated Mariano's target is answered by
 `scrapers()`, one GET, not inferred from a documentation page. That is the
