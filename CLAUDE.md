@@ -164,6 +164,20 @@ A green test suite has twice reported sound work that was not.
 - **Claims in client-facing files are checked, not written from memory.** A
   release note once stated a test count and a property that were both false and
   falsifiable in one command.
+- **A claim about an outside party's documentation is checked by reading that
+  documentation, every time it is relied on.** `OXYLABS_ASSESSMENT.md` declined
+  a route on two such claims, that no dedicated Kroger or grocery target exists
+  and that the Walmart sources document no store id, and **both were false**:
+  `marianos_product`, `marianos_search` and roughly fifteen other Kroger
+  banners exist with `store_id`, `delivery_zip` and `fulfillment_type`, and all
+  three Walmart endpoints take `store_id`. Each was one page away. A refusal
+  built on an unchecked fact is worse than no assessment, because it closes the
+  question. It surfaced only because the account holder asked why we were not
+  using a tool the client pays for, which is not a reliable way to find this.
+  The corrected file shows the original claims rather than replacing them.
+  **A standing position must rest on what a route actually does, never on a
+  guess about what a vendor offers**, or the position becomes a way of avoiding
+  the work of finding out.
 - Prefer an independent review that is given the code and the requirements but
   not the author's reasoning, and told to assume the author is wrong.
 

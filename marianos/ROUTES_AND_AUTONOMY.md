@@ -77,9 +77,46 @@ document that reaches all six fields unattended.
 | 2 | Kroger Catalog V2, partner tier | Unknown; it has a `unit` field nobody here has seen populated | a partner request, which is **not authorized** | Blocked by the client's instruction |
 | 3 | Bright Data, the account already held | Walmart: the rate, as two split fields. Mariano's: unknown | their defect fixed | Walmart yes, 615 records. Mariano's blocked on their ticket #754403 |
 | 4 | The collector on a machine the retailer serves | **Yes, all six** | the client's decision, and a machine | Not built. See below |
-| 5 | Another commercial provider | Possibly | a new paid entitlement | Not pursued; the client is not paying |
+| 5 | Another commercial provider, unspecified | Possibly | a new paid entitlement | Not pursued; superseded by row 8, which is a provider he already pays for |
+| 8 | Oxylabs `marianos_product` / `marianos_search`, the account already held | **Undetermined, and this is the open question.** Takes `store_id`, `delivery_zip` and `fulfillment_type: pickup`, so the store context is a parameter. No documented unit-price or promotion field | 5 requests to find out, plus confirmation that his plan includes the dedicated banner targets | Not pursued until 3 November, because this document and the Oxylabs assessment both wrongly stated no dedicated Mariano's target existed |
 | 6 | Deliver the fields the lawful routes carry, blank the rest, report the gap | No | nothing | **This is the current delivery** |
 | 7 | Publish Kroger's `regularPerUnitEstimate` in a separate labelled column | Partly, and honestly | the client's say-so | Not built. See below |
+
+### Option 8, in detail, because this document was wrong about it
+
+Until 3 November this table had no Oxylabs row and `OXYLABS_ASSESSMENT.md`
+stated that no dedicated Kroger or grocery target existed, so the only way to
+use that account would have been `universal` fetching of `marianos.com`, which
+the standing position refuses. **That was false.** `marianos_search` and
+`marianos_product` are named targets with a dedicated parser, as are roughly
+fifteen other Kroger banners, and they accept `store_id`, `delivery_zip` and
+`fulfillment_type` with `pickup` among the documented values.
+
+So the route was ruled out on a fact that was not true, and row 4 was being
+called "the only complete one" without this having been checked. Row 4 may
+still be the only complete one. It is no longer established.
+
+What is actually undetermined is narrow. No output schema I could reach for
+these targets mentions a unit price, a price per measure, or any promotion,
+deal or coupon text. Those two fields are the whole of the enrichment gap. If
+`marianos_product` returns them, then the statement repeated in every report
+here - that no unattended route to displayed price per measure and retailer
+deal wording exists - stops being true, and it closes with the store context
+requested rather than assumed. Five requests settle it; the probe is specified
+in `OXYLABS_ASSESSMENT.md`.
+
+Two things not to overstate. It attests nothing about category coverage:
+`marianos_search` takes a `query`, so it is term-filtered exactly like the
+Kroger sweep and its output belongs in the trial namespace with
+`coverage_attested = False`. And a dedicated target is still a vendor fetching
+a page our own egress cannot reach; that is a narrower thing than arbitrary
+proxy fetching and it is the same distinction already drawn for Bright Data and
+for `walmart_product`, but it is not a bright line, and the wider judgement is
+the client's.
+
+Also unconfirmed: whether his plan covers the dedicated banner targets at all.
+He named Classic Web Scraper API. If the targets sit outside that entitlement
+the answer reverts to no, for reasons of access rather than capability.
 
 ### Option 4, in detail, because it is the only complete one
 

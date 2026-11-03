@@ -1,4 +1,4 @@
-# Oxylabs Classic Web Scraper API: the four things asked for
+# Oxylabs Web Scraper API: the four things asked for
 
 3 November 2026. The client wrote:
 
@@ -12,10 +12,27 @@ Nothing has been run. No account was used, no request was made, and no access
 is assumed. Everything below comes from Oxylabs' public developer
 documentation, read on 3 November, with the pages named at the end.
 
-**The short answer, before the detail: I am not proposing it for Mariano's,
-and for Walmart it does not resolve the thing that is actually unresolved.**
-The reasons are in sections 3 and 4, and one of them is a line this repository
-does not cross rather than a technical limit.
+## Correction to the first version of this file
+
+The first version of this assessment, written earlier the same day, declined
+the route for Mariano's and judged it useless for Walmart. Both conclusions
+rested on two factual claims about Oxylabs' documentation, **and both claims
+were wrong.** They are recorded here rather than quietly replaced, because the
+reasoning built on them was the substance of the document.
+
+| What it claimed | What the documentation says |
+|---|---|
+| "Mariano's and Kroger: no dedicated source exists. Neither Kroger, Mariano's, nor any US grocery retailer is a named target." | `marianos_search` and `marianos_product` are named targets with a dedicated parser, as are `kroger_*` and roughly fifteen other Kroger banners including Pick 'n Save, Metro Market, Harris Teeter, Fred Meyer, King Soopers, Ralphs and QFC. |
+| "The Oxylabs Walmart documentation does not document a store id, a ZIP code or store-specific pricing on any of its three Walmart sources." | All three Walmart endpoints take `store_id`, and two take `fulfillment_type`. |
+
+Those were checkable in one reading of the target list. This repository's own
+rule is that claims in client-facing files are checked rather than written from
+memory, and this file broke it. The conclusions below are different from the
+first version's because the facts are.
+
+**The short answer now: there is a documented Mariano's interface that accepts
+our store and pickup context, and the remaining question is a narrow one about
+two output fields that a bounded probe settles.**
 
 ## 1. The exact adapter
 
@@ -25,8 +42,8 @@ Page` contract, alongside `FixtureSource`, `AuthorizedProviderSource`,
 and storage layers are untouched:
 
     marianos/marianos_collector/oxylabs_source.py
-        class OxylabsSource:
-            source_mode = "oxylabs_web_scraper_api_universal"
+        class OxylabsMarianosSource:
+            source_mode = "oxylabs_web_scraper_api_marianos_product"
             coverage_attested = False
 
     walmart/walmart_collector/oxylabs_source.py
@@ -37,127 +54,173 @@ and storage layers are untouched:
 Credentials by environment only, `OXYLABS_USERNAME` and `OXYLABS_PASSWORD`,
 never on a command line, same rule as the Kroger keys.
 
-`coverage_attested = False` on both, for the same reason as the sweep: neither
-enumerates a category, so the runner would confine the output to the trial
-namespace.
+`coverage_attested = False` on both. `marianos_search` takes a `query`, so it
+is term-filtered search exactly like the Kroger sweep and enumerates no
+category; the runner would confine its output to the trial namespace and the
+report would say `source_coverage_attested: false`. A dedicated parser does not
+change that, and nothing here is a route to complete category coverage.
 
 ## 2. Source and response shape
 
 **Transport.** `POST https://realtime.oxylabs.io/v1/queries`, HTTP Basic auth,
-`Content-Type: application/json`.
+`Content-Type: application/json`. Realtime returns only the default output;
+other output types need the Push-Pull method.
 
 **Response.** One top-level key, `results`, an array whose items carry
 `content`, `created_at`, `updated_at`, `id`, `page`, `url`, `job_id` and
-`status_code`. Realtime returns only the default output; other output types
-need the Push-Pull method.
+`status_code`.
 
-**Walmart.** Three documented sources:
+**Mariano's.** A dedicated target, and these are the parameters that matter:
 
-| Source | Takes | Parser |
+| Source | Takes | Location parameters |
 |---|---|---|
-| `walmart_product` | a product ID | dedicated |
-| `walmart_search` | a `query` | dedicated |
-| `walmart` | any Walmart URL, search and product pages only | none |
+| `marianos_product` | `query` | `store_id`, `delivery_zip`, `fulfillment_type` |
+| `marianos_search` | `query`, plus `brand` and `price_range` | `store_id`, `delivery_zip`, `fulfillment_type` |
+| `marianos` (url variant) | any Mariano's URL | `store_id`, `delivery_zip`, `fulfillment_type` |
 
-**Mariano's and Kroger: no dedicated source exists.** Neither Kroger,
-Mariano's, nor any US grocery retailer is a named target. That leaves
-`source: universal` with `url`, `geo_location`, `render: html` and
-`parsing_instructions`, the last of which does support custom extraction logic
-over the returned HTML.
+`fulfillment_type` documents `pickup`, `delivery` and `in_store` as values. So
+the assigned context for this engagement, store `53100502`, ZIP `60061`,
+PICKUP, is expressible as request parameters rather than inferred.
 
-## 3. Why I am not proposing it for Mariano's
+**Walmart.** Also a dedicated target with `store_id`:
 
-Using `universal` against `marianos.com` means pointing Oxylabs' proxy network
-at a retailer that refuses our datacenter egress, in order to obtain the page
-our datacenter cannot get. Measured three times: two Azure regions and a
-second cloud provider on 30 October, and a datacenter `curl` of
+| Source | Takes | Location parameters |
+|---|---|---|
+| `walmart_product` | `query`, `domain` | `store_id`, `fulfillment_type` |
+| `walmart_search` | `query`, `domain`, `sort_by`, price bounds, `start_page`, `fulfillment_speed` | `store_id`, `fulfillment_type` |
+| `walmart` (url variant) | any Walmart URL | `store_id`, `fulfillment_type` |
+
+No `delivery_zip` on the Walmart side; that is the one real difference from the
+Kroger banners.
+
+**What is NOT documented, for either retailer.** I could not reach a parsed
+output schema for the Kroger-banner targets. The Oxylabs Kroger product page
+names pricing, availability and fulfillment options. The Walmart product
+sample output shows price, currency, title, rating, review count, seller, SKU
+and GTIN, warranty, breadcrumbs, description and specifications. **Neither
+mentions a unit price, a price per measure, or any promotion, deal or coupon
+text field.** That is now the whole of the open question, and it is undetermined
+rather than answered either way.
+
+## 3. The acceptable-use position, restated
+
+The first version refused the Mariano's route on the ground that it meant
+pointing a general proxy network at a retailer that refuses our datacenter
+egress. That ground was the false claim: there is a dedicated, parsed,
+retailer-specific interface, not a `universal` fetch of an arbitrary URL.
+
+The test this file already applied to Walmart was that `walmart_product` with
+its dedicated parser is a documented product interface rather than proxy
+fetching a page on our behalf, and that it was the one part worth proposing.
+`marianos_product` is the same shape. Applying a stricter rule to Mariano's
+than to Walmart when both are dedicated targets would be incoherent, so it is
+not applied.
+
+What the standing position in `CLAUDE.md` still rules out, unchanged:
+
+- `source: universal` against `marianos.com`, or any arbitrary-URL fetching of
+  a retailer that has refused us.
+- Anything whose purpose is to defeat a bot challenge, under any name.
+- Identity rotation or residential routing arranged by us or at our direction
+  for that purpose.
+
+And the honest qualification, stated rather than glossed: **a dedicated target
+is still a vendor fetching a page our own egress cannot reach.** The
+distinction between a maintained, parsed, retailer-specific product interface
+and proxy-fetching an arbitrary URL is a real one, and it is the distinction
+already drawn for Walmart and for Bright Data. It is not a bright line. The
+broader commercial and legal judgment about collecting a retailer's data
+through a third party belongs to the client and his own counsel, which is where
+`marianos/ACCEPTABLE_USE_POSITION.md` leaves it. Nothing here changes that
+file.
+
+The measured refusal of our own egress stands as recorded: two Azure regions
+and a second cloud provider on 30 October, and a datacenter `curl` of
 `sitemap.xml` on 2 November, all refused before any HTTP exchange, against the
 same URL a browser on an ordinary residential connection served normally.
 
-The standing position in `CLAUDE.md` is that no identity rotation, no
-residential proxy routing and no bot-challenge defeat is built here, **by any
-name**. Paying a vendor to perform it at our direction is the same act with an
-invoice attached. That the interface already exists and is already paid for
-changes who holds the proxy pool, not what the request does.
+## 4. What it could resolve, if the output carries the fields
 
-This is not the same shape as the Bright Data route already in use for
-Walmart. There we consume a dataset the provider collected under its own
-arrangements and we state its provenance and its limits. Here we would be
-issuing per-URL fetch instructions against a specific retailer and relying on
-the vendor's network to get past a refusal aimed at us. If the client reads
-that distinction differently it is his call to make explicitly, with his own
-counsel, and not a thing to arrive at because it was the only option left.
+**Mariano's, the enrichment gap.** Displayed price per measure and the
+retailer's own deal wording exist only on the rendered page. The Kroger public
+Products API carries neither, our page route stopped after 28 page loads on
+1 November, and every report says no unattended route to those fields exists.
+If `marianos_product` returns them, that statement stops being true and the
+gap closes unattended, with the store and pickup context requested rather than
+assumed. If it does not, the statement stands and is better evidenced than
+before.
 
-If Oxylabs offers a **pre-collected grocery dataset**, as opposed to
-`universal` fetching on demand, that is the Bright Data shape and I would
-assess it on the same terms. Their public target list does not show one.
+**Walmart, the store context question.** The open question is whether the
+Bright Data provider's store switch applied to the 22 and 23 October
+snapshots, and therefore whether 143 records sit on products genuinely
+unavailable for pickup at Store 100. `walmart_product` with `store_id` 100 and
+`fulfillment_type` gives an independent second observation of that claim from a
+different provider, which is worth more than the provider restating its own
+mechanism. It does not retroactively verify the October snapshots; it tests
+whether their pickup claim reproduces.
 
-## 4. Why it does not resolve the Walmart gap either
+Neither of these is a coverage route. `marianos_search` is term-filtered and
+attests nothing about category completeness.
 
-The unresolved Walmart question is store context: whether the provider's store
-switch applied to the 22 and 23 October snapshots, and therefore whether 143
-records sit on products genuinely unavailable for pickup at Store 100.
+## 5. A bounded probe
 
-The Oxylabs Walmart documentation **does not document a store id, a ZIP code or
-store-specific pricing on any of its three Walmart sources**, and does not
-document a unit price, price-per-measure or promotion-text field in the parsed
-output. So on the published documentation it supplies neither of the two things
-we need: not the store-bound context, and not the displayed rate.
-
-It might do more than it documents. That would have to be established by a
-bounded probe, section 5, and it would be a probe of whether the capability
-exists at all, not a collection run.
-
-## 5. A bounded probe, if he wants one anyway
-
-This is the smallest thing that answers the capability question. It is not a
-collection and it would produce no delivered records.
+Not a collection. It would produce no delivered records.
 
 | Step | Requests | What it settles |
 |---|---:|---|
-| `walmart_product` with `parse: true` on 5 known Store 100 product IDs | 5 | Whether the parsed output carries any unit-price or promotion field at all |
-| The same 5 with any store or location parameter the account exposes | 5 | Whether a store context can be requested, and whether the price moves when it changes |
-| `walmart` on 2 full product URLs carrying a store parameter | 2 | Whether the returned HTML contains the rendered price-per-measure string |
-| **Total** | **12** | |
+| `marianos_product` on 5 UPCs already in the delivered set, with `store_id` 53100502, `delivery_zip` 60061, `fulfillment_type` pickup | 5 | Whether the parsed output carries a unit price or price-per-measure field, and any promotion or deal text at all. **This is the one that matters.** |
+| The same 5 with no `store_id` | 5 | Whether the store context changes the price, which is the only way to know the parameter does anything |
+| `marianos_search` on 2 terms whose Kroger-API results we already hold | 2 | Whether its result set differs from the API's for the same term, and whether it carries the two fields |
+| `walmart_product` on 5 Store 100 product IDs we already hold, with `store_id` 100 and `fulfillment_type` | 5 | Whether the pickup claim on those records reproduces from an independent provider, and whether a unit price appears |
+| **Total** | **17** | |
 
-Twelve requests. Whatever Oxylabs charges per result, twelve results is a
-rounding error against any commitment tier, so the cost question is not the
-constraint and I am deliberately not quoting a unit price I cannot see: the
-rate card depends on the plan on his account, and guessing it would be the
-same error as guessing a retailer field.
+Seventeen requests. I am deliberately not quoting a unit price: the rate card
+depends on the plan on his account, and guessing it would be the same error as
+guessing a retailer field. Seventeen results is a rounding error against any
+commitment tier, so cost is not the constraint.
 
-**What the probe would not establish**, and this is why I would rather he
-decided section 3 first: twelve successful fetches would not make the route
-compliant with the standing position, nor make `universal` fetching of
-`marianos.com` acceptable. It settles capability only.
+**The first five requests are the whole value of this.** If the parsed output
+has no unit price and no deal text, everything else here is a store-context
+cross-check and nothing more.
 
-## 6. What I would rather do instead
+## 6. The question that has to go back to him
 
-The `walmart_product` source with its dedicated parser, used on product IDs we
-already hold, is worth 12 requests to find out whether it carries a unit price,
-because that is a documented product interface rather than proxy-fetching a
-page on our behalf. That is the one part of this I would propose.
+He named **Classic Web Scraper API** specifically. The dedicated e-commerce
+scrapers may or may not sit inside that entitlement; Oxylabs has reorganised
+these products and the naming across its documentation is not consistent. If
+the banner targets are a separate product or tier, then every parameter in
+section 2 is documentation he cannot use, and the answer reverts to something
+close to the first version of this file for reasons of access rather than of
+capability.
 
-For Mariano's, the honest position is unchanged from
-`marianos/ROUTES_AND_AUTONOMY.md`: no unattended route to displayed price per
-measure and deal wording exists that does not cross the line in section 3. The
-routes that remain are the ones already named there, and the decision among
-them is his.
+That is his to answer and not ours to assume, which is why it is a question
+here rather than a premise.
 
 ## What this assessment does not establish
 
-- **That Oxylabs cannot do these things.** It establishes that its public
-  documentation does not say it can. Vendor documentation is often behind the
-  product; the probe in section 5 exists for exactly that reason.
+- **That `marianos_product` returns a price per measure or deal wording.** It
+  establishes that the documentation reachable on 3 November does not say so,
+  and does not say otherwise. Undetermined. Section 5 exists for that.
+- **That the account can call these targets.** Section 6.
 - **Anything about cost.** No rate card was read. Request counts are bounded
   above; the price per result is on his account and not visible here.
+- **Any category coverage claim.** `marianos_search` is term-filtered search.
+  It cannot enumerate a category and `coverage_attested` is `False`.
+- **That the October Walmart snapshots are verified.** A probe tests whether
+  their pickup claim reproduces now. It cannot observe the past.
 - **That the partner question is affected.** It is not. The partner request
   stays unsubmitted, as agreed.
-- **That any of this changes the acceptable-use question** in
-  `marianos/ACCEPTABLE_USE_POSITION.md`. It does not.
+- **That the acceptable-use position has moved.** The standing refusals in
+  section 3 are unchanged. What changed is that this route is not one of them.
 
 ## Sources
 
-- [Realtime integration](https://developers.oxylabs.io/products/web-scraper-api/integration-methods/realtime) — endpoint, auth, payload fields, response keys
-- [Any Domain / API targets](https://developers.oxylabs.io/api-targets) — `universal`, `parsing_instructions`, `geo_location`, and the absence of any grocery target
-- [Walmart targets](https://developers.oxylabs.io/scraper-apis/web-scraper-api/walmart) — `walmart_product`, `walmart_search`, `walmart`, and the absence of documented store context or unit-price fields
+Read 3 November 2026:
+
+- Oxylabs developer documentation, e-commerce targets list (the page naming
+  `marianos_search`, `marianos_product`, `kroger_search`, `kroger_product`,
+  `walmart_search`, `walmart_product` and the other banners)
+- Oxylabs developer documentation, dedicated scrapers quick reference (the
+  endpoint parameter lists quoted in section 2)
+- Oxylabs Kroger Scraper API product page
+- Oxylabs Walmart Product Data API product page
