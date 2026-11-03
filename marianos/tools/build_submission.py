@@ -172,6 +172,8 @@ def main(argv=None):
         shutil.copy2(a.page_read_evidence, a.out / beside)
 
     enriched_note = []
+    matched = merge_report.get("page_upcs_matched_in_api", 0) if merge_report else 0
+    rated = (merge_report.get("fields_populated_after_merge", {}) or {}).get("ppm", 0)
     if merge_report:
         by_source = merge_report.get("values_by_field_and_source", {})
         enriched_note = [
@@ -192,6 +194,13 @@ def main(argv=None):
             f"- `digital_deals_description`: "
             f"**{merge_report.get('fields_populated_after_merge', {}).get('digital_deals_description', 0)}**",
             "",
+            P(f"**{matched - rated} of the matched products carry no rate.** "
+              f"{matched:,} products on the pages read are in this dataset, and "
+              f"{rated:,} of them have a price per measure, because not every "
+              f"page displayed one. A product whose page showed no rate gets an "
+              f"empty `ppm`; nothing is derived from its price and size."
+              ) if matched and rated and matched > rated else "",
+            "" if matched and rated and matched > rated else None,
             P(f"Of {merge_report.get('page_distinct_upcs', 0):,} distinct products "
               f"on the pages read, {merge_report.get('page_upcs_matched_in_api', 0):,} "
               f"are in this dataset and {merge_report.get('page_upcs_not_in_api', 0)} "
@@ -278,7 +287,15 @@ def main(argv=None):
             "show what the field looks like when the route to it is open.",
             "",
         ]
-    readme += ["## Verifying", "",
+    readme += ["## The two manifests", "",
+               B("`manifest.json` is the release manifest the collector wrote: "
+                 "the release id, the store, the record count and the storage "
+                 "keys of the run that produced this."),
+               B("`MANIFEST_SHA256.json` is the checksum of every file in this "
+                 "folder, including the README, so the package can be verified "
+                 "byte for byte."),
+               "",
+               "## Verifying", "",
                "```bash", "python3 -c \"",
                "import hashlib, json, pathlib",
                "m = json.load(open('MANIFEST_SHA256.json'))",
@@ -286,7 +303,8 @@ def main(argv=None):
                "       or hashlib.sha256(pathlib.Path(k).read_bytes()).hexdigest() != v['sha256']]",
                "print('OK' if not bad else 'CHANGED: ' + ', '.join(bad))\"",
                "```", ""]
-    (a.out / "README.md").write_text("\n".join(readme))
+    (a.out / "README.md").write_text(
+        "\n".join(line for line in readme if line is not None))
 
     manifest = {}
     for path in sorted(a.out.rglob("*")):
