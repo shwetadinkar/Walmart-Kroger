@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+from collections import Counter
 import json
 import os
 import re
@@ -284,6 +285,8 @@ def main(argv=None):
             "deal_field_candidates": candidates(paths, DEAL_PATTERNS),
             "all_leaf_keys": sorted(paths),
             "parsed_content_present": bool(content),
+            "error_excerpt": (json.dumps(document)[:400]
+                              if not content else ""),
         })
 
     any_rate = [r for r in results if r["rate_field_candidates"]]
@@ -299,6 +302,14 @@ def main(argv=None):
         "source_name": a.source_name,
         "store_context_sent": not a.no_store_context,
         "requests_made": len(results),
+        # Statuses are in the summary because the first run of this printed
+        # "0 parsed content" with no indication of why, and the reader had to
+        # open a raw file to find out whether it was a 404, a 401 or a shape
+        # mismatch. A summary that hides the reason is not a summary.
+        "http_status_counts": dict(sorted(Counter(
+            str(r["http_status"]) for r in results).items())),
+        "first_error_body": next(
+            (r["error_excerpt"] for r in results if r.get("error_excerpt")), ""),
         "responses_with_parsed_content": sum(
             1 for r in results if r["parsed_content_present"]),
         "upcs_with_a_rate_field_candidate": len(any_rate),

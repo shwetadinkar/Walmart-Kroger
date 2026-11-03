@@ -206,5 +206,24 @@ class ItDoesNotAnswerTheQuestionItself(unittest.TestCase):
                           f"a write that does not go through --out: {ast.unparse(call)}")
 
 
+class TheSummarySaysWhyItFailed(unittest.TestCase):
+    """The first real run printed "responses_with_parsed_content: 0" and
+    nothing else, so the reader could not tell a 404 from a 401 from a shape
+    mismatch without opening a raw file. A summary that hides the reason is
+    not a summary."""
+
+    def test_the_summary_carries_the_status_counts(self):
+        source = (ROOT / "tools/oxylabs_probe.py").read_text()
+        self.assertIn("http_status_counts", source)
+
+    def test_the_summary_carries_the_first_error_body(self):
+        source = (ROOT / "tools/oxylabs_probe.py").read_text()
+        self.assertIn("first_error_body", source)
+
+    def test_an_error_excerpt_is_kept_per_result_when_content_is_absent(self):
+        source = (ROOT / "tools/oxylabs_probe.py").read_text()
+        self.assertIn("error_excerpt", source)
+
+
 if __name__ == "__main__":
     unittest.main()
