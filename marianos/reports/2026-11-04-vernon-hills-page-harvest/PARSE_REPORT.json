@@ -1,0 +1,42 @@
+{
+ "source": "reports/2026-11-04-vernon-hills-page-harvest/data/harvest.tsv",
+ "cards": 279,
+ "distinct_upcs": 279,
+ "parse_outcomes": {
+  "ok": 279
+ },
+ "ppm_present": 202,
+ "deal_text_present": 137,
+ "sale_price_present": 67,
+ "sold_by_weight": 26,
+ "price_basis": {
+  "fixed": 250,
+  "about each on sale, sold by weight": 3,
+  "about each, sold by weight": 23,
+  "prices may vary": 3
+ },
+ "size_present": 231,
+ "terms": [
+  "apples",
+  "bananas",
+  "batteries",
+  "coupon",
+  "flowers",
+  "food storage containers",
+  "ground coffee",
+  "light bulbs",
+  "salmon",
+  "screwdriver",
+  "shrimp",
+  "tilapia"
+ ],
+ "cross_term_conflicts": [],
+ "ppm_units": {
+  "each": 91,
+  "oz": 78,
+  "lb": 32,
+  "fl oz": 1
+ },
+ "ppm_notation": "as rendered by the retailer; not reformatted or rounded",
+ "deal_wording": "verbatim card lines; not composed"
+}

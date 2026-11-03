@@ -21,6 +21,12 @@ SALE_LINE = re.compile(r"^Sale:\s*\$")
 # Labels the retailer renders above the price block.
 LEADING_LABELS = {"Everyday Low Price", "Sponsored", "New", "Best Seller",
                   "Prices May Vary", "Price Cut"}
+# The retailer also renders an in-store location above the price block, with a
+# varying number, so it cannot sit in the set above. Seen on 4 November as
+# "Aisle 18"; earlier harvests did not carry it. It is a shelf location, not a
+# price or a label about one, so it is skipped rather than recorded: nothing in
+# the 22 fields holds it.
+AISLE = re.compile(r"^(aisle|aisles)\b", re.I)
 # The restatement sentence the retailer renders under a sold-by-weight price,
 # either "about $1.45 each" or "Sale: about $3.38 each discounted from $7.18".
 ABOUT_RESTATEMENT = re.compile(r"^(sale:\s*)?about\s+\$", re.I)
@@ -52,8 +58,10 @@ def parse(term, upc, path, ppm, lines):
 
     rest = list(lines)
 
-    while rest and rest[0] in LEADING_LABELS:
-        rec["price_label"] = rest.pop(0)
+    while rest and (rest[0] in LEADING_LABELS or AISLE.match(rest[0])):
+        popped = rest.pop(0)
+        if popped in LEADING_LABELS:
+            rec["price_label"] = popped
 
     # Sold-by-weight shape: "about", one or two prices, "each", then a
     # restatement sentence. Two prices means the approximate price is marked
