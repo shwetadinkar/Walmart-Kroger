@@ -1,0 +1,3426 @@
+{
+ "_what": "Verdicts recomputed from a saved report, with no new requests. The first run's classifier returned a carriage verdict for any returned product, which produced zero confirmed absences out of 326 and was wrong.",
+ "reclassified_from": "reports/2026-11-03-sitemap-gap/GAP_RESOLUTION.json",
+ "original_counts": {
+  "carried_and_missed": 324,
+  "not_carried": 0,
+  "unresolved": 2
+ },
+ "counts": {
+  "in_catalogue_no_store_evidence": 138,
+  "priced_at_this_store": 186,
+  "absent_from_catalogue": 2
+ },
+ "lower_bound_missed_by_the_sweep": 186,
+ "upper_bound_missed_by_the_sweep": 324,
+ "_stock_was_not_retained": "The first run recorded only whether a price existed, not stock levels, so a product with no price cannot be narrowed here and stays undetermined. A fresh run now retains stock levels and would move some of those either way.",
+ "results": {
+  "0001111002537": {
+   "description": "Kroger\u00ae Vitamin Raspberry Lemonade Water Enhancer Bottle",
+   "categories": [
+    "Beverages",
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111003251": {
+   "description": "Kroger\u00ae Bran Flakes Wheat Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111006574": {
+   "description": "Simple Truth Organic\u00ae Green Tea Bags",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111009267": {
+   "description": "Simple Truth Organic\u00ae Bran Flakes Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111009268": {
+   "description": "Simple Truth Organic\u00ae Raisin Bran Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111009270": {
+   "description": "Simple Truth Organic\u00ae Frosted Flakes Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111009969": {
+   "description": "Kroger\u00ae Raisin Bran Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012149": {
+   "description": "Simple Truth\u00ae Allergy Friendly\u02c6 72% Cacao Dark Chocolate Chunks",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012150": {
+   "description": "Simple Truth\u2122 Semi Sweet Chocolate Chips",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012270": {
+   "description": "Kroger\u00ae Original Couscous",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012271": {
+   "description": "Kroger\u00ae Pearl Couscous",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012672": {
+   "description": "Simple Truth\u00ae Organic 100% Juice Black Cherry Juice Bottle",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012792": {
+   "description": "Big K\u00ae Cola Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012794": {
+   "description": "Big K\u00ae Zero Sugar Zero Calorie Cola Mini Soda Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111012838": {
+   "description": "Simple Truth Organic\u00ae Sprouted Honey Oat Bread",
+   "categories": [
+    "Frozen",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111013014": {
+   "description": "Kroger\u00ae Berry Crunch Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111013048": {
+   "description": "Private Selection\u00ae Golden Citrus Green Tea Bags",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111013085": {
+   "description": "Kroger\u00ae Alkaline Bottled Water",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111014120": {
+   "description": "Kroger\u00ae Toasted Whole Grain Oat Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111014252": {
+   "description": "Kroger\u00ae CARBMaster\u00ae Mango Protein Smoothie",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111014254": {
+   "description": "Kroger\u00ae CARBmaster\u00ae Raspberry Lactose Free Lowfat Protein Yogurt Smoothie",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111078407": {
+   "description": "Simple Truth\u00ae Mixed Berry Granola",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111078408": {
+   "description": "Simple Truth\u00ae Sweet Nut Cluster & Flake Granola",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001111078506": {
+   "description": "Kroger\u00ae Toasted Flakes with Real Strawberries Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111079599": {
+   "description": "Office Works\u00ae Mailing Tape - Clear",
+   "categories": [
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111082432": {
+   "description": "Kroger\u00ae Green Tea Bags",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111084316": {
+   "description": "Kroger\u00ae Hydrate Zero Sugar Lemonade Drink Mix Packets",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111084694": {
+   "description": "Kroger\u00ae Toasted Flakes with Fruit & Yogurt Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111087382": {
+   "description": "Kroger\u00ae Green Tea Bags",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111090275": {
+   "description": "VAPOR DISTILLED WATER WITH ELECTROLYTES ADDED FOR TASTE 24 PK - SIMPLE TRUTH - 405.6 FL OZ",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001111090875": {
+   "description": "Kroger\u00ae Original Pork Breakfast Sausage Patties",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001115048055": {
+   "description": "Roundy's Wisconsin Blue Cheese Crumbled",
+   "categories": [
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200000311": {
+   "description": "Pepsi Cola\u00ae Wild Cherry Soda Bottle",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200016313": {
+   "description": "Pepsi Cola\u00ae Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200017002": {
+   "description": "LifeWtr Purified Water 1 L 6 Count",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200017200": {
+   "description": "Diet Pepsi Cola\u00ae Soda Bottles",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001200017258": {
+   "description": "Pepsi Cola\u00ae Wild Cherry Zero Sugar Soda Bottle",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001200017322": {
+   "description": "Pepsi Cola\u00ae Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200017323": {
+   "description": "Pepsi Cola\u00ae Mini Diet Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200018307": {
+   "description": "Pepsi Cola\u00ae Zero Sugar Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200022242": {
+   "description": "Pepsi Cola\u00ae Wild Cherry Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200023018": {
+   "description": "Pepsi Cola\u00ae Zero Sugar Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001200023019": {
+   "description": "Pepsi Cola\u00ae Real Sugar Mini Soda cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001200023020": {
+   "description": "Pepsi Cola\u00ae Wild Cherry Mini Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001200024082": {
+   "description": "Pepsi Cola\u00ae Wild Cherry & Cream Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001312001261": {
+   "description": "Ore-Ida Seasoned Extra Crispy Frozen Tater Tots",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001380012140": {
+   "description": "Stouffer's\u00ae Meat-Fulls\u00ae Grilled Chicken Parmesan Frozen Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001380024963": {
+   "description": "Stouffer's\u00ae Melt-Fulls\u00ae Double Cheddar Steak Frozen Sandwich",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001450000026": {
+   "description": "Birds Eye Bacon Cheddar Cauliflower Bake, Frozen Side",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001450000102": {
+   "description": "Birds Eye Sweet Chili Cauliflower Wings, Frozen Sides",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001450001794": {
+   "description": "Birds Eye Buffalo Style Cauliflower Wings, Frozen Sides",
+   "categories": [
+    "Frozen",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001450003160": {
+   "description": "Birds Eye Steamfresh Rainbow Cauliflower Frozen Vegetables",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600012222": {
+   "description": "General Mills\u00ae REESE'S\u2122 PUFFS Chocolatey Peanut Butter Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600012749": {
+   "description": "General Mills REESE'S PUFFS Bunnies Easter Edition Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600015777": {
+   "description": "General Mills\u00ae Oatmeal Crisp\u2122 Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600016346": {
+   "description": "General Mills\u00ae Apple Cinnamon Large Size Cheerios\u2122",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600017108": {
+   "error": "Kroger API HTTP 404",
+   "verdict": "absent_from_catalogue",
+   "_why": "Kroger returned HTTP 404 for this id: Kroger API HTTP 404"
+  },
+  "0001600019303": {
+   "description": "General Mills Cheerios\u2122 Cereal Cups",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600019304": {
+   "description": "General Mills Honey Nut Cheerios\u2122 Cereal Cups",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600019305": {
+   "description": "General Mills Cinnamon Toast Crunch\u2122 Cereal Cups",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600019317": {
+   "description": "General Mills Lucky Charms\u2122 with Marshmallows Cereal Cups",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600019457": {
+   "description": "General Mills Lucky Charms Smores Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600020221": {
+   "description": "General Mills Cocoa Puffs\u2122 Bag Cereal",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600020281": {
+   "description": "General Mills Tres Leches Toast Crunch Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600020679": {
+   "description": "Cocoa Puffs Loaded Crispy Cr\u00e8me Filled Breakfast Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600020684": {
+   "description": "General Mills Cinnamon Toast Crunch Loaded Large Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600020929": {
+   "description": "General Mills Lucky Charms\u2122 Berry Swirl Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600021166": {
+   "description": "General Mills REESE'S PUFFS Peanut Butter Lovers Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600021451": {
+   "description": "Maple Cinnamon Cheerios\u2122 Hearty Nut Medley Large Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600022233": {
+   "description": "General Mills Cheerios Veggie Blends Apple Strawberry Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600022605": {
+   "description": "General Mills\u00ae Cheerios\u2122 Oat Crunch Chocolate Large Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600022629": {
+   "description": "General Mills S'mores Loaded Large Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001600022793": {
+   "description": "General Mills Chocolate Strawberry Loaded Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001600087700": {
+   "description": "General Mills Cereal Variety Pack",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001700310855": {
+   "description": "Kaukauna Port Wine Spreadable Cheese Cup, 11.3 oz",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001700310857": {
+   "description": "Kaukauna Extra Sharp Cheddar Spreadable Cheese Cup",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001707710308": {
+   "description": "Lifeway\u00ae Strawberry Probiotic Low Fat Kefir Drink",
+   "categories": [
+    "Dairy",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001707710432": {
+   "description": "Lifeway\u00ae Raspberry Probiotic Low Fat Kefir Drink",
+   "categories": [
+    "Dairy",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001707710808": {
+   "description": "Lifeway\u00ae Peach Probiotic Low Fat Kefir Drink",
+   "categories": [
+    "Dairy",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001707711132": {
+   "description": "Lifeway\u00ae Vanilla Probiotic Low Fat Kefir Drink",
+   "categories": [
+    "Dairy",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001707711708": {
+   "description": "Lifeway\u00ae Mixed Berry Probiotic Low Fat Kefir Drink",
+   "categories": [
+    "Dairy",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001862710139": {
+   "description": "Kashi GO Peanut Butter Crunch Protein Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862710757": {
+   "description": "Kashi GO Chocolate Crunch Protein Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711351": {
+   "description": "Kashi Maple Waffle Bites Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711472": {
+   "description": "Kashi Strawberry Banana Smoothie Loops Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711499": {
+   "description": "Kashi Organic Honey Toasted Oat Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711505": {
+   "description": "Kashi Autumn Wheat Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711507": {
+   "description": "Kashi Organic Cinnamon Harvest Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711509": {
+   "description": "Kashi Island Vanilla Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711511": {
+   "description": "Kashi Berry Fruitful Organic Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862711528": {
+   "description": "Kashi GO Protein Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001862751003": {
+   "description": "Kashi Organic Blueberry Clusters Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862770327": {
+   "description": "Kashi GO Cinnamon Crunch Protein Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001862770339": {
+   "description": "Kashi GO Honey Almond Flax Crunch Protein Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001862770348": {
+   "description": "Kashi GO Toasted Berry Crisp Protein Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0001878777632": {
+   "description": "Dr. Bronner's 18-in-1 Pure-Castile Tea Tree Magic Soap 32 fl oz",
+   "categories": [
+    "Personal Care",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001917505280": {
+   "description": "Crispa Israeli Couscous",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0001917505354": {
+   "description": "Crispa Traditional Medium Couscous",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002100008145": {
+   "description": "Philadelphia Strawberry Cream Cheese Non-Dairy Spread",
+   "categories": [
+    "Dairy",
+    "Natural & Organic",
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002100008386": {
+   "description": "Taco Bell Creamy Crunch-Dip Supreme Cravings Dip, Jar",
+   "categories": [
+    "International",
+    "International"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002190813679": {
+   "description": "Cascadian Farm\u2122 Organic Mini Fruitfuls Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002190813681": {
+   "description": "Cascadian Farm\u2122 Organic Mini Cookies \u2018n\u2019 Creme Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002190845551": {
+   "description": "Cascadian Farm\u2122 Organic Raisin Bran Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002340099774": {
+   "description": "Combat\u00ae for Small and Large Roach Killing Bait Stations",
+   "categories": [
+    "Health",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002570000388": {
+   "description": "Ziploc\u00ae Brand Grip n Seal Technology\u2122 Quart Freezer Bags",
+   "categories": [
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002570000581": {
+   "description": "Ziploc\u00ae Brand Gallon Freezer Storage Bags, Stay Open Design, Easy to Fill, 80 count",
+   "categories": [
+    "Cleaning Products",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002570070407": {
+   "description": "Ziploc\u00ae Brand Gallon Slider Freezer Bags",
+   "categories": [
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002570070953": {
+   "description": "Ziploc Gallon Freezer Bags Press to Close 60 Count",
+   "categories": [
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0002898910314": {
+   "description": "MorningStar Farms\u00ae Homestyle Plant Based Chik'n Tenders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002898910441": {
+   "description": "MorningStar Farms\u00ae Incogmeato Original Plant Based Pancake and Sausage on a Stick",
+   "categories": [
+    "Natural & Organic",
+    "Frozen",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0002898910605": {
+   "description": "MorningStar Farms\u00ae Sweet BBQ Plant Based Sauced Riblets",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003000031379": {
+   "description": "Cap'n Crunch's\u00ae Crunch Berries Breakfast Cereal",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003000056236": {
+   "description": "Cap'n Crunch\u00ae Oops! All Berries Breakfast Cereal",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003000057812": {
+   "description": "Cap'n Crunch\u00ae Cinnamon Crunch Breakfast Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003100044109": {
+   "description": "Banquet Brown 'N Serve Vermont Maple Sausage Links, Frozen Breakfast",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003619212247": {
+   "description": "Santa Cruz Organic Raspberry Lemonade Beverage Bottle",
+   "categories": [
+    "Beverages",
+    "Beverages",
+    "Beverages",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003663203966": {
+   "description": "Too Good & Co. Strawberry Banana Low Fat Smoothie Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003663203967": {
+   "description": "Too Good & Co. Mixed Berry Low Fat Yogurt Smoothie Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003663203968": {
+   "description": "Too Good & Co. Peach Low Fat Smoothie Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003800018339": {
+   "description": "Kellogg's Froot Loops Original",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003800020022": {
+   "description": "Kellogg's\u00ae Smart Start Original Antioxidants Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003800023459": {
+   "description": "Kellogg's\u00ae Jumbo Snax Froot Loops Cereal Snacks",
+   "categories": [
+    "Breakfast",
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003800024848": {
+   "description": "Kellogg's Krave Cereal Chocolate",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003800024850": {
+   "description": "Kellogg's Frosted Flakes Original",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003800027798": {
+   "description": "Kellogg's\u00ae Apple Jacks Cereal Cups",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003800027802": {
+   "description": "Kellogg's\u00ae Frosted Flakes Value Pack Cereal Cups",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003800027804": {
+   "description": "Kellogg's\u00ae Froot Loops Cereal Cups",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0003952890129": {
+   "description": "Pizzeria UNO Steak and Cheese Stromboli 9oz, Frozen",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0003952890130": {
+   "description": "Pizzeria UNO Pepperoni and Cheese Stromboli 9oz, Frozen",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004116707800": {
+   "description": "Gold Bond Healing Foot Cream With Aloe",
+   "categories": [
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004119210233": {
+   "description": "Kellogg's\u00ae Special K Strawberries and Vanilla Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004119210714": {
+   "description": "Kellogg's\u00ae Frosted Flakes Glazed Donut Holes Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004119210747": {
+   "description": "Kellogg's Raisin Bran Blueberry 15.8oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004119210887": {
+   "description": "Kellogg's\u00ae Krave Glazed Donut Holes Glazed Chocolate Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004119210891": {
+   "description": "Kellogg's\u00ae Apple Jacks Glazed Donut Holes Apple Cinnamon Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004119210948": {
+   "description": "Kellogg's\u00ae Extra Toasted Almond Granola",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004126000319": {
+   "description": "Kroger\u00ae Hemorrhoidal Suppositories",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126000321": {
+   "description": "Kroger\u00ae Maximum Strength Hemorrhoidal Cream",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126000487": {
+   "description": "Pretty Savvy\u2122 Sleep Mask",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126000815": {
+   "description": "Simple Truth\u2122 Baby Teething Ring",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126001250": {
+   "description": "Kroger\u00ae Digital One-Step Pregnancy Test",
+   "categories": [
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126001401": {
+   "description": "Pretty Savvy\u2122 Stainless Steel Cuticle Scissors",
+   "categories": [
+    "Beauty"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126001807": {
+   "description": "Simple Truth\u00ae Spa Eucalyptus Foaming Hand Soap",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004126001908": {
+   "description": "Kroger\u00ae Maximum Strength Flushable Hemorrhoidal Medicated Wipes",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126001909": {
+   "description": "Kroger\u00ae Maximum Strength Flushable Hemorrhoidal Medicated Wipes Twin Pack",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126033242": {
+   "description": "Kroger\u00ae Milk & Honey Bubble Bath",
+   "categories": [
+    "Beauty",
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126033247": {
+   "description": "Kroger\u00ae Soak Lavender Bubble Bath",
+   "categories": [
+    "Beauty",
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004126038556": {
+   "description": "Kroger\u00ae Soapy Safari Kiwi Melon Kids Bubble Bath",
+   "categories": [
+    "Personal Care",
+    "Beauty",
+    "Beauty",
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004138800730": {
+   "description": "Tucks\u00ae Medicated Hemorrhoidal Cooling Pads",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004157300315": {
+   "description": "Spicy Wings - Cold",
+   "categories": [
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004227201191": {
+   "description": "Amy's\u00ae Vegan Cheeze Pizza Snacks",
+   "categories": [
+    "Natural & Organic",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004240038991": {
+   "description": "Malt-O-Meal Fruity Dyno Bites with Marshmallows Super Size Cereal Bag",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004240044035": {
+   "description": "Mom's Best\u00ae Frosted Flakes Cereal - 13.5 oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004300009313": {
+   "description": "Crystal Light Raspberry Lemonade Energy Boost Drink Mix, On-the-Go-Packets",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004300009315": {
+   "description": "Crystal Light Lemonade Energy Boost Drink Mix, On-the-Go-Packets",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369505631": {
+   "description": "Hot Pockets Pepperoni Pizza Crispy Crust Frozen Snacks Pizza Snacks Made with Mozzarella Cheese",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369505632": {
+   "description": "Hot Pockets Hickory Ham and Cheddar Croissant Crust Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507107": {
+   "description": "Hot Pockets Philly Steak and Cheese Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507109": {
+   "description": "Hot Pockets Four Cheese Pizza Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507111": {
+   "description": "Hot Pockets Pepperoni Pizza Italian Style Seasoned Crust Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507112": {
+   "description": "Hot Pockets Hickory Ham and Cheddar Crispy Buttery Crust Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507116": {
+   "description": "Hot Pockets Italian Style Meatballs and Mozzarella Frozen Snack",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369507118": {
+   "description": "Hot Pockets Hot Ones Smoky Green Chili",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004369549728": {
+   "description": "Hot Pockets Four Meat Four Cheese Italian-Style Seasoned Crust Frozen Snacks 8PK",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004369595310": {
+   "description": "Hot Pockets Philly Steak and Cheese Frozen Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004524301948": {
+   "description": "Sprecher\u2122 Cherry Cola Soda Can",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004600013534": {
+   "description": "Old El Paso\u2122 Beef and Cheese Taco Bites Frozen Snacks",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004600013535": {
+   "description": "Old El Paso\u2122 Chicken and Cheese Taco Bites Frozen Snacks",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004650004523": {
+   "description": "STEM Light Trap, Attracts and Traps Flying Insects, Emits Soft Blue Light",
+   "categories": [
+    "Health",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004650005071": {
+   "description": "OFF! Insect Repellent Spritz for Adults & Kids, Fragrance-Free Bug Spray for Everyday Protection",
+   "categories": [
+    "Health",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004650005276": {
+   "description": "STEM Flying Insect Fan Trap for Indoor Bug Control, Plug-In Fan with UV Light",
+   "categories": [
+    "Health",
+    "Cleaning Products",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004650005281": {
+   "description": "STEM Glue Trap Re\ufb01ll Pads for STEM Flying Insect Fan Trap Device",
+   "categories": [
+    "Cleaning Products",
+    "Health",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004650022154": {
+   "description": "OFF! FamilyCare Mosquito Repellent Smooth & Dry Non-Greasy Spray, 4 oz",
+   "categories": [
+    "Garden & Patio",
+    "Health",
+    "Cleaning Products",
+    "Cleaning Products",
+    "Cleaning Products",
+    "Cleaning Products",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004800050791": {
+   "description": "Chicken of the Sea Packet Up!\u00ae Tuna Salad Kit",
+   "categories": [
+    "Deli",
+    "Meat & Seafood"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004900004805": {
+   "description": "Dasani\u00ae Purified Water Bottles",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004900006105": {
+   "description": "Diet Coke\u00ae Soda Mini Can",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0004900055883": {
+   "description": "Coca-Cola\u00ae Zero Sugar Orange Cream Soda Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0004900055884": {
+   "description": "Coca-Cola\u00ae Orange Cream Soda Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0005113164204": {
+   "description": "Scotch\u00ae Heavy Duty Shipping Packaging Tape, 1.88 in x 22.2 yd, 1/Pack with Dispenser",
+   "categories": [
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005114193099": {
+   "description": "Scotch\u00ae Shipping Packaging Tape, 1.88 in x 84.2 yd",
+   "categories": [
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005150002990": {
+   "description": "Smucker's Uncrustables Chocolate Flavored Hazelnut Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005150004962": {
+   "description": "Smucker\u2019s Uncrustables Peanut Butter & Honey Spread Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005150021179": {
+   "description": "Smucker's Uncrustables Chocolate Flavored Hazelnut Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005150026124": {
+   "description": "Smucker\u2019s Uncrustables Peanut Butter & Raspberry Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005209204027": {
+   "description": "Handi-foil\u00ae Extra Large Storage W/Folded Lids",
+   "categories": [
+    "Kitchen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0005844960057": {
+   "description": "Nature's Path Organic\u00ae Fruit Juice Corn Flakes Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0005844977050": {
+   "description": "Nature's Path Organic\u00ae Flax Plus\u00ae Multibran Flakes Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007020078858": {
+   "description": "Buffalo Wild Wings Spicy Beer Cheese Dip",
+   "categories": [
+    "Snacks",
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007047022408": {
+   "description": "Go-Gurt\u2122 Protein Strawberry Kids Low Fat Yogurt Tubes",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007073407037": {
+   "description": "Celestial Seasonings Caffeinated Honey Lemon Ginseng Green Tea",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007166206511": {
+   "description": "Mkr 16Ct Fl Signatur E Dual St/Fl 12P",
+   "categories": [
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007225100139": {
+   "description": "Near East\u00ae Wild Mushroom & Herb Couscous Mix",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007225100154": {
+   "description": "Near East\u00ae Mediterranean Curry Couscous Mix",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007225100155": {
+   "description": "Near East\u00ae Roasted Garlic & Olive Oil Couscous Mix",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007225100156": {
+   "description": "Near East\u00ae Parmesan Couscous Mix",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007225100177": {
+   "description": "Near East\u00ae Toasted Pine Nut Couscous Mix",
+   "categories": [
+    "Pasta, Sauces, Grain"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007231000167": {
+   "description": "Bigelow\u00ae Green Tea with Mint Tea Bags",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007279600018": {
+   "description": "IBC Black Cherry Made with Sugar",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007287807151": {
+   "description": "Herdez \u00ae Queso Blanco Cheese Dip with Jalapenos , 15 oz.",
+   "categories": [
+    "International",
+    "International",
+    "Snacks",
+    "International"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007347200153": {
+   "description": "Food for Life\u00ae Ezekiel 4:9\u00ae Flourless Sprouted Grain Frozen Bread",
+   "categories": [
+    "Natural & Organic",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007347200256": {
+   "description": "Food for Life\u00ae Ezekiel 4:9\u00ae Golden Flax Sprouted Organic Cereal",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007502001686": {
+   "description": "Philips Avent 3+ Months Assorted Soothie Baby Pacifiers",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007536557332": {
+   "description": "OPAA! Gyros Sandwich Kit",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007750700501": {
+   "description": "Sandwich Bros. Burger Melts, Frozen Pita Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007750700505": {
+   "description": "Sandwich Bros. Chicken Melts, Frozen Pita Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007790000215": {
+   "description": "Jimmy Dean All Natural Fully Cooked Turkey Sausage Patties",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007800000337": {
+   "description": "RC Cola Soda Bottle",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007800002590": {
+   "description": "Dr Pepper Cherry Soda Bottles",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0007800003761": {
+   "description": "Dr Pepper Strawberries and Cream Soda Cans",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007800003767": {
+   "description": "Dr Pepper Strawberries and Cream Soda Bottle",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007800004037": {
+   "description": "Dr Pepper Blackberry Soda Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0007852202105": {
+   "error": "Kroger API HTTP 404",
+   "verdict": "absent_from_catalogue",
+   "_why": "Kroger returned HTTP 404 for this id: Kroger API HTTP 404"
+  },
+  "0008000052208": {
+   "description": "StarKist\u00ae Tuna Creations Lemon Pepper Pouch",
+   "categories": [
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0008298800006": {
+   "description": "White Castle Original Sliders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0008298801006": {
+   "description": "White Castle Classic Cheese Sliders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0008298801016": {
+   "description": "White Castle Classic Cheese Sliders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0008298801106": {
+   "description": "White Castle Jalapeno Cheese Sliders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0008298804496": {
+   "description": "White Castle Jalapeno Cheese Sliders",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0018473900149": {
+   "description": "Hint\u00ae The Classics Variety Pack",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0019305204570": {
+   "description": "Zuru Oosh\u2122 Slime\u2122 Tub",
+   "categories": [
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0020318900000": {
+   "description": "Fresh Pork Boston Butt Roast",
+   "categories": [
+    "Meat & Seafood",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0021321700000": {
+   "description": "Moist & Tender Boneless Half Pork Loin",
+   "categories": [
+    "Meat & Seafood",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0022335800000": {
+   "description": "Pork Tenderloin",
+   "categories": [
+    "Meat & Seafood",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0023339000000": {
+   "description": "Hormel Bone-In Pork Shoulder Butt",
+   "categories": [
+    "Meat & Seafood",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0023357510000": {
+   "description": "Home Chef Cold Popcorn Chicken",
+   "categories": [
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0024336800000": {
+   "description": "Moist & Tender\u2122 Pork Boneless Center Cut Roast",
+   "categories": [
+    "Meat & Seafood",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0027931550000": {
+   "description": "Whole Cooked Lobster",
+   "categories": [
+    "Meat & Seafood"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0028648060000": {
+   "description": "Point Reyes Original Blue Cheese",
+   "categories": [
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0029647710000": {
+   "description": "Murray's Blue Stilton Cheese",
+   "categories": [
+    "Deli",
+    "Deli"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0030573055620": {
+   "description": "Preparation H Hemorrhoid Wipes with Witch Hazel for Skin Irritation Relief",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0030573284093": {
+   "description": "Preparation H Hemorrhoid Cooling Gel with Aloe for Fast Discomfort Relief",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0030573286893": {
+   "description": "Preparation H Multi-Symptom Relief Hemorrhoidal Cream",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0030573287193": {
+   "description": "Preparation H Hemorrhoid Ointment, Itching, Burning and Discomfort Relief",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0063347260224": {
+   "description": "Clearblue Menopause Stage Indicator",
+   "categories": [
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0063748002084": {
+   "description": "Atkins\u2122 Protein Meal Bar Chocolate Peanut Butter",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0063748002502": {
+   "description": "Atkins\u2122 Protein Meal Bar Chocolate Peanut Butter",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0063748004504": {
+   "description": "Atkins Peanut Butter Granola Meal Protein Bar",
+   "categories": [
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0065334133514": {
+   "description": "Pure Green Turmeric Tonic Shot",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0065577201827": {
+   "description": "Toastmaster Nonstick Griddle 10\" x 16\" Black",
+   "categories": [
+    "Kitchen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0065722720617": {
+   "description": "Essentia Ionized Alkaline Water",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0066651933490": {
+   "description": "Tommee Tippee\u00ae Fun Style Pacifier and Fun Style Night Glow in the Dark Pacifier",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0066651961157": {
+   "description": "Tommee Tippee\u00ae Ultra-Light Pacifiers",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0067628001132": {
+   "description": "Hempz Age Defying Herbal Body Moisturizer",
+   "categories": [
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0067628002709": {
+   "description": "Hempz Sweet Pineapple & Honey Melon Herbal Body Moisturizer",
+   "categories": [
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0071833422007": {
+   "description": "Desert Essence\u00ae 100% Pure Jojoba Oil",
+   "categories": [
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0080812414104": {
+   "description": "Mrs.Meyer's Clean Day \u00ae Hand Soap Basil",
+   "categories": [
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0080812470057": {
+   "description": "Mrs. Meyer's Clean Day \u00ae Hand Soap Lilac",
+   "categories": [
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081000346108": {
+   "description": "LILY'S Chocolate Salted Caramel Flavored No Sugar Added Baking Chips Bag",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081005729013": {
+   "description": "Beyond Meat\u00ae Cookout Classic\u2122 Plant-Based Burger Patties",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081005729082": {
+   "description": "Beyond Popcorn Chicken\u00ae Plant-Based Bites Original",
+   "categories": [
+    "Natural & Organic",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081006371050": {
+   "description": "Poppi Classic Cola Prebiotic Soda Cans",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081009494015": {
+   "description": "eat Meati\u00ae MushroomRoot\u2122 Classic Steaks",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081009494016": {
+   "description": "eat Meati\u2122 Classic Cutlet",
+   "categories": [
+    "Frozen",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081009494018": {
+   "description": "eat Meati\u00ae MushroomRoot\u2122 Carne Asada Steaks",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081012129000": {
+   "description": "Zevo MAX Flying Insect Indoor Fly Trap Easy, Mess-Free Solution",
+   "categories": [
+    "Cleaning Products",
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081012129015": {
+   "description": "Zevo On Body Mosquito Repellent + Tick Repellent - Bug Spray - 6oz Aerosol Spray",
+   "categories": [
+    "Health",
+    "Cleaning Products",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081012129017": {
+   "description": "Zevo On Body Mosquito Repellent + Tick Repellent - Bug Spray - Pump Spray",
+   "categories": [
+    "Cleaning Products",
+    "Health",
+    "Cleaning Products"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081012129023": {
+   "description": "Zevo Ant, Roach & Fly Multi-Insect Trigger Spray",
+   "categories": [
+    "Cleaning Products",
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081012129027": {
+   "description": "Zevo Ant, Roach & Spider Crawling Insect Aerosol Spray",
+   "categories": [
+    "Cleaning Products",
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081012129047": {
+   "description": "Zevo Flying Insect Killer Spray",
+   "categories": [
+    "Cleaning Products",
+    "Cleaning Products",
+    "Health"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081106801100": {
+   "description": "Dr Teal's\u00ae Soothe & Sleep Foaming Bath with Pure Epsom Salt & Lavender",
+   "categories": [
+    "Personal Care",
+    "Beauty"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081106801101": {
+   "description": "Dr Teal\u2019s\u00ae Relax & Relief Foaming Bath with Pure Epsom Salt, Eucalyptus & Spearmint",
+   "categories": [
+    "Personal Care",
+    "Beauty"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081106801500": {
+   "description": "Dr Teal's\u00ae Foaming Bath with Pink Himalayan Salt, Restore & Replenish with Pure Epsom Salt",
+   "categories": [
+    "Beauty",
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081106801501": {
+   "description": "Dr Teal's\u00ae Foaming Bath with Pure Epsom Salt, Nourish & Protect with Coconut Oil",
+   "categories": [
+    "Beauty",
+    "Personal Care"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081157202397": {
+   "description": "SodaStream\u00ae Diet Zerp Sugar Energy Flavor Sodamix",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081157202766": {
+   "description": "Sodastream Diet Carbonated Drink Makers Drink Mix",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0081669702019": {
+   "description": "Impossible\u00ae Plant-Based Frozen Savory Sausage Patties",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081696002262": {
+   "description": "Tiesta Tea\u00ae Superior Matcha Green Tea",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001175": {
+   "description": "Chobani\u00ae Low-Fat Greek Yogurt Peach Drink 7oz",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001177": {
+   "description": "Chobani\u00ae Low-Fat Greek Yogurt Mango Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001558": {
+   "description": "Chobani Zero Added Sugar Strawberries & Cream Greek Yogurt Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001561": {
+   "description": "Chobani Zero Added Sugar Tropical Punch Flavored Greek Yogurt Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001774": {
+   "description": "Chobani 20G Protein Lowfat Greek Yogurt Drink Vanilla",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081829001872": {
+   "description": "Chobani Zero Added Sugar Cookies & Cream Flavored Greek Yogurt Drink",
+   "categories": [
+    "Dairy"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0081985802002": {
+   "description": "Core Hydration Perfectly Balanced Bottled Water",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0084004530022": {
+   "description": "Pacha Soap Co. Sand & Sea Bar Soap",
+   "categories": [
+    "Personal Care",
+    "Beauty",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0084223400670": {
+   "description": "Gardein Ultimate Plant-Based Meatballs Frozen Meat Alternative",
+   "categories": [
+    "Canned & Packaged",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0084223400719": {
+   "description": "Gardein Ultimate Plant-Based Buffalo Chick'n Wings, Frozen Meat Alternative",
+   "categories": [
+    "Natural & Organic",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0085000288742": {
+   "description": "Blueberry Muffin Magic Spoon Protein Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085000964783": {
+   "description": "Hu\u00ae Organic Baking Chocolate Gems",
+   "categories": [
+    "Natural & Organic",
+    "Baking Goods"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085000994283": {
+   "description": "BODYARMOR\u00ae SportWater Sports Drink Bottles",
+   "categories": [
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085001599600": {
+   "description": "Lily's Toaster Grills\u00ae American Grilled Cheese Sandwich",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085001599601": {
+   "description": "Lily's Toaster Grills\u00ae Grilled Ham & Cheese Frozen Sandwiches",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0085001746818": {
+   "description": "Catalina Crunch\u00ae Protein Cereal Chocolate Peanut Butter",
+   "categories": [
+    "Breakfast",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085002026043": {
+   "description": "Actual Veggies\u00ae Purple Roots Veggie Burgers",
+   "categories": [
+    "Natural & Organic",
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0085002770226": {
+   "description": "Olipop\u00ae Cherry Cola Prebiotic Soda Can, Refrigerated",
+   "categories": [
+    "Beverages",
+    "Natural & Organic",
+    "Beverages",
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085002803503": {
+   "description": "Everything Legendary Plnt based Cheese Burgers",
+   "categories": [
+    "Frozen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0085004721780": {
+   "description": "Yulu Foods\u2122 Classic Milk Tea Boba Kit",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085004721781": {
+   "description": "Yulu Foods\u2122 Taro Milk Tea Boba Kit",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085004721782": {
+   "description": "Yulu Foods\u2122 Matcha Milk Tea Boba Kit",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085012500847": {
+   "description": "Pacha Soap Co.\u00ae Jasmine Gardenia Classic Froth Bomb\u00ae",
+   "categories": [
+    "Beauty",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085012500848": {
+   "description": "Pacha Soap Co. Sweet Honey Almond Classic Froth Bath Bomb",
+   "categories": [
+    "Beauty",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085337100643": {
+   "description": "Jade Leaf\u00ae Organic Japanese Matcha Latte Mix",
+   "categories": [
+    "Beverages"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085603500101": {
+   "description": "Dead Sea Warehouse Amazing Minerals Bath Salts",
+   "categories": [
+    "Beauty",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085608800374": {
+   "description": "Seven Sundays Real Maple Sunflower Cereal",
+   "categories": [
+    "Natural & Organic",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085648100318": {
+   "description": "LILY'S Dark Chocolate Style No Sugar Added Baking Chips Bag",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085648100320": {
+   "description": "LILY'S Peanut Butter Flavored No Added Sugar Baking Chips Bag",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085648100389": {
+   "description": "LILY'S Semi-Sweet Chocolate Style No Sugar Added Baking Chips Bag",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085650200608": {
+   "description": "Vive Organic Immunity Boost Original Wellness Shot with Ginger and Turmeric, Potent Wellness Shots",
+   "categories": [
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0085675700642": {
+   "description": "Dash\u00ae Aqua Mini Waffle Maker",
+   "categories": [
+    "Kitchen"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0086376500002": {
+   "description": "Dr. Squatch Natural Bar Soap Bay Rum",
+   "categories": [
+    "Personal Care",
+    "Beauty",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0087863900008": {
+   "description": "Every Man Jack Men's Hydrating Cedarwood Amber Body Wash",
+   "categories": [
+    "Personal Care",
+    "Beauty",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491201426": {
+   "description": "Honey Bunches of Oats Honey Roasted Family Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491201427": {
+   "description": "Honey Bunches of Oats with Almonds Breakfast Cereal - 18 oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491211171": {
+   "description": "Honeycomb Cereal - 12.5 oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491211470": {
+   "description": "Post\u00ae Raisin Bran Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491224926": {
+   "description": "Honey Bunches of Oats with Almonds Mega Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491224927": {
+   "description": "Honey Bunches of Oats Honey Roasted Mega Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491235618": {
+   "description": "Cocoa Pebbles Mega Size Chocolate Cereal - 27.5 oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491235619": {
+   "description": "Fruity Pebbles Mega Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491237927": {
+   "description": "Fruity Pebbles Family Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491237928": {
+   "description": "Cocoa Pebbles Family Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491239406": {
+   "description": "Marshmallow Fruity Pebbles Family Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491241648": {
+   "description": "Honeycomb Family Size Cereal",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491243494": {
+   "description": "Fruity Pebbles Cereal Bag",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491243496": {
+   "description": "Cocoa Pebbles Cereal Bag",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088491243818": {
+   "description": "Honey Bunches of Oats Honey Roasted Cereal Bag",
+   "categories": [
+    "Breakfast",
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088491246291": {
+   "description": "Honey Bunches of Oats Chocolate Cereal - 12 oz",
+   "categories": [
+    "Breakfast"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088513169322": {
+   "description": "NUK\u00ae Orthodontic Baby Pacifier Value Pack",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088513169330": {
+   "description": "NUK\u00ae Orthodontic Pacifiers, 18-36 Months, 2 Pack",
+   "categories": [
+    "Baby"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088877701911": {
+   "description": "Top Flight Office Works Push Pins Clear",
+   "categories": [
+    "Office, School, & Crafts",
+    "Office, School, & Crafts"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  },
+  "0088877705892": {
+   "description": "SDS for HD Designs 13 Inch Scalloped Footed Wood Board",
+   "categories": [
+    "Kitchen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0088877710444": {
+   "description": "SDS for HD Designs 10 Inch Scalloped Footed Wood Board",
+   "categories": [
+    "Kitchen"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0089569700254": {
+   "description": "Raw Sugar\u00ae Watermelon + Fresh Mint Moisture Loving Body Wash",
+   "categories": [
+    "Beauty",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0089569700261": {
+   "description": "Raw\u00ae Sugar Living Green Tea + Cucumber + Aloe Vera Sensitive Skin Simply Body Wash",
+   "categories": [
+    "Beauty",
+    "Personal Care",
+    "Natural & Organic"
+   ],
+   "items": 1,
+   "has_regular_price": false,
+   "verdict": "in_catalogue_no_store_evidence",
+   "_why": "no price at this location, and the first run did not retain stock levels, so carriage is undetermined from this report"
+  },
+  "0089758100036": {
+   "description": "Dandies\u00ae Vegan Marshmallows",
+   "categories": [
+    "Natural & Organic",
+    "Baking Goods"
+   ],
+   "items": 1,
+   "has_regular_price": true,
+   "verdict": "priced_at_this_store",
+   "_why": "the location returned a regular price"
+  }
+ }
+}
