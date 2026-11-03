@@ -9,7 +9,9 @@
   "sale_price": "",
   "product_title": "Trident Seafoods® Alaskan Salmon Burgers",
   "size": "4 ct / 11.2 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -26,8 +28,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Kroger® Fresh Farm Raised Atlantic Salmon Fillet",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$22.48",
   "approximate_each_regular_price": "$29.98",
   "price_basis": "about each on sale, sold by weight",
@@ -43,7 +49,9 @@
   "sale_price": "",
   "product_title": "Kroger® Farm Raised Seafood Stuffed Atlantic Salmon Portions",
   "size": "12 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -61,7 +69,9 @@
   "sale_price": "",
   "product_title": "Kroger® Fresh Farm Raised Atlantic Salmon Center Cut Loin",
   "size": "16 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -79,7 +89,9 @@
   "sale_price": "",
   "product_title": "Private Selection® Atlantic Salmon Seafood Stuffed Large Pan",
   "size": "30 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
    "11 more options"
   ],
@@ -98,7 +110,9 @@
   "sale_price": "",
   "product_title": "Private Selection® Seafood Stuffed Chilean Atlantic Salmon",
   "size": "15 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
    "11 more options"
   ],
@@ -117,7 +131,9 @@
   "sale_price": "",
   "product_title": "Private Selection® Shallot and Herb Butter Chilean Atlantic Salmon",
   "size": "10 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
    "11 more options"
   ],
@@ -136,7 +152,9 @@
   "sale_price": "",
   "product_title": "Kroger® Fresh Farm Raised Atlantic Salmon Fillet Portion",
   "size": "16 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -154,7 +172,9 @@
   "sale_price": "",
   "product_title": "Kroger® Wild Caught Sockeye Salmon Portions",
   "size": "8 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -171,8 +191,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Organic Salmon Filet",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$16.99",
   "approximate_each_regular_price": "$18.98",
   "price_basis": "about each on sale, sold by weight",
@@ -188,7 +212,9 @@
   "sale_price": "",
   "product_title": "Kroger® Farm Raised Atlantic Salmon Portions",
   "size": "33 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -206,9 +232,10 @@
   "sale_price": "$12.99",
   "product_title": "Kroger® Wild Caught Pink Salmon Boneless and Skin On BIG DEAL!",
   "size": "32 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -225,7 +252,9 @@
   "sale_price": "$9.99",
   "product_title": "Aqua Star Wild Pacific Salmon Fillet",
   "size": "1.25 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -242,8 +271,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Rushing Waters Fisheries Smoke House Cracked Pepper Salmon",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$11.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -259,7 +292,9 @@
   "sale_price": "$8.99",
   "product_title": "Sea Cuisine® Citrus Herb Atlantic Salmon",
   "size": "8 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -277,7 +312,9 @@
   "sale_price": "$7.99",
   "product_title": "Lemon Pepper Salmon",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -295,7 +332,9 @@
   "sale_price": "",
   "product_title": "Korean BBQ Salmon",
   "size": "10 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -313,7 +352,9 @@
   "sale_price": "$7.99",
   "product_title": "Teriyaki Salmon",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -331,7 +372,9 @@
   "sale_price": "",
   "product_title": "Baked Salmon Entree",
   "size": "10 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -349,7 +392,9 @@
   "sale_price": "$8.99",
   "product_title": "Sea Cuisine® Honey Chipotle Salmon",
   "size": "10.5 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -367,9 +412,10 @@
   "sale_price": "",
   "product_title": "No Name® Original Boneless and Skinless Salmon Fillets",
   "size": "20 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -386,9 +432,10 @@
   "sale_price": "$8.99",
   "product_title": "Sea Cuisine® Teriyaki Sesame Salmon",
   "size": "9 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -404,8 +451,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Rushing Waters Fisheries Smoke House Cajun Salmon",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$11.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -421,10 +472,12 @@
   "sale_price": "$14.99",
   "product_title": "Simple Truth® Wild Caught Sockeye Salmon Portions Frozen Skin On",
   "size": "12 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "5 more sizes ",
-   " 17 more flavors"
+   "5 more sizes",
+   "17 more flavors"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -442,10 +495,13 @@
   "product_title": "Kroger® Farm Raised Atlantic Salmon Portions Frozen BIG DEAL!",
   "size": "32 ounces",
   "deal_lines": [
+   "Save $2 each when you buy 3 or more"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "5 more sizes ",
-   " 17 more flavors",
-   "Save $2 each when you buy 3 or more",
+   "5 more sizes",
+   "17 more flavors",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -464,6 +520,8 @@
   "product_title": "Smart Way™ Small Rectangle Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -480,6 +538,8 @@
   "product_title": "Smart Way™ Small Square Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -496,6 +556,8 @@
   "product_title": "Smart Way™ Medium Square Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -512,6 +574,8 @@
   "product_title": "Smart Way™ Small Twist Top Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -528,6 +592,8 @@
   "product_title": "Smart Way™ Large Deep Dish Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -544,6 +610,8 @@
   "product_title": "Smart Way™ BPA-Free Large Twist Top Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -560,6 +628,8 @@
   "product_title": "Smart Way™ Small Deep Dish Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -576,6 +646,8 @@
   "product_title": "Smart Way™ Mini Deep Dish Storage Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -592,6 +664,8 @@
   "product_title": "Rubbermaid® TakeAlongs® Square Food Storage Containers, 1.2 L (5.2 Cup), Ruby Red, 4 Pack",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -608,6 +682,8 @@
   "product_title": "Rubbermaid® TakeAlongs® Food Storage Containers, 8 Piece Set",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -624,6 +700,8 @@
   "product_title": "Smart Way™ Large BPA-Free Plastic Rectangle Storage Containers with Lids",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -640,6 +718,8 @@
   "product_title": "Smart Way™ BPA-Free Plastic Meal Prep Containers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -656,6 +736,8 @@
   "product_title": "Rubbermaid® TakeAlongs® Food Storage Containers, 10 Piece Set",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -672,6 +754,8 @@
   "product_title": "Rubbermaid EasyStore Square 14.66-Cup Container with Lid",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -688,6 +772,8 @@
   "product_title": "Ball Leak-Proof Storage Lids, Regular Mouth, 5.5 oz.",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -704,6 +790,8 @@
   "product_title": "Snapware® Total Solution® Food Storage Container - Clear",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -720,6 +808,8 @@
   "product_title": "1.1g Fns Canister",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -736,6 +826,8 @@
   "product_title": "GoodCook® Meal Prep Food Storage Containers With Lids - Clear/Black",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -752,6 +844,8 @@
   "product_title": "Kroger® Slider Stand and Fill Gallon Storage Bags",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -768,6 +862,8 @@
   "product_title": "Rubbermaid EasyStore Rectangle 28.8-Cup Container with Lid",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -784,6 +880,8 @@
   "product_title": "Kroger® Durable Food Storage with Side Latching Lids",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -800,6 +898,8 @@
   "product_title": "Handi-foil® 5 Storage Containers with Folded Lids",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -816,6 +916,8 @@
   "product_title": "GoodCook® Meal Prep Two-Compartment Food Storage Containers - Teal",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -832,6 +934,8 @@
   "product_title": "Rubbermaid Pack & Go 1.1 L Ribbon Bento Box with Mini Bite",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -847,7 +951,9 @@
   "sale_price": "$9.99",
   "product_title": "Gevalia House Blend Medium Roast Ground Coffee, Bag",
   "size": "12 OZ",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -866,8 +972,11 @@
   "product_title": "Starbucks® House Blend Medium Roast Ground Coffee",
   "size": "12 OZ",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -885,7 +994,9 @@
   "sale_price": "",
   "product_title": "Dunkin’ Original Blend Medium Roast Ground Coffee",
   "size": "12 Ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -903,7 +1014,9 @@
   "sale_price": "",
   "product_title": "Folgers Classic Roast Ground Coffee, Medium Roast",
   "size": "25.9 Ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -922,8 +1035,11 @@
   "product_title": "STARBUCKS Breakfast Blend Ground Coffee 12oz Bag",
   "size": "12 oz",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -941,7 +1057,9 @@
   "sale_price": "$7.29",
   "product_title": "Café Bustelo 10 Ounce Brick Each",
   "size": "10 Ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -959,7 +1077,9 @@
   "sale_price": "$6.99",
   "product_title": "Seattle's Best Coffee Breakfast Blend Medium Roast Ground Coffee",
   "size": "12 OZ",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -978,8 +1098,11 @@
   "product_title": "Dunkin’ Original Blend Medium Roast Ground Coffee",
   "size": "18 Ounces",
   "deal_lines": [
+   "Save $2 each when you buy 3 or more"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Save $2 each when you buy 3 or more",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -997,7 +1120,9 @@
   "sale_price": "$9.99",
   "product_title": "The Original Donut Shop Regular Ground 12oz",
   "size": "12 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1015,7 +1140,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® House Blend Medium Dark Roast Ground Coffee",
   "size": "11 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1033,7 +1160,9 @@
   "sale_price": "$8.79",
   "product_title": "Eight O' Clock Original Ground Coffee 11 oz",
   "size": "11 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1051,9 +1180,10 @@
   "sale_price": "",
   "product_title": "Starbucks® Breakfast Blend Medium Roast Ground Coffee",
   "size": "28 OZ",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -1070,7 +1200,9 @@
   "sale_price": "$16.99",
   "product_title": "Starbucks® Single-Origin Sumatra Dark Roast Ground Coffee",
   "size": "18 OZ",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1089,8 +1221,11 @@
   "product_title": "STARBUCKS Medium Roast Pike Place Ground Coffee 12oz Bag",
   "size": "12 oz",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1109,9 +1244,11 @@
   "product_title": "Starbucks® Single-Origin Colombia Medium Roast Ground Coffee",
   "size": "12 OZ",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Low Stock",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1130,8 +1267,11 @@
   "product_title": "Starbucks® Vanilla Flavored Ground Coffee",
   "size": "11 OZ",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1149,7 +1289,9 @@
   "sale_price": "$6.00",
   "product_title": "Kroger® Hazelnut Medium Roast Ground Coffee",
   "size": "11 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1167,9 +1309,10 @@
   "sale_price": "$9.99",
   "product_title": "Gevalia French Roast Dark Roast Ground Coffee, Bag",
   "size": "12 OZ",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -1187,8 +1330,11 @@
   "product_title": "Starbucks® Italian Roast Dark Roast Ground Coffee",
   "size": "12 OZ",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1207,8 +1353,11 @@
   "product_title": "Private Selection® Mocha Latte Medium Roast Ground Coffee",
   "size": "12 oz",
   "deal_lines": [
+   "Save $2 each when you buy 3 or more"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Save $2 each when you buy 3 or more",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1226,7 +1375,9 @@
   "sale_price": "$16.99",
   "product_title": "Starbucks® Italian Roast Dark Roast Ground Coffee",
   "size": "18 OZ",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1244,9 +1395,10 @@
   "sale_price": "",
   "product_title": "Tim Hortons® Dark Roast Ground Coffee",
   "size": "12 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -1264,8 +1416,11 @@
   "product_title": "Private Selection® Peppermint Mocha Medium Dark Roast Ground Coffee",
   "size": "12 oz",
   "deal_lines": [
+   "Save $2 each when you buy 3 or more"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Save $2 each when you buy 3 or more",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -1283,7 +1438,9 @@
   "sale_price": "$9.49",
   "product_title": "Eight O'Clock Coffee™ French Roast Dark Roast Ground Coffee",
   "size": "18 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -1301,9 +1458,10 @@
   "sale_price": "$9.99",
   "product_title": "Gevalia Colombia Medium Roast Ground Coffee, Bag",
   "size": "12 OZ",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -1321,6 +1479,8 @@
   "product_title": "Duracell Coppertop AA Alkaline Batteries",
   "size": "16 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1337,7 +1497,10 @@
   "product_title": "Energizer Max AA Alkaline Batteries",
   "size": "1",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1355,9 +1518,9 @@
   "sale_price": "$17.99",
   "product_title": "Duracell Coppertop AAA Alkaline Batteries",
   "size": "16 ct",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1374,7 +1537,10 @@
   "product_title": "Energizer Max AA Alkaline Batteries",
   "size": "1 ea",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1393,7 +1559,10 @@
   "product_title": "Energizer Max AAA Alkaline Batteries",
   "size": "1",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1412,6 +1581,8 @@
   "product_title": "Duracell Coppertop D Alkaline Batteries",
   "size": "4 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1428,7 +1599,10 @@
   "product_title": "Energizer Max AAA Alkaline Batteries",
   "size": "1",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1447,6 +1621,8 @@
   "product_title": "Duracell Coppertop AA Alkaline Batteries",
   "size": "24 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1463,7 +1639,10 @@
   "product_title": "Energizer Max AAA Alkaline Batteries",
   "size": "8 pk",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1482,7 +1661,10 @@
   "product_title": "Energizer Max AA Alkaline Batteries",
   "size": "1 ea",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1501,7 +1683,10 @@
   "product_title": "Energizer Max 9V Alkaline Batteries",
   "size": "1",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1520,7 +1705,10 @@
   "product_title": "Energizer Max D Alkaline Batteries",
   "size": "4 pk",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1539,6 +1727,8 @@
   "product_title": "Kroger® Alkaline AA Batteries Value Pack",
   "size": "36 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1555,7 +1745,10 @@
   "product_title": "Energizer Max C Alkaline Batteries",
   "size": "4 pk",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1574,7 +1767,10 @@
   "product_title": "Energizer Max 9V Alkaline Batteries",
   "size": "2 pk",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1593,6 +1789,8 @@
   "product_title": "Kroger® Alkaline AAA Batteries Value Pack",
   "size": "36 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1609,7 +1807,10 @@
   "product_title": "Energizer Ultimate Lithium 9V Lithium Battery",
   "size": "1 Count",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1628,7 +1829,10 @@
   "product_title": "Energizer Ultimate Child Shield 2032 3V Lithium Coin Batteries",
   "size": "2 Count",
   "deal_lines": [
-   "Save $1.00 on Energizer",
+   "Save $1.00 on Energizer"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -1647,6 +1851,8 @@
   "product_title": "Duracell Coppertop AA Alkaline Batteries",
   "size": "8 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1663,6 +1869,8 @@
   "product_title": "Rayovac High Energy AA Alkaline Batteries",
   "size": "4 Count",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1679,6 +1887,8 @@
   "product_title": "Kroger® Alkaline AA Batteries",
   "size": "8 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1695,6 +1905,8 @@
   "product_title": "Duracell Coppertop AAA Alkaline Batteries",
   "size": "8 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1711,6 +1923,8 @@
   "product_title": "Energizer Max AA Alkaline Batteries",
   "size": "32 Count",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1727,6 +1941,8 @@
   "product_title": "Kroger® Alkaline AAA Batteries",
   "size": "8 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1743,6 +1959,8 @@
   "product_title": "Philips 10-Watt (60-Watt) A19 LED Light Bulb - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1759,6 +1977,8 @@
   "product_title": "Everyday Living® 10.5-Watt (60-Watt) A19 LED Light Bulb - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1775,6 +1995,8 @@
   "product_title": "Philips 9-Watt (60-Watt) A19 LED Light Bulb - Daylight (5000K)",
   "size": "4 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1791,6 +2013,8 @@
   "product_title": "Everyday Living® 10.5-Watt (60-Watt) A19 LED Light Bulb - Daylight (5000K)",
   "size": "4 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1807,6 +2031,8 @@
   "product_title": "Philips 6.5-Watt (40-Watt) A19 LED Light Bulb - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1823,6 +2049,8 @@
   "product_title": "Everyday Living® 14-Watt (100-Watt) A19 LED Light Bulb - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1839,6 +2067,8 @@
   "product_title": "Everyday Living® 12.5-Watt (100-Watt) A19 LED Light Bulb - Daylight (5000K)",
   "size": "4 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1855,6 +2085,8 @@
   "product_title": "Everyday Living 60-Watt (10.5-Watt) A19 Light Bulb Daylight - 10 Pack",
   "size": "10 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1871,6 +2103,8 @@
   "product_title": "Everyday Living® 11.5-Watt (75-Watt) A19 LED - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1886,9 +2120,9 @@
   "sale_price": "",
   "product_title": "Philips 40-Watt A15 Incandescent Dimmable Light Bulb - Soft White (2700K)",
   "size": "2 Pk",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1905,6 +2139,8 @@
   "product_title": "Philips 11.5-Watt (100-Watt) A19 LED Dimmable Flicker Free Light Bulb - Soft White (2700K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1920,9 +2156,9 @@
   "sale_price": "",
   "product_title": "Philips 25-Watt T7 Incandescent Dimmable Light Bulb - Soft White (2700K)",
   "size": "1 pk",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1938,9 +2174,9 @@
   "sale_price": "",
   "product_title": "Philips 8-Watt (60-Watt) 3-Way A21 LED Light Bulb - Soft White (2700K)",
   "size": "1 pk",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1957,6 +2193,8 @@
   "product_title": "Philips 3.8-Watt (40-Watt) G25 LED Light Bulb - Soft White (2700K)",
   "size": "3 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1973,6 +2211,8 @@
   "product_title": "Everyday Living® 9-Watt (65-Watt) BR30 Reflector LED Light Bulb - Soft White (2700K)",
   "size": "3 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -1989,6 +2229,8 @@
   "product_title": "Philips 5-Watt (40-Watt) A19 LED Dimmable Flicker Free Light Bulb - Soft White (2700K)",
   "size": "4 Pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2004,9 +2246,9 @@
   "sale_price": "",
   "product_title": "Philips 10-Watt (65-Watt) Daylight (5000K) BR40 Reflector LED Light Bulb -",
   "size": "1 pk",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2023,6 +2265,8 @@
   "product_title": "Philips 3.8-Watt (40-Watt) G25 Globe LED Light Bulb - Daylight (5000K)",
   "size": "3 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2039,6 +2283,8 @@
   "product_title": "Philips 5-Watt (40-Watt) A19 LED Dimmable Flicker Free Light Bulb - Soft White (2700K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2055,6 +2301,8 @@
   "product_title": "Philips 11.5-Watt (100-Watt) A19 LED Dimmable Flicker Free Light Bulb - Soft White (2700K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2071,6 +2319,8 @@
   "product_title": "Philips 5.6-Watt (40-Watt) A19 LED Dimmable Flicker Free Light Bulb - Soft White (2700K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2087,6 +2337,8 @@
   "product_title": "Philips 5-Watt (40-Watt) A15 LED Soft White (2700K) Light Bulb",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2103,6 +2355,8 @@
   "product_title": "Philips 0.5-Watt (7-Watt) C7 LED Nightlight Light Bulb - Soft White (2700K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2119,6 +2373,8 @@
   "product_title": "Philips 11.5-Watt (100-Watt) A19 LED Dimmable Flicker Free Light Bulb - Daylight (5000K)",
   "size": "2 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2135,6 +2391,8 @@
   "product_title": "Alstoemeria Floral Boquet Rainbow",
   "size": "12 stem",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2151,6 +2409,8 @@
   "product_title": "Fresh Pink Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2167,6 +2427,8 @@
   "product_title": "Fresh Red Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2183,6 +2445,8 @@
   "product_title": "Fresh Orange Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2199,6 +2463,8 @@
   "product_title": "Fresh White Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2215,6 +2481,8 @@
   "product_title": "Bella Mixed Flower Bouquet",
   "size": "10-15-stem",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2231,6 +2499,8 @@
   "product_title": "Fresh Yellow Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2247,6 +2517,8 @@
   "product_title": "Bubble Plastic Balloon",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2263,6 +2535,8 @@
   "product_title": "Bloom Haus Rainbow Mini Carnation Flower Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2279,6 +2553,8 @@
   "product_title": "Lisianthus",
   "size": "5-stem",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2295,6 +2571,8 @@
   "product_title": "Bloom Haus Poms Flower Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2311,6 +2589,8 @@
   "product_title": "Bloom Haus Antique Hydrangea Flower Bouquet",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2327,6 +2607,8 @@
   "product_title": "Bouquet Mum",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2343,6 +2625,8 @@
   "product_title": "Bloom Haus White Disbud Flower Bunch",
   "size": "8-Stem",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2359,6 +2643,8 @@
   "product_title": "Alstroemeria Lily Bunch",
   "size": "1 each",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2375,6 +2661,8 @@
   "product_title": "Harvest Moon Bouquet - Assorted",
   "size": "27-stem",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2391,6 +2679,8 @@
   "product_title": "Fresh Hot Pink Roses - Dozen Bunch",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2407,6 +2697,8 @@
   "product_title": "Fall Mega Mum Mixed Bouquet - Orange / Yellow / Green",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2423,6 +2715,8 @@
   "product_title": "Potted Blooming Orchid",
   "size": "5 in / 1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2439,6 +2733,8 @@
   "product_title": "Fall Garden Flowering Potted Plant",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2455,6 +2751,8 @@
   "product_title": "Fiore Mixed Flower Bouquet",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2471,6 +2769,8 @@
   "product_title": "Blooming Potted Plant",
   "size": "4-inch pot",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2487,6 +2787,8 @@
   "product_title": "Assorted Blooming Plant in Tin",
   "size": "4.5-inch pot",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2503,6 +2805,8 @@
   "product_title": "Haunted Woods Bouquet",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2519,6 +2823,8 @@
   "product_title": "Project Partners® Precision Screwdriver Set",
   "size": "6 pc",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2535,6 +2841,8 @@
   "product_title": "Project Partners 6 in. Long Nose Pliers",
   "size": "1 ct / 6 in",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2551,6 +2859,8 @@
   "product_title": "Everyday Living® Premium Rolling Pin",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2567,6 +2877,8 @@
   "product_title": "Everyday Living® Toothpick Holder",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2583,6 +2895,8 @@
   "product_title": "Everyday Living® Pizza Cutter",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2599,6 +2913,8 @@
   "product_title": "Everday Living® Mandoline Slicer",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2615,6 +2931,8 @@
   "product_title": "Everyday Living® Kitchen Utensil Set",
   "size": "30 pc",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2631,6 +2949,8 @@
   "product_title": "OXO SW Stainless Steel Turner",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2647,6 +2967,8 @@
   "product_title": "OXO Softworks Silicone Jar Spatula",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2663,6 +2985,8 @@
   "product_title": "KitchenAid Pizza Wheel - Black",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2678,9 +3002,9 @@
   "sale_price": "",
   "product_title": "Touch Chip Clip Asst",
   "size": "1 ct",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2697,6 +3021,8 @@
   "product_title": "Everyday Living® Silicone Spatula Set - Blue",
   "size": "2 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2713,6 +3039,8 @@
   "product_title": "OXO SoftWorks® Etched Zester",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2729,6 +3057,8 @@
   "product_title": "Everyday Living® Waiters Corkscrew",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2744,9 +3074,9 @@
   "sale_price": "",
   "product_title": "Everyday Living® Ice Pop Maker Set",
   "size": "4 pk",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2763,6 +3093,8 @@
   "product_title": "Everday Living® Mini Peeler Set",
   "size": "3 pk",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2779,6 +3111,8 @@
   "product_title": "Everday Living® Locking Tongs",
   "size": "12 in",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2795,6 +3129,8 @@
   "product_title": "Everday Living® Nylon Turner",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2810,9 +3146,9 @@
   "sale_price": "",
   "product_title": "Everyday Living® Turner",
   "size": "1 ct",
-  "deal_lines": [
-   "Low Stock"
-  ],
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2829,6 +3165,8 @@
   "product_title": "BLACK + DECKER 6-Speed Hand Mixer with Storage Case",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2845,6 +3183,8 @@
   "product_title": "Everyday Living® Turner",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2861,6 +3201,8 @@
   "product_title": "OXO Soft Works Silicone Spatula - Black",
   "size": "1 ct",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2877,6 +3219,8 @@
   "product_title": "Everyday Living® Dispenser Bottle",
   "size": "12 fl oz",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2893,6 +3237,8 @@
   "product_title": "Everyday Living® Plastic Funnel Set",
   "size": "3 pc",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -2908,7 +3254,9 @@
   "sale_price": "",
   "product_title": "Kroger® Honeycrisp Apples - 4 Pack Tray",
   "size": "4 ct",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -2925,8 +3273,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Honeycrisp Apple – Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.25",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -2942,7 +3294,9 @@
   "sale_price": "",
   "product_title": "Kroger® Honeycrisp Apples – 3 Pound Bag",
   "size": "3 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -2960,7 +3314,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® Gala Apples – 2 Pound Bag",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -2977,8 +3333,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Cosmic Crisp® Apple – Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.25",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -2993,8 +3353,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Granny Smith Apple - Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$0.95",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3010,7 +3374,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® Honey Crisp Apples - 2 Pound Bag",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3027,8 +3393,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Gala Apple - Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3043,8 +3413,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "SugarBee® Apple Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.40",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3059,8 +3433,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Organic Large Honeycrisp Apple - Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.35",
   "approximate_each_regular_price": "$1.48",
   "price_basis": "about each on sale, sold by weight",
@@ -3076,7 +3454,9 @@
   "sale_price": "",
   "product_title": "Kroger® Cosmic Crisp® Apples - 3 Pound Bag",
   "size": "3 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3094,7 +3474,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® Pink Lady Apples – 2 Pound Bag",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3112,7 +3494,9 @@
   "sale_price": "",
   "product_title": "Quaker® Apple Cinnamon Instant Oatmeal",
   "size": "8 ct",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3129,8 +3513,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Pink Lady® Apple – Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3145,8 +3533,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Envy™ Apple - Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3162,9 +3554,10 @@
   "sale_price": "",
   "product_title": "Kroger® Fuji Apples – 3 Pound Bag",
   "size": "3 lb",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -3181,9 +3574,10 @@
   "sale_price": "",
   "product_title": "Magic Spoon Apple Cinnamon Protein Oatmeal",
   "size": "10.5 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -3199,8 +3593,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Fuji Apple – Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$0.95",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3216,7 +3614,9 @@
   "sale_price": "",
   "product_title": "Organic Large Cosmic Crisp Apple - Each",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3234,7 +3634,9 @@
   "sale_price": "",
   "product_title": "Kroger® Gala Apples – 5 Pound Bag",
   "size": "5 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3252,7 +3654,9 @@
   "sale_price": "$5.49",
   "product_title": "Crunch Pak® Peeled Apple Slices",
   "size": "18 ct / 24 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3270,7 +3674,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® Granny Smith Apples – 2 Pound Bag",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3288,7 +3694,9 @@
   "sale_price": "",
   "product_title": "Kroger® Granny Smith Apples – 5 Pound Bag",
   "size": "5 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3305,8 +3713,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Opal® Apple – Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.00",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3322,7 +3734,9 @@
   "sale_price": "",
   "product_title": "Quaker® Apple & Cinnamon Instant Oatmeal",
   "size": "20 ct",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3339,8 +3753,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Large Red Delicious Apple - Each",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$0.90",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3356,7 +3774,9 @@
   "sale_price": "",
   "product_title": "Small Gala Apple – Each",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3374,7 +3794,9 @@
   "sale_price": "",
   "product_title": "Small Granny Smith Apple - Each",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3393,9 +3815,11 @@
   "product_title": "Mott’s™ Banana Streusel Soft Baked Bars",
   "size": "6 ct / 0.96 oz",
   "deal_lines": [
+   "2 For $5.00"
+  ],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Low Stock",
-   "2 For $5.00",
    "View 3 Offers"
   ],
   "approximate_each_price": "",
@@ -3414,8 +3838,11 @@
   "product_title": "St. Elmo Steak House Blackened Seasoning",
   "size": "5 oz",
   "deal_lines": [
+   "2 For $10.00"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "2 For $10.00",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -3434,8 +3861,11 @@
   "product_title": "Roundy's® Fisherman's Reserve Large Shimp",
   "size": "1 lb",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -3453,7 +3883,9 @@
   "sale_price": "$15.98",
   "product_title": "Kroger® Peeled & Deveined Tail Off White Raw Shrimp",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3471,7 +3903,9 @@
   "sale_price": "$9.99",
   "product_title": "Roundy's® Fisherman's Reserve Jumbo Shrimp",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3489,7 +3923,9 @@
   "sale_price": "$17.98",
   "product_title": "Kroger® Extra Large Shrimp Cooked Peeled and Deveined Tail On BIG DEAL!",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3507,7 +3943,9 @@
   "sale_price": "$15.98",
   "product_title": "Kroger® Jumbo Raw Shrimp Easy Peel Tail On BIG DEAL!",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3525,7 +3963,9 @@
   "sale_price": "",
   "product_title": "Premier Gold Natural Wild Caught Peeled & Deveined Gulf Shrimp",
   "size": "16 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3543,7 +3983,9 @@
   "sale_price": "",
   "product_title": "Large Plain Shrimp Tray",
   "size": "16 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3561,7 +4003,9 @@
   "sale_price": "",
   "product_title": "Private Selection® Wild Caught Extra Large Raw Argentine Red Shrimp Peeled & Deveined",
   "size": "16 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3580,8 +4024,11 @@
   "product_title": "Roundy's® Fisherman's Reserve Cooked Large Shrimp",
   "size": "16 oz",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -3599,7 +4046,9 @@
   "sale_price": "$10.99",
   "product_title": "Simple Truth® Extra Large Shrimp Cooked Peeled & Deveined Tail On",
   "size": "16 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3617,7 +4066,9 @@
   "sale_price": "$10.99",
   "product_title": "Simple Truth® Jumbo Raw Shrimp Peeled & Deveined Tail Off",
   "size": "16 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3635,7 +4086,9 @@
   "sale_price": "$5.99",
   "product_title": "Kroger® Cooked Medium Tail On Peeled and Deveined Shrimp with Cocktail Sauce",
   "size": "7 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3653,7 +4106,9 @@
   "sale_price": "",
   "product_title": "SeaPak Jumbo Coconut Shrimp",
   "size": "16 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3671,7 +4126,9 @@
   "sale_price": "",
   "product_title": "Kroger® Farm Raised Raw Shrimp Scampi Butter",
   "size": "6 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3689,7 +4146,9 @@
   "sale_price": "",
   "product_title": "Small Shrimp Tray with sauce",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3707,7 +4166,9 @@
   "sale_price": "",
   "product_title": "Kroger® Surimi Legs Bowl with Cocktail Sauce",
   "size": "15 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3724,8 +4185,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Cooked Shrimp",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$19.99",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3741,7 +4206,9 @@
   "sale_price": "$10.99",
   "product_title": "Kroger® Crunchy Butterfly Shrimp Frozen",
   "size": "32 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3759,7 +4226,9 @@
   "sale_price": "$14.99",
   "product_title": "Kroger® Beer Battered Shrimp Frozen",
   "size": "24 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3777,7 +4246,9 @@
   "sale_price": "",
   "product_title": "Jumbo Shrimp Cocktail",
   "size": "17 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3796,8 +4267,11 @@
   "product_title": "Seapak Oven Crunchy Butterfly Shrimp",
   "size": "9 oz",
   "deal_lines": [
+   "Buy 1, Get 1 Free"
+  ],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Buy 1, Get 1 Free",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -3815,7 +4289,9 @@
   "sale_price": "$6.99",
   "product_title": "Private Selection® Tempura Shrimp Frozen",
   "size": "10 ct / 12.5 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3833,7 +4309,9 @@
   "sale_price": "",
   "product_title": "Red Lobster Garlic & Herb Stuffed Frozen Shrimp",
   "size": "6.8 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3851,7 +4329,9 @@
   "sale_price": "",
   "product_title": "Seapak Family Butterfly Shrimp",
   "size": "18 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -3870,6 +4350,8 @@
   "product_title": "Fresh Large Ripe Avocado",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -3886,6 +4368,8 @@
   "product_title": "Fresh Seedless Green Grapes",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$7.18",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3902,6 +4386,8 @@
   "product_title": "Seedless Mandarin Clementine Oranges in 3lb Bag",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -3918,6 +4404,8 @@
   "product_title": "Fresh Seedless Red Grapes",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$7.18",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3934,6 +4422,8 @@
   "product_title": "Fresh Bunch of Bananas – 5-7 Bananas",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$1.45",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3950,6 +4440,8 @@
   "product_title": "Fresh Bunch of Organic Bananas – 5-7 Bananas",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$1.66",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -3966,6 +4458,8 @@
   "product_title": "Fresh Red Raspberries - 6 OZ Clamshell",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -3982,6 +4476,8 @@
   "product_title": "Russet Potatoes Bag",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -3998,6 +4494,8 @@
   "product_title": "Fresh Large Lemon - Each",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4014,6 +4512,8 @@
   "product_title": "Kroger® Tri-Color Bell Peppers",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4030,6 +4530,8 @@
   "product_title": "Jumbo Yellow Onions",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$0.45",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4046,6 +4548,8 @@
   "product_title": "Fresh Roma Tomato",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$0.43",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4062,6 +4566,8 @@
   "product_title": "Fresh Blueberries - 1 PT Clamshell",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4078,6 +4584,8 @@
   "product_title": "Fresh Blackberries - 6 OZ Clamshell",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4094,6 +4602,8 @@
   "product_title": "Cilantro",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4110,6 +4620,8 @@
   "product_title": "Green Onions",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4126,6 +4638,8 @@
   "product_title": "Fresh Large Limes - Each",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4142,6 +4656,8 @@
   "product_title": "Kroger® Cut and Peeled Baby Carrots",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4158,6 +4674,8 @@
   "product_title": "Broccoli Crown",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$1.64",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4174,6 +4692,8 @@
   "product_title": "Cucumber",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4190,6 +4710,8 @@
   "product_title": "Jumbo Red Onions",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "$0.70",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4206,6 +4728,8 @@
   "product_title": "Kroger® Fresh Limes Bag",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4222,6 +4746,8 @@
   "product_title": "Fresh Large Green Bell Pepper",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4238,6 +4764,8 @@
   "product_title": "Private Selection® Fresh Colossal Blueberries",
   "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
   "price_basis": "fixed",
@@ -4253,7 +4781,9 @@
   "sale_price": "$10.00",
   "product_title": "Kroger® Farm Raised Tilapia Fillets Frozen BIG DEAL!",
   "size": "32 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4271,7 +4801,9 @@
   "sale_price": "",
   "product_title": "Kroger® Fresh Farm Raised Tilapia Fillets",
   "size": "8 ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4289,7 +4821,9 @@
   "sale_price": "",
   "product_title": "Kroger® Fresh Farm Raised Tilapia Fillets",
   "size": "16 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4306,8 +4840,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Tilapia Fillet",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$9.68",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4323,7 +4861,9 @@
   "sale_price": "$8.99",
   "product_title": "Sea Cuisine® Garlic & Herb Tilapia",
   "size": "9 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4341,7 +4881,9 @@
   "sale_price": "$6.99",
   "product_title": "Simple Truth® Farmed Raised Tilapia Loins",
   "size": "12 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4359,9 +4901,10 @@
   "sale_price": "$10.00",
   "product_title": "Kroger® Wild Caught Flounder Fillets Frozen BIG DEAL!",
   "size": "32 ounces",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -4378,7 +4921,9 @@
   "sale_price": "",
   "product_title": "Farm Raised Lemon Pepper Tilapia Filet",
   "size": "8 Ounces",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4396,9 +4941,10 @@
   "sale_price": "$12.99",
   "product_title": "Morey's Tilapia, Blackened, 4 Fillets, 20 oz",
   "size": "20 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -4415,9 +4961,10 @@
   "sale_price": "$8.99",
   "product_title": "Sea Cuisine® Potato & Herb Cod",
   "size": "8.7 oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -4434,9 +4981,10 @@
   "sale_price": "$18.99",
   "product_title": "Kroger® Wild Caught Pacific Cod Fillets Frozen BIG DEAL!",
   "size": "32 ounces",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",
@@ -4453,7 +5001,9 @@
   "sale_price": "",
   "product_title": "Cole's® Ready To Eat Patagonian Smoked Salmon Fillet with Quinoa",
   "size": "5.6 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4472,9 +5022,11 @@
   "product_title": "Private Selection Halibut 12 oz",
   "size": "6.8x10.2",
   "deal_lines": [
+   "Save $2 each when you buy 3 or more"
+  ],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Low Stock",
-   "Save $2 each when you buy 3 or more",
    "View 1 Offer"
   ],
   "approximate_each_price": "",
@@ -4492,7 +5044,9 @@
   "sale_price": "$11.99",
   "product_title": "Vita Classic™ Atlantic Nova Salmon",
   "size": "8 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4510,7 +5064,9 @@
   "sale_price": "",
   "product_title": "Hickory Smoked Salmon",
   "size": "1 RW",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4528,7 +5084,9 @@
   "sale_price": "",
   "product_title": "Van de Kamp's® Crunchy Breaded Fillets",
   "size": "19 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4546,7 +5104,9 @@
   "sale_price": "",
   "product_title": "Van de Kamp's® Crispy Battered Fillets",
   "size": "19.45 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4565,9 +5125,11 @@
   "product_title": "Sea Cuisine® Honey Chipotle Salmon",
   "size": "22 oz",
   "deal_lines": [
+   "Save $2.00 on Sea Cuisine"
+  ],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
    "SNAP EBT",
-   "Low Stock",
-   "Save $2.00 on Sea Cuisine",
    "View 2 Offers"
   ],
   "approximate_each_price": "",
@@ -4585,7 +5147,9 @@
   "sale_price": "",
   "product_title": "Morey's Wild Salmon Steakhouse, 2 Fillets, Individually Wrapped Frozen Seafood",
   "size": "20 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4603,7 +5167,9 @@
   "sale_price": "",
   "product_title": "Fresh Strawberries – 1 LB Clamshell",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4621,7 +5187,9 @@
   "sale_price": "",
   "product_title": "Fresh Medium Ripe Avocado",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4639,7 +5207,9 @@
   "sale_price": "",
   "product_title": "Seedless California Cuties® Mandarin Clementine Oranges",
   "size": "5 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4657,7 +5227,9 @@
   "sale_price": "",
   "product_title": "Fresh Organic Large Ripe Avocado",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4675,7 +5247,9 @@
   "sale_price": "",
   "product_title": "Fresh Plantain - Single",
   "size": "1 ea",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4692,8 +5266,12 @@
   "regular_price": "",
   "sale_price": "",
   "product_title": "Fresh Large Bartlett Pear",
-  "size": "SNAP EBT",
+  "size": "",
   "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
+   "SNAP EBT"
+  ],
   "approximate_each_price": "$1.35",
   "approximate_each_regular_price": "",
   "price_basis": "about each, sold by weight",
@@ -4709,7 +5287,9 @@
   "sale_price": "",
   "product_title": "Fresh Organic Strawberries - 1 LB clamshell",
   "size": "1 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4727,7 +5307,9 @@
   "sale_price": "",
   "product_title": "Seedless Mandarin Clementine Oranges in 5lb Bag",
   "size": "5 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4745,7 +5327,9 @@
   "sale_price": "",
   "product_title": "Jumbo Fresh Ripe Avocado",
   "size": "1 each",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4763,7 +5347,9 @@
   "sale_price": "",
   "product_title": "Fresh Red Raspberries - 9 OZ Clamshell",
   "size": "9 oz",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4781,7 +5367,9 @@
   "sale_price": "",
   "product_title": "Simple Truth Organic® Fresh Seedless Green White Grapes in Clamshell",
   "size": "2 lb",
-  "deal_lines": [
+  "deal_lines": [],
+  "stock_label": "",
+  "non_deal_labels": [
    "SNAP EBT"
   ],
   "approximate_each_price": "",
@@ -4799,9 +5387,10 @@
   "sale_price": "",
   "product_title": "Naked Boosted Smoothie Strawberry Banana Machine",
   "size": "64 fl oz",
-  "deal_lines": [
-   "SNAP EBT",
-   "Low Stock"
+  "deal_lines": [],
+  "stock_label": "Low Stock",
+  "non_deal_labels": [
+   "SNAP EBT"
   ],
   "approximate_each_price": "",
   "approximate_each_regular_price": "",

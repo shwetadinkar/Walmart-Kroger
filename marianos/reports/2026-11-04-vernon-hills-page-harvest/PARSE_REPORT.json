@@ -6,7 +6,7 @@
   "ok": 279
  },
  "ppm_present": 202,
- "deal_text_present": 137,
+ "deal_text_present": 29,
  "sale_price_present": 67,
  "sold_by_weight": 26,
  "price_basis": {
@@ -15,7 +15,7 @@
   "about each, sold by weight": 23,
   "prices may vary": 3
  },
- "size_present": 231,
+ "size_present": 213,
  "terms": [
   "apples",
   "bananas",

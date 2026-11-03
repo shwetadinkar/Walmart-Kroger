@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 871.
+  counts: Walmart 262, Mariano's 888.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -214,6 +214,38 @@ conflicts, zero contributions refused as unbindable, each attributed to
 `crawl` rather than the API in the per-field provenance. 628 of 649 page UPCs
 bound; the 21 that are not in the API set contributed nothing rather than
 being attached to anything.
+
+**A deal column filled by elimination published badges as offers.** The parser
+took the title, then the next line as the size, then called *everything left
+over* a deal line, and the merge called every deal line not prefixed `Coupon:`
+a volume deal. So on the 1 November page read `volume_deals_description` was
+`Low Stock` on 47 records and `View 2 Offers` on 12 more: 77 of 183 volume
+values were wholly or partly a stock status, a payment eligibility or a
+navigation link. The 22 fields have no column for any of those, so they are
+retained on the page record under `stock_label` and `non_deal_labels` and
+published nowhere. Corrected, the same read gives volume on 120 and digital on
+54, and 88 rows' deal columns change.
+
+The same elimination lost real values in the other direction. A sold-by-weight
+card carries no size, so the line after the title was taken as one whatever it
+said: two digital coupons (`Coupon: $1.79 lb Honeycrisp Apples` and the Bartlett
+pear equivalent) and a number of `Buy 1, Get 1 Free` offers were swallowed into
+`size`, where nothing publishes them. `size` is never taken from the page, so
+none of that reached a published row as a wrong size, but the offers were lost.
+
+**A deal is now identified by what the retailer wrote, not by being left over**,
+and the unrecognised case falls to the size slot rather than into a deal column,
+because that is the safe direction. `classify_card_line` is the one
+implementation of the judgement and the merge imports it, so a `parsed.json`
+produced before the distinction existed re-merges to the same result as one
+produced after. `Cash Back:` is a second digital prefix, not a volume offer.
+
+This surfaced on 4 November from **comparing the two page reads of the same
+store three days apart** - a record whose `size` read a coupon line on 1
+November read `SNAP EBT` on 4 November, which is not a change in the data. That
+comparison is worth keeping as a check: of 64 UPCs rated on both dates, the
+displayed rate was **identical on all 64** and `sale_price` moved on one, which
+is the only reproducibility evidence this enrichment route has.
 
 The merge refused twice before it ran, both times correctly. It will not merge
 a page read onto rows whose store columns differ, so passing a tidied

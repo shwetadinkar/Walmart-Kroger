@@ -140,5 +140,44 @@ class TheCrawlCannotOverreach(unittest.TestCase):
         self.assertEqual(recs[0]["unit_price"], "")
 
 
+class TheDealColumnsTakeOnlyOffers(unittest.TestCase):
+    """The split used to be "anything not prefixed Coupon: is a volume deal".
+
+    That published a stock status into volume_deals_description on 47 rows of
+    the 1 November read and an offer link on 12 more. The split now asks the
+    parser what each line is, so re-merging a page read parsed before that
+    distinction existed gives the same answer as one parsed after it.
+    """
+
+    def test_a_stock_status_reaches_neither_deal_column(self):
+        vol, dig = split_deals(["Low Stock"])
+        self.assertEqual((vol, dig), ("", ""))
+
+    def test_a_payment_eligibility_reaches_neither_deal_column(self):
+        vol, dig = split_deals(["SNAP EBT"])
+        self.assertEqual((vol, dig), ("", ""))
+
+    def test_an_offer_link_reaches_neither_deal_column(self):
+        vol, dig = split_deals(["View 2 Offers"])
+        self.assertEqual((vol, dig), ("", ""))
+
+    def test_a_badge_beside_an_offer_leaves_only_the_offer(self):
+        vol, dig = split_deals(["Low Stock", "Save $15 when you spend $60"])
+        self.assertEqual(vol, "Save $15 when you spend $60")
+        self.assertEqual(dig, "")
+
+    def test_cash_back_is_a_digital_offer_not_a_volume_one(self):
+        vol, dig = split_deals(
+            ["Cash Back: $5.00 Cash Back on Pabst Blue Ribbon or Pabst Light"])
+        self.assertEqual(vol, "")
+        self.assertEqual(
+            dig, "Cash Back: $5.00 Cash Back on Pabst Blue Ribbon or Pabst Light")
+
+    def test_the_wording_is_passed_through_unchanged(self):
+        line = "Save $2 each when you buy 3 or more"
+        vol, _ = split_deals(["Low Stock", line, "View 1 Offer"])
+        self.assertEqual(vol, line)
+
+
 if __name__ == "__main__":
     unittest.main()

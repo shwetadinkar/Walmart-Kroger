@@ -37,6 +37,77 @@ ABOUT_RESTATEMENT = re.compile(r"^(sale:\s*)?about\s+\$", re.I)
 # rate shown beside it is a displayed rate and is kept in ppm unchanged.
 ABOUT_EACH = re.compile(r"^about\s+\$[0-9][0-9,]*\.?[0-9]*\s+each$", re.I)
 
+# Lines the retailer renders on a product card that are NOT deal text. A stock
+# status and a payment eligibility are not offers, and "View 2 Offers" and
+# "11 more options" are navigation into other pages. None of the 22 fields
+# holds any of them, so they are recorded on the page record for provenance and
+# published nowhere.
+#
+# This matters because deal lines used to be whatever was left over after the
+# title and size were taken, which published "Low Stock" into
+# volume_deals_description on 47 records of the 1 November read and "View 2
+# Offers" on 12 more. Found on 4 November by comparing the two harvests at the
+# same store: a record whose size read "Coupon: $1.79 lb Honeycrisp Apples" on
+# 1 November read "SNAP EBT" on 4 November, which is not a change in the data.
+STOCK_LABELS = {"Low Stock", "Out of Stock", "In Stock", "Limited Availability"}
+ELIGIBILITY_LABELS = {"SNAP EBT", "FSA/HSA"}
+VARIANT_LINK = re.compile(
+    r"^\d+\s+more\s+(option|size|flavor|flavour|color|colour|variet|count)", re.I)
+OFFER_LINK = re.compile(r"^view\s+\d+\s+offer", re.I)
+
+# A deal is identified by what the retailer wrote, not by being left over.
+# Every one of the 50 distinct card lines across the 1 and 4 November harvests
+# was checked against this: it matches every real offer and no badge or link.
+DEAL_MARKER = re.compile(
+    r"(\bbuy\b|\bsave\b|\bget\b|\bfree\b|\bwhen\s+you\b|\bmix\b|\blimit\b"
+    r"|^coupon:|^cash\s*back:|^\d+\s*/\s*\$|^\d+\s+for\s+\$|¢\s+each)", re.I)
+
+
+def classify_card_line(line):
+    """Return one of stock, eligibility, offer_link, variant_link, deal, other."""
+    text = (line or "").strip()
+    if not text:
+        return "other"
+    if text in STOCK_LABELS:
+        return "stock"
+    if text in ELIGIBILITY_LABELS:
+        return "eligibility"
+    if OFFER_LINK.match(text):
+        return "offer_link"
+    if VARIANT_LINK.match(text):
+        return "variant_link"
+    if DEAL_MARKER.search(text):
+        return "deal"
+    return "other"
+
+
+def looks_like_size(line):
+    """A size is a line that is not a deal and not one of the card's badges.
+
+    Deals are identified positively, so the unrecognised case falls to the size
+    slot rather than into a published deal column. That direction is the safe
+    one: a size left in the size field is published nowhere, while a size in
+    volume_deals_description would be published as an offer the retailer never
+    made.
+    """
+    return bool((line or "").strip()) and classify_card_line(line) == "other"
+
+
+def sort_card_lines(rest):
+    """Split the remaining card lines into deals and the labels that are not."""
+    deals, stock, labels = [], "", []
+    for line in rest:
+        kind = classify_card_line(line)
+        if kind == "deal":
+            deals.append(line)
+        elif kind == "stock":
+            stock = stock or line.strip()
+        elif kind in ("eligibility", "offer_link", "variant_link"):
+            labels.append(line.strip())
+        elif line.strip():
+            labels.append(line.strip())
+    return deals, stock, labels
+
 
 def parse(term, upc, path, ppm, lines):
     """Return (record, reason). reason is '' when the card was fully recognised."""
@@ -51,6 +122,12 @@ def parse(term, upc, path, ppm, lines):
         "product_title": "",
         "size": "",
         "deal_lines": [],
+        # Recorded so nothing the card rendered is silently dropped. Neither is
+        # published: the 22 fields have no column for a stock status or a
+        # payment eligibility, and a navigation link is not an observation
+        # about the product.
+        "stock_label": "",
+        "non_deal_labels": [],
         "approximate_each_price": "",
         "approximate_each_regular_price": "",
         "price_basis": "fixed",
@@ -85,9 +162,10 @@ def parse(term, upc, path, ppm, lines):
             if not rest:
                 return rec, "sold by weight, no title"
             rec["product_title"] = rest.pop(0)
-            if rest and not PRICE.match(rest[0]):
+            if rest and not PRICE.match(rest[0]) and looks_like_size(rest[0]):
                 rec["size"] = rest.pop(0)
-            rec["deal_lines"] = [x for x in rest if x]
+            rec["deal_lines"], rec["stock_label"], rec["non_deal_labels"] = \
+                sort_card_lines(rest)
             return rec, ""
 
     if rec["price_label"] == "Prices May Vary":
@@ -95,9 +173,10 @@ def parse(term, upc, path, ppm, lines):
         if not rest:
             return rec, "prices may vary, no title"
         rec["product_title"] = rest.pop(0)
-        if rest:
+        if rest and looks_like_size(rest[0]):
             rec["size"] = rest.pop(0)
-        rec["deal_lines"] = [x for x in rest if x]
+        rec["deal_lines"], rec["stock_label"], rec["non_deal_labels"] = \
+            sort_card_lines(rest)
         return rec, ""
 
     prices = []
@@ -125,10 +204,11 @@ def parse(term, upc, path, ppm, lines):
         return rec, "no title"
     rec["product_title"] = rest.pop(0)
 
-    if rest:
+    if rest and looks_like_size(rest[0]):
         rec["size"] = rest.pop(0)
 
-    rec["deal_lines"] = [x for x in rest if x]
+    rec["deal_lines"], rec["stock_label"], rec["non_deal_labels"] = \
+        sort_card_lines(rest)
     return rec, ""
 
 

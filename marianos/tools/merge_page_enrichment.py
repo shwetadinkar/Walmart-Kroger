@@ -25,6 +25,9 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from parse_page_harvest import classify_card_line  # noqa: E402
 
 from marianos_collector.composition import (  # noqa: E402
     BINDING_KEY,
@@ -46,12 +49,27 @@ POLICY = {
 }
 
 COUPON_PREFIX = "coupon:"
+# The retailer renders two clipped-offer prefixes, not one. "Cash Back:" sits on
+# the same digital-offer surface as "Coupon:" and is not a multi-buy offer, so
+# putting it in volume_deals_description would describe it as something it is
+# not. Both go to the digital column, and the prefix is kept as rendered.
+DIGITAL_PREFIXES = ("coupon:", "cash back:", "cashback:")
 
 
 def split_deals(deal_lines):
-    """Return (volume, digital) as the retailer rendered them."""
-    volume = [x for x in deal_lines if not x.lower().startswith(COUPON_PREFIX)]
-    digital = [x for x in deal_lines if x.lower().startswith(COUPON_PREFIX)]
+    """Return (volume, digital) as the retailer rendered them.
+
+    Lines that are not offers are dropped here as well as in the parser. The
+    parser is the one implementation of that judgement and this calls it, so a
+    `parsed.json` produced before the parser distinguished them merges to the
+    same result as one produced after. Without that, re-merging an older page
+    read would reintroduce "Low Stock" into volume_deals_description.
+    """
+    offers = [x for x in deal_lines if classify_card_line(x) == "deal"]
+    volume = [x for x in offers
+              if not x.lower().lstrip().startswith(DIGITAL_PREFIXES)]
+    digital = [x for x in offers
+               if x.lower().lstrip().startswith(DIGITAL_PREFIXES)]
     return "; ".join(volume), "; ".join(digital)
 
 

@@ -11,7 +11,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
 
-from parse_page_harvest import parse  # noqa: E402
+from parse_page_harvest import classify_card_line, parse  # noqa: E402
 
 
 def card(lines, ppm=""):
@@ -123,6 +123,106 @@ class ValuesAreReadNeverMade(unittest.TestCase):
         rec, _ = card(["$1.00", "$1.00", "T", "1 ct"])
         self.assertEqual(rec["upc"], "0001115015950")
         self.assertEqual(rec["term"], "milk")
+
+
+class ABadgeIsNotADeal(unittest.TestCase):
+    """The 1 November read published "Low Stock" as a volume deal on 47 rows.
+
+    Deal lines used to be whatever remained after the title and size were
+    taken, so a stock status, a payment eligibility and a "View 2 Offers" link
+    all became deal text. Each assertion here is on a line the retailer
+    actually rendered at Vernon Hills.
+    """
+
+    def test_a_stock_status_is_not_a_deal_line(self):
+        rec, reason = card(["$4.99", "$4.99", "Yogurt", "32 oz", "Low Stock"])
+        self.assertEqual(reason, "")
+        self.assertEqual(rec["deal_lines"], [])
+        self.assertEqual(rec["stock_label"], "Low Stock")
+
+    def test_a_payment_eligibility_is_not_a_deal_line(self):
+        rec, _ = card(["$4.99", "$4.99", "Yogurt", "32 oz", "SNAP EBT"])
+        self.assertEqual(rec["deal_lines"], [])
+        self.assertIn("SNAP EBT", rec["non_deal_labels"])
+
+    def test_an_offer_link_is_not_a_deal_line(self):
+        rec, _ = card(["$4.99", "$4.99", "Yogurt", "32 oz", "View 2 Offers"])
+        self.assertEqual(rec["deal_lines"], [])
+        self.assertIn("View 2 Offers", rec["non_deal_labels"])
+
+    def test_a_variant_link_is_not_a_deal_line(self):
+        rec, _ = card(["$4.99", "$4.99", "Yogurt", "32 oz", "11 more options"])
+        self.assertEqual(rec["deal_lines"], [])
+        self.assertIn("11 more options", rec["non_deal_labels"])
+
+    def test_a_real_offer_beside_a_badge_keeps_the_offer_and_drops_the_badge(self):
+        rec, _ = card(["$4.99", "$4.99", "Yogurt", "32 oz",
+                       "Low Stock", "Save $15 when you spend $60"])
+        self.assertEqual(rec["deal_lines"], ["Save $15 when you spend $60"])
+        self.assertEqual(rec["stock_label"], "Low Stock")
+
+    def test_every_card_line_seen_at_the_store_classifies_as_the_right_kind(self):
+        for line in ("Low Stock", "Out of Stock"):
+            self.assertEqual(classify_card_line(line), "stock", line)
+        for line in ("SNAP EBT", "FSA/HSA"):
+            self.assertEqual(classify_card_line(line), "eligibility", line)
+        for line in ("View 1 Offer", "View 2 Offers", "View 4 Offers"):
+            self.assertEqual(classify_card_line(line), "offer_link", line)
+        for line in ("11 more options", "5 more sizes", "1 more size"):
+            self.assertEqual(classify_card_line(line), "variant_link", line)
+        for line in ("Buy 1, Get 1 Free", "Buy 2 Get 1 FREE.", "Buy 2 Save $4",
+                     "Save $15 when you spend $60", "Save $1.00 on Energizer",
+                     "Save $2 each when you buy 3 or more", "2 For $4.00",
+                     "3/$12 When you buy 3 or more", "Buy 3 For $10.00",
+                     "99¢ each when you buy 5 or more",
+                     "Coupon: Save $1.00 on Energizer",
+                     "Cash Back: $5.00 Cash Back on Pabst Blue Ribbon"):
+            self.assertEqual(classify_card_line(line), "deal", line)
+
+
+class TheSizeSlotDoesNotSwallowADeal(unittest.TestCase):
+    """Two digital coupons were lost into the size field on 1 November.
+
+    A sold-by-weight card carries no size, so the line after the title was
+    taken as one whatever it said. At Vernon Hills that line was
+    "Coupon: $1.79 lb Honeycrisp Apples" on 1 November and "SNAP EBT" on 4
+    November, and the coupon never reached digital_deals_description.
+    """
+
+    def test_a_coupon_after_a_weight_sold_title_is_a_deal_not_a_size(self):
+        rec, reason = card(["about", "$2.49", "each", "about $2.49 each",
+                            "Large Honeycrisp Apple",
+                            "Coupon: $1.79 lb Honeycrisp Apples"])
+        self.assertEqual(reason, "")
+        self.assertEqual(rec["size"], "")
+        self.assertEqual(rec["deal_lines"],
+                         ["Coupon: $1.79 lb Honeycrisp Apples"])
+
+    def test_a_badge_after_a_weight_sold_title_is_not_a_size(self):
+        rec, _ = card(["about", "$2.49", "each", "about $2.49 each",
+                       "Large Honeycrisp Apple", "SNAP EBT"])
+        self.assertEqual(rec["size"], "")
+        self.assertIn("SNAP EBT", rec["non_deal_labels"])
+
+    def test_a_volume_offer_after_a_weight_sold_title_is_not_a_size(self):
+        rec, _ = card(["about", "$2.49", "each", "about $2.49 each",
+                       "Pears", "Buy 1, Get 1 Free"])
+        self.assertEqual(rec["size"], "")
+        self.assertEqual(rec["deal_lines"], ["Buy 1, Get 1 Free"])
+
+    def test_a_real_size_is_still_read_as_the_size(self):
+        rec, _ = card(["$7.79", "$7.79", "Salmon Burgers", "4 ct / 11.2 oz",
+                       "SNAP EBT"])
+        self.assertEqual(rec["size"], "4 ct / 11.2 oz")
+        self.assertEqual(rec["deal_lines"], [])
+
+    def test_an_unrecognised_line_falls_to_size_not_to_the_deal_column(self):
+        """The safe direction. A size published as an offer would be a value
+        the retailer never displayed; a deal line kept as a size is published
+        nowhere, because the 22 fields take size from the API."""
+        rec, _ = card(["$7.79", "$7.79", "Cheese", "wedge"])
+        self.assertEqual(rec["size"], "wedge")
+        self.assertEqual(rec["deal_lines"], [])
 
 
 if __name__ == "__main__":
