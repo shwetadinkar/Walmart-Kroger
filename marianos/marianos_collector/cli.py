@@ -1,6 +1,7 @@
 """Mariano's Azure collector CLI. Live Kroger API is diagnostic; fully indexed provider required for publish."""
 from __future__ import annotations
 import argparse
+import contextlib
 import json
 import logging
 import os
@@ -13,7 +14,7 @@ from .composition import CompositeSource,unavailable_crawl
 from .config import categories_from_csv,stores_from_json
 from .kroger import Credentials,KrogerClient,KrogerError,location_candidates,trial
 from .kroger_sweep_source import KrogerSweepSource
-from .runner import Collector,storage_namespaces
+from .runner import Collector,record_refused_attempt,storage_namespaces
 from .sources import FixtureSource,AuthorizedProviderSource
 from .sweep_core import store_from_locations
 from .storage import LocalStorage,AzureBlobStorage,read_json
@@ -51,6 +52,71 @@ ATTESTS_COVERAGE={'fixture':True,'provider':True,'catalog_v2':True,'sweep':False
 def attests_coverage(a):
     kind=a.spine if a.source=='composite' else a.source
     return bool(ATTESTS_COVERAGE.get(kind))
+
+
+@contextlib.contextmanager
+def refusal_recorded(a,storage,namespace,categories,uncovered,trial,reached):
+    """Guard a startup region so a refusal in it leaves a record.
+
+    `Collector.run` records its own refusals, but a run can be refused before
+    a Collector exists. The retailer credentials are loaded twice up here -
+    resolving the store, and building the source - so an expired or missing key
+    produced an exception and a log line and nothing to read, which is the
+    failure the record was built for in the first place.
+
+    `reached` carries whatever startup has established so far. The store is
+    read out of it at refusal time rather than passed in, because the first
+    guarded region is where the store is resolved and so has none yet, and a
+    record must not name a store that was never read from the retailer.
+
+    The error is always re-raised. Recording a refusal never replaces it.
+    """
+    try:
+        yield
+    except (Exception,KeyboardInterrupt) as exc:
+        if a.command=='run':
+            store=reached.get('store')
+            record_refused_attempt(
+                storage,namespace,
+                str(getattr(store,'store_id','') or a.store or a.location_id or ''),
+                startup_refusal_record(a,store,categories,uncovered,trial,exc))
+        raise
+
+
+def startup_refusal_record(a,store,categories,uncovered,trial,exc):
+    """What a refusal before collection can honestly say about itself.
+
+    The ids are labelled `requested_` and `store_resolved` is explicit, because
+    when the store resolution is what failed these are arguments and not
+    observations of any store. This repository has already published one store's
+    data under another store's name once; a failure record that reads like a
+    store observation is the same mistake in a quieter place.
+    """
+    record={
+        '_what':('A run refused before collection began. Nothing was published and the '
+                 'latest pointer is unchanged. This exists because the retailer '
+                 'credentials are loaded while the store is resolved and again while '
+                 'the source is built, both before the runner is reached, so a missing '
+                 'or expired key used to leave no artefact at all.'),
+        'stage':'startup',
+        'refused_with':f'{type(exc).__name__}: {exc}',
+        'requested_store_id':a.store,
+        'requested_location_id':a.location_id,
+        'store_resolved':store is not None,
+        'source_requested':a.source,
+        'spine_requested':a.spine if a.source=='composite' else '',
+        'scope':'trial' if trial else 'full',
+        'roots_configured':[c.name for c in categories],
+        'roots_not_covered_by_source':dict(sorted(uncovered.items())),
+    }
+    if store is None:
+        record['_store_not_resolved']=('The store columns were never read from the '
+                                       'retailer, so the ids above are what was asked '
+                                       'for and not an observation of any store.')
+    else:
+        record.update(store_id=store.store_id,zipcode=store.zipcode,
+                      store_name=store.store_name,store_location=store.store_location)
+    return record
 
 
 def build_source(kind,a,store,p):
@@ -202,23 +268,44 @@ def main(argv=None):
         # export and clear-checkpoints pointing at one namespace.
         trial_scope = subset or not attests_coverage(a)
         namespace,checkpoint_root=storage_namespaces(categories,trial_scope)
-        if a.resolve_store:
-            if not a.location_id or a.location_id.upper().startswith(('DEMO','REPLACE')):
-                p.error('--resolve-store requires --location-id from a verified Kroger Locations response')
-            if not a.expect_zipcode or not a.expect_street:
-                p.error('--resolve-store requires --expect-zipcode and --expect-street: the '
-                        'assigned store id differs from West Loop by two characters, so the '
-                        'address is asserted rather than assumed')
-            store,_=store_from_locations(KrogerClient(Credentials.from_environment()),
-                                         a.location_id,a.expect_zipcode,a.expect_street)
-        else:
-            store=next((s for s in stores if s.store_id==a.store),None)
-            if store is None:p.error('Unknown store_id: '+a.store)
+        # Storage is built BEFORE the store is resolved, because resolving the
+        # store calls the retailer and so is a place the run can die. Without
+        # somewhere to write, a refusal there left nothing to read. Nothing in
+        # building storage depends on the store. The one visible consequence is
+        # ordering: a missing Azure connection string is now reported before an
+        # unknown --store, where it used to be the other way round.
         if a.backend=='azure':
             cs=os.environ.get('AZURE_STORAGE_CONNECTION_STRING','')
             if not cs:p.error('Missing Azure storage connection string')
             storage=AzureBlobStorage(cs,a.container)
         else:storage=LocalStorage(a.output)
+        # Two regions below are guarded, because the Kroger credentials are
+        # loaded twice before Collector.run - once resolving the store, once
+        # building the source - and run was the only thing recording refusals.
+        # An expired key therefore left an exception, a log line and no artefact
+        # at all, which is precisely the unattended failure the record exists
+        # for. Only `run` records: status, export and clear-checkpoints are not
+        # runs and must not leave refusal artefacts. argparse refusals still
+        # exit without one, since p.error raises SystemExit; a wrong flag fails
+        # the first time a job is deployed rather than silently months later,
+        # which is why that is left as it is rather than caught.
+        reached={}
+        guard=lambda: refusal_recorded(a,storage,namespace,categories,uncovered,
+                                       trial_scope,reached)
+        with guard():
+            if a.resolve_store:
+                if not a.location_id or a.location_id.upper().startswith(('DEMO','REPLACE')):
+                    p.error('--resolve-store requires --location-id from a verified Kroger Locations response')
+                if not a.expect_zipcode or not a.expect_street:
+                    p.error('--resolve-store requires --expect-zipcode and --expect-street: the '
+                            'assigned store id differs from West Loop by two characters, so the '
+                            'address is asserted rather than assumed')
+                store,_=store_from_locations(KrogerClient(Credentials.from_environment()),
+                                             a.location_id,a.expect_zipcode,a.expect_street)
+            else:
+                store=next((s for s in stores if s.store_id==a.store),None)
+                if store is None:p.error('Unknown store_id: '+a.store)
+            reached['store']=store
         if a.command=='status':
             ptr=read_json(storage,f'{namespace}/{store.store_id}/latest.json')
             print(json.dumps({'store_id':store.store_id,'latest':ptr},indent=2));return 0
@@ -237,16 +324,19 @@ def main(argv=None):
                 for cat in categories:storage.delete(f'{checkpoint_root}/{store.store_id}/{cat.slug}.json')
             print('Partial checkpoints reset; published releases untouched');return 0
         if a.minimum_products is not None and a.minimum_products<1:p.error('minimum must be >=1')
-        if a.source=='composite':
-            # Hybrid: one source enumerates the assortment, others contribute
-            # the fields it cannot supply. The crawl is registered for displayed
-            # PPM and digital coupon terms because no Kroger API exposes them,
-            # and it reports itself unavailable rather than being omitted, so
-            # the gap in the output is explained rather than merely present.
-            spine,minp=build_source(a.spine,a,store,p)
-            src=CompositeSource(spine,a.spine,[unavailable_crawl(CRAWL_BLOCKED_REASON)])
-        else:
-            src,minp=build_source(a.source,a,store,p)
+        with guard():
+            if a.source=='composite':
+                # Hybrid: one source enumerates the assortment, others contribute
+                # the fields it cannot supply. The crawl is registered for displayed
+                # PPM and digital coupon terms because no Kroger API exposes them,
+                # and it reports itself unavailable rather than being omitted, so
+                # the gap in the output is explained rather than merely present.
+                spine,minp=build_source(a.spine,a,store,p)
+                src=CompositeSource(spine,a.spine,[unavailable_crawl(CRAWL_BLOCKED_REASON)])
+            else:
+                src,minp=build_source(a.source,a,store,p)
+        # Unguarded on purpose: the Collector records its own refusals, and
+        # wrapping it here would write a second record for one failure.
         output=Collector(storage,src,categories,min_products=minp,trial=trial_scope,
                          uncovered_roots=uncovered).run(store)
         print(json.dumps(output,indent=2));return 0

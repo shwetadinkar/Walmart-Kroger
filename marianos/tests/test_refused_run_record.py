@@ -16,13 +16,17 @@ must not swallow or replace the error.
 """
 
 import json
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
+from marianos_collector import cli  # noqa: E402
 from marianos_collector.config import Category, Store  # noqa: E402
 from marianos_collector.runner import Collector, ValidationFailure  # noqa: E402
 from marianos_collector.sources import Page  # noqa: E402
@@ -192,6 +196,107 @@ class ItNeitherPublishesNorSwallows(unittest.TestCase):
             with self.assertRaises(ValidationFailure) as caught:
                 collector.run(STORE)
             self.assertIn("Zero eligible products", str(caught.exception))
+
+
+class ARefusalBeforeTheRunnerIsRecordedToo(unittest.TestCase):
+    """The hole the class above did not cover.
+
+    `Collector.run` records its own refusals, but the CLI loads the retailer
+    credentials twice before `run` is ever reached: once resolving the store
+    from /locations, once building the source. So a missing or expired key
+    produced an exception, a log line and no artefact at all - the precise
+    unattended failure this record was built for, going unrecorded by the
+    machinery built to record it. Reproduced by running the real CLI with the
+    credentials removed from the environment.
+
+    Credential expiry is the likeliest unattended failure a twice-weekly job
+    has, because keys are rotated and nobody is watching when they are.
+    """
+
+    def argv(self, td, command="run", *extra):
+        return [command, "--source", "sweep",
+                "--store", "53100502", "--location-id", "53100502",
+                "--resolve-store", "--expect-zipcode", "60061",
+                "--expect-street", "1720 N Milwaukee Ave",
+                "--output", str(td), "--sweep-work-dir", str(Path(td) / "work"),
+                *extra]
+
+    def without_credentials(self):
+        kept = {k: v for k, v in os.environ.items()
+                if k not in ("KROGER_CLIENT_ID", "KROGER_CLIENT_SECRET")}
+        return mock.patch.dict(os.environ, kept, clear=True)
+
+    def refused(self, td, command="run", *extra):
+        with self.without_credentials():
+            code = cli.main(self.argv(td, command, *extra))
+        return code, failures(td)
+
+    def test_a_credential_failure_now_leaves_a_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            code, records = self.refused(td)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(records), 1, "a refusal before the runner left nothing")
+
+    def test_the_record_carries_the_reason_verbatim(self):
+        with tempfile.TemporaryDirectory() as td:
+            _, records = self.refused(td)
+            body = json.loads(records[0].read_text())
+        self.assertIn("KROGER_CLIENT_ID", body["refused_with"])
+        self.assertEqual(body["stage"], "startup")
+
+    def test_it_does_not_claim_a_store_it_never_resolved(self):
+        """Store resolution is what failed, so the ids are arguments. This
+        repository has already published one store's data under another
+        store's name once; a failure record reading like a store observation
+        is the same mistake somewhere quieter."""
+        with tempfile.TemporaryDirectory() as td:
+            _, records = self.refused(td)
+            body = json.loads(records[0].read_text())
+        self.assertFalse(body["store_resolved"])
+        self.assertEqual(body["requested_location_id"], "53100502")
+        self.assertNotIn("store_name", body)
+        self.assertNotIn("store_location", body)
+        self.assertIn("not an observation of any store", body["_store_not_resolved"])
+
+    def test_the_record_is_outside_the_publishing_namespace(self):
+        with tempfile.TemporaryDirectory() as td:
+            _, records = self.refused(td)
+            published = sorted(Path(td).glob("published/**/*.json"))
+            everything = sorted(p for p in Path(td).rglob("*.json"))
+        self.assertEqual(published, [])
+        self.assertEqual(everything, records,
+                         "a refused startup wrote something besides its own record")
+
+    def test_the_declared_uncovered_roots_travel_into_it(self):
+        with tempfile.TemporaryDirectory() as td:
+            _, records = self.refused(
+                td, "run", "--uncovered-roots", str(ROOT / "config/sweep_coverage.json"))
+            body = json.loads(records[0].read_text())
+        self.assertIn("Seafood", body["roots_not_covered_by_source"])
+        self.assertNotIn("Seafood", body["roots_configured"])
+
+    def test_status_is_not_a_run_and_leaves_no_record(self):
+        """status and export must not litter the failure tree, and must not
+        need credentials in the first place."""
+        with tempfile.TemporaryDirectory() as td:
+            code, records = self.refused(td, "status")
+        self.assertEqual(code, 1)
+        self.assertEqual(records, [])
+
+    def test_one_failure_writes_one_record(self):
+        """The startup guard stops before the Collector on purpose. Wrapping
+        the Collector too would write a second record for one failure."""
+        with tempfile.TemporaryDirectory() as td:
+            code = cli.main(["run", "--source", "fixture",
+                             "--store", "DEMO-WESTLOOP-60661",
+                             "--location-id", "DEMO-WESTLOOP-60661",
+                             "--output", str(td), "--minimum-products", "100000"])
+            records = failures(td)
+            bodies = [json.loads(r.read_text()) for r in records]
+        self.assertEqual(code, 1)
+        self.assertEqual(len(records), 1, f"expected one record, got {len(records)}")
+        self.assertEqual(bodies[0].get("stage", "runner"), "runner",
+                         "a runner refusal was recorded as a startup one")
 
 
 if __name__ == "__main__":

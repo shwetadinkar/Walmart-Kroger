@@ -46,6 +46,45 @@ def storage_namespaces(categories, trial: bool) -> tuple[str, str]:
     signature = _payload_hash([(c.name, c.url) for c in categories])[:12]
     return f"trials/{signature}", f"checkpoints-trials/{signature}"
 
+
+def record_refused_attempt(storage, namespace: str, segment: str, record: dict) -> str:
+    """Write a refused attempt outside the publishing namespace. Returns its key.
+
+    The one place a refusal is written, because there are two places a run can
+    be refused and only one of them was recorded. `Collector.run` catches its
+    own refusals, but a run can also die before a Collector exists: the CLI
+    loads Kroger credentials when it resolves the store and again when it
+    builds the source, both before `run` is reached. So a missing or expired
+    credential - the likeliest unattended failure a twice-weekly job has, since
+    keys are rotated and nobody is watching - produced an exception, a log line
+    and no artefact at all. That is the exact scenario this record exists for.
+
+    Deliberately NOT under the publishing namespace. A refused attempt is not
+    release output, and keeping the namespace release-only lets the strong
+    assertion "nothing may be written there" stay strong.
+
+    The timestamp is stamped here from the same instant the key is built, so
+    the key and the record cannot disagree about when the refusal happened.
+
+    Recording a failure never replaces the failure: a write that fails is
+    logged and swallowed, the caller re-raises regardless, and the returned key
+    is empty so a caller cannot report a record that was not written.
+    """
+    segment = str(segment or "").strip() or "unidentified-store"
+    at = datetime.now(timezone.utc)
+    record = dict(record, timestamp_utc=at.isoformat())
+    key = (f"failures/{namespace}/{segment}/"
+           f"{at.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
+    try:
+        write_json(storage, key, record)
+        LOG.warning("run_refused: %s", key, extra={
+            "event": "run_refused", "store_id": segment, "category": ""})
+        return key
+    except Exception as inner:                    # noqa: BLE001
+        LOG.warning("run_refused_unrecorded: %s", inner, extra={
+            "event": "run_refused_unrecorded", "store_id": segment, "category": ""})
+        return ""
+
 class Collector:
     def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False, uncovered_roots=None):
         self.storage = storage
@@ -271,15 +310,9 @@ class Collector:
 
     def _record_failure(self, store, exc, start):
         """Write what the refused attempt reached, then let the error stand."""
-        stamp = datetime.now(timezone.utc)
         # A blank store_id would make the key itself meaningless, so it is
         # named rather than silently producing an odd path.
         segment = str(getattr(store, "store_id", "") or "").strip() or "unidentified-store"
-        # Deliberately NOT under the publishing namespace. A refused attempt is
-        # not release output, and keeping the namespace release-only lets the
-        # strong assertion "nothing may be written there" stay strong.
-        key = (f"failures/{self.namespace}/{segment}/"
-               f"{stamp.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
         record = {
             "_what": ("A run that was refused. Nothing here was published and the "
                       "latest pointer is unchanged; this exists so an unattended "
@@ -287,7 +320,6 @@ class Collector:
             "store_id": store.store_id,
             "zipcode": store.zipcode,
             "refused_with": f"{type(exc).__name__}: {exc}",
-            "timestamp_utc": stamp.isoformat(),
             "runtime_seconds": round(time.monotonic() - start, 3),
             "source_mode": getattr(self.source, "source_mode", ""),
             "scope": "trial" if self.trial else "full",
@@ -311,15 +343,7 @@ class Collector:
                     record[name] = method()
                 except Exception as inner:        # noqa: BLE001
                     record[f"{name}_unavailable"] = f"{type(inner).__name__}: {inner}"
-        try:
-            write_json(self.storage, key, record)
-            LOG.warning("run_refused: %s", key, extra={
-                "event": "run_refused", "store_id": store.store_id, "category": ""})
-        except Exception as inner:                # noqa: BLE001
-            # Never let recording a failure replace the failure.
-            LOG.warning("run_refused_unrecorded: %s", inner, extra={
-                "event": "run_refused_unrecorded", "store_id": store.store_id,
-                "category": ""})
+        record_refused_attempt(self.storage, self.namespace, segment, record)
 
     def _run_locked(self, store, start):
         pointer_key = f"{self.namespace}/{store.store_id}/latest.json"
