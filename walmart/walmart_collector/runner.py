@@ -19,6 +19,45 @@ LOG = logging.getLogger("collector")
 class ValidationFailure(RuntimeError):
     pass
 
+def record_refused_attempt(storage, published_root: str, record: dict) -> str:
+    """Write a refused attempt outside the publishing root. Returns its key.
+
+    The one place a refusal is written, because there are two places a run can
+    be refused and only one of them was recorded. `Collector.run` catches its
+    own refusals, but a run can also die before a Collector exists: the CLI
+    builds the source, reads the OPD mapping and reads the canaries first, so a
+    missing mapping file or a malformed one - an ordinary misconfigured job -
+    produced an exception, a log line and no artefact at all. That is the exact
+    scenario this record exists for. Ported from the marianos module, which was
+    fixed first; the two must not diverge.
+
+    Deliberately NOT under the publishing root. A refused attempt is not
+    release output, and keeping that tree release-only lets the strong
+    assertion "nothing may be written there" stay strong.
+
+    The timestamp is stamped here from the same instant the key is built, so
+    the key and the record cannot disagree about when the refusal happened.
+
+    Recording a failure never replaces the failure: a write that fails is
+    logged and swallowed, the caller re-raises regardless, and the returned key
+    is empty so a caller cannot report a record that was not written.
+    """
+    at = datetime.now(timezone.utc)
+    record = dict(record, timestamp_utc=at.isoformat())
+    key = (f"failures/{published_root}/"
+           f"{at.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
+    store_id = str(record.get("store_id") or record.get("requested_store_id") or "")
+    try:
+        write_json(storage, key, record)
+        LOG.warning("run_refused: %s", key, extra={
+            "event": "run_refused", "store_id": store_id, "category": ""})
+        return key
+    except Exception as inner:                    # noqa: BLE001
+        LOG.warning("run_refused_unrecorded: %s", inner, extra={
+            "event": "run_refused_unrecorded", "store_id": store_id, "category": ""})
+        return ""
+
+
 def _payload_hash(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
@@ -207,12 +246,6 @@ class Collector:
 
     def _record_failure(self, store, exc, start):
         """Write what the refused attempt reached, then let the error stand."""
-        stamp = datetime.now(timezone.utc)
-        # Deliberately NOT under the publishing root. A refused attempt is not
-        # release output, and keeping that tree release-only lets the strong
-        # assertion "nothing may be written there" stay strong.
-        key = (f"failures/{self._published_root(store)}/"
-               f"{stamp.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
         record = {
             "_what": ("A run that was refused. Nothing here was published and the "
                       "latest pointer is unchanged; this exists so an unattended "
@@ -220,7 +253,6 @@ class Collector:
             "store_id": store.store_id,
             "zipcode": store.zipcode,
             "refused_with": f"{type(exc).__name__}: {exc}",
-            "timestamp_utc": stamp.isoformat(),
             "runtime_seconds": round(time.monotonic() - start, 3),
             "source_mode": getattr(self.source, "source_mode", ""),
             "scope": "trial" if self.trial else "full",
@@ -243,15 +275,7 @@ class Collector:
                     record[name] = method()
                 except Exception as inner:        # noqa: BLE001
                     record[f"{name}_unavailable"] = f"{type(inner).__name__}: {inner}"
-        try:
-            write_json(self.storage, key, record)
-            LOG.warning("run_refused: %s", key, extra={
-                "event": "run_refused", "store_id": store.store_id, "category": ""})
-        except Exception as inner:                # noqa: BLE001
-            # Never let recording a failure replace the failure.
-            LOG.warning("run_refused_unrecorded: %s", inner, extra={
-                "event": "run_refused_unrecorded", "store_id": store.store_id,
-                "category": ""})
+        record_refused_attempt(self.storage, self._published_root(store), record)
 
     def _run_locked(self, store, start):
         pointer_key = self._published_root(store) + "/latest.json"

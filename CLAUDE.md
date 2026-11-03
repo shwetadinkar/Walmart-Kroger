@@ -141,7 +141,12 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 805.
+  counts: Walmart 262, Mariano's 812.
+- **"Tested in both collectors" is two claims.** The refused-run record was in
+  both runners and tested in one: searching the whole Walmart suite for the
+  failures tree returned nothing, so on that side a documented property rested
+  on no command anyone could run. When a property is claimed for both modules,
+  check both suites for it rather than the code.
 - **Clear `__pycache__` before a mutation revert.** A restored file once still
   read as red because the mutated bytecode was loaded, which cost a false
   diagnosis. The same staleness in the other direction is the dangerous one: a
@@ -390,6 +395,43 @@ to recur unattended.
 The names in `getattr(self.source, ...)` there are literals on purpose. The
 delegation surface is derived by parsing the runner for what it reads off a
 source, and a variable name made that derivation blind.
+
+**It only covered `Collector.run`, which is not where this fails.** Both CLIs
+do work before the runner exists: the Mariano's CLI loads the Kroger
+credentials twice, resolving the store from `/locations` and building the
+source; the Walmart CLI builds its source, reads the OPD mapping and reads the
+canaries. So a missing or expired key, or a missing mapping file, produced an
+exception, a log line and no artefact at all - the ordinary misconfigured job,
+which is the failure most likely to recur unattended, going unrecorded by the
+machinery built for exactly it. Credential expiry is the likeliest of all for a
+twice-weekly job, because keys are rotated and nobody is watching when they
+are. Found on 3 November by running the real CLI with the two variables
+removed, after the client reproduced the bare error twice.
+
+`record_refused_attempt` in each runner is now the single place a refusal is
+written and named, called by both the runner and the CLI, and it stamps the
+timestamp from the same instant it builds the key so the two cannot disagree.
+Four properties are tested on both sides and each has been mutation-checked:
+
+- Only `run` records. `status` and `export` are not runs, must not leave
+  refusal artefacts, and `status` must not need credentials at all.
+- The `Collector` call stays **outside** the guard, because it records its own
+  refusals and wrapping it would write two records for one failure. A test
+  asserts one failure produces one record.
+- A Mariano's startup record never claims a store it did not resolve. The ids
+  are labelled `requested_`, `store_resolved` is explicit, and the resolved
+  columns appear only when the store was actually read. This repository has
+  already published one store's data under another store's name once; a failure
+  record that reads like a store observation is the same mistake somewhere
+  quieter.
+- A refused run may still leave checkpoints - that is what makes it resumable.
+  The property is that the *publishing* tree is untouched, not that nothing at
+  all was written, and the test asserts the narrower thing. Asserting the wider
+  one failed honestly the first time it ran.
+
+Not fixed, deliberately: an argparse refusal still exits without a record,
+because `p.error` raises `SystemExit`. A wrong flag fails the first time a job
+is deployed rather than silently months later, so it is left.
 
 ## The schedule, as two separate claims
 

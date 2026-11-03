@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from .config import categories_from_csv, stores_from_json
-from .runner import Collector, _payload_hash
+from .runner import Collector, _payload_hash, record_refused_attempt
 from .sources import FixtureSource, AuthorizedProviderSource
 from .opd import OPDClient, WalmartOPDSnapshotSource
 from .composition import CompositeSource, unavailable_crawl
@@ -133,40 +133,85 @@ def main(argv=None):
             return 0
         if args.minimum_products is not None and args.minimum_products < 1:
             parser.error("Minimum products must be >= 1")
-        spine_kind = args.spine if args.source == "composite" else args.source
-        if spine_kind == "provider":
-            if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
-                parser.error("Provider mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
-            source = AuthorizedProviderSource(os.environ.get("PROVIDER_BASE_URL", ""),os.environ.get("PROVIDER_API_TOKEN", ""))
-            min_products = args.minimum_products or 500
-        elif spine_kind == "opd":
-            if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
-                parser.error("OPD mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
-            credentials = (os.environ.get("WALMART_OPD_CLIENT_ID", ""),
-                           os.environ.get("WALMART_OPD_CLIENT_SECRET", ""))
-            client = OPDClient(*credentials)
-            mappings = json.loads(args.opd_mapping.read_text(encoding="utf-8"))
-            cache_dir = args.opd_cache or (args.output / "opd-cache")
-            source = WalmartOPDSnapshotSource(client, cache_dir, mappings, page_size=args.opd_page_size)
-            min_products = args.minimum_products or 500
-        else:
-            source = FixtureSource(args.fixtures)
-            min_products = args.minimum_products or 1
-            print("WARNING: DEMO MODE — all records are synthetic and cannot serve as contest proof.",file=sys.stderr)
-        if args.source == "composite":
-            # OPD documents no offer fields at all, so sale price, volume terms
-            # and digital terms all depend on the crawl. It is registered with
-            # its measured refusal reason rather than omitted, so the resulting
-            # blanks in the output are explained rather than merely present.
-            source = CompositeSource(source, spine_kind, [unavailable_crawl(CRAWL_BLOCKED_REASON)])
-        canaries = json.loads(args.canaries.read_text(encoding="utf-8")) if args.canaries else {}
-        result = Collector(storage, source, categories, min_products=min_products, canaries=canaries, trial=trial).run(store)
+        # Guarded, because everything from here to the Collector can refuse the
+        # run before a Collector exists: the source is constructed, the OPD
+        # mapping is read and the canaries are read, so a missing or malformed
+        # mapping file left an exception, a log line and no artefact at all.
+        # That is the ordinary misconfigured job, which is the failure most
+        # likely to recur unattended, and it was going unrecorded by the
+        # machinery built to record exactly that. Ported from the marianos
+        # module, which was fixed first; the two must not diverge.
+        # Only `run` records: status and export are not runs and must not leave
+        # refusal artefacts. argparse refusals still exit without one, since
+        # parser.error raises SystemExit; a wrong flag fails the first time a
+        # job is deployed rather than silently months later.
+        try:
+            source, min_products, canaries = _build_run_inputs(args, parser, trial)
+        except (Exception, KeyboardInterrupt) as exc:
+            if args.command == "run":
+                record_refused_attempt(storage, pub_root, {
+                    "_what": ("A run refused before collection began. Nothing was "
+                              "published and the latest pointer is unchanged. This "
+                              "exists because the source, the OPD mapping and the "
+                              "canaries are all read before the runner is reached, so "
+                              "a misconfiguration there used to leave no artefact."),
+                    "stage": "startup",
+                    "refused_with": f"{type(exc).__name__}: {exc}",
+                    "store_id": store.store_id,
+                    "zipcode": store.zipcode,
+                    "source_requested": args.source,
+                    "spine_requested": args.spine if args.source == "composite" else "",
+                    "scope": "trial" if trial else "full",
+                    "roots_configured": [c.name for c in categories],
+                })
+            raise
+        # Unguarded on purpose: the Collector records its own refusals, and
+        # wrapping it here would write a second record for one failure.
+        result = Collector(storage, source, categories, min_products=min_products,
+                           canaries=canaries, trial=trial).run(store)
         print(json.dumps({"manifest": result["manifest"],"report":result["report"]}, indent=2))
         return 0
     except (Exception, KeyboardInterrupt) as exc:
         log.error("run_failed",extra={"event":"run_failed", "store_id":args.store})
         print(f"ERROR: {exc}",file=sys.stderr)
         return 1
+
+
+def _build_run_inputs(args, parser, trial):
+    """The source, its product floor and the canaries.
+
+    Lifted out of main so the startup region a refusal has to be recorded for
+    is one call rather than thirty lines inside a try. The body is unchanged.
+    """
+    spine_kind = args.spine if args.source == "composite" else args.source
+    if spine_kind == "provider":
+        if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
+            parser.error("Provider mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
+        source = AuthorizedProviderSource(os.environ.get("PROVIDER_BASE_URL", ""),os.environ.get("PROVIDER_API_TOKEN", ""))
+        min_products = args.minimum_products or 500
+    elif spine_kind == "opd":
+        if not args.authorized_source or os.environ.get("WALMART_DATA_AUTHORIZED") != "yes":
+            parser.error("OPD mode requires --authorized-source and WALMART_DATA_AUTHORIZED=yes")
+        credentials = (os.environ.get("WALMART_OPD_CLIENT_ID", ""),
+                       os.environ.get("WALMART_OPD_CLIENT_SECRET", ""))
+        client = OPDClient(*credentials)
+        mappings = json.loads(args.opd_mapping.read_text(encoding="utf-8"))
+        cache_dir = args.opd_cache or (args.output / "opd-cache")
+        source = WalmartOPDSnapshotSource(client, cache_dir, mappings, page_size=args.opd_page_size)
+        min_products = args.minimum_products or 500
+    else:
+        source = FixtureSource(args.fixtures)
+        min_products = args.minimum_products or 1
+        print("WARNING: DEMO MODE — all records are synthetic and cannot serve as contest proof.",file=sys.stderr)
+    if args.source == "composite":
+        # OPD documents no offer fields at all, so sale price, volume terms
+        # and digital terms all depend on the crawl. It is registered with
+        # its measured refusal reason rather than omitted, so the resulting
+        # blanks in the output are explained rather than merely present.
+        source = CompositeSource(source, spine_kind, [unavailable_crawl(CRAWL_BLOCKED_REASON)])
+    canaries = json.loads(args.canaries.read_text(encoding="utf-8")) if args.canaries else {}
+    return source, min_products, canaries
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
