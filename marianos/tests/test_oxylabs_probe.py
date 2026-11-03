@@ -116,12 +116,12 @@ class ItIsBoundedAndSendsNothingUnasked(unittest.TestCase):
     def test_an_api_key_is_preferred_over_a_username(self):
         import os
         from unittest import mock
-        with mock.patch.dict(os.environ, {"OXYLABS_API_KEY": "k",
+        with mock.patch.dict(os.environ, {"OXYLABS_WEB_API_KEY": "k",
                                           "OXYLABS_USERNAME": "u",
                                           "OXYLABS_PASSWORD": "p"}, clear=True):
             header, which = probe.auth_header()
         self.assertEqual(header, "Bearer k")
-        self.assertEqual(which, "OXYLABS_API_KEY")
+        self.assertEqual(which, "OXYLABS_WEB_API_KEY")
 
     def test_basic_auth_is_used_when_there_is_no_key(self):
         import os
@@ -146,7 +146,7 @@ class ItIsBoundedAndSendsNothingUnasked(unittest.TestCase):
         self.assertNotIn("add_argument(\"--username", source)
         self.assertNotIn("add_argument(\"--api-key", source)
         self.assertIn("OXYLABS_USERNAME", source)
-        self.assertIn("OXYLABS_API_KEY", source)
+        self.assertIn("OXYLABS_WEB_API_KEY", source)
 
 
 class ItDoesNotAnswerTheQuestionItself(unittest.TestCase):
@@ -174,10 +174,21 @@ class ItDoesNotAnswerTheQuestionItself(unittest.TestCase):
                 imported.update(a.name.split(".")[0] for a in node.names)
             elif isinstance(node, ast.ImportFrom) and node.module:
                 imported.add(node.module.split(".")[0])
-        self.assertNotIn("marianos_collector", imported,
-                         "the probe can reach the publishing layers")
-        for forbidden in ("schema", "retention", "storage", "runner"):
-            self.assertNotIn(forbidden, imported)
+        # Narrowed on 3 November. The first version forbade importing
+        # marianos_collector at all, which fired the moment the probe started
+        # using the shared Oxylabs transport. The property that matters is
+        # that it cannot reach the layers that write a release, not that it
+        # imports nothing from the package.
+        source = (ROOT / "tools/oxylabs_probe.py").read_text()
+        for forbidden in ("marianos_collector.schema",
+                          "marianos_collector.retention",
+                          "marianos_collector.storage",
+                          "marianos_collector.runner",
+                          "marianos_collector.composition"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, source)
+        self.assertNotIn("schema", imported)
+        self.assertNotIn("runner", imported)
 
     def test_every_write_targets_the_out_directory(self):
         """Its only output is under --out, so nothing it produces can land

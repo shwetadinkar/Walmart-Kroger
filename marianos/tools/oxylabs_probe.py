@@ -57,6 +57,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 # Two shapes, because Oxylabs has two. "classic" is the Realtime endpoint the
 # client named, which takes {"source": "marianos_product", ...} and HTTP Basic.
@@ -65,7 +66,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # gets depends on the product instance, so both are here and --dry-run shows
 # exactly which is about to be used rather than this file assuming.
 CLASSIC_ENDPOINT = "https://realtime.oxylabs.io/v1/queries"
-SCRAPE_ENDPOINT = "https://api.oxylabs.io/v1/scrape/marianos/product"
+SCRAPE_ENDPOINT = "https://webapi.oxylabs.io/v1/scrape/marianos/product"
 HARD_CAP = 25            # Enforced before the first request, not after.
 DEFAULT_COUNT = 5
 
@@ -90,16 +91,17 @@ def auth_header():
     Classic Realtime endpoint uses a username and password. Supporting only one
     of them would have cost a round trip to find out which the account got.
     """
-    key = os.environ.get("OXYLABS_API_KEY", "").strip()
+    key = (os.environ.get("OXYLABS_WEB_API_KEY")
+           or os.environ.get("OXYLABS_API_KEY") or "").strip()
     if key:
-        return "Bearer " + key, "OXYLABS_API_KEY"
+        return "Bearer " + key, "OXYLABS_WEB_API_KEY"
     user = os.environ.get("OXYLABS_USERNAME", "")
     secret = os.environ.get("OXYLABS_PASSWORD", "")
     if user and secret:
         return ("Basic " + base64.b64encode(f"{user}:{secret}".encode()).decode(),
                 "OXYLABS_USERNAME / OXYLABS_PASSWORD")
     raise SystemExit(
-        "Set OXYLABS_API_KEY, or OXYLABS_USERNAME and OXYLABS_PASSWORD, in the\n"
+        "Set OXYLABS_WEB_API_KEY, or OXYLABS_USERNAME and OXYLABS_PASSWORD, in the\n"
         "environment. Credentials stay with their owner: export them in the shell\n"
         "that runs this, never pass them as arguments. Nothing was sent.")
 
@@ -200,7 +202,30 @@ def main(argv=None):
     p.add_argument("--endpoint", default="",
                    help="Override the URL entirely if neither default is right")
     p.add_argument("--timeout", type=int, default=90)
+    p.add_argument("--list-scrapers", action="store_true",
+                   help="One GET to /v1/scrapers. Lists what this account can "
+                        "actually call, which is what settles whether a dedicated "
+                        "Marianos target exists here rather than inferring it from "
+                        "a documentation page. Run this first.")
     a = p.parse_args(argv)
+
+    if a.list_scrapers:
+        from marianos_collector.oxylabs import OxylabsClient, OxylabsError
+        try:
+            document = OxylabsClient().scrapers()
+        except OxylabsError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        blob = json.dumps(document)
+        names = sorted(set(re.findall(r"[a-z0-9_]*(?:marianos|kroger|walmart)[a-z0-9_]*",
+                                      blob, re.I)))
+        print(json.dumps({
+            "_what": "What this account can call. One request.",
+            "targets_matching_our_retailers": names,
+            "marianos_present": any("marianos" in n.lower() for n in names),
+            "response": document,
+        }, indent=1))
+        return 0
 
     if a.count < 1 or a.count > HARD_CAP:
         p.error(f"--count must be between 1 and {HARD_CAP}. This is a capability "
