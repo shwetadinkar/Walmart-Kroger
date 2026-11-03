@@ -210,12 +210,27 @@ def main(argv=None):
     p.add_argument("--endpoint", default="",
                    help="Override the URL entirely if neither default is right")
     p.add_argument("--timeout", type=int, default=90)
+    p.add_argument("--options", action="store_true",
+                   help="OPTIONS on the dedicated Marianos product endpoint. "
+                        "Returns its typed parameters, which is how to learn "
+                        "whether it can return a parsed product rather than "
+                        "page HTML, without spending requests guessing bodies.")
     p.add_argument("--list-scrapers", action="store_true",
                    help="One GET to /v1/scrapers. Lists what this account can "
                         "actually call, which is what settles whether a dedicated "
                         "Marianos target exists here rather than inferring it from "
                         "a documentation page. Run this first.")
     a = p.parse_args(argv)
+
+    if a.options:
+        from marianos_collector.oxylabs import OxylabsClient, OxylabsError
+        try:
+            print(json.dumps(OxylabsClient().options(
+                "/v1/scrape/marianos/product"), indent=1))
+        except OxylabsError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        return 0
 
     if a.list_scrapers:
         from marianos_collector.oxylabs import OxylabsClient, OxylabsError
@@ -292,6 +307,11 @@ def main(argv=None):
             "deal_field_candidates": candidates(paths, DEAL_PATTERNS),
             "all_leaf_keys": sorted(paths),
             "parsed_content_present": bool(content),
+            "html_bytes_returned": sum(
+                len(v) for item in (document.get("results") or [])
+                if isinstance(item, dict)
+                for k, v in item.items()
+                if k in ("html", "markdown") and isinstance(v, str)),
             "error_excerpt": (json.dumps(document)[:400]
                               if not content else ""),
         })
@@ -319,6 +339,10 @@ def main(argv=None):
             (r["error_excerpt"] for r in results if r.get("error_excerpt")), ""),
         "responses_with_parsed_content": sum(
             1 for r in results if r["parsed_content_present"]),
+        # A page can come back in full with no parsed object at all. Reporting
+        # only the parsed count made five complete HTML pages read as nothing.
+        "responses_with_page_markup": sum(
+            1 for r in results if r.get("html_bytes_returned")),
         "upcs_with_a_rate_field_candidate": len(any_rate),
         "upcs_with_a_deal_field_candidate": len(any_deal),
         "_how_to_read_this": (

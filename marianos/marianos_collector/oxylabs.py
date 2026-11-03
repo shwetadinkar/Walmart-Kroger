@@ -168,6 +168,13 @@ class OxylabsClient:
             self.sleep((2 ** attempt) + random.random())
         raise OxylabsError("Oxylabs retries exhausted")
 
+    def options(self, path):
+        """The typed parameters an endpoint accepts, which is how a capability
+        is found without guessing a body and spending a request on a 400."""
+        request = Request(f"{self.base}{path}", method="OPTIONS",
+                          headers={"Authorization": f"Bearer {self._key}"})
+        return self._read(request)
+
     def scrapers(self):
         """What this account can actually call. One request, and it is the
         thing that settles whether a dedicated Mariano's target exists here

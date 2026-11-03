@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 869.
+  counts: Walmart 262, Mariano's 870.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -569,6 +569,24 @@ cannot reach, which is the route refused by any name, and a new product name
 is not a new act. `scrape()` raises on that host before anything is sent, with
 a test asserting no request was made. A *dedicated* target reached through
 `scrape_target()` is a different interface and is not covered by the refusal.
+
+**The dedicated target is entitled, and what it returns is page HTML.** On
+3 November five requests to `/v1/scrape/marianos/product` with `store_id`,
+`delivery_zip` and `fulfillment_type` came back 200, `state: done`, each
+carrying `results[0].html`: the retailer's own product page. The first attempt
+had returned 400 `UNSUPPORTED_BODY_PROPERTY` on `#/parse`, which is itself
+what established the endpoint exists and the key reaches it, since a missing
+target or a bad key fails before the body is read.
+
+**That weakens the distinction this repository has been drawing, and the
+weakening is the finding.** The case for the dedicated target over
+`/v1/scrape` on a retailer URL was that it is a *maintained, parsed,
+retailer-specific interface* rather than arbitrary page fetching. If its output
+is the page markup, the parsed half of that is absent and the bytes are the
+same page our egress is refused. `OPTIONS` on the endpoint returns its typed
+parameters and settles whether a parsed product output exists; until that is
+read, the distinction should not be leaned on, and `ppm` must not be taken
+from this route on the strength of it.
 
 Whether this account even has a dedicated Mariano's target is answered by
 `scrapers()`, one GET, not inferred from a documentation page. That is the

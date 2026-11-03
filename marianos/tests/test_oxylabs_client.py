@@ -265,6 +265,17 @@ class TheThinPageLadder(unittest.TestCase):
         self.assertIsNone(country_for("https://example.com/es"))
 
 
+class CapabilityIsAskedRatherThanGuessed(unittest.TestCase):
+    def test_options_uses_the_options_method_and_the_bearer(self):
+        opener = opener_for([{"parameters": {}}])
+        client = OxylabsClient(key=KEY, opener=opener, sleep=lambda s: None)
+        client.options("/v1/scrape/marianos/product")
+        self.assertEqual(opener.calls[0]["method"], "OPTIONS")
+        self.assertEqual(opener.calls[0]["headers"].get("Authorization"),
+                         f"Bearer {KEY}")
+        self.assertTrue(opener.calls[0]["url"].endswith("/v1/scrape/marianos/product"))
+
+
 class TheKeyComesFromTheEnvironment(unittest.TestCase):
     def test_a_missing_key_says_so_and_sends_nothing(self):
         import os
