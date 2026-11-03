@@ -185,14 +185,73 @@ class Collector:
 
     def run(self, store):
         self._publication_allowed()
-        self._store_is_usable(store)
         # A source that tracks offers it could not publish starts each run with
         # a clean slate, so a reused instance does not report another run's.
         if hasattr(self.source, "reset_unresolved"):
             self.source.reset_unresolved()
         start = time.monotonic()
         with self.storage.locked(store.store_id):
-            return self._run_locked(store, start)
+            try:
+                # Inside the try so a store refused before any collection
+                # is recorded too.
+                self._store_is_usable(store)
+                return self._run_locked(store, start)
+            except (ValidationFailure, ValueError) as exc:
+                # A refused run must leave something to read. Unattended,
+                # the only trace was the exception and a log line. The
+                # release is still refused; the attempt is recorded beside
+                # the namespace and the latest pointer is not touched.
+                self._record_failure(store, exc, start)
+                raise
+
+
+    def _record_failure(self, store, exc, start):
+        """Write what the refused attempt reached, then let the error stand."""
+        stamp = datetime.now(timezone.utc)
+        # Deliberately NOT under the publishing root. A refused attempt is not
+        # release output, and keeping that tree release-only lets the strong
+        # assertion "nothing may be written there" stay strong.
+        key = (f"failures/{self._published_root(store)}/"
+               f"{stamp.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
+        record = {
+            "_what": ("A run that was refused. Nothing here was published and the "
+                      "latest pointer is unchanged; this exists so an unattended "
+                      "failure leaves evidence rather than only an exception."),
+            "store_id": store.store_id,
+            "zipcode": store.zipcode,
+            "refused_with": f"{type(exc).__name__}: {exc}",
+            "timestamp_utc": stamp.isoformat(),
+            "runtime_seconds": round(time.monotonic() - start, 3),
+            "source_mode": getattr(self.source, "source_mode", ""),
+            "scope": "trial" if self.trial else "full",
+            "roots_configured": [c.name for c in self.categories],
+            "published_release_untouched": (
+                read_json(self.storage, self._published_root(store) + "/latest.json")
+                or {}).get("release", ""),
+        }
+        # Whatever the source can say about how far it got. A source that says
+        # nothing contributes nothing rather than blocking the record.
+        # Literal names on purpose: the delegation surface is derived by
+        # parsing this module for what the runner reads off the source, and a
+        # variable name here made that derivation blind.
+        for name, method in (("provenance_report",
+                              getattr(self.source, "provenance_report", None)),
+                             ("durable_evidence",
+                              getattr(self.source, "durable_evidence", None))):
+            if callable(method):
+                try:
+                    record[name] = method()
+                except Exception as inner:        # noqa: BLE001
+                    record[f"{name}_unavailable"] = f"{type(inner).__name__}: {inner}"
+        try:
+            write_json(self.storage, key, record)
+            LOG.warning("run_refused: %s", key, extra={
+                "event": "run_refused", "store_id": store.store_id, "category": ""})
+        except Exception as inner:                # noqa: BLE001
+            # Never let recording a failure replace the failure.
+            LOG.warning("run_refused_unrecorded: %s", inner, extra={
+                "event": "run_refused_unrecorded", "store_id": store.store_id,
+                "category": ""})
 
     def _run_locked(self, store, start):
         pointer_key = self._published_root(store) + "/latest.json"

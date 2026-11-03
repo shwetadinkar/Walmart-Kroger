@@ -241,7 +241,6 @@ class Collector:
 
     def run(self, store):
         self._publication_allowed()
-        self._store_is_usable(store)
         # A source that tracks offers it could not publish, or accumulates
         # provenance, starts each run clean. Without this a reused source
         # reports another run's numbers: three runs of one CompositeSource gave
@@ -251,7 +250,76 @@ class Collector:
             self.source.reset_unresolved()
         start = time.monotonic()
         with self.storage.locked(store.store_id):
-            return self._run_locked(store, start)
+            try:
+                # Inside the try so a store refused before any collection is
+                # recorded too. It was outside, and an unusable store produced
+                # no artefact at all - the one failure most likely to recur
+                # unattended, since it comes of a misconfigured job.
+                self._store_is_usable(store)
+                return self._run_locked(store, start)
+            except (ValidationFailure, ValueError) as exc:
+                # A refused run must leave something to read. Unattended twice
+                # weekly, the only trace of a failure was the exception and a
+                # log line: the schedule moved on, no artefact existed, and a
+                # budget-stopped or partially collected sweep looked identical
+                # to a run that never started. The release is still refused -
+                # that protection is the point - but the attempt is recorded
+                # beside the namespace it would have published into, and the
+                # latest pointer is not touched.
+                self._record_failure(store, exc, start)
+                raise
+
+    def _record_failure(self, store, exc, start):
+        """Write what the refused attempt reached, then let the error stand."""
+        stamp = datetime.now(timezone.utc)
+        # A blank store_id would make the key itself meaningless, so it is
+        # named rather than silently producing an odd path.
+        segment = str(getattr(store, "store_id", "") or "").strip() or "unidentified-store"
+        # Deliberately NOT under the publishing namespace. A refused attempt is
+        # not release output, and keeping the namespace release-only lets the
+        # strong assertion "nothing may be written there" stay strong.
+        key = (f"failures/{self.namespace}/{segment}/"
+               f"{stamp.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}.json")
+        record = {
+            "_what": ("A run that was refused. Nothing here was published and the "
+                      "latest pointer is unchanged; this exists so an unattended "
+                      "failure leaves evidence rather than only an exception."),
+            "store_id": store.store_id,
+            "zipcode": store.zipcode,
+            "refused_with": f"{type(exc).__name__}: {exc}",
+            "timestamp_utc": stamp.isoformat(),
+            "runtime_seconds": round(time.monotonic() - start, 3),
+            "source_mode": getattr(self.source, "source_mode", ""),
+            "scope": "trial" if self.trial else "full",
+            "roots_configured": [c.name for c in self.categories],
+            "roots_not_covered_by_source": dict(sorted(self.uncovered_roots.items())),
+            "published_release_untouched": (
+                read_json(self.storage, f"{self.namespace}/{segment}/latest.json")
+                or {}).get("release", ""),
+        }
+        # Whatever the source can say about how far it got. A source that says
+        # nothing contributes nothing rather than blocking the record.
+        # Literal names on purpose: the delegation surface is derived by
+        # parsing this module for what the runner reads off the source, and a
+        # variable name here made that derivation blind.
+        for name, method in (("provenance_report",
+                              getattr(self.source, "provenance_report", None)),
+                             ("durable_evidence",
+                              getattr(self.source, "durable_evidence", None))):
+            if callable(method):
+                try:
+                    record[name] = method()
+                except Exception as inner:        # noqa: BLE001
+                    record[f"{name}_unavailable"] = f"{type(inner).__name__}: {inner}"
+        try:
+            write_json(self.storage, key, record)
+            LOG.warning("run_refused: %s", key, extra={
+                "event": "run_refused", "store_id": store.store_id, "category": ""})
+        except Exception as inner:                # noqa: BLE001
+            # Never let recording a failure replace the failure.
+            LOG.warning("run_refused_unrecorded: %s", inner, extra={
+                "event": "run_refused_unrecorded", "store_id": store.store_id,
+                "category": ""})
 
     def _run_locked(self, store, start):
         pointer_key = f"{self.namespace}/{store.store_id}/latest.json"

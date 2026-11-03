@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 743.
+  counts: Walmart 251, Mariano's 755.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works. Two such tests were found
   by review on 3 November and rewritten. One asserted a published row's store
@@ -363,6 +363,28 @@ stated the observed-columns property unconditionally, which was false for the
 CLI. **Fixed on 3 November:** without `--resolve-store`, `--source sweep` now
 requires `--store` to equal `--location-id`, so the store columns describe the
 store queried.
+
+## A refused run leaves a record
+
+Unattended, the only trace of a failure was the exception and a log line: a
+budget-stopped or partially collected run looked identical to one that never
+started. Both runners now write the refused attempt to
+`failures/<namespace>/<store>/<timestamp>_<id>.json`, carrying the reason
+verbatim, the scope, the configured roots, the release that was left untouched,
+and whatever the source can say about how far it got through
+`provenance_report()` and `durable_evidence()`.
+
+The release is still refused; none of that protection is relaxed. Three things
+about the record are deliberate and tested: it is written **outside** the
+publishing namespace, so the assertion that nothing may be written there stays
+strong; the original error is always re-raised, and a failure to write the
+record never replaces the error it was recording; and the store-usability gate
+is inside the recorder, because a misconfigured job is the failure most likely
+to recur unattended.
+
+The names in `getattr(self.source, ...)` there are literals on purpose. The
+delegation surface is derived by parsing the runner for what it reads off a
+source, and a variable name made that derivation blind.
 
 ## Reporting
 
