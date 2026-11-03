@@ -175,12 +175,10 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                 if key in done:
                     continue
                 found = 0
+                returned = 0
                 for page in range(pages_per_term):
                     start = page * 50
                     if start > max_start:
-                        # Only a limit if Kroger says there is more behind it.
-                        if state.get("term_totals", {}).get(key, start + 1) > start:
-                            state["terms_hit_start_cap"].append(key)
                         break
                     budget.spend()
                     # A term that fails is one term, not the run. Only the
@@ -206,6 +204,7 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     response_sha256 = hashlib.sha256(
                         json.dumps(result, sort_keys=True).encode()).hexdigest()
                     data = result.get("data") or []
+                    returned += len(data)
                     pagination = (result.get("meta") or {}).get("pagination") or {}
                     if isinstance(pagination.get("total"), int):
                         state.setdefault("term_totals", {})[key] = pagination["total"]
@@ -256,6 +255,25 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     if not data or (start + 50 >= total if isinstance(total, int)
                                     else len(data) < 50):
                         break
+                # Truncation is a property of the term, not of whether we
+                # happened to request a page Kroger refuses. The old test fired
+                # only inside the `start > max_start` branch, which the
+                # collector never reaches: PAGES_PER_TERM stops at start 250
+                # exactly, so terms_hit_start_cap was structurally always empty
+                # through the Source and a release reported zero terms
+                # truncated when in truth we could not know. The ceiling is
+                # max_start + 50 products; a term that returned that many, or
+                # one Kroger says has more than that behind it, is capped.
+                # A reported total decides it: more than the ceiling means
+                # truncated, exactly the ceiling means complete. Without a
+                # total, reaching the ceiling is all we know, and not knowing
+                # what sits behind it is itself the disclosure.
+                ceiling = max_start + 50
+                total = state.get("term_totals", {}).get(key)
+                capped = (total > ceiling if isinstance(total, int)
+                          else returned >= ceiling)
+                if capped and key not in state["terms_hit_start_cap"]:
+                    state["terms_hit_start_cap"].append(key)
                 state["term_counts"][key] = found
                 done.add(key)
                 state["done_terms"] = sorted(done)

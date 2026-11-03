@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 692.
+  counts: Walmart 251, Mariano's 705.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -260,6 +260,24 @@ Two properties of the adapter are load-bearing and must not be traded away:
   that fails on page 0 is marked done and checkpointed, so a resumed sweep
   skips it for ever while a fresh one collects it. Not yet fixed; the
   resumability claim is limited to terms that completed.
+
+- **`terms_hit_start_cap` is decided after a term's pages, from the term.** It
+  used to be appended only inside the `start > max_start` branch, which the
+  collector never reaches because `PAGES_PER_TERM` stops at start 250 exactly.
+  So the sweep's main quantitative coverage limit was structurally always
+  empty on this path and a release reported zero terms truncated when the truth
+  was that we could not know. A reported total now settles it, more than the
+  ceiling being truncated and exactly the ceiling complete; without a total,
+  reaching the ceiling is recorded because not knowing what is behind it is
+  itself the disclosure.
+
+- **`pickup_context` travels from the source into `retention.json`.**
+  `RETENTION_POLICY.md` requires it per identity: fulfillment flags, `soldBy`,
+  stock level, offer classification, observation time. The sweep tool supplied
+  it and the runner did not, and `retention.observation` had no parameter for
+  it, so every release produced through the collector carried
+  `pickup_context: {}` and the policy's instruction to read `sold_by` before
+  `regular_price` was unsatisfiable on that path.
 
 - **Every raw response is checked against the location it was collected at,
   and a page cursor is only honoured against the contents it was issued for.**

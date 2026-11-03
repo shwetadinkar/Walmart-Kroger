@@ -281,7 +281,10 @@ class Collector:
                     observations[identity] = observation(
                         rec, store.store_id, observed_at,
                         [{"url":stage["page"]["source_url"], "sha256":_payload_hash(stage)}],
-                        "available" if available is True else "unavailable" if available is False else "unknown")
+                        "available" if available is True else "unavailable" if available is False else "unknown",
+                        # Carried from the source, not invented here. A source
+                        # that supplies none passes {} and the absence shows.
+                        pickup_context=raw.get("pickup_context"))
                     count += 1
             category_counts[cat.name] = len(per_cat)
             seen_products_by_category[cat.name] = count

@@ -34,10 +34,22 @@ def provenance_for(provenance,row,store_id):
     return provenance.get(stable_identity(row,store_id),provenance.get(row.get('upc',''),{}))
 
 
-def observation(row, store_id, observed_at, source_refs=None, availability_state='unknown'):
+def observation(row, store_id, observed_at, source_refs=None, availability_state='unknown',
+                pickup_context=None):
+    """The evidence beside one record.
+
+    `pickup_context` is what RETENTION_POLICY.md requires retention.json to
+    repeat per identity: the fulfillment flags, soldBy, stock level, offer
+    classification and the observation time. The sweep tool supplied it; the
+    runner did not, so every release produced through the collector carried
+    'pickup_context': {} and the policy was unsatisfiable on that path. It is a
+    parameter rather than something callers bolt on afterwards so a caller that
+    forgets is visibly passing nothing.
+    """
     stamp(observed_at)
     return {'observed_at':observed_at,'source_refs':deepcopy(source_refs or []),
-            'availability_state':availability_state if availability_state in ('available','unavailable') else 'unknown'}
+            'availability_state':availability_state if availability_state in ('available','unavailable') else 'unknown',
+            'pickup_context':deepcopy(pickup_context or {})}
 
 
 def reconcile(rows, observations, store_id, collection_at, previous_rows=None, previous_retention=None, expected_context=None, upc_collisions='refuse'):

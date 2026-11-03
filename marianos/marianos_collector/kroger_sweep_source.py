@@ -279,7 +279,15 @@ class KrogerSweepSource:
                 raw = dict(raw, sub_category=label, observed_at=observed_at,
                            product_id=context.get("product_id", ""),
                            pickup_available=True if state == "available"
-                           else False if state == "unavailable" else None)
+                           else False if state == "unavailable" else None,
+                           # RETENTION_POLICY.md requires retention.json to
+                           # repeat this per identity. Keeping only
+                           # availability_state and product_id left every
+                           # runner-route release with an empty
+                           # pickup_context, so the whole context travels.
+                           pickup_context=dict(
+                               context, response_file=str(path.relative_to(self.raw_dir)),
+                               observed_at=observed_at))
                 index.by_root.setdefault(root, []).append(raw)
         return index
 
