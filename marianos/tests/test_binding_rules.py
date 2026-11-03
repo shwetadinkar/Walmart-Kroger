@@ -161,31 +161,31 @@ class RefusedContributionsAreRetained(unittest.TestCase):
         composite = CompositeSource(
             Spine(), "spine", [CallableEnrichment("crawl", ("ppm",), lookup)])
         merged = composite.fetch(Store(), Cat(), "replay://x", "").products
-        return merged, composite.provenance_report()
+        return merged, composite.provenance_report(), composite.durable_evidence()
 
     def test_a_stale_contribution_is_not_merged(self):
         old = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
-        merged, _ = self._composite_with(self._live_binding(observed_at=old))
+        merged, _, _ = self._composite_with(self._live_binding(observed_at=old))
         self.assertEqual(merged[0]["ppm"], "")
 
     def test_a_stale_contribution_is_kept_with_its_value_and_date(self):
         old = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
-        _, report = self._composite_with(self._live_binding(observed_at=old))
+        _, report, durable = self._composite_with(self._live_binding(observed_at=old))
         self.assertEqual(report["refused_contribution_count"], 1)
-        kept = report["refused_contributions"][0]
+        kept = durable["refused_contributions"][0]
         self.assertEqual(kept["reason"], "UNBOUND_STALE")
         self.assertEqual(kept["values"]["ppm"], "$0.33/oz")
         self.assertEqual(kept["binding"]["observed_at"], old)
 
     def test_a_mismatched_fulfilment_is_kept_with_both_fulfilments(self):
-        _, report = self._composite_with(self._live_binding(fulfillment="in_store"))
-        kept = report["refused_contributions"][0]
+        _, report, durable = self._composite_with(self._live_binding(fulfillment="in_store"))
+        kept = durable["refused_contributions"][0]
         self.assertEqual(kept["reason"], "UNBOUND_FULFILLMENT_MISMATCH")
         self.assertEqual(kept["binding"]["fulfillment"], "in_store")
         self.assertEqual(kept["required_fulfillment"], "pickup")
 
     def test_a_good_contribution_is_merged_and_not_listed_as_refused(self):
-        merged, report = self._composite_with(self._live_binding())
+        merged, report, durable = self._composite_with(self._live_binding())
         self.assertEqual(merged[0]["ppm"], "$0.33/oz")
         self.assertEqual(report["refused_contribution_count"], 0)
 

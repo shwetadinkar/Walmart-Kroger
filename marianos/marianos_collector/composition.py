@@ -127,6 +127,11 @@ class Availability:
 # The same rule as Walmart's composition; it is also what stops a West Loop page
 # read reaching a Vernon Hills row.
 BINDING_KEY = "_binding"
+
+# Where the COMPLETE provenance evidence is persisted beside a release. The
+# provenance block in a run report is a capped preview that names this file;
+# the preview is never the evidence.
+DURABLE_EVIDENCE_FILENAME = "provenance_evidence.json"
 # The fulfilments the brief admits at all. Membership here is necessary and
 # NOT sufficient: a contribution must also match the fulfilment of the
 # observation it is being merged into. Accepting anything in this set was the
@@ -517,8 +522,63 @@ class CompositeSource:
             # Counts say how many were refused; these say what they were, so a
             # refused observation is retained with its own context and date
             # rather than disappearing into a tally.
-            "refused_contributions": self._refused[:200],
+            #
+            # This is a PREVIEW. The client's point on 3 November: "if that is
+            # the persisted evidence, later refused observations are still
+            # lost. Keep complete durable history separately; a capped report
+            # preview is fine when it points to that complete record." The
+            # complete list is `durable_evidence()`, which the runner and the
+            # merge tool both persist as their own artefact, and the two keys
+            # below say how many there are and where to read them.
+            "refused_contributions_preview": self._refused[:200],
+            "refused_contributions_preview_capped_at": 200,
             "refused_contribution_count": len(self._refused),
+            "complete_evidence_artifact": DURABLE_EVIDENCE_FILENAME,
+            # Per field, per product: which source won and WHEN that source
+            # observed it. Also his point: the freshness window "must not
+            # relabel an older observed price or offer as newly observed on a
+            # later run. Preserve each source observation time and its
+            # context." A count here, the times themselves in the artefact.
+            "field_observations_recorded": sum(
+                len(t.bindings_by_field) for t in self._traces.values()),
+        }
+
+    def durable_evidence(self) -> dict:
+        """The complete record, for persisting beside the release.
+
+        Everything in here is uncapped on purpose. `provenance_report()` is a
+        preview that points at this; nothing in the pipeline may treat the
+        preview as the evidence.
+        """
+        observations = {}
+        for identity, trace in sorted(self._traces.items()):
+            per_field = {}
+            for field_name, binding in sorted(trace.bindings_by_field.items()):
+                source = trace.sources_by_field.get(field_name, "")
+                per_field[field_name] = {
+                    "source": source,
+                    # The observation time of the source that supplied this
+                    # field, kept per field rather than per record, so a page
+                    # value read on a later date is never presented as having
+                    # been observed when the spine was.
+                    "source_observed_at": (binding or {}).get("observed_at", ""),
+                    "binding": binding,
+                }
+            if per_field:
+                observations[identity] = per_field
+        return {
+            "_what": ("The complete provenance evidence for this run. The "
+                      "provenance block in the run report is a capped preview "
+                      "and points here. Nothing may be read as complete from "
+                      "that preview."),
+            "source_mode": self.source_mode,
+            "spine": self.spine_name,
+            "refused_contributions": self._refused,
+            "refused_contribution_count": len(self._refused),
+            "conflicts": self._conflicts,
+            "conflict_count": len(self._conflicts),
+            "field_observations": observations,
+            "field_observation_count": sum(len(v) for v in observations.values()),
         }
 
     def provenance_for(self, identity: str) -> dict:

@@ -111,8 +111,12 @@ class DelegationSurfaceTests(unittest.TestCase):
     """B5. Three attributes were missed one at a time, so the surface is derived
     from the code rather than listed, and adding to it needs no change here."""
 
+    # `durable_evidence` is the composite's own, like `provenance_report`: it
+    # reports on the composition, so delegating it to the spine would hand
+    # back the spine's evidence and lose every refused contribution the
+    # composite recorded.
     OWNED = {"fetch", "source_mode", "reset_unresolved", "provenance_report",
-             "spine_source_mode"}
+             "durable_evidence", "spine_source_mode"}
 
     def surface(self):
         names = runner_reads()

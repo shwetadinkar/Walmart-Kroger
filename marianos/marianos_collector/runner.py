@@ -383,8 +383,20 @@ class Collector:
         write_json(self.storage, report_key, report)
         retention_key = prefix+"/retention.json"
         write_json(self.storage, retention_key, accumulated["retention"])
+        # The COMPLETE provenance evidence, as its own artefact. The
+        # provenance block inside the report is a capped preview: the client's
+        # point on 3 November was that if the preview is the persisted
+        # evidence then refused observations past the cap are lost. This is
+        # the record the preview points at, and it carries the per-field
+        # source observation times so an older observed value is never
+        # presented as newly observed.
+        evidence_key = ""
+        if hasattr(self.source, "durable_evidence"):
+            evidence_key = prefix+"/provenance_evidence.json"
+            write_json(self.storage, evidence_key, self.source.durable_evidence())
         manifest = {"store_id":store.store_id, "zipcode":store.zipcode, "release":release, "data_key":data_key,
                     "report_key":report_key, "retention_key":retention_key, "category_counts":category_counts, "records":len(records), "source_mode":self.source.source_mode,
+                    "provenance_evidence_key": evidence_key,
                     "coverage_scope": "subset_trial" if self.trial else "all_configured_roots"}
         write_json(self.storage, manifest_key, manifest)
         if hasattr(self.storage, "assert_lock_held"):
