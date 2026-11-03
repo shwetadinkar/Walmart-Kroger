@@ -640,11 +640,33 @@ consuming a dataset the provider collected under its own arrangements, which
 is a different act from directing per-URL fetches at a retailer that refuses
 our egress.
 
-So before any further vendor work: rerun that test with ZIP 60061 against
-Vernon Hills, on products that already carry a page-read `ppm`, so the
-provider's rate can be checked against one observed on the retailer's page.
-Until that runs, "Mariano's PPM is unobtainable" is not established, and no
-report may say it is.
+**Rerun on 4 November at ZIP 60061. It failed the same way:** `"No Kroger
+pickup store found for zip code 60061"`, `error_code: bad_input`, on the
+bananas URL that carries a page-read `ppm` of `$0.69/lb`.
+
+So the hypothesis above was wrong. The placeholder ZIP was real and worth
+finding, but it was not the cause, and the test asked for to settle it settled
+it against the guess. What the rerun does buy is a better-founded claim than
+the one it replaces: this route is now **tested at the assigned store and
+fails there**, where before it had only ever been tested at a ZIP belonging to
+nothing. "Blocked on the provider" is accurate now, and evidenced.
+
+The failure is `bad_input`, not `detect_block`, so it is the provider's store
+resolution and not a bot challenge. The retailer's own site resolves Vernon
+Hills from 60061 without trouble, which is in the 1 November message on the
+ticket. So the provider cannot select a store the retailer selects, and the
+provider's assurance that price per measure and coupon fields come through
+"for the product and selected store" cannot be exercised while no store can be
+selected.
+
+Open on ticket #754403 since 1 November, escalated to their R&D, no answer.
+Two things are worth asking that have not been: whether the dataset accepts a
+`store_id` such as `53100502` instead of a ZIP, and whether its Kroger store
+lookup covers the Mariano's banner at all or only Kroger-branded stores.
+
+**Do not report `ppm` as unobtainable on the strength of this.** It is
+unobtainable *through every route currently open to us*, which is a different
+sentence and the one the client should get.
 
 ## Reporting
 
