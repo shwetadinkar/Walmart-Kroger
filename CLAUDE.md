@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 251, Mariano's 632.
+  counts: Walmart 251, Mariano's 648.
 - **Assert on something that changes.** A test that asserts an identity-keyed
   value will pass whether or not the behaviour works.
 - **Claims in client-facing files are checked, not written from memory.** A
@@ -250,10 +250,29 @@ Two properties of the adapter are load-bearing and must not be traded away:
   product.
 - **The index is read back from the persisted API responses, not from the
   sweep's return value.** The checkpoint holds *finished records*, so a resumed
-  sweep would have nothing to hand the runner for terms already done, and a
-  resumed run would deliver less than a fresh one. Reading the responses makes
-  the two identical, and is the re-filter-rather-than-re-fetch property defect
-  4 above asked for, used rather than claimed.
+  sweep would have nothing to hand the runner for terms already done. Reading
+  the responses is the re-filter-rather-than-re-fetch property defect 4 above
+  asked for, used rather than claimed.
+
+  This was first written as "a resumed sweep serves exactly what a fresh one
+  served". **That was false** and the test for it compared a run's output
+  against itself over the same raw directory, so it asserted nothing. A term
+  that fails on page 0 is marked done and checkpointed, so a resumed sweep
+  skips it for ever while a fresh one collects it. Not yet fixed; the
+  resumability claim is limited to terms that completed.
+
+- **Every raw response is checked against the location it was collected at,
+  and a page cursor is only honoured against the contents it was issued for.**
+  Both were defects found by an independent review on 3 November, both
+  reproduced, both fixed, and both now have tests in
+  `tests/test_sweep_source_defects.py` that fail when the fix is reverted.
+  `to_raw_product` stamps the store columns and `store_context_verified: True`
+  from whatever `Store` it is handed, so indexing another store's responses
+  relabelled them: a work directory shared between two stores served three
+  West Loop products as verified Vernon Hills observations, silently. And the
+  cursor was an integer offset into a list rebuilt from disk per process, so
+  across two processes 14 observed products became 10 published with
+  `status: validated` and no gate fired. Neither may be traded away.
 
 Two things the runner route delivers differently from the tool, both honest and
 both reported rather than smoothed over:
@@ -261,7 +280,12 @@ both reported rather than smoothed over:
 - **187 of 26,166 products have no configured root**, because the retailer's own
   label is not in the explicit map. The tool kept them with an empty
   `category`. The runner is category-driven, so they cannot be served under any
-  root; they are counted and named in `provenance()` and never guessed into one.
+  root; they are counted and named in `provenance_report()` and never guessed
+  into one. That method was called `provenance()` until 3 November, which
+  nothing but tests ever called, because the runner looks for
+  `provenance_report()` — so none of this reached a single release, and this
+  file claimed otherwise. `CatalogV2Source.provenance()` has the same gap and
+  is still unfixed.
   This is **not** a map with ten entries missing. The labels are `Party` 117,
   `Halloween` 38, `Entertainment` 10, `Thanksgiving` 10, `Automotive` 4,
   `Other` 3, `Apparel` 2, `Furniture` 1, `Holiday & Seasonal Goods` 1,
@@ -271,16 +295,35 @@ both reported rather than smoothed over:
   question for the client, not a defect to fix here; see
   `ROUTES_AND_AUTONOMY.md`.
 - **Five of the 28 roots came back empty** in the 31 October sweep: Coupons,
-  Seafood, Coffee, Batteries, Light Bulbs. Kroger's label vocabulary has no
-  equivalent, which is not the same as the shelf being empty. The runner refuses
-  a release with an empty configured root, which is correct, so a sweep run
-  names the 23 roots it can populate and `missing_roots()` reports the rest
-  before a reviewer has to infer it from a validation failure.
+  Seafood, Coffee, Batteries, Light Bulbs. The runner refuses a release with an
+  empty configured root, which is correct, so a sweep run names the 23 roots it
+  can populate and the zero-products failure now states which roots the source
+  did reach. Earlier this said `missing_roots()` reported that; nothing called
+  it, and a reviewer met the bare validation failure.
+
+  **`Seafood` on that list does not mean no seafood was collected.** Kroger
+  files meat and seafood under the single label `Meat & Seafood`; the client's
+  CSV splits them; a product cannot be assigned to one from the label alone, so
+  `config/category_map.json` maps the label to `Meat` and keeps it in
+  `sub_category`. Seafood is in the delivered data, inside the 987 Meat
+  records, and is read by filtering `sub_category`. The reason text in
+  `config/sweep_coverage.json` said the cause was Kroger's labels and the
+  retailer's sitemap; the actual cause is this repository's own mapping
+  decision, and a client reading only the root name would have concluded the
+  opposite. `Coffee` was wrong too: the map does contain `Coffee -> Coffee`;
+  no product the sweep reached carried that label.
 
 The store columns come from Kroger's own `/locations` response via
-`sweep_core.store_from_locations`, never from a hand-written config entry, and
+`sweep_core.store_from_locations` **when `--resolve-store` is passed**, and
 `--resolve-store` requires `--expect-zipcode` and `--expect-street` because the
-assigned id differs from West Loop's by two characters.
+assigned id differs from West Loop's by two characters. The Azure job always
+passes it. Without it the columns come from `stores.json` and **nothing checks
+that `--store` and `--location-id` describe the same store**, so
+`--source sweep --store <any configured id> --location-id 53100508` publishes
+West Loop data under whatever name the config holds. This file previously
+stated the observed-columns property unconditionally, which was false for the
+CLI. Still unfixed; `build_source`'s sweep branch should require the two to
+agree.
 
 ## Reporting
 

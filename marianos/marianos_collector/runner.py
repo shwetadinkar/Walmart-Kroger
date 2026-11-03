@@ -286,7 +286,18 @@ class Collector:
             category_counts[cat.name] = len(per_cat)
             seen_products_by_category[cat.name] = count
             if len(per_cat) == 0:
-                raise ValidationFailure(f"Zero eligible products: {cat.name} (failed is not empty)")
+                # Name what the route did reach. A bare "zero products in
+                # Seafood" leaves the reviewer to work out whether the route
+                # cannot see that root at all or the run collapsed, and those
+                # need opposite responses. A source that can report its roots
+                # answers that here rather than in a note nothing calls.
+                reached = getattr(self.source, "populated_roots", None)
+                found = sorted(reached()) if callable(reached) else []
+                detail = (f" The source populated {found}, so declare this root in "
+                          "an --uncovered-roots file if the route genuinely cannot "
+                          "reach it." if found else "")
+                raise ValidationFailure(
+                    f"Zero eligible products: {cat.name} (failed is not empty).{detail}")
             if previous_manifest:
                 prior_count = previous_manifest.get("category_counts", {}).get(cat.name)
                 if isinstance(prior_count, int) and prior_count > 0 and len(per_cat) < prior_count * self.previous_ratio:

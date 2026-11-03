@@ -116,6 +116,23 @@ class TheShippedDeclarationIsConsistent(unittest.TestCase):
     def test_it_does_not_leave_the_28_roots_entirely_uncovered(self):
         self.assertLess(len(self.uncovered), len(self.configured))
 
+    def test_the_seafood_reason_does_not_imply_no_seafood_was_collected(self):
+        """It did not. Kroger files meat and seafood under one label, the map
+        sends it to Meat and keeps the label in sub_category, so seafood ships
+        inside the Meat records. A reviewer reading only the root name would
+        conclude the opposite, so the reason has to say so itself."""
+        reason = self.uncovered["Seafood"]
+        self.assertIn("ARE in the delivered dataset", reason)
+        self.assertIn("sub_category", reason)
+        cmap = json.loads((ROOT / "config/category_map.json").read_text())
+        self.assertEqual(cmap["map"]["Meat & Seafood"], "Meat")
+        self.assertNotIn("Seafood", set(cmap["map"].values()))
+
+    def test_the_coffee_reason_does_not_blame_a_map_that_has_the_entry(self):
+        cmap = json.loads((ROOT / "config/category_map.json").read_text())
+        self.assertEqual(cmap["map"].get("Coffee"), "Coffee")
+        self.assertIn("map is not the obstacle", self.uncovered["Coffee"])
+
 
 class AStaleDeclarationStopsTheRun(unittest.TestCase):
     """The one failure mode a declaration introduces, and the gate for it."""

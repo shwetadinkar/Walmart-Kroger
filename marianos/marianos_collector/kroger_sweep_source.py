@@ -41,6 +41,7 @@ What this source cannot attest, and so declares:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from pathlib import Path
@@ -51,6 +52,10 @@ from .sources import Page
 from .sweep_core import MAX_START, REQUESTED_FULFILLMENT, STATE_VERSION, Budget, sweep
 
 LOG = logging.getLogger("collector")
+
+
+class SweepCursorInvalid(RuntimeError):
+    """A persisted page cursor no longer identifies the products it was issued for."""
 
 # 0, 50 ... 250. One more page would ask for start 300, which Kroger refuses.
 PAGES_PER_TERM = MAX_START // 50 + 1
@@ -73,6 +78,12 @@ class SweepIndex:
         self.products_seen = 0
         self.duplicates = 0
         self.unplaceable = 0
+        # Raw responses skipped because they were collected at another
+        # location, keyed by the locationId they actually carry. Never empty
+        # silently: a non-zero count here means the work directory holds
+        # another store's observations and they were refused, not relabelled.
+        self.foreign_location: dict[str, int] = {}
+        self.terms_indexed: dict[str, int] = {}
 
     @property
     def product_count(self) -> int:
@@ -80,6 +91,20 @@ class SweepIndex:
 
     def populated_roots(self) -> list[str]:
         return sorted(k for k, v in self.by_root.items() if v)
+
+    def fingerprint(self, root: str) -> str:
+        """A digest of the exact products this root would serve, in order.
+
+        The runner persists a page cursor in its checkpoint and resumes in a
+        new process, where this index is rebuilt from disk. If the raw
+        directory changed in between, a numeric offset into the rebuilt list
+        points somewhere else, and products the sweep observed are never
+        served by either run. Carrying this digest in the cursor turns that
+        into a refusal instead of a silent loss.
+        """
+        basis = "\n".join(f"{p.get('url') or ''}|{p.get('upc') or ''}"
+                          for p in self.by_root.get(root, []))
+        return hashlib.sha256(basis.encode()).hexdigest()[:12]
 
 
 class KrogerSweepSource:
@@ -190,6 +215,17 @@ class KrogerSweepSource:
         Deterministic: the files are walked in sorted order and products keep
         the order the response gave them, so two indexings of the same raw
         directory produce the same pages in the same order.
+
+        **Every response is checked against the location it was collected at.**
+        `to_raw_product` stamps the store columns and
+        `store_context_verified: True` from whatever `Store` it is handed, so
+        indexing another store's responses would relabel them as this store's
+        observations. A work directory shared between two stores did exactly
+        that: three West Loop products were served as Vernon Hills, verified,
+        with no error and no report line, which is the one thing the working
+        rules forbid outright. The sweep writes `locationId` into every
+        response file, so the check is a comparison and not a heuristic, and a
+        foreign response is refused and counted rather than converted.
         """
         index = SweepIndex()
         for path in sorted(self.raw_dir.rglob("start_*.json")):
@@ -202,7 +238,16 @@ class KrogerSweepSource:
             if not isinstance(document, dict):
                 index.malformed["RESPONSE_NOT_OBJECT"] = index.malformed.get("RESPONSE_NOT_OBJECT", 0) + 1
                 continue
+            where = str(document.get("locationId") or "")
+            if where != str(self.location_id):
+                # Another store's observation, or one whose store cannot be
+                # established. Either way it is not evidence of this store.
+                index.foreign_location[where or "(absent)"] = \
+                    index.foreign_location.get(where or "(absent)", 0) + 1
+                continue
             index.responses += 1
+            index.terms_indexed[str(document.get("term") or "")] = \
+                index.terms_indexed.get(str(document.get("term") or ""), 0) + 1
             observed_at = str(document.get("observed_at") or "")
             response = document.get("response")
             data = response.get("data") if isinstance(response, dict) else None
@@ -241,9 +286,38 @@ class KrogerSweepSource:
     # -------------------------------------------------------------- page serve
 
     def fetch(self, store, category, url: str, cursor: str) -> Page:
+        """One page of this root's products.
+
+        The cursor is `<fingerprint>:<offset>`, not a bare offset. The runner
+        persists it in a checkpoint and resumes in a new process, where this
+        index is rebuilt from disk; a bare offset into a list that gained or
+        lost files in between points at the wrong products. Measured: across
+        two processes, 14 products observed, 10 published, 4 served by neither
+        run, `status: validated`, no gate fired, and the only trace was a
+        `duplicate_placements: 4` that reads like deduplication working.
+
+        So the offset is only honoured when the root's contents are the ones
+        it was issued against. Otherwise this refuses, because the alternative
+        is losing observed products quietly, and a run that stops and asks for
+        a reset is the behaviour the runner already has for a stale checkpoint.
+        """
         index = self.sweep_once(store)
         products = index.by_root.get(category.name, [])
-        start = int(cursor) if cursor.isdecimal() else 0
+        fingerprint = index.fingerprint(category.name)
+        start = 0
+        if cursor:
+            issued, _, offset = cursor.rpartition(":")
+            if not offset.isdecimal():
+                raise SweepCursorInvalid(
+                    f"Unreadable sweep cursor {cursor!r} for {category.name}")
+            if issued != fingerprint:
+                raise SweepCursorInvalid(
+                    f"The sweep index for {category.name} changed since this cursor was "
+                    f"issued ({issued or 'none'} then, {fingerprint} now), so the offset "
+                    f"no longer identifies the same products. Reset the checkpoints for "
+                    f"this store and rerun; continuing would skip observed products "
+                    f"without reporting them.")
+            start = int(offset)
         window = products[start:start + self.serve_page_size]
         end = start + self.serve_page_size
         return Page(
@@ -253,7 +327,7 @@ class KrogerSweepSource:
             source_url=url,
             products=window,
             children=[],
-            next_cursor=str(end) if end < len(products) else "",
+            next_cursor=f"{fingerprint}:{end}" if end < len(products) else "",
             # Term-filtered search discovers no children and enumerates no
             # category, so this is False by construction and not a value this
             # source could ever honestly set True.
@@ -283,7 +357,19 @@ class KrogerSweepSource:
             return []
         return [c.name for c in categories if not self._index.by_root.get(c.name)]
 
-    def provenance(self) -> dict:
+    def provenance_report(self) -> dict:
+        """Everything a reviewer needs about what this sweep reached.
+
+        Named `provenance_report` because that is the name the runner looks
+        for (`runner.py`, the report assembly). It was called `provenance`,
+        which nothing but tests ever called, so none of this reached a single
+        release: not the unmapped labels, not the 187 unplaceable products,
+        not `page_failures`, not `stopped_reason`, not the coverage limit. The
+        working rules claimed the 187 were "counted and named in
+        provenance()"; they were counted on an object the CLI discarded. This
+        is the same defect the runner's `unresolved_offers` block exists to
+        fix, and it is fixed the same way.
+        """
         index, state = self._index, self._state or {}
         return {
             "source_mode": self.source_mode,
@@ -310,4 +396,10 @@ class KrogerSweepSource:
             "unmapped_labels": dict(sorted(index.unmapped.items())) if index else None,
             "malformed_by_reason": dict(sorted(index.malformed.items())) if index else None,
             "populated_roots": index.populated_roots() if index else None,
+            # Non-zero means the work directory held responses collected at
+            # another location and they were refused rather than relabelled as
+            # this store's. A reviewer has to be able to see that happened.
+            "responses_refused_as_foreign_location": (
+                dict(sorted(index.foreign_location.items())) if index else None),
+            "terms_the_index_drew_from": len(index.terms_indexed) if index else None,
         }

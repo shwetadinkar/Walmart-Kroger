@@ -128,7 +128,7 @@ class TheProductsOwnLabelDecidesTheRoot(unittest.TestCase):
                          Path(td))
             self.assertEqual(served(src, "Dairy"), [])
             self.assertEqual(served(src, "Produce"), [])
-            prov = src.provenance()
+            prov = src.provenance_report()
             self.assertEqual(prov["unplaceable_unmapped_products"], 1)
             self.assertEqual(prov["unmapped_labels"], {"Nothing Mapped": 1})
 
@@ -137,7 +137,7 @@ class TheProductsOwnLabelDecidesTheRoot(unittest.TestCase):
             src = source({"milk": [product("0001111060933", ("Nothing Mapped",))]},
                          Path(td))
             src.sweep_once(STORE)
-            prov = src.provenance()
+            prov = src.provenance_report()
             self.assertEqual(prov["products_seen"], 1)
             self.assertEqual(prov["products_served"], 0)
 
@@ -162,7 +162,7 @@ class ItDoesNotClaimCoverage(unittest.TestCase):
 
     def test_the_provenance_states_the_paging_ceiling(self):
         with tempfile.TemporaryDirectory() as td:
-            prov = source({}, Path(td)).provenance()
+            prov = source({}, Path(td)).provenance_report()
             self.assertIn("skip count", prov["coverage_limit"])
             self.assertIn("300", prov["coverage_limit"])
 
@@ -197,7 +197,10 @@ class PagingServesEveryProductExactlyOnce(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             items = [product(f"000111106{i:04d}") for i in range(50)]
             src = source({"milk": items}, Path(td), serve_page_size=25)
-            second = src.fetch(STORE, CATEGORIES[0], CATEGORIES[0].url, "25")
+            first = src.fetch(STORE, CATEGORIES[0], CATEGORIES[0].url, "")
+            self.assertTrue(first.next_cursor)
+            second = src.fetch(STORE, CATEGORIES[0], CATEGORIES[0].url,
+                               first.next_cursor)
             self.assertEqual(second.next_cursor, "")
 
     def test_a_product_found_by_two_terms_is_served_once(self):
@@ -206,7 +209,7 @@ class PagingServesEveryProductExactlyOnce(unittest.TestCase):
             src = source({"milk": [shared], "eggs": [shared]}, Path(td),
                          terms={"Dairy": ["milk", "eggs"]})
             self.assertEqual(len(served(src, "Dairy")), 1)
-            self.assertEqual(src.provenance()["duplicate_identities"], 1)
+            self.assertEqual(src.provenance_report()["duplicate_identities"], 1)
 
 
 class TheIndexComesFromThePersistedResponses(unittest.TestCase):
@@ -275,7 +278,7 @@ class TheIndexComesFromThePersistedResponses(unittest.TestCase):
                                       {"Dairy": ["milk"]}, category_map=CATEGORY_MAP)
             again.sweep_once(STORE)
             self.assertTrue(any(k.startswith("UNREADABLE_RESPONSE")
-                                for k in again.provenance()["malformed_by_reason"]))
+                                for k in again.provenance_report()["malformed_by_reason"]))
 
 
 class OneDefinitionOfAProduct(unittest.TestCase):
