@@ -42,7 +42,7 @@ key back to the API records.
 | Cards captured | 656, all recovered |
 | Distinct UPCs | 649 |
 | Cards with a displayed `ppm` | 608 of 656 |
-| Cards with retailer deal wording | 217 of 656 |
+| Cards with retailer deal wording | 217 of 656 — **superseded, see below** |
 | Cards with a sale price | 181 of 656 |
 | Cards sold by weight | 32 of 656 |
 | Cross-term value disagreements | 0 |
@@ -147,3 +147,23 @@ Parser verification: `tests/test_parse_page_harvest.py` runs 14 tests directly
 and contributes the same 14 to the Mariano's suite, which stands at 485. Two mutations were run and both were caught: writing the
 approximate each-price into `regular_price` failed two tests, and deriving a rate
 from price and size when none was displayed failed one.
+
+## Superseded figure in the table above
+
+**"Cards with retailer deal wording: 217 of 656" is the pre-correction count
+and must not be quoted. The corrected figure is 174.**
+
+217 counted every line left over after the title and the size were taken, which
+included lines that are not offers at all: a stock status, a payment
+eligibility, a "View 2 Offers" link, an "11 more options" link. 174 is the
+count after a deal is identified by the wording the retailer actually used,
+from `data/parsed_full_corrected.json`.
+
+`SUPERSEDED.md` in this folder named the unreliable *keys* in
+`data/parsed_full.json` and did not say that this file's own headline number
+was one of the things affected. It is. Found by an independent review on
+4 November.
+
+Nothing else in the table above changes. In particular the 608 displayed rates
+are unaffected: the rate was read from its own column in the capture and
+neither defect could reach it.

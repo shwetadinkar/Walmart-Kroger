@@ -70,6 +70,17 @@ def main(argv=None):
     by_label = Counter(r["retailer_label"] or "(none)" for r in rows)
     by_file = Counter(r["source_response_file"] for r in rows)
 
+    # Checked BEFORE anything is written. It used to run after the CSV and the
+    # JSON were already on disk, so a refused reconciliation left a
+    # complete-looking pair of files with mismatched counts and no README
+    # saying so - which is worse than no output, because it looks finished.
+    if index.unplaceable != len(rows):
+        raise SystemExit(
+            f"REFUSED: the unplaceable counter says {index.unplaceable} and "
+            f"{len(rows)} identities were retained. A reconciliation that does "
+            f"not account for every counted product is not a reconciliation. "
+            f"Nothing was written.")
+
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -114,11 +125,6 @@ def main(argv=None):
     (out / "OUT_OF_SCOPE_RECONCILIATION.json").write_text(
         json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8")
 
-    if index.unplaceable != len(rows):
-        raise SystemExit(
-            f"REFUSED: the unplaceable counter says {index.unplaceable} and "
-            f"{len(rows)} identities were retained. A reconciliation that does "
-            f"not account for every counted product is not a reconciliation.")
 
     lines = [
         "# Out-of-scope reconciliation",

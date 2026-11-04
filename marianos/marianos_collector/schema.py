@@ -67,6 +67,56 @@ def _is_private_brand(brand: str) -> bool:
     # house brand and "Simple Mills" or "Field Roast" do not.
     return any(brand == name or brand.startswith(name + " ") for name in _PRIVATE_BRANDS)
 
+DIGITAL_DEAL_EVIDENCE = re.compile(
+    r"\b(?:clip|clipp(?:ed|ing)|activat(?:e|ion)|add (?:to |the )?(?:account|offer)"
+    r"|save (?:the |this )?(?:offer|coupon)|digital coupon)\b"
+    # The retailer's own leading `Coupon:` marker on a rendered card. That
+    # prefix is how the retailer itself labels the digital-coupon surface, so
+    # it is observed evidence that the value belongs in this column, in exactly
+    # the way a bare promotional sentence is not.
+    #
+    # Without it this gate rejected **all 54** digital values read from the
+    # retailer's pages, 53 of which carry that prefix, while the merge tool
+    # wrote them to the column anyway because it bypassed this function. Two
+    # write paths with contradictory rules for one column, and the unreachable
+    # one was the stricter. Found by an independent review on 4 November.
+    r"|^coupon:",
+    re.I)
+"""What makes a value admissible in `digital_deals_description`.
+
+Deliberately narrow. `cashback` and `cash back` are refused separately below
+and are NOT evidence of a digital coupon: there is no cashback column among the
+22 fields, so a cashback offer the retailer displayed is withheld from both
+deal columns rather than filed under the nearest one.
+"""
+
+
+def check_deal_columns(volume_description, volume_price,
+                       digital_description, digital_price):
+    """The deal-column rules, as one implementation both write paths use.
+
+    `make_record` applies these, and `tools/merge_page_enrichment.py` wrote the
+    same column directly without them, so a value the schema would refuse could
+    still reach a published row through the merge. Returns the refusal reason,
+    or None when the pairing is admissible.
+    """
+    vol_d = (volume_description or "").strip()
+    vol_p = (volume_price or "").strip()
+    dig_d = (digital_description or "").strip()
+    dig_p = (digital_price or "").strip()
+    if dig_p and not dig_d:
+        return "DIGITAL_PRICE_WITHOUT_DESCRIPTION"
+    if dig_d and not DIGITAL_DEAL_EVIDENCE.search(dig_d):
+        return "UNVERIFIED_DIGITAL_DEAL"
+    if dig_d and re.search(
+            r"\b(?:cashback|cash back)\b",
+            re.sub(r"\bno[ \t]+cash[ \t]+back\b", "", dig_d, flags=re.I), re.I):
+        return "CASHBACK_MISCLASSIFIED_AS_DIGITAL"
+    if vol_p and not vol_d:
+        return "VOLUME_PRICE_WITHOUT_DESCRIPTION"
+    return None
+
+
 def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: str) -> dict:
     if not isinstance(raw, dict):
         raise RecordRejected("Product is not a JSON object")
@@ -130,7 +180,7 @@ def make_record(raw: dict, store, category: str, sub_category: str, crawl_date: 
     dig_price = result["digital_deals_price"].strip()
     if dig_price and not dig_desc:
         raise RecordRejected("DIGITAL_PRICE_WITHOUT_DESCRIPTION")
-    if dig_desc and not re.search(r"\b(?:clip|clipp(?:ed|ing)|activat(?:e|ion)|add (?:to |the )?(?:account|offer)|save (?:the |this )?(?:offer|coupon)|digital coupon)\b", dig_desc, re.I):
+    if dig_desc and not DIGITAL_DEAL_EVIDENCE.search(dig_desc):
         raise RecordRejected("UNVERIFIED_DIGITAL_DEAL")
     # A prohibition in coupon terms is not an advertised cash-back benefit.
     # Inspect a copy only; preserve the complete source description in output.

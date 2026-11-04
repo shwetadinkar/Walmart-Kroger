@@ -9,8 +9,18 @@ distinct UPCs. Parsed by `tools/parse_page_harvest.py` with outcome `ok` on all
 279 and zero cross-term conflicts.
 
 - displayed price per measure present on **202**
-- deal or offer wording present on **137**
-- sale price present on 67, size present on 231
+- deal or offer wording present on **29**
+- sale price present on 67, size present on 213
+
+Those three figures are `deal_text_present`, `sale_price_present` and
+`size_present` from `PARSE_REPORT.json` in this folder, and they can be
+recomputed from `data/harvest.tsv`. **This file first said 137 and 231.** 137
+was neither a count of anything: it was deal lines plus the badge labels that
+are deliberately not deal wording, and it overstated the real figure by about
+4.7 times. 231 was simply wrong against the 213 in the report beside it. Both
+were written from memory into a file whose whole purpose is to be the
+conservative statement, and both were falsifiable against a JSON file in the
+same directory. Found by an independent review on 4 November.
 
 Store context was confirmed two independent ways before collection and is not
 inferred: the page header read `Pickup at Marianos Vernon Hills`, and the
@@ -33,6 +43,32 @@ Terms: salmon, shrimp, tilapia, ground coffee, batteries, light bulbs, food
 storage containers, screwdriver, apples, bananas, flowers, coupon.
 
 ## What it does not establish
+
+**It still does not create a record in any of those roots.** A displayed rate
+for a battery does not make a battery record, and none was made.
+
+**The search term is not evidence of category.** The `shrimp` term returned a
+steak seasoning, among others. Nothing here assigns a category, and the term
+column is kept only so a reader can see how a card was reached.
+
+**It does not establish an unattended route.** This was a person's own browser
+driven interactively. It is not a schedule, not a server, and nothing about it
+runs twice a week. The three page-only columns will be empty again in the next
+sweep unless a merge is run against a page read.
+
+**It does not reopen the datacenter route.** No refusal was encountered at any
+point in this session, which bounds nothing about our egress: the measured
+refusals from two Azure regions, a second cloud provider and a plain sitemap
+request were from datacenter addresses, and this was not. The two are
+different observations about different clients and neither answers the other.
+
+**Floral and Coupons returning zero rates is an observation, not a gap in this
+harvest.** 24 flower cards and 24 coupon cards were read and parsed cleanly;
+the retailer displays no price per measure on either surface. Coupons is a
+savings surface rather than a product category.
+
+**It says nothing about Azure, about category coverage, or about the 300
+product per term ceiling.** None of those were touched.
 
 ## Answered since this file was written
 
@@ -66,28 +102,3 @@ category the product's own source does not carry, which the one rule forbids.
 It is a question about the client's taxonomy against the retailer's, and it is
 his to answer; nothing here guesses at it.
 
-**It still does not create a record in any of those roots.** A displayed rate
-for a battery does not make a battery record, and none was made.
-
-**The search term is not evidence of category.** The `shrimp` term returned a
-steak seasoning, among others. Nothing here assigns a category, and the term
-column is kept only so a reader can see how a card was reached.
-
-**It does not establish an unattended route.** This was a person's own browser
-driven interactively. It is not a schedule, not a server, and nothing about it
-runs twice a week. The three page-only columns will be empty again in the next
-sweep unless a merge is run against a page read.
-
-**It does not reopen the datacenter route.** No refusal was encountered at any
-point in this session, which bounds nothing about our egress: the measured
-refusals from two Azure regions, a second cloud provider and a plain sitemap
-request were from datacenter addresses, and this was not. The two are
-different observations about different clients and neither answers the other.
-
-**Floral and Coupons returning zero rates is an observation, not a gap in this
-harvest.** 24 flower cards and 24 coupon cards were read and parsed cleanly;
-the retailer displays no price per measure on either surface. Coupons is a
-savings surface rather than a product category.
-
-**It says nothing about Azure, about category coverage, or about the 300
-product per term ceiling.** None of those were touched.

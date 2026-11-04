@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from merge_page_enrichment import (  # noqa: E402
-    build_lookup, main, split_deals)
+    REFUSED_DEAL_VALUES, WITHHELD_DEAL_VALUES, build_lookup, main, split_deals)
 from marianos_collector.composition import BINDING_KEY  # noqa: E402
 
 STORE = "Marianos - Marianos Vernon Hills"
@@ -219,12 +219,46 @@ class TheDealColumnsTakeOnlyOffers(unittest.TestCase):
         self.assertEqual(vol, "Save $15 when you spend $60")
         self.assertEqual(dig, "")
 
-    def test_cash_back_is_a_digital_offer_not_a_volume_one(self):
-        vol, dig = split_deals(
-            ["Cash Back: $5.00 Cash Back on Pabst Blue Ribbon or Pabst Light"])
+    def test_cash_back_reaches_neither_column_and_is_recorded(self):
+        """This asserted the opposite, and the assertion was mine.
+
+        `schema.make_record` has refused cashback in the digital column since
+        before this tool existed, as CASHBACK_MISCLASSIFIED_AS_DIGITAL, and the
+        schema is right: there is no cashback column among the 22 fields, so a
+        cashback offer the retailer displayed is withheld rather than filed
+        under the nearest column. It is recorded, not dropped.
+        """
+        line = "Cash Back: $5.00 Cash Back on Pabst Blue Ribbon or Pabst Light"
+        vol, dig = split_deals([line])
+        self.assertEqual((vol, dig), ("", ""))
+        self.assertIn(line, WITHHELD_DEAL_VALUES)
+
+    def test_the_retailers_coupon_prefix_is_admissible_in_the_digital_column(self):
+        """The gate demanded clipping language and rejected all 54 values read
+        from the retailer's pages, 53 of which carry this prefix, while this
+        tool wrote them anyway because it bypassed make_record. The prefix is
+        the retailer's own marker for that surface."""
+        vol, dig = split_deals(["Coupon: Save $1.00 on Energizer"])
         self.assertEqual(vol, "")
+        self.assertEqual(dig, "Coupon: Save $1.00 on Energizer")
+
+    def test_a_value_the_schema_refuses_is_blanked_and_recorded(self):
+        """The merge writes the column directly, so without this a value the
+        schema refuses could reach a published row through the merge."""
+        before = len(REFUSED_DEAL_VALUES)
+        vol, dig = split_deals(["Coupon: no cash back, cashback bonus applies"])
+        self.assertEqual((vol, dig), ("", ""))
+        self.assertEqual(len(REFUSED_DEAL_VALUES), before + 1)
+        self.assertEqual(REFUSED_DEAL_VALUES[-1]["reason"],
+                         "CASHBACK_MISCLASSIFIED_AS_DIGITAL")
+
+    def test_the_two_write_paths_agree_on_one_implementation(self):
+        """make_record and this tool must apply the same deal rules."""
+        from marianos_collector.schema import check_deal_columns
+        self.assertIsNone(check_deal_columns("", "", "Coupon: Save $1", ""))
         self.assertEqual(
-            dig, "Cash Back: $5.00 Cash Back on Pabst Blue Ribbon or Pabst Light")
+            check_deal_columns("", "", "Half price today", ""),
+            "UNVERIFIED_DIGITAL_DEAL")
 
     def test_the_wording_is_passed_through_unchanged(self):
         line = "Save $2 each when you buy 3 or more"

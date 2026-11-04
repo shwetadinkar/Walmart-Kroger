@@ -147,6 +147,30 @@ class TheToolWritesTheReconciliation(unittest.TestCase):
         finally:
             tool.KrogerSweepSource = real
 
+    def test_a_refused_reconciliation_writes_nothing_at_all(self):
+        """The gate used to fire after the CSV and JSON were already on disk,
+        so a refusal left a complete-looking pair of files with mismatched
+        counts and no README saying so, which is worse than no output because
+        it looks finished."""
+        real = tool.KrogerSweepSource
+
+        class Skewed(real):
+            def _index_raw(self, store):
+                index = super()._index_raw(store)
+                index.unplaceable += 1
+                return index
+
+        tool.KrogerSweepSource = Skewed
+        try:
+            with self.assertRaises(SystemExit):
+                self.run_tool()
+        finally:
+            tool.KrogerSweepSource = real
+        for name in ("out_of_scope_products.csv",
+                     "OUT_OF_SCOPE_RECONCILIATION.json", "README.md"):
+            self.assertFalse((self.out / name).exists(),
+                             f"{name} was written despite the refusal")
+
 
 if __name__ == "__main__":
     unittest.main()

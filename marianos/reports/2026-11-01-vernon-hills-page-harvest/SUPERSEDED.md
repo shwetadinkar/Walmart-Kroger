@@ -9,9 +9,11 @@ a corrected file cannot serve as that. It is not edited.
 - **`deal_lines`** holds every card line that was not the title or the size,
   which includes lines that are not offers. Through the merge as it then stood,
   that put `Low Stock` into `volume_deals_description` on 47 records and
-  `View 2 Offers` on 12 more; 77 of the 183 volume values were wholly or partly
-  a stock status, a payment eligibility or a navigation link. The 22 fields have
-  no column for any of those.
+  `View 2 Offers` on 12 more; **82** of the 183 volume values were wholly or
+  partly a stock status, a payment eligibility or a navigation link. The 22
+  fields have no column for any of those. (This said 77, written from memory.
+  The sub-counts above are exact; only the summary was wrong, and it understated
+  the defect. Found by an independent review on 4 November.)
 - **`size`** holds the line after the title whatever it said. On sold-by-weight
   cards, which carry no size, that swallowed two digital coupons
   (`0000000003283` and `0000000004409`) and a number of `Buy 1, Get 1 Free`

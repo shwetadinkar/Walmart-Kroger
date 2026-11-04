@@ -29,6 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from parse_page_harvest import classify_card_line  # noqa: E402
 
+from marianos_collector.schema import check_deal_columns  # noqa: E402
+
 from marianos_collector.composition import (  # noqa: E402
     BINDING_KEY,
     DURABLE_EVIDENCE_FILENAME,
@@ -51,11 +53,20 @@ POLICY = {
 }
 
 COUPON_PREFIX = "coupon:"
-# The retailer renders two clipped-offer prefixes, not one. "Cash Back:" sits on
-# the same digital-offer surface as "Coupon:" and is not a multi-buy offer, so
-# putting it in volume_deals_description would describe it as something it is
-# not. Both go to the digital column, and the prefix is kept as rendered.
-DIGITAL_PREFIXES = ("coupon:", "cash back:", "cashback:")
+DIGITAL_PREFIXES = ("coupon:",)
+# **`Cash Back:` belongs in neither deal column.**
+#
+# It was briefly routed to the digital column on the reasoning that it sits on
+# the same clipped-offer surface as `Coupon:` and is certainly not a multi-buy
+# offer. `schema.make_record` has refused exactly that since before this tool
+# existed, as `CASHBACK_MISCLASSIFIED_AS_DIGITAL`, and the schema is right:
+# there is no cashback column among the 22 fields, so a cashback offer the
+# retailer displayed is withheld rather than filed under the nearest column.
+# The reasoning was mine and the existing deliberate rule contradicted it.
+#
+# One record at Vernon Hills is affected, a Pabst Blue Ribbon cashback offer.
+# It is retained in the page read and published nowhere.
+WITHHELD_PREFIXES = ("cash back:", "cashback:")
 
 
 def split_deals(deal_lines):
@@ -67,12 +78,41 @@ def split_deals(deal_lines):
     same result as one produced after. Without that, re-merging an older page
     read would reintroduce "Low Stock" into volume_deals_description.
     """
-    offers = [x for x in deal_lines if classify_card_line(x) == "deal"]
+    offers = []
+    for line in deal_lines:
+        if classify_card_line(line) != "deal":
+            continue
+        if line.lower().lstrip().startswith(WITHHELD_PREFIXES):
+            # Recorded, not dropped. The 22 fields have no column for it, and
+            # an offer the retailer displayed that we publish nowhere is a fact
+            # about the delivery rather than an implementation detail.
+            if line not in WITHHELD_DEAL_VALUES:
+                WITHHELD_DEAL_VALUES.append(line)
+            continue
+        offers.append(line)
     volume = [x for x in offers
               if not x.lower().lstrip().startswith(DIGITAL_PREFIXES)]
     digital = [x for x in offers
                if x.lower().lstrip().startswith(DIGITAL_PREFIXES)]
-    return "; ".join(volume), "; ".join(digital)
+    vol_text, dig_text = "; ".join(volume), "; ".join(digital)
+
+    # The schema's own deal rules, applied here too. This tool writes the
+    # column directly instead of through `make_record`, so without this a value
+    # the schema refuses could still reach a published row by coming through
+    # the merge. One implementation, called from both paths.
+    refusal = check_deal_columns(vol_text, "", dig_text, "")
+    if refusal:
+        REFUSED_DEAL_VALUES.append(
+            {"reason": refusal, "volume": vol_text, "digital": dig_text})
+        return "", ""
+    return vol_text, dig_text
+
+
+# Deal values the schema refused, recorded so a blanked column is a reported
+# fact rather than a silent omission.
+REFUSED_DEAL_VALUES: list = []
+# Offers the retailer displayed that no column in the 22 fields can carry.
+WITHHELD_DEAL_VALUES: list = []
 
 
 class _Spine:
@@ -334,6 +374,15 @@ def main(argv=None):
         "page_distinct_upcs": len(page_upcs),
         # Where two reads supplied different values for the same field and
         # product. Recorded, never resolved silently.
+        # Deal values the schema's own rules refused, so a blanked column is
+        # reported rather than silently empty.
+        "deal_values_refused_by_schema": len(REFUSED_DEAL_VALUES),
+        # Offers the retailer displayed that the 22 fields have no column for.
+        # Published nowhere, named here. A cashback offer is the case: the
+        # schema refuses it in the digital column and it is not a volume offer.
+        "offers_withheld_no_column_for_them": len(WITHHELD_DEAL_VALUES),
+        "offers_withheld_detail": WITHHELD_DEAL_VALUES[:50],
+        "deal_values_refused_detail": REFUSED_DEAL_VALUES[:50],
         "cross_read_disagreements": sum(
             len(v) for v in lookup.disagreements.values()),
         "cross_read_disagreement_detail": lookup.disagreements,

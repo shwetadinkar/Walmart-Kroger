@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 986.
+  counts: Walmart 262, Mariano's 990.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -250,9 +250,10 @@ anything. 540 products carry values observed on 1 November and 202 observed on
 took the title, then the next line as the size, then called *everything left
 over* a deal line, and the merge called every deal line not prefixed `Coupon:`
 a volume deal. So on the 1 November page read `volume_deals_description` was
-`Low Stock` on 47 records and `View 2 Offers` on 12 more: 77 of 183 volume
+`Low Stock` on 47 records and `View 2 Offers` on 12 more: **82** of 183 volume
 values were wholly or partly a stock status, a payment eligibility or a
-navigation link. The 22 fields have no column for any of those, so they are
+navigation link. This said 77, written from memory; the sub-counts were exact
+and only the summary was wrong, and it understated the defect. The 22 fields have no column for any of those, so they are
 retained on the page record under `stock_label` and `non_deal_labels` and
 published nowhere. Corrected, the same read gives volume on 120 and digital on
 54, and 88 rows' deal columns change.
@@ -269,7 +270,9 @@ and the unrecognised case falls to the size slot rather than into a deal column,
 because that is the safe direction. `classify_card_line` is the one
 implementation of the judgement and the merge imports it, so a `parsed.json`
 produced before the distinction existed re-merges to the same result as one
-produced after. `Cash Back:` is a second digital prefix, not a volume offer.
+produced after. **`Cash Back:` reaches neither deal column.** It was briefly routed to the digital one, on the reasoning that it sits on the same clipped-offer surface as `Coupon:` and is certainly not a multi-buy offer. `schema.make_record` has refused exactly that since before the merge tool existed, as `CASHBACK_MISCLASSIFIED_AS_DIGITAL`, and the schema is right: there is no cashback column among the 22 fields. The reasoning was the author's and an existing deliberate rule contradicted it. One Vernon Hills record is affected, a Pabst cashback offer, now named in the merge report's `offers_withheld_no_column_for_them` and published nowhere. Digital deals are therefore **48**, not 49.
+
+**The merge wrote the deal columns without the schema's rules.** It bypasses `make_record`, so a value the schema refuses could reach a published row by coming through the merge, and all 54 page-read digital values failed the schema's gate while being published anyway: two write paths with contradictory rules for one column, and the unreachable one was the stricter. `schema.check_deal_columns` is now the one implementation and both call it. The gate's clipping-language requirement was itself too strict - it rejected every value read from the retailer's own pages - so the retailer's leading `Coupon:` marker is admissible evidence, because that prefix is how the retailer labels that surface, in exactly the way a bare promotional sentence is not.
 
 This surfaced on 4 November from **comparing the two page reads of the same
 store three days apart** - a record whose `size` read a coupon line on 1
@@ -523,8 +526,17 @@ both reported rather than smoothed over:
   the 74,788 products seen, over 1,833 indexed responses. On the client's
   instruction of 4 November they are now retained as identities with the
   retailer label verbatim and the raw response file each came from, written by
-  `tools/out_of_scope_reconciliation.py` to
-  `reports/2026-11-04-out-of-scope-reconciliation/`.
+  `tools/out_of_scope_reconciliation.py`, which re-indexes the persisted raw
+  responses and so needs no collection and no credential.
+
+  **The artefact is not in this repository**, and this line previously read as
+  if it were, citing `reports/2026-11-04-out-of-scope-reconciliation/` as
+  though that path existed here. It does not. The tool was run on the account
+  holder's machine, where the raw responses and the release live, and its output
+  ships in the client package. The counts it produced are the ones above and
+  they reconcile exactly, but **a claim that identities "are now retained"
+  needs the artefact to exist wherever the claim is read**. Found by an
+  independent review on 4 November, which looked for the directory.
 
   **The label set is seasonal and turns over between runs.** Measured at the
   same store three days apart:
