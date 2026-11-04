@@ -407,6 +407,33 @@ class KrogerSweepSource:
             "location_id": self.location_id,
             "requested_fulfillment": REQUESTED_FULFILLMENT,
             "coverage_attested": self.coverage_attested,
+            # **Why three published columns are empty on every run of this
+            # source.** The scheduled Azure job runs `--source sweep`, not
+            # `--source composite`, so the `unavailable_crawl` enrichment that
+            # explains this gap on the composite path is not registered and the
+            # columns arrived empty with nothing saying why. An unexplained
+            # empty column reads as a collection failure; this one is a
+            # property of the contract.
+            "fields_this_source_cannot_supply": {
+                "ppm": "the displayed price per measure exists only on the "
+                       "rendered retailer page. This API carries "
+                       "regularPerUnitEstimate, which is an estimate and must "
+                       "never be written into ppm",
+                "volume_deals_description": "the retailer's own offer wording "
+                                            "is rendered on the page and is "
+                                            "not in this API at any tier",
+                "digital_deals_description": "no Kroger API on the published "
+                                             "list exposes clipping state, "
+                                             "household limits or coupon terms",
+            },
+            "page_only_fields_are_empty_unless": (
+                "a page read is merged in afterwards through "
+                "tools/merge_page_enrichment.py. An unattended run cannot do "
+                "that, and the composition layer's freshness window refuses a "
+                "page read older than its limit rather than relabelling an "
+                "older observed price or offer as newly observed, so a "
+                "scheduled release carries these three columns empty by "
+                "design"),
             "coverage_limit": (
                 "filter.start is a skip count Kroger refuses past 250, so one term "
                 "reaches at most 300 products however many sit behind it, and the "

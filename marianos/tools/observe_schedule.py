@@ -209,10 +209,25 @@ def one_execution(store_root: Path, work_root: Path, sequence: int) -> dict:
     return record
 
 
-def observe_unattended(executions: int, interval: float) -> dict:
-    """Start a scheduler, touch nothing, record every firing."""
-    store_root = Path(tempfile.mkdtemp(prefix="sched-store-"))
-    work_root = Path(tempfile.mkdtemp(prefix="sched-work-"))
+def observe_unattended(executions: int, interval: float,
+                       keep_releases_under: Path | None = None) -> dict:
+    """Start a scheduler, touch nothing, record every firing.
+
+    `keep_releases_under` writes the published releases somewhere inspectable
+    instead of a temporary directory. Without it this tool proved that a
+    scheduler repeats the job and then discarded what the job published, so the
+    one question an operator has before trusting an unattended run - what does
+    a release from it actually contain, and are the page-only columns empty -
+    could not be answered from its output.
+    """
+    if keep_releases_under is not None:
+        store_root = Path(keep_releases_under) / "releases"
+        work_root = Path(keep_releases_under) / "sweep-work"
+        store_root.mkdir(parents=True, exist_ok=True)
+        work_root.mkdir(parents=True, exist_ok=True)
+    else:
+        store_root = Path(tempfile.mkdtemp(prefix="sched-store-"))
+        work_root = Path(tempfile.mkdtemp(prefix="sched-work-"))
     # A minute-granularity cron compressed to seconds, so the matcher that
     # decides the real schedule is the matcher driving this one.
     expression = f"*/{max(1, int(interval))} * * * * *"
@@ -232,8 +247,12 @@ def observe_unattended(executions: int, interval: float) -> dict:
         latest = json.loads(pointer[0].read_text()) if pointer else {}
         failures = sorted(store_root.rglob("failures/**/*.json"))
     finally:
-        shutil.rmtree(store_root, ignore_errors=True)
-        shutil.rmtree(work_root, ignore_errors=True)
+        # Kept when the caller asked to keep them. Deleting what the run
+        # published is what made this tool unable to answer the question an
+        # operator actually has before an unattended deployment.
+        if keep_releases_under is None:
+            shutil.rmtree(store_root, ignore_errors=True)
+            shutil.rmtree(work_root, ignore_errors=True)
 
     published = [r for r in runs if r["outcome"] == "published"]
     return {
@@ -302,13 +321,21 @@ def main(argv=None):
     p.add_argument("--deploy-script", type=Path,
                    default=ROOT / "azure/deploy_jobs.sh")
     p.add_argument("--executions", type=int, default=3)
+    p.add_argument("--keep-releases", action="store_true",
+                   help="Write the published releases under --out instead of a "
+                        "temporary directory, so what an unattended run "
+                        "publishes can be inspected. Without this the tool "
+                        "proved the scheduler repeats the job and then threw "
+                        "away what the job produced.")
     p.add_argument("--interval", type=float, default=5.0,
                    help="Seconds between firings for the unattended observation")
     a = p.parse_args(argv)
 
     expression = deployed_cron(a.deploy_script)
     claim_a = check_deployed_times(expression)
-    claim_b = observe_unattended(a.executions, a.interval)
+    claim_b = observe_unattended(
+        a.executions, a.interval,
+        keep_releases_under=a.out if a.keep_releases else None)
 
     report = {
         "_what": ("Two separate claims about the schedule, kept apart so neither "
