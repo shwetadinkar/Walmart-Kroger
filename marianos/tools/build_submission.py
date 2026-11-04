@@ -128,6 +128,15 @@ def main(argv=None):
     p.add_argument("--page-read-evidence", type=Path, default=None,
                    help="Optional. A file of page-read records from ANOTHER "
                         "store to ship BESIDE the release, never merged in.")
+    p.add_argument("--include", action="append", default=[], type=Path,
+                   help="A file or directory to ship in the package alongside "
+                        "the release, copied under its own basename. Repeatable. "
+                        "Used for artefacts that are not produced by the merge: "
+                        "the out-of-scope reconciliation, the revision manifest "
+                        "and change-to-test map, and the acquisition proposal. "
+                        "Everything copied is picked up by MANIFEST_SHA256.json, "
+                        "which is built by walking the output directory, so an "
+                        "included file cannot ship unhashed.")
     a = p.parse_args(argv)
 
     base = find_release(a.output_root, a.namespace, a.store, a.release)
@@ -171,21 +180,52 @@ def main(argv=None):
         beside = "page-read-evidence-west-loop.json"
         shutil.copy2(a.page_read_evidence, a.out / beside)
 
+    included = []
+    for item in a.include:
+        if item.is_dir():
+            shutil.copytree(item, a.out / item.name, dirs_exist_ok=True)
+            included.append(item.name + "/")
+        elif item.is_file():
+            shutil.copy2(item, a.out / item.name)
+            included.append(item.name)
+        else:
+            raise SystemExit(f"--include path does not exist: {item}")
+
     enriched_note = []
     matched = merge_report.get("page_upcs_matched_in_api", 0) if merge_report else 0
     rated = (merge_report.get("fields_populated_after_merge", {}) or {}).get("ppm", 0)
     if merge_report:
         by_source = merge_report.get("values_by_field_and_source", {})
+        # The read dates are taken from the merge report, never written here.
+        # This said "on 1 November" as a literal, which was true of the first
+        # merge and false the moment a second read was added: 202 of the
+        # delivered values were observed on 3 November. A date in a
+        # client-facing file is a claim, and it is read from the data.
+        reads = merge_report.get("page_reads") or []
+        if reads:
+            when = [str(r.get("observed_at", ""))[:10] for r in reads]
+            from_counts = merge_report.get(
+                "products_whose_values_came_from_each_read") or {}
+            read_phrase = (
+                "on " + " and ".join(when) if len(when) > 1
+                else "on " + when[0])
+            per_read = "; ".join(
+                f"{n:,} observed {str(k)[:10]}"
+                for k, n in sorted(from_counts.items())) if from_counts else ""
+        else:
+            read_phrase = "in an attended page read"
+            per_read = ""
         enriched_note = [
             "## Three columns came from a page read, not from the API",
             "",
             P("`ppm`, `volume_deals_description` and "
               "`digital_deals_description` are not in the Kroger public "
-              "Products API at any tier. They were read from the rendered "
-              "retailer pages at this store on 1 November and merged onto the "
+              f"Products API at any tier. They were read from the rendered "
+              f"retailer pages at this store {read_phrase} and merged onto the "
               "API spine through the composition layer, which binds every "
               "contribution to the product, store, fulfilment and time it was "
-              "observed at, and records per field which source supplied it."),
+              "observed at, and records per field which source supplied it."
+              + (f" Values per read: {per_read}." if per_read else "")),
             "",
             f"- `ppm`: **{merge_report.get('fields_populated_after_merge', {}).get('ppm', 0)}** "
             f"records, all from the page read",
@@ -287,6 +327,14 @@ def main(argv=None):
             "show what the field looks like when the route to it is open.",
             "",
         ]
+    if included:
+        readme += ["## Also in this package", "",
+                   P("Artefacts that are not output of the collection or the "
+                     "merge, shipped alongside it. Each is covered by "
+                     "`MANIFEST_SHA256.json` like everything else here."), ""]
+        readme += [f"- `{name}`" for name in included]
+        readme += [""]
+
     readme += ["## The two manifests", "",
                B("`manifest.json` is the release manifest the collector wrote: "
                  "the release id, the store, the record count and the storage "
