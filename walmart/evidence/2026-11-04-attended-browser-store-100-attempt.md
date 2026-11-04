@@ -31,8 +31,9 @@ The page's own payload gave `storeId: "3081"`, `postalCode: "95829"`,
 Sacramento store.
 
 **Those 27 rates are store 3081's and are recorded nowhere.** Not in an export,
-not in a scratch file, not quoted as a Walmart figure anywhere outside this
-sentence. This repository has already published one store's data under another
+not in a scratch file, not quoted as a Walmart figure anywhere. The three quoted
+above appear only in this file, only to show the cents notation, and are
+labelled as store 3081's here. This repository has already published one store's data under another
 store's name once, and a displayed rate from the wrong store is that same
 mistake with better-looking evidence.
 
