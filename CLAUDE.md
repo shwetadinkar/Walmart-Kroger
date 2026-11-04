@@ -83,6 +83,29 @@ Concretely, and these are not negotiable:
   available for pickup rests on the provider's pickup field, which depends on
   the switch. Until answered, the 615 are the provider's output for a
   *requested* store 100 context, not a verified store 100 assortment.
+
+  **The client rejected the composed value on 4 November**, in his words: "the
+  separate composed-PPM export does not satisfy directly captured PPM." So the
+  attended browser route that had just worked at Mariano's was tried against
+  Walmart store 100, because a directly captured rate in the rendered cents form
+  would answer him outright. **It is not obtainable.** The search page serves the
+  displayed rate in cents with no challenge at all, but it served **store 3081,
+  Sacramento CA 95829**, because Walmart geolocated the request (`isoLoc=IN_DL_t3`)
+  and defaulted; those rates are another store's and are recorded nowhere.
+  Reaching store 100 context means the store-selection path, and that path
+  serves a press-and-hold bot challenge. Defeating it is not done here by any
+  name, including by having a person press the button so automated reading can
+  continue, which is defeating the protection by proxy. The route is therefore
+  unavailable and that is reported. See
+  `walmart/evidence/2026-11-04-attended-browser-store-100-attempt.md`.
+
+  The composed value stays the only available form of this column, which was
+  already the position; what changed is that it now rests on a test at the right
+  store on the current site rather than an inherited claim. The first keyword
+  check flagged a challenge on a pattern that could have matched a toy robot in
+  a store directory, and the matched text was read before anything was
+  concluded — a route declared closed on an unchecked match is the failure this
+  file records twice already.
 - Volume and digital deal text must be the retailer's own wording. Never
   compose a deal description, and never compute a promotional price the
   retailer did not display.
