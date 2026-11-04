@@ -45,6 +45,20 @@ def git(repo, *args):
     return out.stdout.strip()
 
 
+def git_raw(repo, *args):
+    """git output with no stripping.
+
+    `git status --porcelain` encodes the status in the first two columns, and
+    an unstaged modification leaves column one blank: " M pkg/thing.py". So
+    stripping the whole output removes the leading space of the first line
+    only, and that line's path then loses its first character. It produced
+    "kg/thing.py" for "pkg/thing.py" on exactly one file per run, which is the
+    kind of defect a count never shows.
+    """
+    return subprocess.run(["git", "-C", str(repo), *args],
+                          capture_output=True, text=True, check=True).stdout
+
+
 def sha256(path):
     h = hashlib.sha256()
     with open(path, "rb") as fh:
@@ -96,7 +110,21 @@ def main(argv=None):
     repo = Path(a.repo).resolve()
     head = git(repo, "rev-parse", "HEAD")
     branch = git(repo, "rev-parse", "--abbrev-ref", "HEAD")
-    dirty = git(repo, "status", "--porcelain")
+    dirty = git_raw(repo, "status", "--porcelain")
+
+    # A bare working_tree_clean: false tells a reviewer that something was
+    # uncommitted and not what, which invites exactly the question the manifest
+    # exists to answer. Untracked output directories are the normal case and
+    # say nothing about whether the revision describes the source; a modified
+    # tracked file is the case that matters, because then the revision does
+    # not describe what produced the delivery. They are reported separately.
+    untracked, modified = [], []
+    for line in dirty.splitlines():
+        if not line.strip():
+            continue
+        status, path = line[:2].strip(), line[3:].strip()
+        (untracked if status == "??" else modified).append(
+            {"status": status, "path": path})
 
     index = test_index(repo, a.test_dir)
 
@@ -148,6 +176,16 @@ def main(argv=None):
         "revision": head,
         "branch": branch,
         "working_tree_clean": not dirty,
+        # The one that matters: if this is non-empty, the revision above does
+        # not describe the source that produced the delivery.
+        "modified_tracked_files": modified,
+        "modified_tracked_file_count": len(modified),
+        "untracked_paths": [x["path"] for x in untracked],
+        "untracked_path_count": len(untracked),
+        "_working_tree_note": (
+            "Untracked paths are normally the run outputs being delivered and "
+            "do not affect whether the revision describes the source. A "
+            "non-empty modified_tracked_files means it does not."),
         "reviewed_revision": git(repo, "rev-parse", a.since),
         "commits_since_reviewed_revision": len(commits),
         "delivered_files": delivered,
@@ -175,7 +213,14 @@ def main(argv=None):
         P(f"Revision `{head[:9]}` on `{branch}`. "
           f"{len(commits)} commits since `{git(repo, 'rev-parse', '--short', a.since)}`, "
           f"the revision last reviewed."
-          + ("" if not dirty else " WORKING TREE NOT CLEAN.")),
+          + ("" if not dirty else
+             (f" {len(modified)} tracked file(s) MODIFIED and not committed, so "
+              f"this revision does not describe the source that produced the "
+              f"delivery."
+              if modified else
+              f" {len(untracked)} untracked path(s) present, which are the run "
+              f"outputs; no tracked file is modified, so the revision does "
+              f"describe the source."))),
         "",
         P("Derived by reading which test modules import each changed module, "
           "not written by hand. It says which tests exercise a module. It does "
