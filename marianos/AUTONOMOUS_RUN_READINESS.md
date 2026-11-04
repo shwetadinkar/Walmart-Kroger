@@ -96,6 +96,76 @@ the same store". The real hazard already has a real guard. Staggering would
 also change a time stated to the client in that document, Monday and Thursday
 06:00 UTC, for no correctness gain, so the schedule is unchanged.
 
+## A failed run retries itself, then emails
+
+Eight retries at fifteen minute intervals, then a failure notice, with the next
+scheduled run untouched. `azure/retry_supervisor.py` does it, on both sides.
+
+**The arithmetic has to be seen before deploying, because it changed the
+timeouts.** Eight retries at 900 seconds is two hours of waiting *alone*, and
+the whole plan has to fit inside one replica timeout, because a replica timeout
+is a SIGKILL and would cut the plan off part-way. So:
+
+| | Mariano's | Walmart |
+|---|---:|---:|
+| retries, interval | 8 at 900s | 8 at 900s |
+| waiting alone | 7200s | 7200s |
+| **minimum timeout for all 9 attempts** | **10920s** | **11220s** |
+| was deployed with | 7200s | 14400s |
+| **now defaults to** | **14400s** | **21600s** |
+| first attempt's budget at that default | 13500s | 20400s |
+| gap to the next firing | 259200s | 259200s |
+
+Every figure above is computed by `retry_supervisor.RetryPlan`, not worked out
+by hand. Nine attempts each getting a *full-length* run would need 128820s and
+190920s respectively, which is why the plan degrades the number of attempts
+rather than reserving time up front.
+
+The deployment **refuses** a timeout that cannot reach every configured
+attempt, and quotes the figure to set. It is refused rather than quietly
+shortened: a plan that silently stops at attempt three is not the plan that was
+configured. Lowering `RETRY_ATTEMPTS` or `RETRY_INTERVAL_SECONDS` is the other
+way to make it fit.
+
+**No Azure maximum is claimed here.** Microsoft's jobs reference lists
+`replicaTimeout` as a required int with no stated maximum, minimum or default.
+The last row above is therefore reported, not enforced; whether Azure accepts
+it is found out at deploy time.
+
+**The first attempt gets the whole window, retries get what it leaves.** So a
+successful run is never starved to pay for retries it does not need, and a run
+that used its whole budget and failed is not retried, because there is nothing
+left to retry it with. That is the one failure where retrying is waste.
+
+**What is not retried:** a usage error, which will be wrong the same way eight
+more times, and a bot challenge, because the retailer said no and retrying a
+refusal on a schedule is working around it. Everything else is, including an
+expired credential - the likeliest unattended failure, and one that costs no
+retailer requests to retry.
+
+**The next run is unaffected, and that is checked rather than assumed.** Azure's
+cron fires independently of how long an execution takes, so an overrunning
+execution does not delay the next firing - it runs beside it and meets the Blob
+lease, which refuses it. The deployment therefore also refuses a replica timeout
+that is not shorter than the gap between firings, computed from the deployed
+expression. At 72 hours there is room.
+
+**Email is optional and needs no credential in the image.** A final failure
+always prints `MARIANOS_RUN_FAILED_AFTER_RETRIES`, which an Azure Monitor log
+alert matches with nothing deployed alongside it. For email instead, set
+`ALERT_EMAIL_TO` and `SMTP_HOST`, plus `SMTP_USERNAME` and `SMTP_PASSWORD` if
+the relay needs them; the password reaches the job as an Azure secret and is in
+no file here. A `--dry-run` says which route is configured.
+
+```bash
+# What the configured plan needs, before deploying anything.
+REPLICA_TIMEOUT=14400 bash azure/deploy_jobs.sh --dry-run
+
+# To be emailed instead of alerting on the log line:
+ALERT_EMAIL_TO=you@example.com SMTP_HOST=smtp.example.com \
+  bash azure/deploy_jobs.sh --dry-run
+```
+
 ## The image refuses to build without a verified store
 
 `config/stores_live.json` is gitignored by design, because it holds the
@@ -156,6 +226,12 @@ into `ppm` on an unattended job.
 4. `failures/<namespace>/<store>/` — empty on a clean run. A refused attempt
    leaves a record there carrying the reason verbatim, including a refusal that
    happens before the runner exists, such as an expired credential.
+5. The job log, for `retry_supervisor attempt N of 9` lines and a closing
+   `retry_supervisor summary:`. A clean run shows attempt 1 and nothing else.
+   On a failure the summary gives each attempt's exit code, the budget it was
+   given and how long it took, and `stopped_early` says so when the plan ended
+   before its ninth attempt and why. **One failed run writes one refusal record
+   per attempt and one notice**, not one notice per attempt.
 
 ## What an Azure execution will establish, and what it will not
 

@@ -46,6 +46,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from marianos_collector.config import Category, Store  # noqa: E402
+# The cron maths lives in the package, not here: the container image ships
+# marianos_collector and not tools/, and the retry supervisor needs the gap
+# between firings. One implementation of the day-of-week conversion.
+from marianos_collector.cron import (  # noqa: E402
+    DAY_NAMES, matches, next_firings, shortest_gap_seconds)
 from marianos_collector.kroger_sweep_source import KrogerSweepSource  # noqa: E402
 from marianos_collector.runner import Collector, ValidationFailure  # noqa: E402
 from marianos_collector.storage import LocalStorage  # noqa: E402
@@ -57,11 +62,6 @@ STORE = Store("53100502", "60061", "Marianos - Marianos Vernon Hills",
 CATEGORIES = [Category("Dairy", "https://www.marianos.com/d/dairy"),
               Category("Produce", "https://www.marianos.com/d/produce")]
 CATEGORY_MAP = {"Dairy": "Dairy", "Produce": "Produce"}
-
-# cron day-of-week: 0 and 7 are both Sunday, 1 is Monday.
-DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-             "Friday", "Saturday"]
-
 
 def deployed_cron(script: Path) -> str:
     """The cron expression the deployment script defaults to.
@@ -84,52 +84,6 @@ def deployed_cron(script: Path) -> str:
             f"{script} carries disagreeing cron defaults {sorted(unique)}; "
             "fix the script rather than guessing which one deploys")
     return unique.pop()
-
-
-def _field(spec: str, low: int, high: int) -> set:
-    """One cron field expanded to the values it matches."""
-    values = set()
-    for part in spec.split(","):
-        base, _, step_text = part.partition("/")
-        step = int(step_text) if step_text else 1
-        if base == "*":
-            start, end = low, high
-        elif "-" in base:
-            a, _, b = base.partition("-")
-            start, end = int(a), int(b)
-        else:
-            start = end = int(base)
-        values.update(range(start, end + 1, step))
-    return values
-
-
-def matches(expression: str, moment: datetime) -> bool:
-    """Whether a 5-field cron expression fires at this minute."""
-    minute, hour, dom, month, dow = expression.split()
-    cron_dow = (moment.weekday() + 1) % 7      # Monday 0 -> cron 1
-    wanted_dow = _field(dow, 0, 7)
-    if 7 in wanted_dow:
-        wanted_dow.add(0)
-    return (moment.minute in _field(minute, 0, 59)
-            and moment.hour in _field(hour, 0, 23)
-            and moment.day in _field(dom, 1, 31)
-            and moment.month in _field(month, 1, 12)
-            and cron_dow in wanted_dow)
-
-
-def next_firings(expression: str, after: datetime, count: int) -> list:
-    """The next `count` firing times, by walking minutes. No library."""
-    moment = after.replace(second=0, microsecond=0) + timedelta(minutes=1)
-    out = []
-    limit = 366 * 24 * 60
-    while len(out) < count and limit:
-        if matches(expression, moment):
-            out.append(moment)
-        moment += timedelta(minutes=1)
-        limit -= 1
-    if len(out) < count:
-        raise SystemExit(f"{expression!r} did not fire {count} times within a year")
-    return out
 
 
 # ------------------------------------------------------------------ claim A

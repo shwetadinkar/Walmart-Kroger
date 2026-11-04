@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 276, Mariano's 1002.
+  counts: Walmart 331, Mariano's 1057.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -711,6 +711,128 @@ Blob lease prevents two overlapping executions of the same store". The hazard
 has a guard, the 06:00 UTC time is stated to the client in that document, and
 the schedule is therefore unchanged.
 
+## A refused run is retried, then reported
+
+The account holder's instruction on 4 November: *"If it fails then keep trying
+every 15 minutes for 8 times, and still not successful then send email
+regarding failure. But next run should remain on time due."*
+
+`azure/retry_supervisor.py`, in both collectors, runs the collector as a
+subprocess and retries it. `os.execv` used to run it, which replaces the
+process, so nothing was left to observe the exit code and no retry was
+possible.
+
+**The retry is inside one replica, and that is forced rather than chosen.**
+Azure's own `--replica-retry-limit` would retry a failed replica, but its
+interval is not configurable, so "every 15 minutes" cannot be expressed that
+way. The cost of supervising inside the replica is that the whole plan has to
+fit inside one replica timeout, because a replica timeout is a SIGKILL.
+
+**The first attempt gets the whole window and retries get what it leaves.** The
+obvious scheme reserves eight intervals up front, so the first attempt gets
+`window - 8 x interval`; that starves the run that *succeeds* to pay for
+retries it never needs, and at the old 7200s timeout it reserves more than the
+window holds. Each attempt is therefore given the time actually left when it
+starts. **This removes a special case rather than adding one:** a run that
+consumed its whole budget and failed is not retried, because there is nothing
+left to retry it with. Budget exhaustion is the one failure where retrying is
+pure waste - the next attempt would get less time, not more - and it falls out
+of the clock, so the collector never has to classify its own failures and the
+CLI's exit contract is unchanged.
+
+**Almost everything else is retried, including an expired credential.** That is
+the likeliest unattended failure for a twice-weekly job, a classifier cannot
+tell an expired key from a token blip, and retrying one costs no retailer
+requests at all. Two exceptions: a usage error, which exits 2 and will be wrong
+the same way eight more times, consistent with the existing decision to let an
+argparse refusal fail loudly the first time a job is deployed; and a bot
+challenge, because the retailer said no, the standing position is that such a
+route is unavailable and that is reported rather than worked around, and
+retrying a refusal on a schedule is working around it. The challenge marker is
+matched on the exception name rather than loose prose, because a route declared
+closed on an unchecked match is the failure this file records twice.
+
+**The deployment refuses a plan it cannot deliver.** Eight retries at 900s is
+7200s of waiting *alone*, so the configured plan needs at least 10,920s on the
+Mariano's side and 11,220s on the Walmart side even if every attempt fails
+instantly. The deployed timeouts were 7200 and 14400. `deploy_jobs.sh` now
+resolves the plan once, checks it with the same code the container runs - read
+from `retry_supervisor.py`, not retyped - and **refuses rather than quietly
+shortening it**, because a plan that silently stops at attempt three is not the
+plan that was configured. The refusal quotes the figure to set. Defaults are
+now 14400 and 21600.
+
+It also refuses a replica timeout that is not shorter than the gap between cron
+firings, computed from the deployed expression. That is what answers "next run
+should remain on time due": Azure's cron fires independently of how long an
+execution takes, so an overrun is not a late next run, it is a *second*
+execution running beside the first, which then meets the Blob lease and is
+refused. A retry plan that overruns turns one transient failure into a refused
+next run. `0 6 * * 1,4` gives 72 hours, so there is room.
+
+**No maximum replica timeout is asserted anywhere here.** Microsoft's jobs
+reference lists `replicaTimeout` as a required int with no stated maximum,
+minimum or default, and the only discussion of a practical ceiling is a
+community thread. So the timeout needed for every attempt to get a *full-length*
+run is reported to the operator rather than enforced, and whether Azure accepts
+it is discovered at deploy time on their screen. A standing position must rest
+on what a route actually does, never on a guess about what a vendor offers.
+
+**The failure notice needs no credential by default.** The supervisor always
+prints `MARIANOS_RUN_FAILED_AFTER_RETRIES` or `WALMART_RUN_FAILED_AFTER_RETRIES`,
+which an Azure Monitor log alert matches with nothing in the image. Email is
+sent when, and only when, the operator sets `ALERT_EMAIL_TO` and `SMTP_HOST`;
+the SMTP password is theirs, reaches the job as an Azure secret, and appears in
+no file here. A failed email never replaces the failure it reports and never
+decides the exit code, the same rule the refusal recorder follows, and a test
+asserts no password reaches the body or the marker line.
+
+`list` is not a run: it executes once, is never retried and leaves no notice,
+the separation `cli.py` already makes.
+
+**The alert query was written from memory and was wrong.** The first draft of
+the Azure Monitor query in both deployment docs narrowed on
+`ContainerName_s startswith "marianos-"`. Checked against
+`learn.microsoft.com/azure/container-apps/log-monitoring`, that page documents
+the table for container *apps*, does not mention jobs at all and documents no
+job-name column; `ContainerName_s` is the container's name, not the job's. So
+the filter would most likely have matched nothing and **the alert would have
+stayed silent through exactly the failure it exists to report** - worse than no
+alert, because it reads as one. Both docs now filter on the marker alone, which
+carries the store and source itself, and say to confirm the job-name column in
+the operator's own workspace before narrowing. Caught before shipping only
+because the query is an instruction someone else would paste, which is the test
+for when a recalled fact has to be read instead.
+
+**The cron maths moved into both packages** as `cron.py`, because the container
+ships the package and not `tools/`. `tools/observe_schedule.py` imports it, and
+a test fails if a second copy of the day-of-week conversion appears anywhere -
+cron Monday is 1 where Python's `weekday()` makes it 0, and two copies of that
+would disagree silently. `shortest_gap_seconds` takes the *tightest* gap over
+several firings, not the first or the widest: `0 6 * * 1,4` alternates 72 and 96
+hours and 96 would permit an overlap.
+
+**The supervisor is one implementation kept in two places, and checked.** The
+two images build from separate contexts, so neither Dockerfile can copy a
+module above its own directory, and this repository already ports between the
+modules for that reason. A copy nobody checks is how two implementations of one
+rule drift apart, so `PortedBetweenCollectors` derives the Walmart copy from the
+Mariano's one by substitution and compares them line by line: a change made to
+one side only fails by name, and the fix is to port it rather than to edit the
+substitution list. Its own substitution list is checked for dead entries, which
+immediately found one looking in too narrow a place.
+
+Both Dockerfiles now `COPY azure/retry_supervisor.py`; without it the image
+builds and fails at 06:00 UTC, the same defect class as the missing store
+mapping.
+
+Tested on both sides in `tests/test_retry_supervisor.py`, 55 tests each, with
+**24 mutation reverts checked on each**, because "tested in both collectors" is
+two claims. Two of those reverts found tests of mine that detected nothing: the
+pre-attempt window check was covered only by the post-wait check that catches
+the same cases later, and the success path asserted attempt counts while a
+docstring claimed it asserted that no email is sent. Both are now asserted.
+
 ## The schedule, as two separate claims
 
 "Twice-weekly Azure operation" was a template plus a manually driven
@@ -720,10 +842,12 @@ subscription, and keeps two claims apart so neither carries the other.
 
 **The deployed expression fires when it should.** Computed, not simulated, from
 the cron default read out of `azure/deploy_jobs.sh` rather than retyped, and
-both deployment scripts are read because they spell it differently. `0 6 * * 1,4`
-gives Mondays and Thursdays at 06:00 UTC with 72 and 96 hour gaps. If a script
-is edited in one of its two places so its defaults disagree, this refuses
-rather than attesting whichever it found first.
+both deployment scripts are read. `0 6 * * 1,4` gives Mondays and Thursdays at
+06:00 UTC with 72 and 96 hour gaps. If a script carries disagreeing defaults,
+this refuses rather than attesting whichever it found first. Each script now
+resolves `CRON` once and uses that variable everywhere, so the expression
+validated against the retry plan is the expression deployed; the Walmart script
+previously spelled the default inline in three places.
 
 **A scheduler left alone repeats the job.** Observed in real elapsed time:
 three executions, three distinct releases, zero operator interventions, each

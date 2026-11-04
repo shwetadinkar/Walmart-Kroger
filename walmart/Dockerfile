@@ -6,6 +6,10 @@ COPY walmart_collector/ ./walmart_collector/
 RUN pip install --no-cache-dir '.[azure]' && useradd -r -u 10001 collector
 COPY config/ ./config/
 COPY azure/container_entrypoint.py ./azure/container_entrypoint.py
+# The supervisor that retries a refused run and reports a final failure. The
+# entrypoint imports it by path, so an image built without it would fail at
+# 06:00 UTC with nobody watching.
+COPY azure/retry_supervisor.py ./azure/retry_supervisor.py
 USER 10001
 # The route is chosen at run time by WALMART_SOURCE, not baked into the image,
 # so one immutable image serves the provider, OPD and composite routes.

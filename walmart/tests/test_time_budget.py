@@ -115,22 +115,22 @@ class TheEntrypointBudgetStaysUnderTheReplicaTimeout(unittest.TestCase):
 
     def test_it_is_strictly_less_than_the_deployed_timeout(self):
         os.environ["REPLICA_TIMEOUT"] = "14400"
-        self.assertLess(self.module.budget_seconds(), 14400)
+        self.assertLess(self.module.default_budget_seconds(), 14400)
 
     def test_the_headroom_is_enough_to_publish(self):
         os.environ["REPLICA_TIMEOUT"] = "14400"
-        self.assertEqual(14400 - self.module.budget_seconds(),
+        self.assertEqual(14400 - self.module.default_budget_seconds(),
                          self.module.BUDGET_HEADROOM_SECONDS)
         self.assertGreaterEqual(self.module.BUDGET_HEADROOM_SECONDS, 300)
 
     def test_it_tracks_the_timeout_actually_deployed(self):
         os.environ["REPLICA_TIMEOUT"] = "7200"
-        self.assertLess(self.module.budget_seconds(), 7200)
+        self.assertLess(self.module.default_budget_seconds(), 7200)
 
     def test_a_timeout_with_no_room_to_publish_is_refused(self):
         os.environ["REPLICA_TIMEOUT"] = "1200"
         with self.assertRaises(ValueError):
-            self.module.budget_seconds()
+            self.module.default_budget_seconds()
 
     def test_the_argv_carries_the_budget(self):
         os.environ["REPLICA_TIMEOUT"] = "14400"

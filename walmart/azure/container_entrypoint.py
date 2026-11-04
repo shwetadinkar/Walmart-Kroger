@@ -22,7 +22,7 @@ BUDGET_HEADROOM_SECONDS = 1200
 DEFAULT_REPLICA_TIMEOUT = 14400
 
 
-def budget_seconds() -> int:
+def default_budget_seconds() -> int:
     """How long the run may take, strictly less than the replica timeout.
 
     **There was no budget at all.** The only bound was Azure's
@@ -57,7 +57,15 @@ def budget_seconds() -> int:
     return budget
 
 
-def command():
+def command(budget_seconds: int = None):
+    """The argv for one attempt.
+
+    `budget_seconds` is passed per attempt rather than computed once, because
+    the retry supervisor gives each attempt the time actually left in the
+    replica window. Called with no budget it falls back to deriving one from
+    the replica timeout, which is what a single unsupervised run did before the
+    supervisor existed.
+    """
     store = os.getenv('WALMART_STORE_ID', '')
     if not store:
         return [sys.executable, '-m', 'walmart_collector', 'list']
@@ -85,9 +93,38 @@ def command():
     # overrides that, and nothing here should.
 
     # Only on a run. `list` is not a run and takes no budget.
-    argv += ['--max-seconds', str(budget_seconds())]
+    argv += ['--max-seconds',
+             str(budget_seconds if budget_seconds else default_budget_seconds())]
     return argv
 
 
+def replica_timeout_seconds() -> int:
+    """The replica timeout the job was deployed with.
+
+    `deploy_jobs.sh` resolves this once, deploys it and forwards the same value
+    in, so the figure the supervisor plans against is the figure Azure will
+    enforce.
+    """
+    raw = os.getenv('REPLICA_TIMEOUT', '').strip()
+    try:
+        return int(float(raw)) if raw else DEFAULT_REPLICA_TIMEOUT
+    except ValueError:
+        return DEFAULT_REPLICA_TIMEOUT
+
+
 if __name__ == '__main__':
-    os.execv(sys.executable, command())
+    # `os.execv` used to run here. It replaces this process, so nothing was
+    # left to observe the collector's exit code, and a refused unattended run
+    # could not be retried: the instruction was eight retries at fifteen
+    # minutes, then an email, with the next scheduled run unaffected.
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import retry_supervisor
+
+    argv = command()
+    is_run = 'run' in argv
+    raise SystemExit(retry_supervisor.main(
+        build_argv=command,
+        replica_timeout=replica_timeout_seconds(),
+        collector_headroom_seconds=BUDGET_HEADROOM_SECONDS,
+        argv_for_non_run=None if is_run else argv,
+    ))

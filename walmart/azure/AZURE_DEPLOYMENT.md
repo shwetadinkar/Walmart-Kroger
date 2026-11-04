@@ -53,3 +53,58 @@ Official Microsoft documentation: https://learn.microsoft.com/en-us/azure/contai
 ## Walmart OPD (v0.4) integration warning
 
 When using `--source opd`, provide `WALMART_OPD_CLIENT_ID`, `WALMART_OPD_CLIENT_SECRET`, and `WALMART_DATA_AUTHORIZED=yes` securely. Always include `--authorized-source` and `--opd-cache` pointing to a **persistent mounted volume** (e.g. Azure Files). Ephemeral Container Apps storage cannot preserve the SQLite feed-import checkpoints across container restarts. The source uses `--backend azure` for final published outputs; live API and Azure deployment have not been verified. Audit the provisional category mappings and price-role semantics before treating any live output as contest-ready. Read `OPD_CLIENT_RUNBOOK.md`.
+
+## Retries and failure alerting
+
+A refused run is retried by `retry_supervisor.py` inside the same replica:
+eight retries at fifteen minute intervals by default, then a failure notice.
+The two scheduled jobs still fire together on `0 6 * * 1,4`, one per store, and
+the Blob lease still prevents two overlapping executions of the same store. The
+deployment now also refuses a replica timeout that is not shorter than the gap
+between firings, so the lease is never asked to arbitrate between a retrying
+run and that same job's next firing.
+
+`bash azure/deploy_jobs.sh --dry-run` prints the resolved plan and the
+configured failure route. It **refuses** a `REPLICA_TIMEOUT` that cannot reach
+every configured attempt and quotes the figure to set: eight retries at 900s is
+7200s of waiting alone, so the default plan needs at least 11220s. The default
+is now 21600s, up from 14400s.
+
+**The first attempt gets the whole window and retries get what it leaves**, so
+a run that succeeds is never starved to pay for retries it does not need, and a
+run stopped by its own `--max-seconds` budget is not retried: there is nothing
+left to retry it with, and the next attempt would get less time, not more.
+
+Not retried: a usage error, and a bot challenge. Everything else is, including
+an expired credential.
+
+### Getting told about a failure
+
+A final failure always prints one line to the job log:
+
+```
+WALMART_RUN_FAILED_AFTER_RETRIES store=... source=... runs=9 exit_codes=1,1,...
+```
+
+**The credential-free route is an Azure Monitor log alert on that string**,
+needing nothing deployed with the image and no secret anywhere:
+
+```kusto
+ContainerAppConsoleLogs_CL
+| where Log_s contains "WALMART_RUN_FAILED_AFTER_RETRIES"
+| project TimeGenerated, Log_s
+```
+
+**Deliberately filtered on the marker alone.** Microsoft's
+`learn.microsoft.com/azure/container-apps/log-monitoring` documents this table
+for container *apps*: it does not mention jobs and documents no job-name
+column. `ContainerName_s` is the container's name, not the job's, so narrowing
+on it would most likely match nothing and the alert would stay silent through a
+real failure. The marker carries the store and source itself. Both stores write
+the same marker, so add a job-name filter only after confirming in your own
+workspace which column holds it.
+
+For email from the job itself, set `ALERT_EMAIL_TO` and `SMTP_HOST` when
+deploying, plus `SMTP_USERNAME` and `SMTP_PASSWORD` if the relay authenticates.
+The password is stored as an Azure secret and referenced with `secretref:`; it
+is in no file here. A failed email never replaces the failure it reports.

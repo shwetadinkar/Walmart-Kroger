@@ -49,3 +49,59 @@ bash azure/deploy_jobs.sh --execute
 References:
 - https://learn.microsoft.com/en-us/azure/container-apps/jobs
 - https://learn.microsoft.com/en-us/cli/azure/containerapp/job
+
+## Retries and failure alerting
+
+A refused run is retried by `retry_supervisor.py` inside the same replica:
+eight retries at fifteen minute intervals by default, then a failure notice.
+The next scheduled firing is unaffected, and the deployment refuses a replica
+timeout that could let one execution overrun into the next firing.
+
+`bash azure/deploy_jobs.sh --dry-run` prints the resolved plan and which
+failure route is configured. It **refuses** a `REPLICA_TIMEOUT` that cannot
+reach every configured attempt and quotes the figure to set: eight retries at
+900s is 7200s of waiting alone, so the default plan needs at least 10920s. The
+default is now 14400s. `AUTONOMOUS_RUN_READINESS.md` has the full arithmetic.
+
+```bash
+RETRY_ATTEMPTS=8 RETRY_INTERVAL_SECONDS=900 REPLICA_TIMEOUT=14400 \
+  bash azure/deploy_jobs.sh --dry-run
+```
+
+### Getting told about a failure
+
+A final failure always prints one line to the job log:
+
+```
+MARIANOS_RUN_FAILED_AFTER_RETRIES store=... source=... runs=9 exit_codes=1,1,...
+```
+
+**The credential-free route is an Azure Monitor log alert on that string**,
+which needs nothing deployed with the image and no secret anywhere. Create it
+against the job's Log Analytics workspace:
+
+```kusto
+ContainerAppConsoleLogs_CL
+| where Log_s contains "MARIANOS_RUN_FAILED_AFTER_RETRIES"
+| project TimeGenerated, Log_s
+```
+
+**Deliberately filtered on the marker alone.** Microsoft's
+`learn.microsoft.com/azure/container-apps/log-monitoring` documents this table
+for container *apps*: it does not mention jobs, and it documents no job-name
+column. `ContainerName_s` is the container's name, not the job's, so narrowing
+on it would most likely match nothing and the alert would stay silent through a
+real failure. The marker carries the store and source itself, so the query
+above needs no such filter. Add one only after confirming in your own
+workspace which column holds the job name - run the query without a filter once
+and look at what the rows actually carry. A first draft of this file narrowed
+on `ContainerName_s`; it was not checked against the documentation before being
+written, and that is the mistake this repository has made before in the other
+direction.
+
+For email from the job itself instead, set `ALERT_EMAIL_TO` and `SMTP_HOST`
+when deploying, plus `SMTP_USERNAME` and `SMTP_PASSWORD` if the relay
+authenticates. The password is stored as an Azure secret and referenced with
+`secretref:`; it is never written into this repository and never pasted into a
+session. A failed email does not replace the failure it reports, and the marker
+line above is printed either way.

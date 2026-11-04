@@ -92,10 +92,123 @@ if ((${#STORE_IDS[@]} == 0)) || [[ -z "${STORE_IDS[0]:-}" ]]; then
   exit 2
 fi
 
+# The replica timeout, resolved ONCE and used for BOTH the deployment and the
+# collector's own budget, so the two cannot drift apart.
+#
+# They were previously equal by coincidence: this script deployed
+# --replica-timeout 7200 and the entrypoint passed no budget, so the CLI default
+# of 7200 applied. The collector's graceful stop and Azure's SIGKILL therefore
+# landed on the same instant, and SIGKILL is not an exception, so an overrunning
+# unattended run would leave no release AND no refusal record. The entrypoint
+# derives its budget from REPLICA_TIMEOUT, which is forwarded below.
+REPLICA_TIMEOUT="${REPLICA_TIMEOUT:-14400}"
+if (( REPLICA_TIMEOUT <= 900 )); then
+  echo "ERROR: REPLICA_TIMEOUT=$REPLICA_TIMEOUT leaves the collector no room to" >&2
+  echo "       stop itself and publish. It must exceed the 900s headroom." >&2
+  exit 1
+fi
+
+# The retry plan, resolved once and VALIDATED against the timeout about to be
+# deployed. A refused run is retried inside the replica, because Azure's own
+# --replica-retry-limit cannot express an interval, so the whole plan has to fit
+# inside one replica timeout: a replica timeout is a SIGKILL and would cut the
+# plan off mid-way, leaving neither a release nor a refusal record.
+#
+# Both figures below are checked by the same code the container runs, read from
+# azure/retry_supervisor.py rather than retyped, so a deployment cannot promise
+# a plan the supervisor will not deliver.
+RETRY_ATTEMPTS="${RETRY_ATTEMPTS:-8}"
+RETRY_INTERVAL_SECONDS="${RETRY_INTERVAL_SECONDS:-900}"
+CRON="${CRON_EXPRESSION:-0 6 * * 1,4}"
+
+RETRY_PLAN="$(python - "$ROOT" "$REPLICA_TIMEOUT" "$RETRY_ATTEMPTS" \
+                       "$RETRY_INTERVAL_SECONDS" "$CRON" <<'PY'
+import json, sys
+root, timeout, attempts, interval, cron = sys.argv[1:6]
+sys.path.insert(0, root)
+sys.path.insert(0, root + '/azure')
+import retry_supervisor as rs
+from marianos_collector.cron import shortest_gap_seconds
+
+timeout = int(timeout)
+headroom = 900                      # container_entrypoint.BUDGET_HEADROOM_SECONDS
+try:
+    plan = rs.RetryPlan(attempts=int(attempts), interval_seconds=int(interval),
+                        collector_headroom_seconds=headroom)
+except ValueError as exc:
+    sys.exit(f'Invalid retry plan: {exc}')
+try:
+    gap = shortest_gap_seconds(cron)
+except ValueError as exc:
+    sys.exit(f'Cannot compute the gap between firings of {cron!r}: {exc}')
+
+budget = timeout - headroom
+info = rs.describe(plan, timeout, budget, gap)
+
+problems = []
+if not info['all_attempts_reachable']:
+    problems.append(
+        f"REPLICA_TIMEOUT={timeout}s cannot reach all {plan.total_runs} attempts.\n"
+        f"       {plan.attempts} retries at {plan.interval_seconds}s is "
+        f"{plan.waiting_seconds()}s of waiting alone, so the plan needs at least "
+        f"{info['minimum_timeout_for_all_attempts']}s even if every attempt fails "
+        f"immediately.\n"
+        f"       Set REPLICA_TIMEOUT to at least "
+        f"{info['minimum_timeout_for_all_attempts']} for all of them to be "
+        f"reachable, or {info['timeout_for_full_length_attempts']} for every "
+        f"attempt to get a full-length run.\n"
+        f"       Lowering RETRY_ATTEMPTS or RETRY_INTERVAL_SECONDS is the other "
+        f"way to make it fit. It is refused rather than quietly shortened, "
+        f"because a plan that silently stops at attempt 3 is not the plan that "
+        f"was configured.")
+if not info['finishes_before_the_next_firing']:
+    problems.append(
+        f"REPLICA_TIMEOUT={timeout}s is not shorter than the {gap}s gap between "
+        f"firings of {cron!r}.\n"
+        f"       An execution could still be running when the scheduler fires "
+        f"again. Azure's cron fires independently of how long an execution "
+        f"takes, so the next run is not delayed - it starts beside this one and "
+        f"meets the Blob lease, which refuses it. A retry plan that overruns "
+        f"turns one transient failure into a refused next run.")
+if problems:
+    print('ERROR: ' + '\n\nERROR: '.join(problems), file=sys.stderr)
+    sys.exit(1)
+
+# The human summary is printed here, by the code that holds the figures, rather
+# than re-parsed in shell. One place, and no second chance to misreport it.
+print(f"Retry plan: {plan.attempts} retries at {plan.interval_seconds}s "
+      f"({plan.total_runs} runs max), first attempt gets {budget}s, "
+      f"inside a {timeout}s replica; next firing is {gap}s away.",
+      file=sys.stderr)
+print(json.dumps(info))
+PY
+)" || exit 1
+
+# How a final failure gets out of the container. Validated here, before any
+# deployment, so a --dry-run review shows which route is configured.
+#
+# Email is optional on purpose. The credential-free route is an Azure Monitor
+# log alert matching the marker the supervisor always prints, which needs
+# nothing in the image and no secret anywhere. When the operator wants email
+# instead, the SMTP credentials are theirs and come from Azure secrets they
+# set: no SMTP password lives in this repository, and none is ever pasted into
+# a session.
+if [[ -n "${ALERT_EMAIL_TO:-}" ]]; then
+  : "${SMTP_HOST:?Set SMTP_HOST when ALERT_EMAIL_TO is set, or a failure can only be logged}"
+  if [[ -n "${SMTP_USERNAME:-}" ]]; then
+    : "${SMTP_PASSWORD:?Set SMTP_PASSWORD when SMTP_USERNAME is set}"
+  fi
+  echo "Failure notice: email to $ALERT_EMAIL_TO via $SMTP_HOST:${SMTP_PORT:-587}," \
+       "plus the MARIANOS_RUN_FAILED_AFTER_RETRIES marker in the job log."
+else
+  echo "Failure notice: no ALERT_EMAIL_TO set, so a final failure prints the" \
+       "MARIANOS_RUN_FAILED_AFTER_RETRIES marker for an Azure Monitor log alert" \
+       "to match. See azure/README.md. Set ALERT_EMAIL_TO and SMTP_HOST for email."
+fi
+
 for STORE_ID in "${STORE_IDS[@]}"; do
   CLEAN_ID="$(printf %s "$STORE_ID" | tr '[:upper:]_' '[:lower:]-' | cut -c1-20)"
   JOB_NAME="marianos-$CLEAN_ID"
-  CRON="${CRON_EXPRESSION:-0 6 * * 1,4}"
   echo "Job: $JOB_NAME | store_id: $STORE_ID | source: $MARIANOS_SOURCE | schedule (UTC): $CRON"
   if [[ "$MODE" == '--dry-run' ]]; then
     echo 'DRY RUN: no network requests or Azure changes. Never include secrets in logs.'
@@ -107,30 +220,27 @@ for STORE_ID in "${STORE_IDS[@]}"; do
   fi
   # NOTE: Passing secret values to CLI args exposes them to local process inspection.
   # Preferred production method is managed identity + Key Vault references set by Azure admin.
-  # The replica timeout, resolved once and used for BOTH the deployment and the
-  # collector's own budget, so the two cannot drift apart.
-  #
-  # They were previously equal by coincidence: this script deployed
-  # --replica-timeout 7200 and the entrypoint passed no budget, so the CLI
-  # default of 7200 applied. The collector's graceful stop and Azure's SIGKILL
-  # therefore landed on the same instant, and SIGKILL is not an exception, so an
-  # overrunning unattended run would leave no release AND no refusal record.
-  # The entrypoint derives its budget from REPLICA_TIMEOUT minus headroom, and
-  # that variable is passed in below so it sees the figure actually deployed.
-  REPLICA_TIMEOUT="${REPLICA_TIMEOUT:-7200}"
-  if (( REPLICA_TIMEOUT <= 900 )); then
-    echo "ERROR: REPLICA_TIMEOUT=$REPLICA_TIMEOUT leaves the collector no room to" >&2
-    echo "       stop itself and publish. It must exceed the 900s headroom." >&2
-    exit 1
-  fi
-
   SECRETS=("marianos-blob=$AZURE_STORAGE_CONNECTION_STRING")
   ENVVARS=('AZURE_STORAGE_CONNECTION_STRING=secretref:marianos-blob'
            'MARIANOS_DATA_AUTHORIZED=yes'
            "MARIANOS_SOURCE=$MARIANOS_SOURCE"
            "AZURE_BLOB_CONTAINER=${AZURE_BLOB_CONTAINER:-marianos-collection}"
            "REPLICA_TIMEOUT=$REPLICA_TIMEOUT"
+           "RETRY_ATTEMPTS=$RETRY_ATTEMPTS"
+           "RETRY_INTERVAL_SECONDS=$RETRY_INTERVAL_SECONDS"
            "MARIANOS_STORE_ID=$STORE_ID")
+
+  if [[ -n "${ALERT_EMAIL_TO:-}" ]]; then
+    ENVVARS+=("ALERT_EMAIL_TO=$ALERT_EMAIL_TO"
+              "SMTP_HOST=$SMTP_HOST"
+              "SMTP_PORT=${SMTP_PORT:-587}"
+              "ALERT_EMAIL_FROM=${ALERT_EMAIL_FROM:-}")
+    if [[ -n "${SMTP_USERNAME:-}" ]]; then
+      SECRETS+=("marianos-smtp-password=$SMTP_PASSWORD")
+      ENVVARS+=("SMTP_USERNAME=$SMTP_USERNAME"
+                'SMTP_PASSWORD=secretref:marianos-smtp-password')
+    fi
+  fi
   if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
     SECRETS+=("marianos-provider-token=$PROVIDER_API_TOKEN")
     ENVVARS+=("PROVIDER_BASE_URL=$PROVIDER_BASE_URL"

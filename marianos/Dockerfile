@@ -5,6 +5,11 @@ COPY pyproject.toml ./
 COPY marianos_collector ./marianos_collector
 COPY config ./config
 COPY azure/container_entrypoint.py ./azure/container_entrypoint.py
+# The supervisor that retries a refused run and reports a final failure. The
+# entrypoint imports it by path, so an image built without it would fail at
+# 06:00 UTC with nobody watching - the same class of defect as the missing
+# store mapping below, which is why both are checked at build time.
+COPY azure/retry_supervisor.py ./azure/retry_supervisor.py
 RUN pip install --no-cache-dir . "azure-storage-blob>=12.19,<13"
 
 # Fail the BUILD if the store mapping is absent or still a placeholder.
