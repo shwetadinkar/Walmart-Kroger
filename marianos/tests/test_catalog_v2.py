@@ -391,9 +391,13 @@ class ProvenanceTests(unittest.TestCase):
         record = src.provenance_report()
         self.assertFalse(record["fulfillment_filter_verified"])
         self.assertFalse(record["scope_verified"])
+        # Was composed_from_nFor_not_verbatim_retailer_text. That described
+        # the defect accurately while it existed; the composing has stopped,
+        # so the line would otherwise have gone stale against its own code.
         self.assertEqual(
-            record["volume_wording"], "composed_from_nFor_not_verbatim_retailer_text"
+            record["volume_wording"], "verbatim_retailer_wording_only_else_withheld"
         )
+        self.assertTrue(record["_does_not_establish"])
         self.assertEqual(
             record["digital_deals"], "not_exposed_by_any_published_kroger_api"
         )

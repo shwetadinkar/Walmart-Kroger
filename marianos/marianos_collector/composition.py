@@ -556,6 +556,22 @@ class CompositeSource:
             # context." A count here, the times themselves in the artefact.
             "field_observations_recorded": sum(
                 len(t.bindings_by_field) for t in self._traces.values()),
+            # Required of every report here, and missing from this one. The
+            # merge report carried a does-not-establish block and the source
+            # block it sits beside did not, so a reader of the provenance alone
+            # got the claims without their limits.
+            "_does_not_establish": [
+                "That any field is correct. This records which source supplied "
+                "each value and when it was observed, not whether the value is "
+                "right.",
+                "Coverage. A field is populated only where a source supplied "
+                "it; the rest keep empty strings and the products are not "
+                "removed.",
+                "That the sources agree. Where two supplied different values "
+                "for one field the conflict is recorded rather than resolved, "
+                "and a refused contribution is kept as history rather than "
+                "merged.",
+            ],
         }
 
     def durable_evidence(self) -> dict:

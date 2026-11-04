@@ -689,10 +689,26 @@ class CatalogV2Source:
             "scope_verified": False,
             "page_size": self.page_size,
             "option_missing_prices": self.include_missing_prices,
+            # Always false now. No environment variable may promote a value
+            # into ppm, and CATALOG_V2_UNIT_IS_PPM is ignored if set.
             "unit_field_treated_as_ppm": self.unit_is_ppm,
-            "volume_wording": "composed_from_nFor_not_verbatim_retailer_text",
+            # This said composed_from_nFor_not_verbatim_retailer_text, which
+            # described the defect accurately while it existed and became false
+            # when the composing stopped. A report line is a claim and goes
+            # stale with the code it describes.
+            "volume_wording": "verbatim_retailer_wording_only_else_withheld",
             "digital_deals": "not_exposed_by_any_published_kroger_api",
             "sweep_complete": self._sweep.complete if self._sweep else None,
             "products_swept": self._sweep.product_count if self._sweep else None,
             "pages_fetched": self._sweep.pages_fetched if self._sweep else None,
+            "_does_not_establish": [
+                "That this route is entitled. Catalog V2 is a partner-tier "
+                "contract and no agreement has been submitted or authorized.",
+                "A displayed price per measure. The unit field's meaning is "
+                "not stated by the contract, so it is carried as a candidate "
+                "in the audit record and never written into ppm.",
+                "A volume offer where the retailer supplied no wording. The "
+                "structured nFor quantity and price are kept in the audit "
+                "record and the published columns stay empty.",
+            ],
         }

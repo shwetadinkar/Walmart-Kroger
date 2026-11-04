@@ -438,6 +438,23 @@ class KrogerSweepSource:
                 "filter.start is a skip count Kroger refuses past 250, so one term "
                 "reaches at most 300 products however many sit behind it, and the "
                 "public API has no category enumeration at all"),
+            # This source had `coverage_limit` and no does-not-establish block,
+            # and it is the source the scheduled Azure job runs, so it is the
+            # one whose report a reader is most likely to be alone with.
+            "_does_not_establish": [
+                "Complete category discovery. The route is term-filtered "
+                "search with no category enumeration, so coverage cannot be "
+                "attested and the output stays in the trial namespace.",
+                "That a configured root with no products is absent from the "
+                "store. Three of the five empty roots hold products that are "
+                "in the delivered data under the retailer's own broader "
+                "label, which is a taxonomy mismatch rather than a gap.",
+                "A displayed price per measure or any retailer deal wording. "
+                "See fields_this_source_cannot_supply above.",
+                "That every configured term was collected. A term whose pages "
+                "did not all complete is retried and, after the cap, named in "
+                "terms_abandoned_after_retries having collected nothing.",
+            ],
             "terms_configured": sum(len(v) for v in self.terms_by_category.values()),
             # Completed means collected, not merely finished with. An
             # abandoned term is added to `done_terms` so a resume stops

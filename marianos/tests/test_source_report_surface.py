@@ -129,6 +129,26 @@ class EverySourceExposesTheReport(unittest.TestCase):
                                 f"{name} attests coverage and reports nothing")
 
 
+class EveryReportStatesItsLimits(unittest.TestCase):
+    """Every report here must state what it does not establish.
+
+    The merge report carried such a block while the source block beside it did
+    not, so a reader of the provenance alone got the claims without the limits.
+    CompositeSource and CatalogV2Source were both missing one.
+    """
+
+    def test_the_source_classes_that_report_also_state_their_limits(self):
+        missing = []
+        for name, cls in source_classes().items():
+            if name in FIXTURE_ONLY or not hasattr(cls, "provenance_report"):
+                continue
+            src = inspect.getsource(cls.provenance_report)
+            if "_does_not_establish" not in src:
+                missing.append(name)
+        self.assertEqual(missing, [],
+                         f"provenance_report states no limits on: {missing}")
+
+
 class TheProviderReportSaysWhatItIsAndHidesTheToken(unittest.TestCase):
 
     def build(self):
