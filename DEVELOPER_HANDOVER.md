@@ -28,7 +28,7 @@ Read in this order:
 | | |
 |---|---|
 | working branch | `marianos-api-sweep-2026-10-31` |
-| HEAD | `763d14b`, pushed, working tree clean |
+| package built from | `53193e6`, see "Built on 4 November evening" below |
 | authoritative Mariano's release commit | `74a55c5e6fb2d938df1d06ff6717561420130cd9` |
 | frozen, never commit to | `walmart-client-corrections-2026-10-31` (`86245e1`) |
 | test counts | Walmart 331, Mariano's 1066 — direct and pytest must agree |
@@ -78,8 +78,8 @@ disagreements.
 | `tools/kroger_full_sweep.py` | thin wrapper over `sweep_core` | done |
 | `tools/merge_page_enrichment.py` | the one-pass multi-read merge | done |
 | `tools/parse_page_harvest.py` | `classify_card_line`, the offer grammar | done |
-| `tools/out_of_scope_reconciliation.py` | the 166 unmapped identities | done; **artefact not in repo** |
-| `tools/delivery_manifest.py` | revision/hash manifest + change-to-test map | done, not yet run for delivery |
+| `tools/out_of_scope_reconciliation.py` | the 166 unmapped identities | done; run for delivery 4 Nov, artefact in the package, not in repo |
+| `tools/delivery_manifest.py` | revision/hash manifest + change-to-test map | done; run for delivery 4 Nov, see the two-pass order below |
 | `tools/build_submission.py` | assembles the submission from a release | done |
 | `tools/observe_schedule.py` | the schedule, as two separate claims | done |
 | `tools/resolve_sitemap_gap.py` | carriage, as a range never a number | done |
@@ -123,6 +123,42 @@ which is a defect this engagement has already shipped once.
 
 ## What remains
 
+### Built on 4 November evening: the Mariano's update package
+
+Sections 0 to 2 below were the blockers. They are now done on the account
+holder's machine, and the output is **not in this repository** by design:
+
+| artefact | where | what it holds |
+|---|---|---|
+| package folder | `marianos/out/delivery-2026-11-04/marianos-vernon-hills-2026-11-04/` (gitignored) | release data with the one-pass merge, merge report, `provenance.json` **and** `provenance_evidence.json`, out-of-scope reconciliation, acquisition proposal, Walmart store 100 evidence, revision manifest and change-to-test map, `MANIFEST_SHA256.json` |
+| zip | the same folder's `.zip`, copied to the account holder's Downloads | the folder above |
+| merge output | `marianos/out/delivery-2026-11-04/merge/` | `ppm` 727, volume 146, digital 48 after the Pabst cashback withheld (49 before), 540 + 202 products by read, zero conflicts |
+| out-of-scope output | `marianos/out/delivery-2026-11-04/out-of-scope-reconciliation/` | 166; 28,549 + 46,073 + 166 = 74,788 over 1,833 responses |
+
+Built from **`53193e6`**, change-to-test map from `a858c42`, 77 commits,
+`working_tree_clean: true`. Both manifests were verified on a fresh extraction
+of the zip, zero mismatches.
+
+**The two manifests cannot hash each other, so the order matters.** Build the
+package once with every `--include` except the manifest; run
+`delivery_manifest.py` from **inside** that folder, passing each top-level entry
+as `--delivery` except `MANIFEST_SHA256.json`, so the paths are bare names and
+not a local `out/` path; then rebuild with `--include` of the manifest too and
+confirm the README is byte-identical between the two builds. The revision
+manifest then covers every delivered file but the checksum file, and
+`MANIFEST_SHA256.json` covers everything including the revision manifest. Run
+the obvious way round, it records hashes for a README and checksum file that
+the final package does not contain, and `sha256sum -c` fails on two files.
+
+Four untracked folders that had been sitting in the tree (an old
+`submission/`, two stale 4 November reports, and the Oxylabs probe with raw
+retailer pages that must never be committed) were moved, not deleted, to
+`marianos/out/moved-from-repo-tree-2026-11-04/`. The `submission/` one is the
+package the client already holds, 589 / 181 / 51; it is not the new one.
+
+The client message is corrected to match the package, and **nothing has been
+sent**. Sending it is the account holder's.
+
 ### 0. What this repository does NOT contain
 
 Checked by looking, 4 November. Four things the remaining work needs are not
@@ -147,7 +183,7 @@ as a delivered figure must be re-derived once the release is in place. And the
 `values_by_field_and_source` labels page-read values as Kroger API values. Read
 `SUPERSEDED.md` there before reading either JSON.
 
-### 1. Blocked on you — the delivery package
+### 1. The delivery package (done 4 Nov; kept as the procedure for the next one)
 
 ```bash
 # The page-read inputs ARE here. Note which files: this matters.
@@ -156,7 +192,7 @@ python3 tools/merge_page_enrichment.py \
   --page reports/2026-11-01-vernon-hills-page-harvest/data/parsed_full_corrected.json \
   --observed-at 2026-11-01T08:45:00+00:00 \
   --page reports/2026-11-04-vernon-hills-page-harvest/page_reads.json \
-  --observed-at <the 3 November read's time, from the release report> \
+  --observed-at 2026-11-03T20:00:00+00:00 \
   --store-id 53100502 --zipcode 60061 \
   --store-name "Marianos - Marianos Vernon Hills" \
   --store-location "1720 N Milwaukee Ave, Vernon Hills, IL 60061" \
@@ -200,7 +236,7 @@ Expected figures to check against: `ppm` 727, volume 146, digital 48, and
 28,549 + 46,073 duplicates + 166 out of scope = 74,788 seen over 1,833 indexed
 responses.
 
-### 2. The drafted client message is not sent
+### 2. The drafted client message (both preconditions now met; not sent)
 
 `freelancer_msg_marianos_2026-11-04-update.md`, held locally. Two
 preconditions, both checkable:
