@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 991.
+  counts: Walmart 262, Mariano's 1002.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -666,6 +666,37 @@ Four properties are tested on both sides and each has been mutation-checked:
 Not fixed, deliberately: an argparse refusal still exits without a record,
 because `p.error` raises `SystemExit`. A wrong flag fails the first time a job
 is deployed rather than silently months later, so it is left.
+
+**A SIGKILL bypasses all of it, and the job was configured to earn one.** The
+entrypoint passed no time budget, so the CLI default of 7200 seconds applied,
+and `deploy_jobs.sh` deployed `--replica-timeout 7200`. Equal by coincidence,
+and an Azure replica timeout is a SIGKILL rather than an exception, so
+`refusal_recorded` never runs: an overrunning unattended run would leave **no
+release and no refusal record**, exactly the trace this machinery exists to
+leave, defeated by configuration rather than by code and only on the runs where
+it matters most. The budget is now derived from the deployed replica timeout
+minus 900 seconds of headroom; `deploy_jobs.sh` resolves `REPLICA_TIMEOUT`
+once, deploys it and forwards the same value into the container so the two
+cannot drift, and refuses a timeout with no headroom. Found on 4 November while
+checking what a rehearsal does not touch.
+
+**The image refused nothing about its own store mapping.**
+`config/stores_live.json` is gitignored by design, holding the verified
+location id, and `azure/README.md` says to copy it from the template before
+building. Nothing checked. A build that skipped that step produced a good image
+whose first act at 06:00 UTC was to fail on a missing file. The Dockerfile now
+refuses to build on the file being absent, invalid, empty, or still containing
+`DEMO`, `REPLACE`, `UNRESOLVED` or `EXAMPLE` - the placeholder case mattering
+as much, because a copied template would otherwise deploy under an unverified
+store identity.
+
+Two things about the Walmart job are recorded and **not** fixed, in
+`marianos/AUTONOMOUS_RUN_READINESS.md`: it is scheduled at the same instant as
+the Mariano's job, `0 6 * * 1,4` in both, and staggering them changes a
+schedule the client has been told; and the Walmart CLI takes no `--max-seconds`
+at all, so only its 14400 second replica timeout bounds it, which is the same
+SIGKILL. Four hours is large headroom for 615 provider-snapshot products, but
+unlikely is not recorded, so it is recorded.
 
 ## The schedule, as two separate claims
 

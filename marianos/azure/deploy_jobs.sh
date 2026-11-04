@@ -107,11 +107,29 @@ for STORE_ID in "${STORE_IDS[@]}"; do
   fi
   # NOTE: Passing secret values to CLI args exposes them to local process inspection.
   # Preferred production method is managed identity + Key Vault references set by Azure admin.
+  # The replica timeout, resolved once and used for BOTH the deployment and the
+  # collector's own budget, so the two cannot drift apart.
+  #
+  # They were previously equal by coincidence: this script deployed
+  # --replica-timeout 7200 and the entrypoint passed no budget, so the CLI
+  # default of 7200 applied. The collector's graceful stop and Azure's SIGKILL
+  # therefore landed on the same instant, and SIGKILL is not an exception, so an
+  # overrunning unattended run would leave no release AND no refusal record.
+  # The entrypoint derives its budget from REPLICA_TIMEOUT minus headroom, and
+  # that variable is passed in below so it sees the figure actually deployed.
+  REPLICA_TIMEOUT="${REPLICA_TIMEOUT:-7200}"
+  if (( REPLICA_TIMEOUT <= 900 )); then
+    echo "ERROR: REPLICA_TIMEOUT=$REPLICA_TIMEOUT leaves the collector no room to" >&2
+    echo "       stop itself and publish. It must exceed the 900s headroom." >&2
+    exit 1
+  fi
+
   SECRETS=("marianos-blob=$AZURE_STORAGE_CONNECTION_STRING")
   ENVVARS=('AZURE_STORAGE_CONNECTION_STRING=secretref:marianos-blob'
            'MARIANOS_DATA_AUTHORIZED=yes'
            "MARIANOS_SOURCE=$MARIANOS_SOURCE"
            "AZURE_BLOB_CONTAINER=${AZURE_BLOB_CONTAINER:-marianos-collection}"
+           "REPLICA_TIMEOUT=$REPLICA_TIMEOUT"
            "MARIANOS_STORE_ID=$STORE_ID")
   if [[ "$MARIANOS_SOURCE" == 'provider' ]]; then
     SECRETS+=("marianos-provider-token=$PROVIDER_API_TOKEN")
@@ -156,7 +174,7 @@ for STORE_ID in "${STORE_IDS[@]}"; do
     --environment "$CONTAINERAPPS_ENVIRONMENT" \
     --trigger-type Schedule --cron-expression "$CRON" \
     --parallelism 1 --replica-completion-count 1 \
-    --replica-timeout "${REPLICA_TIMEOUT:-7200}" --replica-retry-limit 0 \
+    --replica-timeout "$REPLICA_TIMEOUT" --replica-retry-limit 0 \
     --cpu "${CPU:-0.5}" --memory "${MEMORY:-1.0Gi}" \
     --image "$IMAGE" \
     --secrets "${SECRETS[@]}" \

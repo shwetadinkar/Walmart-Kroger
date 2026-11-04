@@ -12,6 +12,53 @@ import sys
 AUTHORIZED_SOURCES = ('provider', 'catalog_v2', 'sweep')
 
 
+# Headroom between the collector stopping itself and Azure killing the replica.
+# The collector has to finish the term it is on, reconcile retention, publish the
+# release and write its report inside this window.
+BUDGET_HEADROOM_SECONDS = 900
+DEFAULT_REPLICA_TIMEOUT = 7200
+
+
+def sweep_budget_seconds() -> int:
+    """How long the sweep may run, strictly less than the replica timeout.
+
+    **The collector was given exactly as long as Azure allows.** This entrypoint
+    passed no budget, so the CLI default of 7200 seconds applied, and
+    `deploy_jobs.sh` sets `--replica-timeout 7200`. The collector's own graceful
+    budget stop and Azure's kill therefore landed on the same instant, and the
+    kill is SIGKILL: not an exception, so `refusal_recorded` never runs. An
+    overrunning unattended run would leave **no release and no refusal record**,
+    which is precisely the trace that machinery exists to leave, defeated by a
+    configuration coincidence rather than by any code.
+
+    The budget is now derived from the replica timeout the job is deployed with,
+    minus headroom, and the deploy script exports the same value it deploys so
+    the two cannot drift apart.
+    """
+    explicit = os.getenv('MARIANOS_SWEEP_MAX_SECONDS', '').strip()
+    if explicit:
+        try:
+            value = int(float(explicit))
+        except ValueError:
+            raise ValueError(
+                f'MARIANOS_SWEEP_MAX_SECONDS must be a number, not {explicit!r}')
+        if value <= 0:
+            raise ValueError('MARIANOS_SWEEP_MAX_SECONDS must be positive')
+        return value
+
+    timeout = os.getenv('REPLICA_TIMEOUT', '').strip()
+    try:
+        limit = int(float(timeout)) if timeout else DEFAULT_REPLICA_TIMEOUT
+    except ValueError:
+        limit = DEFAULT_REPLICA_TIMEOUT
+    budget = limit - BUDGET_HEADROOM_SECONDS
+    if budget <= 0:
+        raise ValueError(
+            f'replica timeout {limit}s leaves no room for the collector to stop '
+            f'itself and publish; it must exceed {BUDGET_HEADROOM_SECONDS}s')
+    return budget
+
+
 def command():
     sid = os.getenv('MARIANOS_STORE_ID', '')
     if not sid:
@@ -65,7 +112,8 @@ def command():
                  '--expect-zipcode', zipcode, '--expect-street', street,
                  '--sweep-terms', '/app/config/sweep_terms.json',
                  '--uncovered-roots', '/app/config/sweep_coverage.json',
-                 '--sweep-work-dir', os.getenv('MARIANOS_SWEEP_WORK_DIR', '/tmp/sweep-work')]
+                 '--sweep-work-dir', os.getenv('MARIANOS_SWEEP_WORK_DIR', '/tmp/sweep-work'),
+                 '--sweep-max-seconds', str(sweep_budget_seconds())]
         return argv
 
     if source == 'catalog_v2':

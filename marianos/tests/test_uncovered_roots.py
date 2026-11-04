@@ -231,7 +231,8 @@ class TheAzureJobCanRunTheSweep(unittest.TestCase):
         spec.loader.exec_module(self.module)
         self.keys = ("MARIANOS_STORE_ID", "MARIANOS_SOURCE", "KROGER_LOCATION_ID",
                      "MARIANOS_EXPECT_ZIPCODE", "MARIANOS_EXPECT_STREET",
-                     "MARIANOS_SWEEP_WORK_DIR")
+                     "MARIANOS_SWEEP_WORK_DIR", "MARIANOS_SWEEP_MAX_SECONDS",
+                     "REPLICA_TIMEOUT")
         self._saved = {k: os.environ.pop(k, None) for k in self.keys}
 
     def tearDown(self):
@@ -295,5 +296,134 @@ class TheAzureJobCanRunTheSweep(unittest.TestCase):
             self.module.command()
 
 
+
+class TheCollectorStopsItselfBeforeAzureKillsIt(unittest.TestCase):
+    """The collector was given exactly as long as Azure allows.
+
+    The entrypoint passed no budget, so the CLI default of 7200 seconds
+    applied, and `deploy_jobs.sh` deployed `--replica-timeout 7200`. The
+    graceful stop and Azure's kill landed on the same instant, and the kill is
+    SIGKILL: not an exception, so `refusal_recorded` never runs. An overrunning
+    unattended run would leave **no release and no refusal record** - exactly
+    the trace that machinery exists to leave - defeated by a configuration
+    coincidence rather than by any code.
+    """
+
+    def setUp(self):
+        import importlib.util
+        import os
+        spec = importlib.util.spec_from_file_location(
+            "sweep_entrypoint2", ROOT / "azure" / "container_entrypoint.py")
+        self.module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.module)
+        self.keys = ("MARIANOS_SWEEP_MAX_SECONDS", "REPLICA_TIMEOUT",
+                     "MARIANOS_STORE_ID", "MARIANOS_SOURCE",
+                     "KROGER_LOCATION_ID", "MARIANOS_EXPECT_ZIPCODE",
+                     "MARIANOS_EXPECT_STREET")
+        self._saved = {k: os.environ.pop(k, None) for k in self.keys}
+
+    def tearDown(self):
+        import os
+        for key, value in self._saved.items():
+            os.environ.pop(key, None)
+            if value is not None:
+                os.environ[key] = value
+
+    def test_the_budget_is_strictly_less_than_the_replica_timeout(self):
+        import os
+        os.environ["REPLICA_TIMEOUT"] = "7200"
+        self.assertLess(self.module.sweep_budget_seconds(), 7200)
+
+    def test_the_headroom_is_enough_to_publish(self):
+        import os
+        os.environ["REPLICA_TIMEOUT"] = "7200"
+        self.assertEqual(7200 - self.module.sweep_budget_seconds(),
+                         self.module.BUDGET_HEADROOM_SECONDS)
+        self.assertGreaterEqual(self.module.BUDGET_HEADROOM_SECONDS, 300)
+
+    def test_it_tracks_a_timeout_the_job_is_actually_deployed_with(self):
+        import os
+        os.environ["REPLICA_TIMEOUT"] = "3600"
+        self.assertLess(self.module.sweep_budget_seconds(), 3600)
+
+    def test_a_timeout_with_no_room_to_publish_is_refused(self):
+        import os
+        os.environ["REPLICA_TIMEOUT"] = "600"
+        with self.assertRaises(ValueError):
+            self.module.sweep_budget_seconds()
+
+    def test_the_argv_carries_the_budget(self):
+        import os
+        os.environ.update(MARIANOS_STORE_ID="53100502", MARIANOS_SOURCE="sweep",
+                          KROGER_LOCATION_ID="53100502",
+                          MARIANOS_EXPECT_ZIPCODE="60061",
+                          MARIANOS_EXPECT_STREET="1720 N Milwaukee Ave",
+                          REPLICA_TIMEOUT="7200")
+        argv = self.module.command()
+        self.assertIn("--sweep-max-seconds", argv)
+        budget = float(argv[argv.index("--sweep-max-seconds") + 1])
+        self.assertLess(budget, 7200)
+
+    def test_the_deploy_script_passes_the_timeout_through_to_the_container(self):
+        """Otherwise the entrypoint would derive its budget from a default
+        while the job was deployed with something else."""
+        script = (ROOT / "azure" / "deploy_jobs.sh").read_text(encoding="utf-8")
+
+        # Asserted on the ENVVARS entry itself, not on the substring. The
+        # substring `REPLICA_TIMEOUT=$REPLICA_TIMEOUT` also occurs inside this
+        # script's own error message, so the first version of this assertion
+        # passed with the forwarding deleted: it was satisfied by the error
+        # text. Exactly the "assert on something that changes" failure.
+        forwarded = [line.strip() for line in script.splitlines()
+                     if line.strip() == '"REPLICA_TIMEOUT=$REPLICA_TIMEOUT"']
+        self.assertEqual(len(forwarded), 1,
+                         "the replica timeout is not forwarded to the container "
+                         "as an ENVVARS entry")
+        self.assertIn('--replica-timeout "$REPLICA_TIMEOUT"', script)
+
+    def test_the_deploy_script_refuses_a_timeout_with_no_headroom(self):
+        script = (ROOT / "azure" / "deploy_jobs.sh").read_text(encoding="utf-8")
+        self.assertIn("REPLICA_TIMEOUT <= 900", script)
+
+class TheImageRefusesToBuildWithoutAVerifiedStore(unittest.TestCase):
+    """config/stores_live.json is gitignored by design and nothing checked it.
+
+    It holds the verified location id, so azure/README.md says to copy it from
+    the template before building. A build that skipped that step produced a
+    perfectly good image whose first act, at 06:00 UTC with nobody watching,
+    was to fail on a missing file. A misconfigured job is the failure most
+    likely to recur unattended, and the build is the cheapest place to catch
+    it: on the operator's screen.
+    """
+
+    def setUp(self):
+        self.dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
+
+    def test_the_build_checks_the_store_mapping_exists(self):
+        self.assertIn("stores_live.json", self.dockerfile)
+        self.assertIn("BUILD REFUSED", self.dockerfile)
+
+    def test_the_build_also_rejects_placeholder_identities(self):
+        """A copied template still saying DEMO would otherwise deploy, and this
+        repository has published one store's data under another store's name
+        once already."""
+        for marker in ("DEMO", "REPLACE", "UNRESOLVED"):
+            self.assertIn(marker, self.dockerfile)
+
+    def test_the_check_runs_before_the_entrypoint_is_declared(self):
+        """A check after ENTRYPOINT would still build a broken image."""
+        self.assertLess(self.dockerfile.index("BUILD REFUSED"),
+                        self.dockerfile.index("ENTRYPOINT"))
+
+    def test_the_entrypoint_asks_for_the_file_the_build_checks(self):
+        """The two must name the same path, or the build would verify a file
+        the job does not read."""
+        entry = (ROOT / "azure" / "container_entrypoint.py").read_text(
+            encoding="utf-8")
+        self.assertIn("/app/config/stores_live.json", entry)
+        self.assertIn("/app/config/stores_live.json", self.dockerfile)
+
+
 if __name__ == "__main__":
     unittest.main()
+

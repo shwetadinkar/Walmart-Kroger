@@ -47,6 +47,58 @@ The last three are the gates doing their job. A term-filtered search cannot
 attest complete category discovery, so the output stays in the trial namespace
 and says so. **A release from an unattended run is not a submission.**
 
+## The collector now stops itself before Azure kills it
+
+**It did not.** This entrypoint passed no time budget, so the CLI default of
+7200 seconds applied, and `deploy_jobs.sh` deployed `--replica-timeout 7200`.
+The two were equal by coincidence, and the consequence is not a late finish: an
+Azure replica timeout is a **SIGKILL**, which is not an exception, so
+`refusal_recorded` never runs. An overrunning unattended run would have left
+**no release and no refusal record at all** - precisely the trace the refusal
+machinery exists to leave - defeated by a configuration coincidence rather than
+by any code, and only on the runs where it matters most.
+
+The budget is now derived from the replica timeout the job is actually deployed
+with, minus 900 seconds of headroom for the collector to finish its term,
+reconcile retention, publish and write its report. `deploy_jobs.sh` resolves
+`REPLICA_TIMEOUT` once, deploys that figure and forwards the same figure into
+the container, so the two cannot drift apart, and it refuses to deploy a
+timeout that leaves no headroom. At the default that is a 6300 second sweep
+inside a 7200 second replica.
+
+## Two things about the Walmart job, not fixed here
+
+**Both jobs are scheduled for the same instant.** `walmart/azure/deploy_jobs.sh`
+also deploys `--trigger-type Schedule` with `0 6 * * 1,4`, so Mariano's and
+Walmart start together twice a week. Staggering them is a one-line change and it
+is deliberately **not** made here: Monday and Thursday at 06:00 UTC is the
+schedule the client has been told, and changing what he has been told is his
+call rather than ours.
+
+**The Walmart CLI has no time budget to tune.** It takes no `--max-seconds`, so
+only the 14400 second replica timeout bounds it, and that bound is the SIGKILL
+described above. With 615 products from provider snapshots, four hours is large
+headroom and the case is unlikely; but unlikely is not the same as recorded, so
+it is recorded. Giving that CLI a budget is the same fix as above and has not
+been done.
+
+## The image refuses to build without a verified store
+
+`config/stores_live.json` is gitignored by design, because it holds the
+location id verified against Kroger's Locations API, and `azure/README.md` says
+to copy it from `stores_live.template.json` before building. **Nothing checked
+that it had been done.** A build that skipped the step produced a perfectly
+good image whose first act, at 06:00 UTC with nobody watching, was to fail on a
+missing file.
+
+The build now refuses: on the file being absent, on it being invalid JSON, on
+it being empty, and on it still containing `DEMO`, `REPLACE`, `UNRESOLVED` or
+`EXAMPLE`. The placeholder case matters as much as the missing one, because a
+copied template would otherwise deploy and this repository has published one
+store's data under another store's name once already. A test asserts the check
+sits before `ENTRYPOINT`, since a check after it would still build a broken
+image, and that the Dockerfile and the entrypoint name the same path.
+
 ## Before the first Azure execution
 
 ```bash
