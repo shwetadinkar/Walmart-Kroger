@@ -73,6 +73,14 @@ class SweepIndex:
         self.by_root: dict[str, list[dict]] = {}
         self.identities: set[str] = set()
         self.unmapped: dict[str, int] = {}
+        # The out-of-scope products themselves, not just a count of them. The
+        # client asked on 4 November that their original retailer labels and
+        # identities be retained in a separate reconciliation with source paths
+        # and counts, and that no historical observation be discarded. Only a
+        # count was kept before, so the identities could not be produced
+        # without re-indexing. They are never served under any root: this list
+        # is written beside the release, not into it.
+        self.out_of_scope: list[dict] = []
         self.malformed: dict[str, int] = {}
         self.responses = 0
         self.products_seen = 0
@@ -274,6 +282,20 @@ class KrogerSweepSource:
                     # into a root by the term that found it.
                     index.unmapped[label or "(none)"] = index.unmapped.get(label or "(none)", 0) + 1
                     index.unplaceable += 1
+                    # Retained with the label exactly as the retailer returned
+                    # it, so any eventual mapping can be supported by the
+                    # retailer's own taxonomy rather than by the search term.
+                    index.out_of_scope.append({
+                        "identity": identity,
+                        "upc": raw.get("upc", ""),
+                        "product_title": raw.get("product_title", ""),
+                        "retailer_label": label or "",
+                        "configured_root": "",
+                        "source_response_file": str(path.relative_to(self.raw_dir)),
+                        "search_term": str(document.get("term") or ""),
+                        "observed_at": observed_at,
+                        "product_id": context.get("product_id", ""),
+                    })
                     continue
                 state = context.get("availability_state")
                 raw = dict(raw, sub_category=label, observed_at=observed_at,
@@ -401,6 +423,12 @@ class KrogerSweepSource:
             "products_served": index.product_count if index else None,
             "duplicate_identities": index.duplicates if index else None,
             "unplaceable_unmapped_products": index.unplaceable if index else None,
+            # The identities themselves, for the out-of-scope reconciliation the
+            # client asked for. Carried here rather than in the release, because
+            # these products belong to no configured root and must not appear
+            # under one. Their presence here does not establish completion of
+            # any required root.
+            "out_of_scope_products": list(index.out_of_scope) if index else None,
             "unmapped_labels": dict(sorted(index.unmapped.items())) if index else None,
             "malformed_by_reason": dict(sorted(index.malformed.items())) if index else None,
             "populated_roots": index.populated_roots() if index else None,

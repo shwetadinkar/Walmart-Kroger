@@ -15,7 +15,9 @@ import unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from merge_page_enrichment import main, split_deals  # noqa: E402
+from merge_page_enrichment import (  # noqa: E402
+    build_lookup, main, split_deals)
+from marianos_collector.composition import BINDING_KEY  # noqa: E402
 
 STORE = "Marianos - Marianos Vernon Hills"
 
@@ -177,6 +179,107 @@ class TheDealColumnsTakeOnlyOffers(unittest.TestCase):
         line = "Save $2 each when you buy 3 or more"
         vol, _ = split_deals(["Low Stock", line, "View 1 Offer"])
         self.assertEqual(vol, line)
+
+
+class SeveralReadsAreAppliedInOnePass(unittest.TestCase):
+    """Chaining a second merge onto the first one's output falsifies provenance.
+
+    Run that way on 4 November against the real 28,549 release, 526 page-derived
+    `ppm` values and all 53 digital deal descriptions came back attributed to
+    `kroger_public` - the Kroger public Products API, which carries neither
+    field at any tier. Every count was right, no conflict was reported and
+    nothing failed; only the source labels were wrong, because the second pass
+    cannot tell the first pass's contributions from the spine's own values.
+    """
+
+    @staticmethod
+    def rec(upc, ppm="", deals=()):
+        return {"upc": upc, "ppm": ppm, "deal_lines": list(deals)}
+
+    def lookup_for(self, reads):
+        lookup, _ = build_lookup(reads, "53100502")
+        return lookup
+
+    def test_a_value_from_either_read_is_attributed_to_the_page_not_the_spine(self):
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0002", ppm="$2.00/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        for upc in ("0001", "0002"):
+            self.assertEqual(lookup(None, upc, None)["ppm"],
+                             {"0001": "$1.00/oz", "0002": "$2.00/oz"}[upc])
+
+    def test_each_product_carries_the_time_of_the_read_that_supplied_it(self):
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0002", ppm="$2.00/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        self.assertEqual(lookup(None, "0001", None)[BINDING_KEY]["observed_at"],
+                         "2026-11-01T00:00:00+00:00")
+        self.assertEqual(lookup(None, "0002", None)[BINDING_KEY]["observed_at"],
+                         "2026-11-03T00:00:00+00:00")
+
+    def test_the_freshest_read_wins_for_a_product_in_both(self):
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.50/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        got = lookup(None, "0001", None)
+        self.assertEqual(got["ppm"], "$1.50/oz")
+        self.assertEqual(got[BINDING_KEY]["observed_at"], "2026-11-03T00:00:00+00:00")
+
+    def test_read_order_on_the_command_line_does_not_decide_which_wins(self):
+        """The observation time decides, not the argument order."""
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.50/oz")], "2026-11-03T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+        ])
+        self.assertEqual(lookup(None, "0001", None)["ppm"], "$1.50/oz")
+
+    def test_an_offer_the_later_read_did_not_see_is_not_carried_forward(self):
+        """Offers expire. Four published digital deals dropped this way between
+        the 1 and 4 November reads, which is correct: a coupon absent from the
+        later observation is not evidence of a coupon now."""
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz", deals=["Coupon: Save $1.00"])],
+             "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        self.assertNotIn("digital_deals_description", lookup(None, "0001", None))
+
+    def test_fields_are_never_mixed_across_reads_for_one_product(self):
+        """All three come from the one read that won, so a single observation
+        time on the contribution is true of every value in it."""
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz", deals=["Buy 1, Get 1 Free"])],
+             "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.50/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        got = lookup(None, "0001", None)
+        self.assertEqual(got["ppm"], "$1.50/oz")
+        self.assertNotIn("volume_deals_description", got)
+
+    def test_a_disagreement_between_reads_is_recorded(self):
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.50/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        self.assertEqual(len(lookup.disagreements["0001"]), 1)
+        entry = lookup.disagreements["0001"][0]
+        self.assertEqual((entry["field"], entry["earlier_value"], entry["later_value"]),
+                         ("ppm", "$1.00/oz", "$1.50/oz"))
+
+    def test_agreement_between_reads_is_not_recorded_as_a_disagreement(self):
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-01T00:00:00+00:00"),
+            ([self.rec("0001", ppm="$1.00/oz")], "2026-11-03T00:00:00+00:00"),
+        ])
+        self.assertEqual(lookup.disagreements, {})
+
+    def test_one_read_still_works_the_old_way(self):
+        lookup, _ = build_lookup([self.rec("0001", ppm="$1.00/oz")],
+                                 "53100502", "2026-11-01T00:00:00+00:00")
+        self.assertEqual(lookup(None, "0001", None)["ppm"], "$1.00/oz")
 
 
 if __name__ == "__main__":

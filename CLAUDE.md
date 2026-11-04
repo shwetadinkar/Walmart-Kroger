@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 888.
+  counts: Walmart 262, Mariano's 908.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -246,6 +246,40 @@ November read `SNAP EBT` on 4 November, which is not a change in the data. That
 comparison is worth keeping as a check: of 64 UPCs rated on both dates, the
 displayed rate was **identical on all 64** and `sale_price` moved on one, which
 is the only reproducibility evidence this enrichment route has.
+
+**Chaining two merges falsified the provenance, and every count stayed right.**
+Two page reads were merged by running the tool twice, the second onto the first
+one's output. Against the real 28,549 release that produced `ppm` 727 and
+`volume_deals_description` 146 - correct totals - with
+`values_by_field_and_source` reading `ppm: {crawl: 201, kroger_public: 526}`
+and `digital_deals_description: {kroger_public: 53}`. **The Kroger public
+Products API carries neither field at any tier**, so 526 rates and all 53
+coupon descriptions were recorded as having come from a source that cannot
+produce them. The second pass cannot tell the first pass's contributions from
+the spine's own values. No conflict was reported and nothing failed, because
+nothing was wrong except the labels; it was caught by reading the report rather
+than by any gate.
+
+`--page` and `--observed-at` are now repeatable in pairs and **every read is
+applied in one pass**. Per product the freshest read that supplies anything
+wins and all three fields come from that one read, so the single observation
+time on a contribution is true of every value in it; taking each field from
+whichever read happened to have it would stamp values with a time they were not
+observed at. Argument order does not decide anything, the observation time does.
+A mismatched count of `--page` and `--observed-at` is refused rather than
+reusing one stamp. Disagreements between reads are recorded in
+`cross_read_disagreements`, and `page_reads` names each file with the time it
+was applied under.
+
+One pass over the two reads gives `ppm`, `volume_deals_description` and
+`digital_deals_description` **all attributed to `crawl`, none to the API**, with
+zero conflicts and zero cross-read disagreements. Digital deals come out at 49
+rather than the 53 the chained run reported: five coupons present on 1 November
+were gone when those same products were re-read on 3 November, and one of the
+five is not in the API set. **An offer the later observation did not see is not
+evidence of an offer now**, so it is not carried forward. The 1 November read is
+kept, so the historical observation is not lost; it is simply not published as
+current.
 
 The merge refused twice before it ran, both times correctly. It will not merge
 a page read onto rows whose store columns differ, so passing a tidied

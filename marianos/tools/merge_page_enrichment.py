@@ -98,56 +98,123 @@ class _Spine:
         )
 
 
-def build_lookup(page_records, store_id, observed_at):
-    """Index the page read by UPC and return a composition lookup."""
-    by_upc = {}
-    for rec in page_records:
-        upc = (rec.get("upc") or "").strip()
-        if upc:
-            by_upc.setdefault(upc, rec)
+def _page_values(rec):
+    """The three page-only fields this record supplies, or {}."""
+    volume, digital = split_deals(rec.get("deal_lines") or [])
+    out = {}
+    if rec.get("ppm"):
+        out["ppm"] = rec["ppm"]
+    if volume:
+        out["volume_deals_description"] = volume
+    if digital:
+        out["digital_deals_description"] = digital
+    return out
+
+
+def build_lookup(reads, store_id, observed_at=None):
+    """Index one or more page reads by UPC and return a composition lookup.
+
+    `reads` is a list of (records, observed_at) pairs, oldest first or in any
+    order; a bare record list with `observed_at` is accepted for one read.
+
+    **Several reads are applied in one pass, not chained.** Merging read B onto
+    the output of read A looks equivalent and is not: the second pass sees read
+    A's values sitting in the spine and attributes them to the spine's source.
+    Run that way on 4 November, 526 page-derived `ppm` values and all 53 digital
+    deal descriptions were recorded as having come from the Kroger public
+    Products API, which carries neither field at any tier. The provenance was
+    falsified by the shape of the command, with every count still correct and no
+    conflict reported, so nothing failed. One pass is the only correct form.
+
+    Per product the freshest read that supplies anything wins, and all three
+    fields come from that one read. The alternative, taking each field from
+    whichever read has it, would stamp one observation time on values observed
+    at different times. A deal seen on 1 November and absent on 4 November is
+    therefore dropped rather than carried forward, which is right for deal
+    wording: offers expire, and an offer the later observation did not see is
+    not evidence of an offer now. Disagreements between reads are recorded.
+    """
+    if reads and isinstance(reads[0], dict):
+        reads = [(reads, observed_at)]
+
+    ordered = sorted(reads, key=lambda r: str(r[1]))
+    by_upc, supplied_at, disagreements = {}, {}, {}
+    for records, when in ordered:
+        for rec in records:
+            upc = (rec.get("upc") or "").strip()
+            if not upc or not _page_values(rec):
+                continue
+            prior = by_upc.get(upc)
+            if prior is not None:
+                was, now = _page_values(prior), _page_values(rec)
+                for field in CRAWL_FIELDS:
+                    a, b = was.get(field, ""), now.get(field, "")
+                    if a and b and a != b:
+                        disagreements.setdefault(upc, []).append({
+                            "field": field,
+                            "earlier_value": a, "earlier_observed_at": supplied_at[upc],
+                            "later_value": b, "later_observed_at": when,
+                        })
+            by_upc[upc] = rec
+            supplied_at[upc] = when
 
     def lookup(store, identity, product):
         rec = by_upc.get(identity)
         if not rec:
             return {}
-        volume, digital = split_deals(rec.get("deal_lines") or [])
-        out = {}
-        if rec.get("ppm"):
-            out["ppm"] = rec["ppm"]
-        if volume:
-            out["volume_deals_description"] = volume
-        if digital:
-            out["digital_deals_description"] = digital
+        out = _page_values(rec)
         if not out:
             return {}
         out[BINDING_KEY] = {
             "identity": identity,
             "store_id": store_id,
             "fulfillment": "pickup",
-            "observed_at": observed_at,
+            "observed_at": supplied_at[identity],
         }
         return out
 
+    lookup.disagreements = disagreements
+    lookup.supplied_at = supplied_at
     return lookup, by_upc
 
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--api", required=True, help="data_22_fields.json from the sweep")
-    p.add_argument("--page", required=True, help="parsed_full.json from the page read")
+    p.add_argument("--page", required=True, action="append",
+                   help="parsed_full.json from a page read. Repeatable: pass it "
+                        "once per read, with a matching --observed-at each time, "
+                        "and all reads are applied in ONE pass. Never chain a "
+                        "second merge onto the first one's output: the second "
+                        "pass would attribute the first read's values to the "
+                        "spine's source.")
     p.add_argument("--store-id", default="53100502")
     p.add_argument("--zipcode", default="60061")
     p.add_argument("--store-name", default="Marianos - Marianos Vernon Hills")
     p.add_argument("--store-location", default="1720 N Milwaukee Ave, Vernon Hills, IL 60061")
-    p.add_argument("--observed-at", default="2026-11-01",
-                   help="When the pages were read. Must parse and be within the "
-                        "composition freshness window, or contributions are refused "
-                        "and retained as history instead of merged.")
+    p.add_argument("--observed-at", action="append",
+                   help="When the matching --page was read, in the same order. "
+                        "Must parse and be within the composition freshness "
+                        "window, or contributions are refused and retained as "
+                        "history instead of merged. UTC: a time stamped ahead of "
+                        "the clock is refused as UNBOUND_TIME_FUTURE, correctly.")
     p.add_argument("--out", required=True, help="Output directory")
     args = p.parse_args(argv)
 
+    observed = args.observed_at or ["2026-11-01"]
+    if len(observed) != len(args.page):
+        p.error(f"{len(args.page)} --page given and {len(observed)} --observed-at. "
+                "Each page read needs its own observation time; one time across "
+                "several reads would stamp values with a time they were not "
+                "observed at.")
+
     api = json.loads(Path(args.api).read_text(encoding="utf-8"))
-    page = json.loads(Path(args.page).read_text(encoding="utf-8"))
+    reads = []
+    for path_str, when in zip(args.page, observed):
+        records = json.loads(Path(path_str).read_text(encoding="utf-8"))
+        records = records if isinstance(records, list) else records.get("products", [])
+        reads.append((records, when))
+    page = [r for records, _ in reads for r in records]
 
     store = Store(store_id=args.store_id, zipcode=args.zipcode,
                   store_name=args.store_name, store_location=args.store_location)
@@ -161,7 +228,7 @@ def main(argv=None):
             "onto another store's rows."
         )
 
-    lookup, by_upc = build_lookup(page, args.store_id, args.observed_at)
+    lookup, by_upc = build_lookup(reads, args.store_id)
     crawl = CallableEnrichment("crawl", CRAWL_FIELDS, lookup)
     # The spine here is a replay of finished 22-field records, which carry no
     # fulfilment column, so the required fulfilment is stated explicitly. The
@@ -195,8 +262,24 @@ def main(argv=None):
 
     report = {
         "api_records": len(api),
+        # One entry per page read, with the file and the observation time it was
+        # applied under, so a reader can see which reads went into this release
+        # and when each was observed rather than inferring it from one stamp.
+        "page_reads": [
+            {"file": path_str, "observed_at": when, "records": len(records)}
+            for (records, when), path_str in zip(reads, args.page)
+        ],
         "page_records": len(page),
         "page_distinct_upcs": len(page_upcs),
+        # Where two reads supplied different values for the same field and
+        # product. Recorded, never resolved silently.
+        "cross_read_disagreements": sum(
+            len(v) for v in lookup.disagreements.values()),
+        "cross_read_disagreement_detail": lookup.disagreements,
+        "products_whose_values_came_from_each_read": {
+            when: sum(1 for w in lookup.supplied_at.values() if w == when)
+            for when in dict.fromkeys(str(w) for _, w in reads)
+        },
         "page_upcs_matched_in_api": len(page_upcs & api_upcs),
         "page_upcs_not_in_api": len(unmatched),
         "page_upcs_not_in_api_sample": unmatched[:20],
