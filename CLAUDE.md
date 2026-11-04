@@ -454,14 +454,46 @@ both reported rather than smoothed over:
   `provenance_report()` — so none of this reached a single release, and this
   file claimed otherwise. `CatalogV2Source.provenance()` has the same gap and
   is still unfixed.
-  This is **not** a map with ten entries missing. The labels are `Party` 117,
-  `Halloween` 38, `Entertainment` 10, `Thanksgiving` 10, `Automotive` 4,
-  `Other` 3, `Apparel` 2, `Furniture` 1, `Holiday & Seasonal Goods` 1,
-  `Sporting Goods` 1 — seasonal and non-grocery departments outside the
-  client's 28 roots. Mapping them would be assigning a category from the one
-  the product is not in. What to do with out-of-scope products is a scope
-  question for the client, not a defect to fix here; see
-  `ROUTES_AND_AUTONOMY.md`.
+  This is **not** a map with ten entries missing. They are seasonal and
+  non-grocery departments outside the client's 28 roots, so mapping them would
+  be assigning a category from the one the product is not in. What to do with
+  out-of-scope products is a scope question for the client, not a defect to fix
+  here; see `ROUTES_AND_AUTONOMY.md`.
+
+  **The delivered release has 166, not 187**, and the counters reconcile
+  exactly: 28,549 served plus 46,073 duplicates plus 166 out of scope equals
+  the 74,788 products seen, over 1,833 indexed responses. On the client's
+  instruction of 4 November they are now retained as identities with the
+  retailer label verbatim and the raw response file each came from, written by
+  `tools/out_of_scope_reconciliation.py` to
+  `reports/2026-11-04-out-of-scope-reconciliation/`.
+
+  **The label set is seasonal and turns over between runs.** Measured at the
+  same store three days apart:
+
+  | label | 31 Oct sweep | 3 Nov sweep |
+  |---|---:|---:|
+  | `Party` | 117 | 116 |
+  | `Halloween` | 38 | **3** |
+  | `Christmas` | 0 | **11** |
+  | `Entertainment` | 10 | 11 |
+  | `Thanksgiving` | 10 | 10 |
+  | `Automotive` | 4 | 5 |
+  | `Other` | 3 | 3 |
+  | `Apparel` | 2 | 2 |
+  | `Holiday & Seasonal Goods` | 1 | 2 |
+  | `Sporting Goods` | 1 | 1 |
+  | `Furniture` | 1 | 1 |
+  | `Travel & Luggage` | 0 | **1** |
+  | total | 187 | 166 |
+
+  `Christmas` and `Travel & Luggage` are labels the 31 October sweep never saw,
+  and `Halloween` fell by 35 in three days. So this is not a fixed list of
+  labels waiting to be mapped: **a static map of the seasonal departments would
+  be stale within days and would need maintenance for ever**, which is a reason
+  to keep reconciling them separately rather than an argument for mapping them.
+  It also means the 187 figure above describes the superseded 26,166 set and
+  cannot be quoted for any later release.
 - **Five of the 28 roots came back empty** in the 31 October sweep: Coupons,
   Seafood, Coffee, Batteries, Light Bulbs. The runner refuses a release with an
   empty configured root, which is correct, so a sweep run names the 23 roots it
