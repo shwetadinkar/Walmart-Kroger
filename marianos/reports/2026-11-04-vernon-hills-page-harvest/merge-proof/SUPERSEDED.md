@@ -23,13 +23,13 @@ defect was real, and a corrected file cannot evidence that. Neither is edited.
 - **Its 729 / 147 / 53 totals.** They were measured against the superseded
   26,166 spine, not the delivered release, and the digital figure is wrong for
   a second reason: the chained run carried forward five coupons that were gone
-  when those products were re-read, so 53 should be 49.
+  when those products were re-read, so 53 should be 49, and the cashback withholding then takes it to 48.
 
 ## What replaces it
 
 One pass over both reads, `--page` and `--observed-at` repeated in pairs. Run
 against the delivered 28,549 release that gives `ppm` 727,
-`volume_deals_description` 146, `digital_deals_description` 49, **all three
+`volume_deals_description` 146, `digital_deals_description` 48, **all three
 attributed to `crawl` and none to the API**, zero conflicts, zero cross-read
 disagreements, nothing refused. The correct invocation is in
 `AUTONOMOUS_RUN_READINESS.md` and in the repository's working rules.

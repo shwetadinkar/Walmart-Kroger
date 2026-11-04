@@ -31,7 +31,7 @@ Read in this order:
 | HEAD | `763d14b`, pushed, working tree clean |
 | authoritative Mariano's release commit | `74a55c5e6fb2d938df1d06ff6717561420130cd9` |
 | frozen, never commit to | `walmart-client-corrections-2026-10-31` (`86245e1`) |
-| test counts | Walmart 331, Mariano's 1057 — direct and pytest must agree |
+| test counts | Walmart 331, Mariano's 1064 — direct and pytest must agree |
 | delivery date | 5 November 2026, 00:00 GMT |
 
 Commits are authored `Shweta Dinkar
@@ -39,7 +39,7 @@ Commits are authored `Shweta Dinkar
 tooling or session trailers. History is not rewritten.
 
 ```bash
-cd marianos && python3 -m pytest tests -q      # expect 1057
+cd marianos && python3 -m pytest tests -q      # expect 1064
 cd walmart  && python3 -m pytest tests -q      # expect 331
 ```
 
@@ -123,35 +123,78 @@ which is a defect this engagement has already shipped once.
 
 ## What remains
 
+### 0. What this repository does NOT contain
+
+Checked by looking, 4 November. Four things the remaining work needs are not
+here, and three of them are absent by design:
+
+| missing | needed for | why |
+|---|---|---|
+| the release `20261103T175940Z_426c12e8` | every step below | lives on your machine; nothing matching it is in `.collector-output` |
+| the persisted raw API responses | `out_of_scope_reconciliation.py --work-dir` | same |
+| the correct merge report, `ppm` 727 / 146 / 48 | evidencing the delivered figures | it was produced against the release on your machine. **The only merge reports here are the superseded chained ones**, marked by `merge-proof/SUPERSEDED.md` |
+| Walmart `MANIFEST_SHA256.json`, `PROVENANCE_615.json` | verifying the 615 | `rebuild_evidence.py --output` is a private folder, never inside git |
+
+So the repository alone is **not** sufficient to finish, and it never was. It
+carries all the code, all the tests, all the page reads, and every rule and
+gate. It does not carry the release or the raw responses, and the delivered
+figures have no artefact here to check against — only this file and `CLAUDE.md`
+asserting them in prose.
+
+**Two consequences worth knowing before you trust a number.** Anything stated
+as a delivered figure must be re-derived once the release is in place. And the
+`merge-proof/` directory is deliberately kept wrong: its
+`values_by_field_and_source` labels page-read values as Kroger API values. Read
+`SUPERSEDED.md` there before reading either JSON.
+
 ### 1. Blocked on you — the delivery package
 
-The release and the raw responses live on your machine, not here. Nothing below
-can run until the release is where the tools can read it.
-
 ```bash
-# After the release is in place:
+# The page-read inputs ARE here. Note which files: this matters.
 python3 tools/merge_page_enrichment.py \
   --api <release data.json> \
-  --page reports/2026-11-01-vernon-hills-page-harvest/data/parsed_full.json \
+  --page reports/2026-11-01-vernon-hills-page-harvest/data/parsed_full_corrected.json \
   --observed-at 2026-11-01T22:00:00+00:00 \
-  --page reports/2026-11-04-vernon-hills-page-harvest/data/parsed_full.json \
-  --observed-at 2026-11-03T<...>+00:00 \
+  --page reports/2026-11-04-vernon-hills-page-harvest/page_reads.json \
+  --observed-at <the 3 November read's time, from the release report> \
   --store-id 53100502 --zipcode 60061 \
   --store-name "Marianos - Marianos Vernon Hills" \
   --store-location "1720 N Milwaukee Ave, Vernon Hills, IL 60061" \
   --out out/<new-dir>
 ```
 
+**Three traps in that command, each of which has already cost something.**
+
+`parsed_full_corrected.json`, never `parsed_full.json`. The merge re-classifies
+every `deal_lines` entry, which fixes a badge wrongly admitted as a deal but
+**cannot recover an offer the old parser put into `size`** — such a line never
+reaches `deal_lines`. The two files differ on 87 UPCs and the old one yields
+169 deal values against 174. `CLAUDE.md` claimed they were interchangeable;
+that was false and is corrected, with
+`tests/test_parse_inputs_not_interchangeable.py` pinning it.
+
+The 4 November read's parsed records are **`page_reads.json`**. There is no
+`parsed_full.json` under that directory, only the raw `data/harvest.tsv`.
+
 `--page` and `--observed-at` are repeatable and **must be passed as pairs in
 one invocation**. Never chain two merges: doing so labelled 526 rates and 53
 coupon descriptions as having come from the Kroger public API, which carries
 neither field at any tier. Every count stayed correct; only the provenance was
-false.
+false, which is why reading the report caught it and no gate did.
+
+The store name must be the observed `Marianos - Marianos Vernon Hills`, not a
+tidied version. The merge refuses a mismatch, and that gate has already caught
+a store name typed from memory.
 
 Then, in order: `tools/out_of_scope_reconciliation.py` (needs `--work-dir` with
 the persisted raw responses), `tools/build_submission.py`,
-`tools/delivery_manifest.py --since <revision the client last reviewed>`,
-checksum verification, zip.
+`tools/delivery_manifest.py --since <revision>`, checksum verification, zip.
+
+**`--since` takes the revision the client last reviewed, which is `a858c42`.**
+Both V2 packages were built from it and it was named to him in the 2 November
+messages for each contest. Checked: the 4 November submissions named **no**
+commit hash, so `a858c42` is still the latest revision he has been given and
+the change-to-test map runs from there.
 
 Expected figures to check against: `ppm` 727, volume 146, digital 48, and
 28,549 + 46,073 duplicates + 166 out of scope = 74,788 seen over 1,833 indexed
@@ -159,8 +202,17 @@ responses.
 
 ### 2. The drafted client message is not sent
 
-It states digital deals at 48 and must not go out until the package matches.
-Held locally, not in this repository.
+`freelancer_msg_marianos_2026-11-04-update.md`, held locally. Two
+preconditions, both checkable:
+
+- **The figures must match the package.** It states `ppm` 727, volume 146,
+  digital 48, and the volume column wrong on 82 of 183 values in the package he
+  holds. That 82 was itself corrected on 4 November from a 77 written from
+  memory, which understated the defect.
+- **It already claims the revision and hash manifest are "supplied".** They are
+  not, until `tools/delivery_manifest.py` has run and its output is in the
+  package. Sending it before then makes the message false about its own
+  attachment.
 
 ### 3. Open with third parties
 

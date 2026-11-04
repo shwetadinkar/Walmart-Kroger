@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 331, Mariano's 1057.
+  counts: Walmart 331, Mariano's 1064.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -239,7 +239,7 @@ badge defect below, and the read was then only one of two.
 
 **The delivered figures are the one-pass merge of both reads**, run against the
 28,549 release: `ppm` **727**, `volume_deals_description` **146**,
-`digital_deals_description` **49**, every one of the three attributed to
+`digital_deals_description` **48**, every one of the three attributed to
 `crawl` and none to the API, zero conflicts, zero cross-read disagreements,
 nothing refused as unbindable. 730 of 742 page UPCs with a value bound; the 12
 that are not in the API set contributed nothing rather than being attached to
@@ -268,9 +268,26 @@ none of that reached a published row as a wrong size, but the offers were lost.
 **A deal is now identified by what the retailer wrote, not by being left over**,
 and the unrecognised case falls to the size slot rather than into a deal column,
 because that is the safe direction. `classify_card_line` is the one
-implementation of the judgement and the merge imports it, so a `parsed.json`
-produced before the distinction existed re-merges to the same result as one
-produced after. **`Cash Back:` reaches neither deal column.** It was briefly routed to the digital one, on the reasoning that it sits on the same clipped-offer surface as `Coupon:` and is certainly not a multi-buy offer. `schema.make_record` has refused exactly that since before the merge tool existed, as `CASHBACK_MISCLASSIFIED_AS_DIGITAL`, and the schema is right: there is no cashback column among the 22 fields. The reasoning was the author's and an existing deliberate rule contradicted it. One Vernon Hills record is affected, a Pabst cashback offer, now named in the merge report's `offers_withheld_no_column_for_them` and published nowhere. Digital deals are therefore **48**, not 49.
+implementation of the judgement and the merge imports it, re-classifying every
+`deal_lines` entry rather than trusting the parse.
+
+**That does NOT make the two parses interchangeable, and this file claimed it
+did.** The sentence here used to read that "a `parsed.json` produced before the
+distinction existed re-merges to the same result as one produced after".
+Measured on the 1 November read, that is **false**. Re-classification removes a
+badge wrongly admitted as a deal, so it fixes that direction. It cannot recover
+an offer the old parser put in `size`, because such a line never reaches
+`deal_lines` at all. The two files differ on **87 UPCs**, and re-merged the old
+one yields **169** deal values against the corrected one's **174**: the five
+lost are the two `Coupon: $1.79 lb` produce offers and `Buy 1, Get 1 Free`
+lines on sold-by-weight cards.
+
+**So the merge takes `parsed_full_corrected.json`, never `parsed_full.json`.**
+Both are in `reports/2026-11-01-vernon-hills-page-harvest/data/`, the old one
+distinguishable by having no `stock_label` and no `non_deal_labels` keys. The
+4 November read's parsed records are `page_reads.json`, not a `parsed_full*`
+file. `tests/test_parse_inputs_not_interchangeable.py` fails if anyone
+re-asserts the interchangeability. **`Cash Back:` reaches neither deal column.** It was briefly routed to the digital one, on the reasoning that it sits on the same clipped-offer surface as `Coupon:` and is certainly not a multi-buy offer. `schema.make_record` has refused exactly that since before the merge tool existed, as `CASHBACK_MISCLASSIFIED_AS_DIGITAL`, and the schema is right: there is no cashback column among the 22 fields. The reasoning was the author's and an existing deliberate rule contradicted it. One Vernon Hills record is affected, a Pabst cashback offer, now named in the merge report's `offers_withheld_no_column_for_them` and published nowhere. Digital deals are therefore **48**, not 49.
 
 **The merge wrote the deal columns without the schema's rules.** It bypasses `make_record`, so a value the schema refuses could reach a published row by coming through the merge, and all 54 page-read digital values failed the schema's gate while being published anyway: two write paths with contradictory rules for one column, and the unreachable one was the stricter. `schema.check_deal_columns` is now the one implementation and both call it. The gate's clipping-language requirement was itself too strict - it rejected every value read from the retailer's own pages - so the retailer's leading `Coupon:` marker is admissible evidence, because that prefix is how the retailer labels that surface, in exactly the way a bare promotional sentence is not.
 
@@ -308,7 +325,8 @@ was applied under.
 One pass over the two reads gives `ppm`, `volume_deals_description` and
 `digital_deals_description` **all attributed to `crawl`, none to the API**, with
 zero conflicts and zero cross-read disagreements. Digital deals come out at 49
-rather than the 53 the chained run reported: five coupons present on 1 November
+before the cashback withholding below takes them to the delivered 48, rather
+than the 53 the chained run reported: five coupons present on 1 November
 were gone when those same products were re-read on 3 November, and one of the
 five is not in the API set. **An offer the later observation did not see is not
 evidence of an offer now**, so it is not carried forward. The 1 November read is

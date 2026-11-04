@@ -11,7 +11,7 @@ surprise.
 Those three exist only on the rendered retailer page. The Kroger public
 Products API carries no displayed rate at any tier, only
 `regularPerUnitEstimate`, which is an estimate and must never be written into
-`ppm`. The populated figures the client has seen, 727 and 146 and 49, came from
+`ppm`. The populated figures the client has seen, 727 and 146 and 48, came from
 attended page reads merged in afterwards with `tools/merge_page_enrichment.py`.
 
 A scheduled job cannot do that, and it must not fake it: the composition
