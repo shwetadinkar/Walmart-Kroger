@@ -39,9 +39,19 @@ Commits are authored `Shweta Dinkar
 tooling or session trailers. History is not rewritten.
 
 ```bash
-cd marianos && python3 -m pytest tests -q      # expect 1066
+cd marianos && python3 -m pytest tests -q      # expect 1066 (1065 passed, 1 skipped)
 cd walmart  && python3 -m pytest tests -q      # expect 331
 ```
+
+**Machine setup the suites need.** pytest (installed per user with
+`python3 -m pip install --user pytest`), and a `python` command, because
+`azure/deploy_jobs.sh` calls `python` and six `test_retry_supervisor.py` tests
+run that script on each side. On Debian or Ubuntu WSL that is
+`sudo apt install python-is-python3`, run in a real terminal because sudo needs
+one for the password. Without it those six fail with `python: command not
+found`, which is the machine and not the code. The one skip is
+`test_review_remainder.py`, which looks for a superseded 1 November dataset
+and skips by design when it is absent.
 
 ## Mariano's
 
@@ -154,10 +164,18 @@ Four untracked folders that had been sitting in the tree (an old
 `submission/`, two stale 4 November reports, and the Oxylabs probe with raw
 retailer pages that must never be committed) were moved, not deleted, to
 `marianos/out/moved-from-repo-tree-2026-11-04/`. The `submission/` one is the
-package the client already holds, 589 / 181 / 51; it is not the new one.
+earlier package, 589 / 181 / 51, superseded by the one below; it is not the
+new one.
 
-The client message is corrected to match the package, and **nothing has been
-sent**. Sending it is the account holder's.
+**Sent to the client on 4 November**, by the account holder: the zip above
+with the corrected update message, which names revision `53193e6`. The
+Mariano's update is therefore delivered. What the client says next is the
+starting point; it arrives as a local file, never in this repository.
+
+**`marianos/out/` is now the only copy of what was sent.** It is gitignored,
+so the release, the raw responses and the package exist only on the account
+holder's machine. Losing them makes the sent package unreproducible byte for
+byte. Back it up somewhere private, never to this public repository.
 
 ### 0. What this repository does NOT contain
 
@@ -236,10 +254,11 @@ Expected figures to check against: `ppm` 727, volume 146, digital 48, and
 28,549 + 46,073 duplicates + 166 out of scope = 74,788 seen over 1,833 indexed
 responses.
 
-### 2. The drafted client message (both preconditions now met; not sent)
+### 2. The client message (sent 4 November, both preconditions met first)
 
-`freelancer_msg_marianos_2026-11-04-update.md`, held locally. Two
-preconditions, both checkable:
+Sent as `freelancer_msg_marianos_2026-11-04-update-final.md`, held locally;
+`...-update.md` beside it is the earlier draft and was not sent. Kept here as
+the checklist for the next message. Two preconditions, both checkable:
 
 - **The figures must match the package.** It states `ppm` 727, volume 146,
   digital 48, and the volume column wrong on 82 of 183 values in the package he
