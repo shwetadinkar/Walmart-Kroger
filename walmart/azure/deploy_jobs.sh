@@ -51,10 +51,24 @@ for store in ${WALMART_STORE_IDS:-100 5959}; do
   echo "Job: $name | store: $store | source: $DESCRIPTION | schedule (UTC): ${CRON_EXPRESSION:-0 6 * * 1,4}"
 
   SECRETS=("blob-conn=$AZURE_STORAGE_CONNECTION_STRING")
+  # Resolved once and used for BOTH the deployment and the collector's own
+  # budget, so the two cannot drift apart. There was no budget at all before:
+  # the only bound was this timeout, and AZURE_DEPLOYMENT.md says plainly that
+  # the jobs are not guaranteed to finish in four hours. A replica timeout is a
+  # SIGKILL, not an exception, so an overrunning run left no release and no
+  # refusal record.
+  REPLICA_TIMEOUT="${REPLICA_TIMEOUT:-14400}"
+  if (( REPLICA_TIMEOUT <= 1200 )); then
+    echo "ERROR: REPLICA_TIMEOUT=$REPLICA_TIMEOUT leaves the collector no room to" >&2
+    echo "       stop itself and publish. It must exceed the 1200s headroom." >&2
+    exit 1
+  fi
+
   ENVVARS=("WALMART_STORE_ID=$store"
            'WALMART_DATA_AUTHORIZED=yes'
            "WALMART_SOURCE=$WALMART_SOURCE"
            'AZURE_STORAGE_CONNECTION_STRING=secretref:blob-conn'
+           "REPLICA_TIMEOUT=$REPLICA_TIMEOUT"
            "AZURE_BLOB_CONTAINER=${AZURE_BLOB_CONTAINER:-retail-collection}")
   [[ "$WALMART_SOURCE" == 'composite' ]] && ENVVARS+=("WALMART_SPINE=$WALMART_SPINE")
 
@@ -79,7 +93,7 @@ for store in ${WALMART_STORE_IDS:-100 5959}; do
     --environment "$CONTAINERAPPS_ENVIRONMENT" \
     --trigger-type Schedule \
     --cron-expression "${CRON_EXPRESSION:-0 6 * * 1,4}" \
-    --replica-timeout "${REPLICA_TIMEOUT:-14400}" \
+    --replica-timeout "$REPLICA_TIMEOUT" \
     --replica-retry-limit 0 \
     --parallelism 1 \
     --replica-completion-count 1 \

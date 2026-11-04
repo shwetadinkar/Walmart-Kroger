@@ -58,6 +58,11 @@ def build_parser():
     parser.add_argument("--only-categories", default="", help="Trial subset, e.g. Food,Beauty; never overwrites full release")
     parser.add_argument("--trial", action="store_true", help="Isolate this run/status/export in a trial namespace")
     parser.add_argument("--minimum-products", type=int, default=None)
+    parser.add_argument("--max-seconds", type=float, default=None,
+                        help="Wall-clock budget. The run refuses the release and "
+                             "records the attempt rather than being killed by the "
+                             "platform, which leaves no record at all. Set it below "
+                             "the deployed --replica-timeout.")
     parser.add_argument("--authorized-source", action="store_true", help="Affirm client's authorized/contractual feed access")
     parser.add_argument("--canaries", type=Path, help="Optional JSON dictionary category to required product IDs")
     parser.add_argument("--export-file", type=Path, help="Destination for latest successful exact-schema JSON")
@@ -168,7 +173,8 @@ def main(argv=None):
         # Unguarded on purpose: the Collector records its own refusals, and
         # wrapping it here would write a second record for one failure.
         result = Collector(storage, source, categories, min_products=min_products,
-                           canaries=canaries, trial=trial).run(store)
+                           canaries=canaries, trial=trial,
+                           max_seconds=args.max_seconds).run(store)
         print(json.dumps({"manifest": result["manifest"],"report":result["report"]}, indent=2))
         return 0
     except (Exception, KeyboardInterrupt) as exc:

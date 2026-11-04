@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 1002.
+  counts: Walmart 276, Mariano's 1002.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -690,13 +690,26 @@ refuses to build on the file being absent, invalid, empty, or still containing
 as much, because a copied template would otherwise deploy under an unverified
 store identity.
 
-Two things about the Walmart job are recorded and **not** fixed, in
-`marianos/AUTONOMOUS_RUN_READINESS.md`: it is scheduled at the same instant as
-the Mariano's job, `0 6 * * 1,4` in both, and staggering them changes a
-schedule the client has been told; and the Walmart CLI takes no `--max-seconds`
-at all, so only its 14400 second replica timeout bounds it, which is the same
-SIGKILL. Four hours is large headroom for 615 provider-snapshot products, but
-unlikely is not recorded, so it is recorded.
+**The same defect existed on the Walmart side as an absence.** Its run had no
+time budget at all, so only `--replica-timeout 14400` bounded it, and
+`walmart/azure/AZURE_DEPLOYMENT.md` says plainly that "the jobs are not
+guaranteed to finish in four hours". `Collector` now takes `max_seconds` and
+checks it between categories; exceeding it **refuses the release and records
+the attempt** rather than publishing a partial set that would read as complete.
+Between categories rather than per page, because the check must leave room for
+the category in hand plus publication. Its entrypoint and deploy script are
+wired exactly like the Mariano's pair, 13200 inside 14400, and `list` takes no
+budget because it is not a run. Tested on the Walmart side in
+`tests/test_time_budget.py`, four mutation reverts checked, because "tested in
+both collectors" is two claims.
+
+**Simultaneous firing is the design and an earlier note here was wrong.** That
+note called the two jobs starting together a gap worth staggering.
+`walmart/azure/AZURE_DEPLOYMENT.md` says the Walmart deployment deliberately
+runs two scheduled jobs, one per store, on the same expression, and that "a
+Blob lease prevents two overlapping executions of the same store". The hazard
+has a guard, the 06:00 UTC time is stated to the client in that document, and
+the schedule is therefore unchanged.
 
 ## The schedule, as two separate claims
 

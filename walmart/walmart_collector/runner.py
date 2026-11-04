@@ -62,7 +62,7 @@ def _payload_hash(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 class Collector:
-    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False):
+    def __init__(self, storage, source, categories, min_products=500, previous_ratio=0.5, max_pages=100000, canaries=None, trial=False, max_seconds=None):
         self.storage = storage
         self.source = source
         self.categories = categories
@@ -71,6 +71,20 @@ class Collector:
         self.max_pages = max_pages
         self.canaries = canaries or {}
         self.trial = trial
+        # A wall-clock budget, so the run stops itself rather than being killed.
+        #
+        # There was none. The only bound on a Walmart run was Azure's
+        # `--replica-timeout 14400`, and `azure/AZURE_DEPLOYMENT.md` says
+        # plainly that "the jobs are not guaranteed to finish in four hours".
+        # A replica timeout is a SIGKILL, not an exception, so a run that
+        # overran left no release AND no refusal record: the one failure the
+        # refusal machinery exists for, on the runs where nobody is watching.
+        #
+        # Exceeding it refuses the release and records the attempt, rather than
+        # publishing what was collected so far. A partial Walmart release would
+        # read as complete, and this collector already refuses a release whose
+        # coverage cannot be attested.
+        self.max_seconds = float(max_seconds) if max_seconds else None
         # A source that cannot attest complete coverage must not produce a full
         # release. Reporting source_coverage_attested=false alongside
         # scope=full and status=validated is a disclosure, not a gate, and a
@@ -244,6 +258,24 @@ class Collector:
                 raise
 
 
+    def _check_time_budget(self, start, next_category):
+        """Stop before the platform does, so the refusal is recorded.
+
+        Checked between categories rather than per page: the check has to leave
+        enough time for the category in hand plus publication, and a per-page
+        check would stop mid-category with the same partial-release problem.
+        """
+        if not self.max_seconds:
+            return
+        elapsed = time.monotonic() - start
+        if elapsed >= self.max_seconds:
+            raise ValidationFailure(
+                f"TIME_BUDGET_EXCEEDED: {elapsed:.0f}s elapsed of "
+                f"{self.max_seconds:.0f}s allowed, stopping before "
+                f"'{next_category}'. The release is refused and this attempt "
+                f"is recorded. Raise the budget and the deployed replica "
+                f"timeout together, or narrow the run.")
+
     def _record_failure(self, store, exc, start):
         """Write what the refused attempt reached, then let the error stand."""
         record = {
@@ -286,6 +318,7 @@ class Collector:
         all_stages = {}
         LOG.info("run_started", extra={"event":"run_started", "store_id":store.store_id, "source_mode":self.source.source_mode})
         for cat in self.categories:
+            self._check_time_budget(start, cat.name)
             all_stages[cat.name] = self._collect_category(store, cat)
         records = []
         seen = set()

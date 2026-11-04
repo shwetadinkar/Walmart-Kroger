@@ -66,21 +66,35 @@ the container, so the two cannot drift apart, and it refuses to deploy a
 timeout that leaves no headroom. At the default that is a 6300 second sweep
 inside a 7200 second replica.
 
-## Two things about the Walmart job, not fixed here
+## The Walmart job, now fixed and one thing corrected
 
-**Both jobs are scheduled for the same instant.** `walmart/azure/deploy_jobs.sh`
-also deploys `--trigger-type Schedule` with `0 6 * * 1,4`, so Mariano's and
-Walmart start together twice a week. Staggering them is a one-line change and it
-is deliberately **not** made here: Monday and Thursday at 06:00 UTC is the
-schedule the client has been told, and changing what he has been told is his
-call rather than ours.
+**The Walmart run had no time budget at all.** Only Azure's
+`--replica-timeout 14400` bounded it, and `walmart/azure/AZURE_DEPLOYMENT.md`
+says plainly that "the jobs are not guaranteed to finish in four hours". A
+replica timeout is a SIGKILL, so an overrunning run left no release and no
+refusal record. Same defect as the Mariano's one in a different shape: there
+the budget equalled the timeout, here it was absent.
 
-**The Walmart CLI has no time budget to tune.** It takes no `--max-seconds`, so
-only the 14400 second replica timeout bounds it, and that bound is the SIGKILL
-described above. With 615 products from provider snapshots, four hours is large
-headroom and the case is unlikely; but unlikely is not the same as recorded, so
-it is recorded. Giving that CLI a budget is the same fix as above and has not
-been done.
+`Collector` now takes `max_seconds` and checks it between categories. Exceeding
+it **refuses the release and records the attempt** rather than publishing what
+was collected: a partial Walmart release would read as complete, and this
+collector already refuses a release whose coverage cannot be attested. The
+check sits between categories rather than per page, because it has to leave
+room for the category in hand plus publication, and a per-page stop would leave
+the same partial release. The entrypoint derives the budget from the deployed
+replica timeout minus 1200 seconds, the deploy script resolves `REPLICA_TIMEOUT`
+once and forwards the same figure it deploys, and refuses a timeout with no
+headroom. 13200 seconds inside 14400 at the default. `list` is not a run and
+takes no budget.
+
+**Simultaneous firing is the design, not an oversight.** An earlier version of
+this file called the two jobs starting together a gap worth staggering. That
+was wrong, and reading `walmart/azure/AZURE_DEPLOYMENT.md` corrected it: the
+Walmart deployment **deliberately** runs two scheduled jobs, one per store, on
+the same expression, and "a Blob lease prevents two overlapping executions of
+the same store". The real hazard already has a real guard. Staggering would
+also change a time stated to the client in that document, Monday and Thursday
+06:00 UTC, for no correctness gain, so the schedule is unchanged.
 
 ## The image refuses to build without a verified store
 

@@ -15,6 +15,48 @@ AUTHORIZED_SOURCES = ('provider', 'opd', 'composite')
 AUTHORIZED_SPINES = ('provider', 'opd')
 
 
+# Headroom between the collector stopping itself and Azure killing the replica.
+# The collector has to finish the category in hand, reconcile and publish inside
+# this window.
+BUDGET_HEADROOM_SECONDS = 1200
+DEFAULT_REPLICA_TIMEOUT = 14400
+
+
+def budget_seconds() -> int:
+    """How long the run may take, strictly less than the replica timeout.
+
+    **There was no budget at all.** The only bound was Azure's
+    `--replica-timeout 14400`, and `azure/AZURE_DEPLOYMENT.md` says plainly
+    that "the jobs are not guaranteed to finish in four hours". A replica
+    timeout is a SIGKILL rather than an exception, so a run that overran left
+    no release and no refusal record: the exact failure the refusal machinery
+    exists for, on the runs nobody is watching. The same defect existed on the
+    Mariano's side with the budget set equal to the timeout; here it was
+    absent.
+    """
+    explicit = os.getenv('WALMART_MAX_SECONDS', '').strip()
+    if explicit:
+        try:
+            value = int(float(explicit))
+        except ValueError:
+            raise ValueError(
+                f'WALMART_MAX_SECONDS must be a number, not {explicit!r}')
+        if value <= 0:
+            raise ValueError('WALMART_MAX_SECONDS must be positive')
+        return value
+    timeout = os.getenv('REPLICA_TIMEOUT', '').strip()
+    try:
+        limit = int(float(timeout)) if timeout else DEFAULT_REPLICA_TIMEOUT
+    except ValueError:
+        limit = DEFAULT_REPLICA_TIMEOUT
+    budget = limit - BUDGET_HEADROOM_SECONDS
+    if budget <= 0:
+        raise ValueError(
+            f'replica timeout {limit}s leaves no room for the collector to stop '
+            f'itself and publish; it must exceed {BUDGET_HEADROOM_SECONDS}s')
+    return budget
+
+
 def command():
     store = os.getenv('WALMART_STORE_ID', '')
     if not store:
@@ -41,6 +83,9 @@ def command():
     # OPD output is provisional: the CLI forces it into the trials namespace
     # rather than publishing it as a complete production dataset. Nothing here
     # overrides that, and nothing here should.
+
+    # Only on a run. `list` is not a run and takes no budget.
+    argv += ['--max-seconds', str(budget_seconds())]
     return argv
 
 
