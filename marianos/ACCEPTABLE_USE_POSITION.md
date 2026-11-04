@@ -1,6 +1,28 @@
 # The Kroger public-tier acceptable-use position
 
-1 November 2026.
+1 November 2026, with the retrieval attempts and the client's instruction
+updated 4 November 2026.
+
+## Where this stands with the client, as of 4 November
+
+He answered this question directly and narrowed it. In his words: he is **not
+authorizing a new agreement, partner submission or production schedule**; the
+partner request **stays unsubmitted**; he wants **the exact applicable policy
+text or link, and the specific acquisition and scheduled-use proposal, for
+owner review**; and this technical review is **not** to be treated as legal
+clearance, nor are terms to be agreed on his behalf.
+
+So the open question is no longer "what does the policy permit". It is a
+decision belonging to him and his own counsel, and what is owed from here is
+material for them to decide on, not a conclusion.
+
+- The proposal is `ACQUISITION_AND_SCHEDULED_USE_PROPOSAL.md`: route, scope,
+  fields taken and not taken, per-run request ceiling, cadence, retention and
+  intended use, all read out of the code and config.
+- The link is `https://developer.kroger.com/terms`.
+- The exact text is **still not held here**, for the reason the table below
+  records. That is unchanged since 1 November and is now a third measured
+  refusal rather than an assumption.
 
 ## Why this file exists
 
@@ -28,6 +50,12 @@ re-read from this environment:
 |---|---|
 | `developer.kroger.com/documentation/public/other/acceptable-use` | Not on this environment's fetch allowlist. Nothing retrieved. |
 | `developer-ce.kroger.com/documentation/public/getting-started/acceptable-use?beta=true` | `robots_disallowed` at the site. Nothing retrieved. |
+| `developer.kroger.com/terms` and `developer.kroger.com/api-products/api/catalog-api-v2`, 4 November 2026 | `robots_disallowed`. The refusal is **host-wide**, not page-specific: a second path on the same host was tried to establish which it was. Nothing retrieved. |
+
+A third-party terms-tracking site carries a copy. It was **not** used. A mirror
+of a terms page can be stale or partial, and the document relied on would then
+not be the one quoted, which is the whole failure this file exists to avoid on a
+question that goes to counsel.
 
 An unrelated public project records the same two prohibitions, in the same
 paraphrased form, and reached the same conclusion that retaining the data and

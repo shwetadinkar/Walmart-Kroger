@@ -244,6 +244,30 @@ with a blank `store_name`; that cannot recur.
    under that route they are reported and not delivered. Those are two
    defensible readings of the same rule and we should not pick between them on
    his behalf.
+
+   **Answered on 4 November.** He chose a third thing, narrower than either:
+   retain their original retailer labels and identities in a separate
+   unmapped/out-of-scope reconciliation with source paths and counts; invent no
+   root assignment; discard no historical observation; and any eventual mapping
+   must be supported by the retailer taxonomy. That is implemented in
+   `tools/out_of_scope_reconciliation.py`, which re-indexes the persisted raw
+   responses, so it reconciles a published release without collecting anything
+   and without reading a credential, and refuses if its own counter and the
+   retained rows disagree.
+
+   **The table above describes the superseded 26,166 set and must not be quoted
+   for the delivered one.** The delivered release has **166**, and the counters
+   reconcile exactly: 28,549 served plus 46,073 duplicate identities plus 166
+   out of scope equals the 74,788 products seen, over 1,833 indexed responses.
+
+   **The label set is seasonal and turns over between runs**, which bears
+   directly on his condition about the retailer taxonomy. Measured at the same
+   store three days apart, `Halloween` fell from 38 products to 3, `Christmas`
+   went from absent to 11, and `Travel & Luggage` appeared with 1 — two labels
+   the 31 October sweep never saw at all. So this is not a fixed list waiting to
+   be mapped. A static map of the seasonal departments would be stale within
+   days and would need maintaining indefinitely, which supports keeping them in
+   a separate reconciliation rather than mapping them.
 5. **The 326-product question is open and answerable today.** 326 of the 890
    products in the retailer's own SEO sitemap are absent from our data.
    `tools/resolve_sitemap_gap.py` decides, per id against this store, whether
