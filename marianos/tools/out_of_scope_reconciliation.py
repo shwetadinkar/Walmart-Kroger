@@ -28,7 +28,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from marianos_collector.config import Store, load_category_map  # noqa: E402
+from marianos_collector.api_trial import load_category_map  # noqa: E402
+from marianos_collector.config import Store  # noqa: E402
 from marianos_collector.kroger_sweep_source import KrogerSweepSource  # noqa: E402
 
 
