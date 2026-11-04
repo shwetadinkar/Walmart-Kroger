@@ -140,13 +140,41 @@ class MoneyTests(unittest.TestCase):
 
 
 class VolumeDealTests(unittest.TestCase):
-    def test_nfor_composes_a_description_and_flags_it_as_composed(self):
-        description, price, origin = _volume_deal({"nFor": {"quantity": 4, "price": "USD 18.00"}})
-        self.assertEqual(description, "4 for $18.00")
+    def test_nfor_without_retailer_wording_publishes_nothing(self):
+        """This test used to assert the opposite, and that is why the defect
+        shipped. It required `_volume_deal` to return "4 for $18.00" from
+        nFor.quantity and nFor.price and called it correct because the third
+        value said `composed_from_nFor`. The retailer never rendered that
+        sentence. The rule is "Never compose a deal description", not "disclose
+        that you composed one", and the audit flag refused nothing.
+        """
+        description, price, origin = _volume_deal(
+            {"nFor": {"quantity": 4, "price": "USD 18.00"}})
+        self.assertEqual(description, "")
+        self.assertEqual(price, "")
+        self.assertEqual(origin, "withheld_no_retailer_wording_for_nFor")
+
+    def test_the_price_is_withheld_with_the_description(self):
+        """A volume price with no description asserts an offer whose terms we
+        cannot state, and `make_record` refuses that pairing anyway."""
+        _, price, _ = _volume_deal({"nFor": {"quantity": 2, "price": "USD 7.00"}})
+        self.assertEqual(price, "")
+
+    def test_retailer_wording_is_used_verbatim_when_the_promotion_carries_it(self):
+        description, price, origin = _volume_deal({
+            "nFor": {"quantity": 4, "price": "USD 18.00",
+                     "nForDescription": "Buy 4 for $18.00, mix and match"}})
+        self.assertEqual(description, "Buy 4 for $18.00, mix and match")
         self.assertEqual(price, "18.00")
-        # The brief wants retailer wording preserved. This string was built by
-        # us, and the adapter must say so rather than implying it was scraped.
-        self.assertEqual(origin, "composed_from_nFor")
+        self.assertEqual(origin, "verbatim:nForDescription")
+
+    def test_the_wording_is_not_reformatted(self):
+        """Verbatim means the retailer's characters, including punctuation and
+        case we would not have chosen."""
+        wording = "2/$5.00  WHEN YOU BUY 2 OR MORE!"
+        description, _, _ = _volume_deal({
+            "nFor": {"quantity": 2, "price": "USD 5.00", "description": wording}})
+        self.assertEqual(description, wording)
 
     def test_absent_or_partial_nfor_yields_nothing(self):
         self.assertEqual(_volume_deal({}), ("", "", ""))
@@ -171,12 +199,15 @@ class MappingTests(unittest.TestCase):
         raw = src.fetch(STORE, CATEGORY, CATEGORY.url, "").products[0]
         self.assertEqual(raw["upc"], "0001111041700")
 
-    def test_volume_offer_reaches_the_record(self):
+    def test_a_composed_volume_offer_does_not_reach_the_record(self):
+        """The published column, end to end. This asserted the composed
+        sentence and so certified the defect through the whole path."""
         src = source(FakeClient([page([product(promo="$18.00", n_for=(4, "USD 18.00"))])]))
         raw = src.fetch(STORE, CATEGORY, CATEGORY.url, "").products[0]
         record = make_record(raw, STORE, "Dairy", "Milk", "2026-11-06")
-        self.assertEqual(record["volume_deals_description"], "4 for $18.00")
-        self.assertEqual(record["volume_deals_price"], "18.00")
+        self.assertEqual(record["volume_deals_description"], "")
+        self.assertEqual(record["volume_deals_price"], "")
+        self.assertNotIn("for $18.00", record["volume_deals_description"])
 
     def test_digital_deal_fields_stay_blank_because_no_kroger_api_exposes_them(self):
         src = source(FakeClient([page([product(promo="$18.00", n_for=(4, "USD 18.00"))])]))
@@ -193,16 +224,35 @@ class PPMTests(unittest.TestCase):
         raw = src.fetch(STORE, CATEGORY, CATEGORY.url, "").products[0]
         self.assertEqual(raw["ppm"], "")
 
-    def test_unit_field_is_written_only_when_an_operator_opts_in(self):
+    def test_no_environment_variable_can_promote_a_value_into_ppm(self):
+        """This asserted that CATALOG_V2_UNIT_IS_PPM=yes writes the `unit`
+        field into `ppm`, and `azure/deploy_jobs.sh` forwarded the variable
+        into the deployed twice-weekly job. The field's own docstring says the
+        contract does not state whether it is a per-measure rate or the price
+        for the unit of sale, and nothing validates the shape of `ppm`, so one
+        variable on an unattended job could publish `ppm: "USD 5.00"` on every
+        record. An env var is a toggle, not a gate."""
         import os
 
         os.environ["CATALOG_V2_UNIT_IS_PPM"] = "yes"
         try:
             src = source(FakeClient([page([product(unit="USD 5.00")])]))
             raw = src.fetch(STORE, CATEGORY, CATEGORY.url, "").products[0]
-            self.assertEqual(raw["ppm"], "USD 5.00")
+            self.assertEqual(raw["ppm"], "")
         finally:
             del os.environ["CATALOG_V2_UNIT_IS_PPM"]
+
+    def test_the_deploy_script_does_not_forward_the_variable(self):
+        """The gate is in the collector, and the deployment must not carry the
+        variable either, so a reader of the job's environment is not misled
+        into thinking it does something."""
+        from pathlib import Path
+        script = (Path(__file__).resolve().parent.parent
+                  / "azure" / "deploy_jobs.sh").read_text(encoding="utf-8")
+        forwarding = [line for line in script.splitlines()
+                      if "CATALOG_V2_UNIT_IS_PPM" in line
+                      and "ENVVARS+=" in line]
+        self.assertEqual(forwarding, [])
 
     def test_the_candidate_is_always_carried_to_the_audit_record(self):
         client = FakeClient([page([product(unit="USD 5.00")])])

@@ -5,13 +5,51 @@ against the rule it has to obey: it may recognise a shape, and it may not
 produce a value the page did not show.
 """
 
+import csv
 import os
+import re
 import sys
 import unittest
+from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
 
 from parse_page_harvest import classify_card_line, parse  # noqa: E402
+
+_REPORTS = Path(__file__).resolve().parent.parent / "reports"
+HARVESTS = (
+    _REPORTS / "2026-11-01-vernon-hills-page-harvest/data/harvest_full.tsv",
+    _REPORTS / "2026-11-04-vernon-hills-page-harvest/data/harvest.tsv",
+)
+
+
+def harvest_lines():
+    """Every distinct card line across the real harvests, from the files."""
+    out = set()
+    for tsv in HARVESTS:
+        if not tsv.is_file():
+            continue
+        with open(tsv, encoding="utf-8") as fh:
+            for row in csv.DictReader(fh, delimiter="\t"):
+                for part in (row.get("lines") or "").split("|"):
+                    if part.strip():
+                        out.add(part.strip())
+    return out
+
+
+def harvest_titles():
+    """Every product title the parser extracts from the real harvests."""
+    out = set()
+    for tsv in HARVESTS:
+        if not tsv.is_file():
+            continue
+        with open(tsv, encoding="utf-8") as fh:
+            for row in csv.DictReader(fh, delimiter="\t"):
+                rec, _ = parse(row["term"], row["upc"], row["path"],
+                               row["ppm"], (row.get("lines") or "").split("|"))
+                if rec and rec.get("product_title"):
+                    out.add(rec["product_title"].strip())
+    return out
 
 
 def card(lines, ppm=""):
@@ -161,7 +199,7 @@ class ABadgeIsNotADeal(unittest.TestCase):
         self.assertEqual(rec["deal_lines"], ["Save $15 when you spend $60"])
         self.assertEqual(rec["stock_label"], "Low Stock")
 
-    def test_every_card_line_seen_at_the_store_classifies_as_the_right_kind(self):
+    def test_the_known_label_kinds_classify_as_themselves(self):
         for line in ("Low Stock", "Out of Stock"):
             self.assertEqual(classify_card_line(line), "stock", line)
         for line in ("SNAP EBT", "FSA/HSA"):
@@ -178,6 +216,45 @@ class ABadgeIsNotADeal(unittest.TestCase):
                      "Coupon: Save $1.00 on Energizer",
                      "Cash Back: $5.00 Cash Back on Pabst Blue Ribbon"):
             self.assertEqual(classify_card_line(line), "deal", line)
+
+    def test_no_product_title_in_either_harvest_classifies_as_an_offer(self):
+        """Read from the harvest files, not from a list typed here.
+
+        The test this replaces was named for the real harvest and asserted 23
+        hand-typed strings, never opening either file. It passed while about 40
+        genuine product titles classified as `deal` through substring words:
+        "Gluten Free", "Caffeine-Free", "Fat Free", "BPA-Free", "Free Range",
+        "Flicker Free", "WILTON SPRINKLES GOLD METALLIC MIX TALL", and a
+        chicken breast title ending "(Limit 2 at sale price)". Nothing was
+        mis-published, because titles are popped positionally, but one
+        unrecognised leading line shifts those positions - which is exactly
+        what `Aisle 25` did between the two harvests.
+
+        Titles and offers must be disjoint sets, and both sets come out of the
+        data, so this cannot drift from what was actually collected.
+        """
+        lines = harvest_lines()
+        self.assertGreater(len(lines), 500, "the harvest files were not read")
+        titles = harvest_titles()
+        self.assertGreater(len(titles), 100, "no titles were parsed")
+
+        offenders = sorted(t for t in titles
+                           if classify_card_line(t) == "deal")
+        self.assertEqual(offenders, [],
+                         f"{len(offenders)} product titles classify as an "
+                         f"offer, e.g. {offenders[:4]}")
+
+    def test_every_line_classified_as_an_offer_states_an_offer(self):
+        """The other direction, also from the files. Each line classified as a
+        deal must carry an offer anchor, so the set cannot quietly widen."""
+        deals = [l for l in harvest_lines() if classify_card_line(l) == "deal"]
+        self.assertGreater(len(deals), 20, "no offers found in the harvests")
+        anchor = re.compile(
+            r"^(coupon:|cash\s*back:|buy\s+\d|get\s+\d|save\s+\$?\d|spend\s+\$?\d"
+            r"|limit\s+\d|mix\s*(and|&)\s*match|\d+\s*/\s*\$\d|\d+\s+for\s+\$\d"
+            r"|\d+(\.\d+)?\s*¢\s+each)|when\s+you\s+(buy|spend)\b", re.I)
+        unanchored = sorted(l for l in deals if not anchor.search(l))
+        self.assertEqual(unanchored, [])
 
 
 class TheSizeSlotDoesNotSwallowADeal(unittest.TestCase):

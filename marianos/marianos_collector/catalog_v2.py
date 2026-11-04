@@ -287,15 +287,27 @@ def _ppm_candidate(price: dict) -> str:
 def _volume_deal(promo: dict) -> tuple[str, str, str]:
     """Return (description, price, wording_source) for an nFor volume offer.
 
-    The brief requires retailer wording to be preserved rather than rebuilt.
-    Catalog V2 supplies the volume offer as structured data — nFor.quantity and
-    nFor.price — not as the shelf sentence. A string such as "4 for $18.00"
-    is therefore COMPOSED here, and the third return value says so, so that the
-    run manifest can record it and nobody downstream mistakes it for verbatim
-    retailer text.
+    Catalog V2 supplies the volume offer as structured data, nFor.quantity and
+    nFor.price, not as the shelf sentence.
 
-    If a future agreement exposes the offer wording itself, map it here and
-    return "verbatim".
+    **It used to compose one.** This returned `f"{quantity} for ${amount}"`,
+    for example "4 for $18.00", a sentence the retailer never rendered, and it
+    was written straight into the published `volume_deals_description`. The
+    third return value said `composed_from_nFor` and the audit row recorded it,
+    but nothing refused the publish, and the rule is "Never compose a deal
+    description", not "disclose that you composed one". Disclosure does not
+    make an unobserved value publishable. Found by an independent review on
+    4 November.
+
+    So the description is only ever the retailer's own sentence. When the
+    promotion carries no wording, both the description and the price are blank
+    and `wording_source` says why: a volume price with no description is
+    refused by `schema.make_record` anyway, and publishing the price alone
+    would assert an offer whose terms we cannot state.
+
+    The structured nFor values are not lost. They stay in the audit record, so
+    if an agreement later exposes the wording the offer can be matched up
+    without recollecting.
     """
     n_for = promo.get("nFor")
     if not isinstance(n_for, dict):
@@ -304,7 +316,23 @@ def _volume_deal(promo: dict) -> tuple[str, str, str]:
     amount = _money(n_for.get("price"))
     if not quantity or not amount:
         return "", "", ""
-    return f"{quantity} for ${amount}", amount, "composed_from_nFor"
+
+    # The retailer's own wording for THIS offer, read only off the nFor object.
+    #
+    # The first attempt at this fix also looked at `promo` for the same keys,
+    # which picked up `promo.defaultDescription` - the price label, "Offer
+    # price" - and published that as a volume deal description. Replacing a
+    # composed sentence with a borrowed label is the same violation wearing a
+    # different hat, and the test for the published column caught it.
+    #
+    # `promo.defaultDescription` and `promoDescription` are the sale-price
+    # labels and are already used for `sale_price`. They are not offer terms.
+    for key in ("nForDescription", "description"):
+        wording = str(n_for.get(key) or "").strip()
+        if wording:
+            return wording, amount, f"verbatim:{key}"
+
+    return "", "", "withheld_no_retailer_wording_for_nFor"
 
 
 def _category_path(product: dict) -> tuple[str, str]:
@@ -407,7 +435,35 @@ class CatalogV2Source:
         self.max_pages = max_pages
         self.include_missing_prices = include_missing_prices
         self.banner_host = banner_host
-        self.unit_is_ppm = os.getenv("CATALOG_V2_UNIT_IS_PPM", "").lower() == "yes"
+        # **No environment variable may promote a value into `ppm`.**
+        #
+        # This read CATALOG_V2_UNIT_IS_PPM=yes and wrote Catalog V2's `unit`
+        # field into the published `ppm`. That field's own docstring says the
+        # contract "does not say whether it is a per-measure rate or the price
+        # for the unit of sale", there is no shape validation on `ppm`
+        # anywhere, and `azure/deploy_jobs.sh` forwards this variable into the
+        # deployed twice-weekly job. So one environment variable on an
+        # unattended job could have published `ppm: "USD 5.00"` on every
+        # record, not even in per-measure notation, with nothing refusing it.
+        #
+        # An env var is a toggle, not a gate. `ppm` is the displayed rate read
+        # from the retailer's page; a field whose meaning is unknown is not
+        # that, whatever an operator believes having looked at it. The value is
+        # still carried in the audit record as `ppm_candidate_unit_field`, so
+        # the first live response can still settle what the field means, which
+        # was the stated reason for the toggle. Settling it is a code change
+        # with a test, reviewed, not a deployment variable.
+        #
+        # Found by an independent review on 4 November.
+        self.unit_is_ppm = False
+        if os.getenv("CATALOG_V2_UNIT_IS_PPM", "").strip():
+            LOG.warning(
+                "catalog_v2_unit_is_ppm_ignored: the variable is set and is "
+                "ignored. ppm is the displayed per-measure rate; Catalog V2's "
+                "unit field is of unknown meaning and is carried in the audit "
+                "record instead.",
+                extra={"event": "catalog_v2_unit_is_ppm_ignored",
+                       "store_id": str(location_id), "category": ""})
         self._sweep: SweepResult | None = None
 
     # ------------------------------------------------------------------ sweep

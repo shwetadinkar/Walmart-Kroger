@@ -31,8 +31,10 @@ from parse_page_harvest import classify_card_line  # noqa: E402
 
 from marianos_collector.composition import (  # noqa: E402
     BINDING_KEY,
+    DURABLE_EVIDENCE_FILENAME,
     CallableEnrichment,
     CompositeSource,
+    parse_observed_at,
 )
 from marianos_collector.config import Store  # noqa: E402
 from marianos_collector.sources import Page  # noqa: E402
@@ -137,7 +139,34 @@ def build_lookup(reads, store_id, observed_at=None):
     if reads and isinstance(reads[0], dict):
         reads = [(reads, observed_at)]
 
-    ordered = sorted(reads, key=lambda r: str(r[1]))
+    # Chronological, not lexicographic. A string sort reads "freshest" off the
+    # characters, so a read stamped 2026-11-02T01:00:00+05:30 (19:30Z on the
+    # 1st) sorts after one stamped 2026-11-01T22:00:00+00:00 (22:00Z) and the
+    # STALE read wins, is published, and is stamped with a time its values were
+    # not observed at. The operator is at UTC+5:30, so mixed offsets are the
+    # realistic case rather than a contrived one, and an unpadded date does the
+    # same thing ("2026-11-1" sorts before "2026-11-09"). `parse_observed_at`
+    # already existed and was simply not used here.
+    #
+    # A stamp that will not parse is refused here rather than sorted last.
+    # Everything this function promises depends on knowing when each read
+    # happened: which read is freshest, what time a contribution carries, and
+    # which value is "earlier" in a recorded disagreement. With an unparseable
+    # stamp the winner fell out of argument order, which is arbitrary, and the
+    # value was then stamped with a string that is not a time. Unpadded dates
+    # are the realistic case: "2026-11-1" does not parse while "2026-11-01"
+    # does.
+    unparseable = [str(when) for _, when in reads
+                   if parse_observed_at(when) is None]
+    if unparseable:
+        raise ValueError(
+            "unparseable --observed-at: " + ", ".join(repr(x) for x in unparseable)
+            + ". Use an ISO 8601 instant with a zero-padded date, for example "
+              "2026-11-03T20:00:00+00:00. Ordering reads, stamping their "
+              "values and recording which of two values is earlier all depend "
+              "on this parsing, so it is refused rather than guessed.")
+
+    ordered = sorted(reads, key=lambda r: parse_observed_at(r[1]))
     by_upc, supplied_at, disagreements = {}, {}, {}
     for records, when in ordered:
         for rec in records:
@@ -208,6 +237,14 @@ def main(argv=None):
                 "several reads would stamp values with a time they were not "
                 "observed at.")
 
+    # Checked before any file is opened, so an operator typo in a flag fails at
+    # once rather than after reading a 28,549 record spine.
+    bad = [w for w in observed if parse_observed_at(w) is None]
+    if bad:
+        p.error("unparseable --observed-at: " + ", ".join(repr(x) for x in bad)
+                + ". Use an ISO 8601 instant with a zero-padded date, for "
+                  "example 2026-11-03T20:00:00+00:00.")
+
     api = json.loads(Path(args.api).read_text(encoding="utf-8"))
     reads = []
     for path_str, when in zip(args.page, observed):
@@ -228,7 +265,12 @@ def main(argv=None):
             "onto another store's rows."
         )
 
-    lookup, by_upc = build_lookup(reads, args.store_id)
+    try:
+        lookup, by_upc = build_lookup(reads, args.store_id)
+    except ValueError as exc:
+        # A clean refusal rather than a traceback: this is an operator mistake
+        # in a flag, and the message names the offending value.
+        p.error(str(exc))
     crawl = CallableEnrichment("crawl", CRAWL_FIELDS, lookup)
     # The spine here is a replay of finished 22-field records, which carry no
     # fulfilment column, so the required fulfilment is stated explicitly. The
@@ -255,6 +297,25 @@ def main(argv=None):
     prov = composite.provenance_report()
     (out / "provenance.json").write_text(
         json.dumps(prov, indent=1, ensure_ascii=False), encoding="utf-8")
+
+    # The uncapped record, which `provenance.json` points at by name.
+    #
+    # It was never written on this path. `provenance_report()` caps
+    # `refused_contributions_preview` at 200 and names
+    # `provenance_evidence.json` as the complete artifact, and
+    # `composition.py` claimed "the runner and the merge tool both persist
+    # it" - the runner did, this tool did not. So every refused contribution
+    # past the 200th was lost here, silently, while the file it was supposed to
+    # be in was cited in the output.
+    #
+    # Not hypothetical. The first attempt at the 4 November merge refused 229
+    # of 279 contributions as UNBOUND_TIME_FUTURE; 29 of those were already
+    # beyond the preview cap and unrecoverable. The client asked on 4 November
+    # to "retain complete refused-contribution history beyond a report
+    # preview", which is exactly this file.
+    (out / DURABLE_EVIDENCE_FILENAME).write_text(
+        json.dumps(composite.durable_evidence(), indent=1, ensure_ascii=False),
+        encoding="utf-8")
 
     filled = Counter()
     for field_name in CRAWL_FIELDS:

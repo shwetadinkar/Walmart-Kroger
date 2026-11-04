@@ -221,6 +221,23 @@ class TheReportSurfacesBoth(unittest.TestCase):
         self.assertEqual(report["terms_abandoned_count"], 1)
         self.assertEqual(report["terms_incomplete_pending_retry"], [])
 
+    def test_an_abandoned_term_is_not_counted_as_completed(self):
+        """It is added to done_terms so a resume stops retrying it, so counting
+        that list reported 1 of 1 terms completed for a term that collected
+        nothing across three attempts."""
+        report = self.report_after(sweep_core.MAX_TERM_ATTEMPTS)
+        self.assertEqual(report["terms_configured"], 2)
+        self.assertEqual(report["terms_completed"], 1)          # eggs only
+        self.assertEqual(report["terms_done_including_abandoned"], 2)
+
+    def test_page_failures_are_events_and_the_term_count_is_separate(self):
+        """One term retried three times contributes three failure events. The
+        count was read as a number of affected terms."""
+        report = self.report_after(sweep_core.MAX_TERM_ATTEMPTS)
+        self.assertEqual(report["page_failure_events"],
+                         sweep_core.MAX_TERM_ATTEMPTS)
+        self.assertEqual(report["terms_with_a_page_failure"], 1)
+
     def test_a_clean_run_reports_neither(self):
         from marianos_collector.kroger_sweep_source import KrogerSweepSource
         with tempfile.TemporaryDirectory() as td:

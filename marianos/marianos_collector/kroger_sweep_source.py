@@ -412,9 +412,24 @@ class KrogerSweepSource:
                 "reaches at most 300 products however many sit behind it, and the "
                 "public API has no category enumeration at all"),
             "terms_configured": sum(len(v) for v in self.terms_by_category.values()),
-            "terms_completed": len(state.get("done_terms", [])),
+            # Completed means collected, not merely finished with. An
+            # abandoned term is added to `done_terms` so a resume stops
+            # retrying it, so counting that list reported 1 of 1 terms
+            # completed for a term that collected nothing across three
+            # attempts. The two are now separate figures and the abandoned ones
+            # are subtracted here.
+            "terms_completed": (len(state.get("done_terms", []))
+                                - len(state.get("terms_abandoned", []))),
+            "terms_done_including_abandoned": len(state.get("done_terms", [])),
             "terms_hit_start_cap": len(state.get("terms_hit_start_cap", [])),
+            # Failure EVENTS, one per failed request. A term retried across
+            # three resumes contributes three, so this is not a count of
+            # affected terms and was read as one; the distinct figure is
+            # beside it.
             "page_failures": len(state.get("page_failures", [])),
+            "page_failure_events": len(state.get("page_failures", [])),
+            "terms_with_a_page_failure": len(
+                {f.get("term") for f in state.get("page_failures", [])}),
             # A term whose pages did not all complete is not marked done, so a
             # resume retries it. After MAX_TERM_ATTEMPTS it is marked done and
             # named here. These are terms we stopped trying to collect, which

@@ -123,10 +123,16 @@ for STORE_ID in "${STORE_IDS[@]}"; do
               'KROGER_CLIENT_SECRET=secretref:kroger-client-secret'
               "KROGER_LOCATION_ID=$KROGER_LOCATION_ID"
               "CATALOG_V2_FULFILLMENT=${CATALOG_V2_FULFILLMENT:-curbside}")
-    # Only set when the partner agreement issues a scope other than the default,
-    # or when a live response has shown the `unit` field to be displayed PPM.
+    # Only set when the partner agreement issues a scope other than the default.
     [[ -n "${CATALOG_V2_SCOPE:-}" ]] && ENVVARS+=("CATALOG_V2_SCOPE=$CATALOG_V2_SCOPE")
-    [[ -n "${CATALOG_V2_UNIT_IS_PPM:-}" ]] && ENVVARS+=("CATALOG_V2_UNIT_IS_PPM=$CATALOG_V2_UNIT_IS_PPM")
+    # CATALOG_V2_UNIT_IS_PPM is deliberately NOT forwarded, and the collector
+    # ignores it. It used to promote Catalog V2's `unit` field, whose meaning
+    # the contract does not state, into the published `ppm` column, on an
+    # unattended job, with no shape validation anywhere. An env var is a
+    # toggle, not a gate, and `ppm` is the displayed per-measure rate. The
+    # field is carried in the audit record instead, so what it means can still
+    # be settled from a live response: by a reviewed code change, not a
+    # deployment variable.
   fi
   if [[ "$MARIANOS_SOURCE" == 'sweep' ]]; then
     ENVVARS+=("MARIANOS_EXPECT_ZIPCODE=$MARIANOS_EXPECT_ZIPCODE"

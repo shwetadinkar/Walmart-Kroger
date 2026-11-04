@@ -59,8 +59,43 @@ OFFER_LINK = re.compile(r"^view\s+\d+\s+offer", re.I)
 # Every one of the 50 distinct card lines across the 1 and 4 November harvests
 # was checked against this: it matches every real offer and no badge or link.
 DEAL_MARKER = re.compile(
-    r"(\bbuy\b|\bsave\b|\bget\b|\bfree\b|\bwhen\s+you\b|\bmix\b|\blimit\b"
-    r"|^coupon:|^cash\s*back:|^\d+\s*/\s*\$|^\d+\s+for\s+\$|¢\s+each)", re.I)
+    r"""
+      ^coupon:                      # Coupon: Save $1.00 on Energizer
+    | ^cash\s*back:                 # Cash Back: $5.00 Cash Back on ...
+    | ^buy\s+\d                     # Buy 1, Get 1 Free / Buy 2 Save $4
+    | ^get\s+\d                     # Get 2 for $5
+    | ^save\s+\$?\d                 # Save $15 when you spend $60
+    | ^spend\s+\$?\d                # Spend $50 save $10
+    | ^limit\s+\d\b                 # a bare "Limit 2" offer line
+    | ^mix\s*(?:and|&)\s*match      # Mix and match 4 for $10
+    | ^\d+\s*/\s*\$\d               # 3/$12 When you buy 3 or more
+    | ^\d+\s+for\s+\$\d             # 2 For $4.00
+    | ^\d+(?:\.\d+)?\s*¢\s+each  # 99c each when you buy 5 or more
+    | \bwhen\s+you\s+(?:buy|spend)\b  # ... when you buy 3 or more
+    """,
+    re.I | re.X)
+"""Identify an offer by an anchored grammar, not by substring words.
+
+The first version matched `\\bfree\\b`, `\\bmix\\b`, `\\blimit\\b`, `\\bbuy\\b`,
+`\\bsave\\b` and `\\bget\\b` anywhere in a line. Across the two real harvests
+that classified about 40 **product titles** as offers: "Gluten Free",
+"Caffeine-Free", "Lactose Free", "Fat Free", "BPA-Free", "Free Range",
+"Flicker Free", "WILTON SPRINKLES GOLD METALLIC MIX TALL", and a chicken breast
+title ending "(Limit 2 at sale price)".
+
+Nothing was mis-published, because titles are popped positionally before the
+remaining lines are classified. But it was reachable through a single
+unrecognised leading line, which is exactly what `Aisle 25` was between the
+1 and 4 November harvests: one new label shifts the positions, the title lands
+in the deal slot, and `volume_deals_description` becomes a product name with
+`parse_reason` empty, reported as fully recognised. Silent, and no count would
+reveal it.
+
+Found by an independent review on 4 November. Every one of the 1,464 distinct
+card lines across both harvests is checked against this in
+`tests/test_parse_page_harvest.py`, from the files rather than from a list
+typed here.
+"""
 
 
 def classify_card_line(line):

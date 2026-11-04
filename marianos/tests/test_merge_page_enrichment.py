@@ -58,6 +58,57 @@ def run(api, page, extra=()):
             json.load(open(os.path.join(out, "provenance.json"))))
 
 
+class TheCompleteRefusedHistoryIsPersisted(unittest.TestCase):
+    """`provenance.json` names `provenance_evidence.json` and the merge never
+    wrote it.
+
+    `provenance_report()` caps `refused_contributions_preview` at 200 and
+    points at that file as the complete artifact, and `composition.py` claimed
+    "the runner and the merge tool both persist it". The runner did; this tool
+    did not. So every refused contribution past the 200th was lost on this
+    path while the output cited the file it should have been in.
+
+    Not hypothetical: the first attempt at the 4 November merge refused 229 of
+    279 contributions as UNBOUND_TIME_FUTURE, 29 of them already beyond the
+    cap. The client asked on 4 November to retain complete
+    refused-contribution history beyond a report preview, which is this file.
+    """
+
+    def setUp(self):
+        self.d = tempfile.mkdtemp()
+        ap = os.path.join(self.d, "a.json")
+        pp = os.path.join(self.d, "p.json")
+        json.dump([api_row("0001", "Milk"), api_row("0002", "Eggs")], open(ap, "w"))
+        json.dump([page_row("0001", ppm="$1.00/lb"),
+                   page_row("0002", ppm="$2.00/lb")], open(pp, "w"))
+        self.out = os.path.join(self.d, "out")
+        main(["--api", ap, "--page", pp, "--out", self.out])
+
+    def test_the_file_provenance_json_points_at_actually_exists(self):
+        prov = json.load(open(os.path.join(self.out, "provenance.json")))
+        named = prov["complete_evidence_artifact"]
+        self.assertTrue(os.path.isfile(os.path.join(self.out, named)),
+                        f"provenance.json cites {named} and it is not there")
+
+    def test_the_persisted_record_is_the_uncapped_one(self):
+        prov = json.load(open(os.path.join(self.out, "provenance.json")))
+        durable = json.load(open(os.path.join(
+            self.out, prov["complete_evidence_artifact"])))
+        self.assertIn("refused_contributions", durable)
+        self.assertNotIn("refused_contributions_preview", durable)
+        self.assertEqual(durable["refused_contribution_count"],
+                         prov["refused_contribution_count"])
+
+    def test_every_refusal_is_in_it_not_just_the_preview(self):
+        """The preview is capped at 200; the durable file must hold them all.
+        Asserted as a property of the two documents rather than by generating
+        201 refusals, which the freshness gate would make slow and indirect."""
+        durable = json.load(open(os.path.join(
+            self.out, "provenance_evidence.json")))
+        self.assertEqual(len(durable["refused_contributions"]),
+                         durable["refused_contribution_count"])
+
+
 class DealSplitting(unittest.TestCase):
     def test_a_coupon_line_is_a_digital_deal(self):
         vol, dig = split_deals(["Coupon: $1.79 lb Bartlett Pears"])
@@ -258,6 +309,56 @@ class SeveralReadsAreAppliedInOnePass(unittest.TestCase):
         got = lookup(None, "0001", None)
         self.assertEqual(got["ppm"], "$1.50/oz")
         self.assertNotIn("volume_deals_description", got)
+
+    def test_the_freshest_read_wins_across_different_utc_offsets(self):
+        """A string sort reads "freshest" off the characters, not the clock.
+
+        `2026-11-02T01:00:00+05:30` is 19:30Z on the 1st, so it is OLDER than
+        `2026-11-01T22:00:00+00:00`, and sorts after it as text. The operator
+        is at UTC+5:30, so mixed offsets are the realistic case. Under the
+        string sort the stale rate was published and stamped with a time it was
+        not observed at, and the two tests above could not see it because their
+        timestamps happened to sort the same way both.
+        """
+        older_local = "2026-11-02T01:00:00+05:30"   # 2026-11-01T19:30Z
+        newer_utc = "2026-11-01T22:00:00+00:00"     # 2026-11-01T22:00Z
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/lb")], older_local),
+            ([self.rec("0001", ppm="$2.00/lb")], newer_utc),
+        ])
+        got = lookup(None, "0001", None)
+        self.assertEqual(got["ppm"], "$2.00/lb")
+        self.assertEqual(got[BINDING_KEY]["observed_at"], newer_utc)
+
+    def test_the_disagreement_record_is_not_reversed_by_offset(self):
+        """With the ordering wrong, earlier_value and later_value swap too."""
+        lookup = self.lookup_for([
+            ([self.rec("0001", ppm="$1.00/lb")], "2026-11-02T01:00:00+05:30"),
+            ([self.rec("0001", ppm="$2.00/lb")], "2026-11-01T22:00:00+00:00"),
+        ])
+        entry = lookup.disagreements["0001"][0]
+        self.assertEqual(entry["earlier_value"], "$1.00/lb")
+        self.assertEqual(entry["later_value"], "$2.00/lb")
+
+    def test_an_unpadded_date_is_refused_rather_than_ordered(self):
+        """"2026-11-1" does not parse while "2026-11-01" does, so under the
+        string sort it ordered by characters and the winner fell out of
+        argument order. Which read is freshest, what time a value carries and
+        which of two values is earlier all depend on this parsing."""
+        with self.assertRaises(ValueError) as caught:
+            self.lookup_for([
+                ([self.rec("0001", ppm="$9.00/lb")], "2026-11-9"),
+                ([self.rec("0001", ppm="$1.00/lb")], "2026-11-1"),
+            ])
+        self.assertIn("2026-11-9", str(caught.exception))
+
+    def test_an_unparseable_stamp_is_refused_and_named(self):
+        with self.assertRaises(ValueError) as caught:
+            self.lookup_for([
+                ([self.rec("0001", ppm="$1.00/lb")], "2026-11-03T00:00:00+00:00"),
+                ([self.rec("0002", ppm="$2.00/lb")], "not a timestamp"),
+            ])
+        self.assertIn("not a timestamp", str(caught.exception))
 
     def test_a_disagreement_between_reads_is_recorded(self):
         lookup = self.lookup_for([
