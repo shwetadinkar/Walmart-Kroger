@@ -120,6 +120,46 @@ class TheReadDatesComeFromTheMergeReport(unittest.TestCase):
         self.assertNotIn("2026-11-03", self.readme)
 
 
+class TheCompleteProvenanceEvidenceShips(unittest.TestCase):
+    """provenance.json carries a preview capped at 200 and names the file with
+    the complete history. The client asked for that history beyond a preview,
+    and the builder used to copy the summary and leave the named file behind."""
+
+    def setUp(self):
+        self._td = tempfile.TemporaryDirectory()
+        td = Path(self._td.name)
+        self.root = td / "out"
+        base = self.root / NAMESPACE / STORE / "runs" / RELEASE
+        base.mkdir(parents=True)
+        (base / "data.json").write_text(json.dumps([record("0001")]))
+        self.enriched = td / "merged"
+        self.enriched.mkdir()
+        (self.enriched / "data_22_fields_enriched.json").write_text(
+            json.dumps([record("0001", ppm="$1.00/oz")]))
+        (self.enriched / "provenance.json").write_text(json.dumps(
+            {"complete_evidence_artifact": "provenance_evidence.json"}))
+        self.out = td / "pkg"
+
+    def tearDown(self):
+        self._td.cleanup()
+
+    def build(self):
+        tool.main(["--output-root", str(self.root), "--namespace", NAMESPACE,
+                   "--store", STORE, "--release", RELEASE,
+                   "--enriched-from", str(self.enriched), "--out", str(self.out)])
+
+    def test_the_named_evidence_file_is_copied_and_hashed(self):
+        (self.enriched / "provenance_evidence.json").write_text('{"all": []}')
+        self.build()
+        self.assertTrue((self.out / "provenance_evidence.json").is_file())
+        manifest = json.loads((self.out / "MANIFEST_SHA256.json").read_text())
+        self.assertIn("provenance_evidence.json", manifest)
+
+    def test_a_named_evidence_file_that_is_missing_is_refused(self):
+        with self.assertRaises(SystemExit):
+            self.build()
+
+
 class AnythingShippedAlongsideIsHashed(unittest.TestCase):
 
     def setUp(self):

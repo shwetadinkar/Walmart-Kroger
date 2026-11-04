@@ -162,6 +162,21 @@ def main(argv=None):
         for name in ("merge_report.json", "provenance.json"):
             if (a.enriched_from / name).is_file():
                 shutil.copy2(a.enriched_from / name, a.out / name)
+        # provenance.json is a summary with a capped preview; it names the file
+        # that holds the complete per-field observations and refused
+        # contributions. Shipping the summary without that file would leave the
+        # package pointing at an artefact it does not contain.
+        if (a.out / "provenance.json").is_file():
+            named = json.loads((a.out / "provenance.json").read_text()).get(
+                "complete_evidence_artifact")
+            if named:
+                if Path(named).name != named:
+                    raise SystemExit(f"complete_evidence_artifact is not a bare file name: {named!r}")
+                if not (a.enriched_from / named).is_file():
+                    raise SystemExit(
+                        f"provenance.json names {named} as its complete evidence, "
+                        f"but {a.enriched_from} does not contain it")
+                shutil.copy2(a.enriched_from / named, a.out / named)
         if (a.out / "merge_report.json").is_file():
             merge_report = json.loads((a.out / "merge_report.json").read_text())
 

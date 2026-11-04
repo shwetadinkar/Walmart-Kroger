@@ -164,7 +164,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 331, Mariano's 1064.
+  counts: Walmart 331, Mariano's 1066.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested

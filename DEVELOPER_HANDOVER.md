@@ -31,7 +31,7 @@ Read in this order:
 | HEAD | `763d14b`, pushed, working tree clean |
 | authoritative Mariano's release commit | `74a55c5e6fb2d938df1d06ff6717561420130cd9` |
 | frozen, never commit to | `walmart-client-corrections-2026-10-31` (`86245e1`) |
-| test counts | Walmart 331, Mariano's 1064 — direct and pytest must agree |
+| test counts | Walmart 331, Mariano's 1066 — direct and pytest must agree |
 | delivery date | 5 November 2026, 00:00 GMT |
 
 Commits are authored `Shweta Dinkar
@@ -39,7 +39,7 @@ Commits are authored `Shweta Dinkar
 tooling or session trailers. History is not rewritten.
 
 ```bash
-cd marianos && python3 -m pytest tests -q      # expect 1064
+cd marianos && python3 -m pytest tests -q      # expect 1066
 cd walmart  && python3 -m pytest tests -q      # expect 331
 ```
 
@@ -154,7 +154,7 @@ as a delivered figure must be re-derived once the release is in place. And the
 python3 tools/merge_page_enrichment.py \
   --api <release data.json> \
   --page reports/2026-11-01-vernon-hills-page-harvest/data/parsed_full_corrected.json \
-  --observed-at 2026-11-01T22:00:00+00:00 \
+  --observed-at 2026-11-01T08:45:00+00:00 \
   --page reports/2026-11-04-vernon-hills-page-harvest/page_reads.json \
   --observed-at <the 3 November read's time, from the release report> \
   --store-id 53100502 --zipcode 60061 \
