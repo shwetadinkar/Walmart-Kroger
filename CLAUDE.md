@@ -141,7 +141,7 @@ A green test suite has twice reported sound work that was not.
 - **Direct and pytest counts must agree.** `python3 tests/<file>.py` and
   `python3 -m pytest tests` must execute the same number of tests. A stray
   `unittest.main()` above a class silently runs a subset and prints OK. Current
-  counts: Walmart 262, Mariano's 944.
+  counts: Walmart 262, Mariano's 971.
 - **"Tested in both collectors" is two claims.** The refused-run record was in
   both runners and tested in one: searching the whole Walmart suite for the
   failures tree returned nothing, so on that side a documented property rested
@@ -407,9 +407,21 @@ Two properties of the adapter are load-bearing and must not be traded away:
   This was first written as "a resumed sweep serves exactly what a fresh one
   served". **That was false** and the test for it compared a run's output
   against itself over the same raw directory, so it asserted nothing. A term
-  that fails on page 0 is marked done and checkpointed, so a resumed sweep
-  skips it for ever while a fresh one collects it. Not yet fixed; the
-  resumability claim is limited to terms that completed.
+  that failed on page 0 was marked done and checkpointed, so a resumed sweep
+  skipped it for ever while a fresh one collected it, and the only trace was an
+  entry in `page_failures` that nothing compared against `done_terms`.
+
+  **Fixed on 4 November.** A term whose pages did not all complete is not added
+  to `done_terms`, so a resume retries it. Retrying is bounded at
+  `MAX_TERM_ATTEMPTS` of 3, because a term that fails the same way every time
+  would otherwise be retried for ever across resumes and no run would finish;
+  after the cap it is marked done and named in `terms_abandoned`. Both reach
+  the release report as `terms_abandoned_after_retries` and
+  `terms_incomplete_pending_retry`, because a term we stopped trying to collect
+  is a coverage fact and a run that left work for a resume has not produced
+  what its configured terms would yield. `STATE_VERSION` is 6; the version gate
+  refuses an older checkpoint rather than misreading it. A failure mid-sequence
+  counts as incomplete too, not only one on page 0.
 
 - **`terms_hit_start_cap` is decided after a term's pages, from the term.** It
   used to be appended only inside the `start > max_start` branch, which the
@@ -452,8 +464,31 @@ both reported rather than smoothed over:
   into one. That method was called `provenance()` until 3 November, which
   nothing but tests ever called, because the runner looks for
   `provenance_report()` — so none of this reached a single release, and this
-  file claimed otherwise. `CatalogV2Source.provenance()` has the same gap and
-  is still unfixed.
+  file claimed otherwise.
+
+  **This has now happened in three sources, and is fixed in all three on
+  4 November.** `CatalogV2Source.provenance()` had the identical stale name,
+  called only by a test. `AuthorizedProviderSource` had **no report method
+  under either name**, and because the runner reads it through `hasattr`, a
+  release produced through that source carried no provenance block at all and
+  nothing failed. That is the worst placement for the gap: that source sets
+  `coverage_attested = True`, so unlike the sweep it may publish outside the
+  trial namespace, and the source permitted the strongest claim disclosed the
+  least. It now reports its host, path, attestation with the explicit note that
+  the attestation is the provider's claim carried forward rather than our
+  verification, its page and retry counters, and what it does not establish.
+  The token appears nowhere, with a test asserting that.
+
+  **A rename fixes one occurrence, so the guard is structural.**
+  `tests/test_source_report_surface.py` parses `runner.py` for the attribute
+  names it reads off a source, asserts it looks for `provenance_report` and not
+  `provenance`, discovers every `*Source` class in the package, and requires
+  the method on each one that is not a test fixture - with a sharper assertion
+  for any source that attests coverage. It also fails if any source carries the
+  stale `provenance` name again, even beside the right one, because that is
+  where the divergence starts. Two of its own assertions check that the
+  derivation and the discovery actually found something, so the rest cannot
+  pass vacuously.
   This is **not** a map with ten entries missing. They are seasonal and
   non-grocery departments outside the client's 28 roots, so mapping them would
   be assigning a category from the one the product is not in. What to do with
@@ -512,6 +547,18 @@ both reported rather than smoothed over:
   decision, and a client reading only the root name would have concluded the
   opposite. `Coffee` was wrong too: the map does contain `Coffee -> Coffee`;
   no product the sweep reached carried that label.
+
+  **Three of the five are now measured against the delivered data rather than
+  inferred from the sitemap.** Binding the 3 November page read by UPC shows 24
+  ground coffee products in the dataset labelled `Beverages`, 24 light bulbs
+  labelled `Household` / `Cleaning Products`, and 24 batteries, 19 under the
+  same label and 5 under `Hardware Home Improvement`. So those products **are
+  in the delivered data**, under the retailer's own broader label, exactly as
+  seafood sits inside Meat. The gap is a taxonomy mismatch between the client's
+  28 roots and what the retailer publishes, not a collection failure, and
+  assigning a root would be assigning a category the product's own source does
+  not carry. None of it makes those roots covered: no product is served under
+  them and each stays declared.
 
 The store columns come from Kroger's own `/locations` response via
 `sweep_core.store_from_locations` **when `--resolve-store` is passed**, and

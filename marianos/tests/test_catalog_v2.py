@@ -338,7 +338,7 @@ class ProvenanceTests(unittest.TestCase):
         client = FakeClient([page([product()])])
         src = source(client)
         src.sweep(STORE)
-        record = src.provenance()
+        record = src.provenance_report()
         self.assertFalse(record["fulfillment_filter_verified"])
         self.assertFalse(record["scope_verified"])
         self.assertEqual(

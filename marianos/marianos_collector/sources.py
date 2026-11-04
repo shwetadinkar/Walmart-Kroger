@@ -104,6 +104,51 @@ class AuthorizedProviderSource:
             raise SourceError("PROVIDER_API_TOKEN is required")
         self.base_url, self.token = base_url, token
         self.timeout, self.max_attempts = timeout, max_attempts
+        self.pages_fetched = 0
+        self.transient_retries = 0
+
+    def provenance_report(self) -> dict:
+        """What this run actually used, for the release report.
+
+        This source had no `provenance_report` at all, and the runner reads it
+        through `hasattr`, so a release produced here carried **no provenance
+        block** and nothing failed. That is the worst place for the gap to be:
+        `coverage_attested` is True on this source, so unlike the sweep it may
+        publish outside the trial namespace, and the source permitted to make
+        the strongest claim was disclosing the least. Two other sources had the
+        same defect under a different name, `provenance` instead of
+        `provenance_report`, and it cost a release each time.
+
+        The token is never included, in any form.
+        """
+        parsed = urlparse(self.base_url)
+        return {
+            "source_mode": self.source_mode,
+            "contract": ("GET {base}?store_id&zipcode&category&category_url"
+                         "&cursor, Bearer token, Page.parse response"),
+            "provider_host": parsed.hostname,
+            "provider_path": parsed.path,
+            "credential": "PROVIDER_API_TOKEN, read from the environment, "
+                          "never recorded here",
+            "coverage_attested": self.coverage_attested,
+            "coverage_attested_means": (
+                "the provider contract makes the provider responsible for "
+                "complete product and category discovery, and the runner "
+                "enforces subcategories_complete on every page returned. It is "
+                "the provider's claim, carried forward, not an independent "
+                "verification by us"),
+            "pages_fetched": self.pages_fetched,
+            "transient_retries": self.transient_retries,
+            "timeout_seconds": self.timeout,
+            "max_attempts": self.max_attempts,
+            "max_payload_bytes": 20_000_000,
+            "_does_not_establish": [
+                "That the provider's data is correct. source_mode says "
+                "unverified until review and that is the standing position.",
+                "That the products are the store's assortment. That rests on "
+                "the provider resolving the store_id passed to it.",
+            ],
+        }
 
     def fetch(self, store, category, url: str, cursor: str) -> Page:
         check_retailer_url(url)
@@ -126,7 +171,9 @@ class AuthorizedProviderSource:
                     if len(data) > 20_000_000:
                         raise SourceError("Provider payload exceeds 20MB")
                 document = json.loads(data)
-                return Page.parse(document)
+                page = Page.parse(document)
+                self.pages_fetched += 1
+                return page
             except HTTPError as ex:
                 if ex.code in (401, 403):
                     raise AccessChallenge(f"Authorization denied or challenge: HTTP {ex.code}") from ex
@@ -137,6 +184,7 @@ class AuthorizedProviderSource:
                     raise SourceError(f"Provider unavailable: {ex}") from ex
             except (ValueError, TypeError) as ex:
                 raise SourceError(f"Invalid provider JSON: {ex}") from ex
+            self.transient_retries += 1
             LOG.warning("transient_provider_retry", extra={"event":"transient_provider_retry", "store_id":store.store_id,"category":category.name,"attempt":attempt+1})
             time.sleep(min(2**attempt, 8))
         raise SourceError("Provider exhausted retries")

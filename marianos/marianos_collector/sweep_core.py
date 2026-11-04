@@ -33,10 +33,16 @@ from .retention import observation, stable_identity
 # product, 250 works and 251 is HTTP 400. So pages start at 0, 50 ... 250, and
 # a term reaches at most 300 products.
 MAX_START = 250
+# How many times a resume will retry a term whose pages did not all complete,
+# before marking it done and naming it in `terms_abandoned`. Bounded because an
+# unbounded retry means a persistently failing term stops any run from
+# finishing; three attempts across resumes distinguishes a transient API error
+# from a term that cannot be collected.
+MAX_TERM_ATTEMPTS = 3
 
 # Bump when records change meaning. A checkpoint from another version holds
 # records built under other rules, and resuming would mix the two.
-STATE_VERSION = 5
+STATE_VERSION = 6   # 6 adds terms_abandoned and term_attempts
 
 # Sent as filter.fulfillment, so Kroger returns only products it holds for
 # in-store or curbside at the location.
@@ -162,9 +168,15 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                       "records": {}, "done_terms": [], "term_counts": {},
                       "category_disagreements": [], "errors": [],
                       "page_failures": [], "terms_hit_start_cap": [],
+                      "terms_abandoned": [], "term_attempts": {},
                       "unmapped": {}, "discovery": {}, "quarantine": {},
                       "contexts": {}, "observations": {}}
     records = state["records"]
+    # Defensive for a state built by a caller rather than by the default above.
+    # The version gate already refuses an older checkpoint; this keeps a
+    # hand-assembled one from raising on a key it does not carry.
+    state.setdefault("terms_abandoned", [])
+    state.setdefault("term_attempts", {})
     done = set(state["done_terms"])
     stopped = None
 
@@ -176,6 +188,7 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     continue
                 found = 0
                 returned = 0
+                incomplete = False
                 for page in range(pages_per_term):
                     start = page * 50
                     if start > max_start:
@@ -190,6 +203,7 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                     except KrogerError as exc:
                         state["page_failures"].append(
                             {"term": key, "start": start, "error": str(exc)})
+                        incomplete = True
                         break
                     # Written before anything reads it, so a rule that refuses
                     # a product can never cost the response that showed it.
@@ -275,7 +289,34 @@ def sweep(client, location_id, store, terms_by_category, budget, pages_per_term,
                 if capped and key not in state["terms_hit_start_cap"]:
                     state["terms_hit_start_cap"].append(key)
                 state["term_counts"][key] = found
-                done.add(key)
+
+                # A term whose pages did not all complete is NOT done.
+                #
+                # It used to be marked done unconditionally, so a term that
+                # failed on page 0 collected nothing, was checkpointed as
+                # finished, and was skipped by every later resume for ever
+                # while a fresh run would have collected it. That made the
+                # resumability claim false and the loss silent: the only trace
+                # was an entry in page_failures that nothing compared against
+                # done_terms.
+                #
+                # Retrying is bounded, because a term that fails the same way
+                # on every attempt would otherwise be retried for ever across
+                # resumes and no run would ever finish. After the cap it is
+                # marked done and named in terms_abandoned, which is the
+                # disclosure: a term we stopped trying to collect is a coverage
+                # fact, not an implementation detail.
+                attempts = state.setdefault("term_attempts", {})
+                if incomplete:
+                    attempts[key] = attempts.get(key, 0) + 1
+                    if attempts[key] >= MAX_TERM_ATTEMPTS:
+                        if key not in state["terms_abandoned"]:
+                            state["terms_abandoned"].append(key)
+                        done.add(key)
+                    # else: left out of done_terms, so a resume retries it
+                else:
+                    attempts.pop(key, None)
+                    done.add(key)
                 state["done_terms"] = sorted(done)
                 if checkpoint_path:
                     _write(checkpoint_path, state)

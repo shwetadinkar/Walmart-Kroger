@@ -415,6 +415,20 @@ class KrogerSweepSource:
             "terms_completed": len(state.get("done_terms", [])),
             "terms_hit_start_cap": len(state.get("terms_hit_start_cap", [])),
             "page_failures": len(state.get("page_failures", [])),
+            # A term whose pages did not all complete is not marked done, so a
+            # resume retries it. After MAX_TERM_ATTEMPTS it is marked done and
+            # named here. These are terms we stopped trying to collect, which
+            # is a coverage fact and belongs in the report rather than only in
+            # the checkpoint.
+            "terms_abandoned_after_retries": sorted(
+                state.get("terms_abandoned", [])),
+            "terms_abandoned_count": len(state.get("terms_abandoned", [])),
+            # Terms carrying an unfinished attempt. Non-zero means this run
+            # left work a resume would pick up, and that the term counts below
+            # are not the whole of what the configured terms would yield.
+            "terms_incomplete_pending_retry": sorted(
+                k for k, n in (state.get("term_attempts") or {}).items()
+                if k not in set(state.get("terms_abandoned", []))),
             "stopped_reason": state.get("stopped_reason"),
             "raw_dir": str(self.raw_dir),
             "checkpoint": str(self.checkpoint_path),

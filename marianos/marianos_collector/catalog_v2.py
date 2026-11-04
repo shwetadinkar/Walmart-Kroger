@@ -612,8 +612,16 @@ class CatalogV2Source:
         data = document.get("data")
         return data if isinstance(data, list) else []
 
-    def provenance(self) -> dict:
-        """Everything a reviewer needs to judge what this run actually used."""
+    def provenance_report(self) -> dict:
+        """Everything a reviewer needs to judge what this run actually used.
+
+        Named `provenance_report` because that is the name the runner looks
+        for. It was called `provenance`, which only a test ever called, so
+        none of this reached a release through this source: not the unverified
+        scope, not the unverified fulfillment filter, not the endpoints used.
+        `KrogerSweepSource` had the identical gap and it cost a release there;
+        this is the same defect in the other source, fixed the same way.
+        """
         return {
             "source_mode": self.source_mode,
             "contract": "Kroger Catalog V2 OpenAPI 1.5.5",
