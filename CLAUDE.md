@@ -208,12 +208,20 @@ The account holder asked whether there was progress, which is what surfaced
 it. **A new spine does not inherit an enrichment. Re-merge after every sweep,
 and check the three page-only columns before calling a release deliverable.**
 
-Merged on 4 November through `tools/merge_page_enrichment.py`: `ppm` on 589,
-`volume_deals_description` on 181, `digital_deals_description` on 51, zero
-conflicts, zero contributions refused as unbindable, each attributed to
-`crawl` rather than the API in the per-field provenance. 628 of 649 page UPCs
-bound; the 21 that are not in the API set contributed nothing rather than
-being attached to anything.
+Merged on 4 November through `tools/merge_page_enrichment.py`. The first merge
+put `ppm` on 589, `volume_deals_description` on 181 and
+`digital_deals_description` on 51 from the 1 November read alone, 628 of 649
+page UPCs bound. **Both of those numbers are superseded**: 181 included the
+badge defect below, and the read was then only one of two.
+
+**The delivered figures are the one-pass merge of both reads**, run against the
+28,549 release: `ppm` **727**, `volume_deals_description` **146**,
+`digital_deals_description` **49**, every one of the three attributed to
+`crawl` and none to the API, zero conflicts, zero cross-read disagreements,
+nothing refused as unbindable. 730 of 742 page UPCs with a value bound; the 12
+that are not in the API set contributed nothing rather than being attached to
+anything. 540 products carry values observed on 1 November and 202 observed on
+3 November, each stamped with its own read's time.
 
 **A deal column filled by elimination published badges as offers.** The parser
 took the title, then the next line as the size, then called *everything left
